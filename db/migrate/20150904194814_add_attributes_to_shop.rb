@@ -1,12 +1,12 @@
 class AddAttributesToShop < ActiveRecord::Migration
   def up
-    add_column :shops, :shopify_id, :bigint
-    add_column :shops, :credit, :int
-    add_column :shops, :enabled, :boolean
-    add_column :shops, :international, :boolean
-    add_column :shops, :send_delay, :int
-    add_column :shops, :webhook_id, :bigint
-    add_column :shops, :uninstall_id, :bigint
+    add_column :shops, :shopify_id,     :bigint
+    add_column :shops, :credit,         :int, default: 0
+    add_column :shops, :enabled,        :boolean, null: false, default: false
+    add_column :shops, :international,  :boolean, null: false, default: false
+    add_column :shops, :send_delay,     :int, default: 2
+    add_column :shops, :webhook_id,     :bigint
+    add_column :shops, :uninstall_id,   :bigint
   end
 
   def down

@@ -21,6 +21,12 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 # Shopify app
 gem 'shopify_app'
 
+# S3 connection
+gem 'aws-sdk'
+
+# Image Manipulation
+gem 'rmagick'
+
 # Newrelic for monitoring
 gem 'newrelic_rpm'
 

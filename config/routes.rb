@@ -1,13 +1,13 @@
 Rails.application.routes.draw do
 
+  # Routes for Shops
+  resources :shops
+
+  # Routes for Master Cards
+  resources :master_cards
+
   # Routes for Cards
-  get 'card/index'
-  get 'card/new'
-  get 'card/create'
-  get 'card/show'
-  get 'card/edit'
-  get 'card/update'
-  get 'card/destroy'
+  resources :cards
 
   # Webhook routes
   post '/new_product',  to:   'webhook#order'

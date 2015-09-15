@@ -1,0 +1,2 @@
+module MasterCardHelper
+end

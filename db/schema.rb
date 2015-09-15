@@ -11,29 +11,62 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150904210020) do
+ActiveRecord::Schema.define(version: 20150914183757) do
 
   create_table "cards", force: :cascade do |t|
     t.integer  "shop_id"
     t.string   "template"
+    t.string   "logo"
     t.string   "image_front"
     t.string   "image_back"
     t.string   "text_front"
+    t.string   "title_back"
     t.string   "text_back"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.string   "coupon"
+    t.string   "customer_name"
+    t.integer  "customer_id",   limit: 8
+    t.string   "addr1"
+    t.string   "addr2"
+    t.string   "city"
+    t.string   "state"
+    t.string   "country"
+    t.string   "zip"
+    t.datetime "send_date"
+    t.boolean  "sent",                    default: false, null: false
+    t.datetime "date_sent"
+    t.integer  "postcard_id",   limit: 8
+    t.datetime "created_at",                              null: false
+    t.datetime "updated_at",                              null: false
+  end
+
+  create_table "master_cards", force: :cascade do |t|
+    t.integer  "shop_id"
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
+    t.string   "template"
+    t.string   "logo"
+    t.string   "image_front"
+    t.string   "image_back"
+    t.string   "title_front"
+    t.string   "text_front"
+    t.string   "text_back"
+    t.string   "preview_front"
+    t.string   "preview_back"
+    t.integer  "coupon_pct"
+    t.integer  "coupon_exp"
+    t.string   "coupon_loc"
   end
 
   create_table "shops", force: :cascade do |t|
-    t.string   "domain",                  null: false
-    t.string   "token",                   null: false
+    t.string   "domain",                                  null: false
+    t.string   "token",                                   null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "shopify_id",    limit: 8
-    t.integer  "credit"
-    t.boolean  "enabled"
-    t.boolean  "international"
-    t.integer  "send_delay"
+    t.integer  "credit",                  default: 0
+    t.boolean  "enabled",                 default: false, null: false
+    t.boolean  "international",           default: false, null: false
+    t.integer  "send_delay",              default: 2
     t.integer  "webhook_id",    limit: 8
     t.integer  "uninstall_id",  limit: 8
   end

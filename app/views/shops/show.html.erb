@@ -1,0 +1,5 @@
+<% unless @shop.cards.count == 0 %>
+  <%= render 'shop/show_cards' %>
+<% else %>
+  <%= render 'shop/show_nocards' %>
+<% end %>

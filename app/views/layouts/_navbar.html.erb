@@ -1,0 +1,26 @@
+<nav class="navbar navbar-shopify" role="navigation">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/">TOUCHCARD.CO</a>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <% if @current_shop.master_card != nil %>
+        <ul class="nav navbar-nav navbar-right">
+          <li><%= link_to 'Dashboard', root_path %></li>
+          <li><%= link_to 'Manage', master_card_path({:id => @current_shop.master_card.id})  %></li>
+          <li><%= link_to 'Settings', edit_shop_path({:id => @current_shop.id}) %></li>
+          <li><a href="/support">Need help?</a></li>
+        </ul>
+      <% end %>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>

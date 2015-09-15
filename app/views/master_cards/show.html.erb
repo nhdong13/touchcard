@@ -1,0 +1,50 @@
+<div class="container-fluid">
+  <h1>Manage Cards</h1>
+
+  <div class="row">
+    <div class="preview address_side col-xs-5">
+      <h3>Address Side</h3>
+      <% unless @master_card.preview_back == nil %>
+        <%= image_tag(@master_card.preview_back, :class => "card_display") %>
+      <% else %>
+        <%= image_tag('postage-area-image.png', :class=> "card_display") %>
+      <% end %>
+      <%= link_to 'Edit', edit_master_card_path(:id => @current_shop.master_card.id), :class => "btn btn-lg btn-primary" %>
+    </div>
+    <div class="preview message_side col-xs-5">
+      <h3>Message Side</h3>
+      <% unless @master_card.preview_front == nil %>
+        <%= image_tag(@master_card.preview_front, :class => "card_display") %>
+      <% else %>
+        <%= image_tag('thankyou_example.png', :class => "card_display") %>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-xs-10">
+      <h3>Settings</h3>
+      <div class="well shop_settings">
+        <div class="setting">
+          <% if @current_shop.enabled? %>
+            ACTIVE!
+          <% else %>
+              INACTIVE
+            <% if @current_shop.credit == 0 %>
+              add credits to turn on <!-- Make this a link to purchase credit page -->
+            <% end %>
+          <% end %>
+        </div>
+        <div class="setting">
+          <!-- link to edit card -->
+          Send a card <%= @current_shop.send_delay %> weeks after a new customer purchases
+        </div>
+        <div class="last_setting">
+          <!-- indicator/ajax switch -->
+          <p><b>Send Postcards to International Addresses</b><p>
+          <p>Any Country outside the US - 2 credits each</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

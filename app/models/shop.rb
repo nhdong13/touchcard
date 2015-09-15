@@ -1,11 +1,21 @@
 class Shop < ActiveRecord::Base
+  has_one :master_card, dependent: :destroy
   has_many :cards, dependent: :destroy
 
   def self.store(session)
-    shop = self.new(domain: session.url, token: session.token)
-    shop.save!
-    shop.uninstall_hook
-    shop.new_order_hook
+    shop = Shop.find_by(:domain => session.url)
+    if shop == nil
+      shop = self.new(domain: session.url, token: session.token)
+      shop.uninstall_hook
+      shop.new_order_hook
+      shop.save!
+    else
+      shop.token = session.token
+      shop.uninstall_hook
+      shop.new_order_hook
+      shop.save!
+      ShopifyAPI::Session.new(shop.domain, shop.token)
+    end
     shop.id
   end
 

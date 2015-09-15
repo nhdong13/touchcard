@@ -1,4 +1,5 @@
-class CardController < ApplicationController
+class CardsController < AuthenticatedController
+  before_action :current_shop
 
   def index
     @cards = current_shop.cards
@@ -9,7 +10,26 @@ class CardController < ApplicationController
   end
 
   def create
-    @card = Card.new(card_params)
+    if params.has_key?(:image_front)
+      image_front_key = params[:image_front].original_filename
+      #@card = Card.new(card_params)
+
+      # Initialize S3 bucket
+      obj = S3_BUCKET.object(image_front_key)
+      obj.upload_file(params[:image_front].path)
+
+      key = "assets\/" + image_front_key
+      src_url = "https://" + S3_BUCKET + ".s3.amazonaws.com/front_images/" + image_front_key
+      theme_id = ShopifyAPI::Theme.where(:role => "main")[0].id
+
+      begin
+        ShopifyAPI::Asset.create({:key => key, :src => src_url, :theme_id => theme_id})
+        S3_BUCKET.objects.delete(image_front_key)
+      rescue
+        puts "There was a problem with the uplaod"
+      end
+    end
+
 
     # Validate with save
     if @card.save!

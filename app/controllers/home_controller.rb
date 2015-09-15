@@ -1,10 +1,21 @@
 class HomeController < AuthenticatedController
+  before_action :current_shop
+
   def index
-    unless current_shop.cards.count == 0
-      @cards = current_shop.cards
+    unless current_shop.master_card == nil
+      @income = 0.00
+
+      @follow_ups = []
+      # TODO: get array of repeat orders from past card recipients (private method)
+
+      @sent_cards = current_shop.cards.where(:sent => true);
     else
-      redirect_to card_index_path
+      redirect_to new_master_card_path
+
     end
+  end
+
+  def support
   end
 
   private

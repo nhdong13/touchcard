@@ -1,4 +1,4 @@
-class WebhookController < ApplicationController
+class WebhookController < AuthenticatedController
   before_filter :verify_webhook, only: [:order, :uninstall]
 
   def order
