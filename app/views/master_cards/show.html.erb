@@ -26,12 +26,14 @@
     <div class="col-xs-10">
       <h3>Settings</h3>
       <div class="well shop_settings">
-        <div class="setting">
-          <% if @current_shop.enabled? %>
-            ACTIVE!
+        <%= link_to "", edit_shop_path({:id => @master_card.shop.id}),:class => "glyphicon glyphicon-cog", :id => "settings_link" %>
+      <div class="setting">
+          <p style="margin: 0px;"><span class="shop_indicator <%= @master_card.shop.enabled? ? 'enabled' : 'not-enabled' %>">&nbsp;</span>
+          <% if @master_card.shop.enabled? %>
+            <b>ACTIVE!</b></p>
           <% else %>
-              INACTIVE
-            <% if @current_shop.credit == 0 %>
+            <b>INACTIVE</b></p>
+            <% if @master_card.shop.credit == 0 %>
               add credits to turn on <!-- Make this a link to purchase credit page -->
             <% end %>
           <% end %>
@@ -42,7 +44,9 @@
         </div>
         <div class="last_setting">
           <!-- indicator/ajax switch -->
-          <p><b>Send Postcards to International Addresses</b><p>
+          <p>
+            <span class="shop_indicator <%= @master_card.shop.international? ? 'enabled' : 'not-enabled' %>">&nbsp;</span>
+            <b>Send Postcards to International Addresses</b></p>
           <p>Any Country outside the US - 2 credits each</p>
         </div>
       </div>

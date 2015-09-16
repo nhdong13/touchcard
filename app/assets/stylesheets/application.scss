@@ -38,6 +38,9 @@
     text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
   }
 }
+.editor_images {
+  position: relative;
+}
 #bg_box_back {
   position: absolute;
   width: 30%;
@@ -62,8 +65,12 @@
  left: 2%;
 }
 .card_editor_fields {
+  width: 50%;
+  margin-left:50%;
   position: absolute;
-  top: 8%;
+  top: 0;
+  bottom:0;
+  padding:10px;
 }
 .card_title {
   margin-bottom: 3%;
@@ -71,6 +78,15 @@
 }
 .card_message {
   font-size: 18px;
+}
+.coupon_box {
+  top: -100px;
+  cursor: move;
+  background-color: #FFFFFF;
+  padding: 0px;
+  p {
+    margin: 0px !important;
+  }
 }
 
 /* Dashboard page */
@@ -95,9 +111,6 @@
 .preview:hover a{
   display: block !important;
 }
-.front_images {
-  position: relative;
-}
 .card_display {
   width: 100%;
   border: 2px solid;
@@ -119,6 +132,13 @@
 .shop_settings {
   padding: 0px;
 }
+#settings_link {
+  float:right;
+  font-size: 30px;
+  margin-top: 10px;
+  margin-right: 20px;
+  color: #555555 !important;
+}
 .setting {
   padding: 15px;
   border-bottom: 1px solid;
@@ -129,4 +149,17 @@
   padding: 15px;
   width: 98%;
   margin: auto;
+}
+.shop_indicator {
+  height: 1em;
+  padding-right: 30px;
+  margin-right: 10px;
+  border: 1px solid;
+  border-radius: 4px;
+}
+.shop_indicator.enabled {
+  background-color: #00FF00;
+}
+.shop_indicator.not-enabled {
+  background-color: #FF0000;
 }

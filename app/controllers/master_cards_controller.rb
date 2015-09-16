@@ -103,6 +103,8 @@ class MasterCardsController < ApplicationController
       end
 
       begin @master_card.save!
+        @master_card.create_preview_front
+        @master_card.create_preview_back
         flash[:success] = "Settings updated"
         render 'show'
       rescue
@@ -115,8 +117,6 @@ class MasterCardsController < ApplicationController
         @master_card.template = "coupon"
       end
       @master_card.save!
-      @master_card.create_preview_front
-      @master_card.create_preview_back
       render 'edit'
     end
   end

@@ -1,9 +1,12 @@
 <%= form_for @master_card do |f| %>
+
   <div class="row">
-    <div class="col-md-8 card_editor">
+    <div class="col-md-10 card_editor">
       <h4 style="display: inline;">ADDRESS SIDE</h4>
       <a href="#/" id="custom_background_back" onClick="customBackground()" style="display: inline; float: right;">Go Custom - Add Background</a>
-      <div class="front_images">
+
+      <div class="editor_images">
+        <!-- Images -->
         <% if @master_card.image_back == nil %>
           <%= image_tag('postage-area-image.png', :class => "card_display") %>
         <% else %>
@@ -11,44 +14,60 @@
           <%= image_tag('postage-area-image.png', :class => "address_overlay") %>
         <% end %>
         <%= image_tag(@master_card.logo, :class => "address_logo") %>
+
+        <!-- Custom Background Upload -->
         <div class="custom_background_box" id="bg_box_back" style="display: none;">
-        <%= f.label :image_back, "Custom Background" %>
-        <%= f.file_field :image_back, :class => "form-control" %>
+          <%= f.label :image_back, "Custom Background" %>
+          <%= f.file_field :image_back, :class => "form-control" %>
         </div>
+
+        <!-- Custom Logo -->
         <div class="logo_box">
-        <%= f.label :logo, "Logo" %>
-        <%= f.file_field :logo, :class => "form-control" %>
+          <%= f.label :logo, "Logo" %>
+          <%= f.file_field :logo, :class => "form-control" %>
         </div>
+
       </div>
     </div>
   </div>
+
   <div class="row">
-    <div class="col-md-8 card_editor">
+    <div class="col-md-10 card_editor">
       <h4 style="display: inline;">MESSAGE SIDE</h4>
       <a href="#/" id="no_text" onClick="removeFrontText()" style="display: inline; float: right;">Go Custom - Remove Editable Text</a>
-      <% if @master_card.image_front == nil %>
-        <%= image_tag('thankyou-bg.png', :class => "card_display", :id => "front_display") %>
-      <% else %>
-        <%= image_tag(@master_card.image_front, :class => "card_display", :id => "front_display") %>
-      <% end %>
 
-      <div class="coupon_box col-xs-3" style="top: -100px;">
-        <p style="border: 2px solid; padding: 20px; background-color: #FFFFFF;">This is the coupon</p>
-      </div>
+      <!-- Images -->
+      <div class="editor_images">
+        <% if @master_card.image_front == nil %>
+          <%= image_tag('thankyou-bg.png', :class => "card_display", :id => "front_display") %>
+        <% else %>
+          <%= image_tag(@master_card.image_front, :class => "card_display", :id => "front_display") %>
+        <% end %>
 
-      <div class="col-xs-5 col-xs-offset-6 card_editor_fields">
-        <%= f.label :title_front, "Title" %>
-        <%= f.text_field :title_front, :class => "form-control card_title", :id => "master_card_title_front"%>
+        <!-- Custom Coupon -->
+        <div class="coupon_box col-xs-3">
+          <p style="border: 2px solid; padding: 20px; background-color: #FFFFFF;">This is the coupon
+            <a href="#/" class="btn btn-sm btn-primary">Edit</a>
+          </p>
+        </div>
 
-        <%= f.label :text_front, "Message" %>
-        <%= f.text_area :text_front, :rows => 14, :class => "form-control card_message", :id => "master_card_text_front"%>
-      </div>
+        <!-- Custom Text Boxes -->
+        <div class="card_editor_fields">
+          <%= f.label :title_front, "Title" %>
+          <%= f.text_field :title_front, :class => "form-control card_title", :id => "master_card_title_front"%>
 
-      <div class="custom_background_box" id="bg_box_front" style="display: none;">
-      <%= f.label :image_front, "Custom Background" %>
-      <%= f.file_field :image_front, :class => "form-control" %>
+          <%= f.label :text_front, "Message" %>
+          <%= f.text_area :text_front, :rows => 14, :class => "form-control card_message", :id => "master_card_text_front"%>
+        </div>
+
+        <!-- Custom Background Upload -->
+        <div class="custom_background_box" id="bg_box_front">
+          <%= f.label :image_front, "Custom Background" %>
+          <%= f.file_field :image_front, :class => "form-control" %>
+        </div>
       </div>
     </div>
   </div>
+
   <%= f.submit "Next", onClick: "ShopifyApp.Bar.loadingOn()", class: "btn btn-lg btn-primary", id: "wizard2_submit" %>
 <% end %>
