@@ -9,15 +9,16 @@
       <% else %>
         <%= image_tag('postage-area-image.png', :class=> "card_display") %>
       <% end %>
-      <%= link_to 'Edit', edit_master_card_path(:id => @current_shop.master_card.id), :class => "btn btn-lg btn-primary" %>
+      <%= link_to 'Edit', edit_master_card_path(:id => @current_shop.master_card.id), :class => "btn btn-lg btn-primary", :style => "position: absolute; top: 50%; left: 40%; display: none;"%>
     </div>
-    <div class="preview message_side col-xs-5">
+    <div class="preview message_side col-xs-5" id="tester1">
       <h3>Message Side</h3>
       <% unless @master_card.preview_front == nil %>
         <%= image_tag(@master_card.preview_front, :class => "card_display") %>
       <% else %>
         <%= image_tag('thankyou_example.png', :class => "card_display") %>
       <% end %>
+      <%= link_to 'Edit', edit_master_card_path(:id => @current_shop.master_card.id), :class => "btn btn-lg btn-primary", :style => "position: absolute; top: 50%; left: 40%; display: none;"%>
     </div>
   </div>
 

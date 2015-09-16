@@ -24,6 +24,9 @@ gem 'shopify_app'
 # S3 connection
 gem 'aws-sdk'
 
+# Card creator ui js
+gem 'jquery-ui-rails'
+
 # Image Manipulation
 gem 'rmagick'
 

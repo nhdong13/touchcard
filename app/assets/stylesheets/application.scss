@@ -1,4 +1,6 @@
 // "bootstrap-sprockets" must be imported before "bootstrap" and "bootstrap/variables"
+
+@import 'jquery-ui/core.css';
 @import "bootstrap-sprockets";
 @import "bootstrap";
 
@@ -18,6 +20,13 @@
     padding-top: 15px;
   }
 }
+.template_switch {
+  background-color: #FFFFFF;
+  border: 0;
+  color: #337ab7;
+  padding-left: 0px;
+}
+
 .card_editor {
   margin-top: 5%;
   img {
@@ -29,11 +38,22 @@
     text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
   }
 }
-.custom_background_box {
+#bg_box_back {
   position: absolute;
   width: 30%;
-  top: 2%;
-  left: 40%;
+  top:2%;
+  left: 68%;
+}
+#bg_box_front {
+  position: absolute;
+  width: 30%;
+  top: 6%;
+  left: 4%;
+}
+#coupon_box {
+  position: absolute;
+  top: -100px;
+  left: 10%;
 }
 .logo_box {
  position: absolute;
@@ -46,11 +66,11 @@
   top: 8%;
 }
 .card_title {
-  margin-bottom: 10%;
-  font-size: 28px;
+  margin-bottom: 3%;
+  font-size: 22px;
 }
 .card_message {
-  font-size: 20px;
+  font-size: 18px;
 }
 
 /* Dashboard page */
@@ -72,6 +92,9 @@
 }
 
 /* Card Displays */
+.preview:hover a{
+  display: block !important;
+}
 .front_images {
   position: relative;
 }
