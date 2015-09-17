@@ -5,37 +5,47 @@ class MasterCard < ActiveRecord::Base
 
   def create_preview_front
     require 'rmagick'
-    puts "past require"
     bg    = Magick::ImageList.new(self.image_front)
-    puts "got past bg"
 
-    if self.title_front != nil
-      #Add title to image here
-    elsif self.text_front != nil
-      # Add text to image here
+    if self.title_front != nil or self.text_front != nil
+      shade = Magick::Image.new((bg.columns/2), bg.rows) { self.background_color = "#00000088" }
+
+      # Add text to shade image
+      text = Magick::Draw.new
+      text.font_family = 'helvetica'
+      text.pointsize = 30
+      text.fill = 'white'
+      text.gravity = Magick::NorthWestGravity
+      text.annotate(shade, 0,0,10,(bg.rows/100 * 5), self.title_front)
+      text.pointsize = 18
+      #text.annotate(shade, 0,0,10,(bg.rows/100 * 10), self.text_front)
+      position = bg.rows/100 * 10
+      message = word_wrap(self.text_front, 40)
+      message.split('\n').each do |row|
+        text.annotate(shade, 0, 0, 20, position += 20, row)
+      end
+
+      # Add shade and text to background
+      bg.composite!(shade, (bg.columns/2), 0, Magick::OverCompositeOp)
     end
 
     if self.coupon_loc != nil
       #Add coupon here
     end
 
+
     local_path = "#{Rails.root}/tmp/preview_front.jpg"
-    puts local_path
     image_key = "#{self.shop_id}-preview_front.jpg"
-    puts image_key
 
     bg.write(local_path)
-    puts "wrote bg"
 
     # Initialize S3 bucket
     obj = S3_BUCKET.object(image_key)
     obj.upload_file(local_path)
-    puts "uploaded to S3"
 
     # Set access on S3 to public
     s3 = Aws::S3::Client.new
     s3.put_object_acl(bucket: ENV['S3_BUCKET_NAME'], key: image_key, acl: 'public-read')
-    puts "set acl"
 
     # Setup variables for Shopify theme asset creation
     key = "assets\/touchcard_preview_front.jpg"
@@ -48,7 +58,7 @@ class MasterCard < ActiveRecord::Base
       preview_front = ShopifyAPI::Asset.create({:key => key, :src => src_url, :theme_id => theme_id})
       self.preview_front = preview_front.public_url
       self.save!
-      puts "saved!!"
+      puts "Saved Front"
       S3_BUCKET.objects.delete(image_key)
     rescue
       puts "There was a problem with the image creation"
@@ -61,9 +71,10 @@ class MasterCard < ActiveRecord::Base
     logo    = Magick::ImageList.new(self.logo)
     address = Magick::Image.read("#{Rails.root}/app/assets/images/postage-area-image.png").first
 
-    bg.composite!(logo,   20,   20, Magick::OverCompositeOp)
-    bg.composite!(address,   400,   250, Magick::OverCompositeOp)
-    puts "past composite"
+    address.scale!(bg.columns, bg.rows)
+
+    bg.composite!(logo, 20, 20, Magick::OverCompositeOp)
+    bg.composite!(address, 0, 0, Magick::OverCompositeOp)
 
     if self.text_back != nil
       # Add text here
@@ -93,13 +104,20 @@ class MasterCard < ActiveRecord::Base
       preview_back = ShopifyAPI::Asset.create({:key => key, :src => src_url, :theme_id => theme_id})
       self.preview_back = preview_back.public_url
       self.save!
+      puts "Saved Back"
       S3_BUCKET.objects.delete(image_key)
     rescue
       puts "There was a problem with the image creation"
     end
-    if self.text_back != nil
-      #Add text to image here
-    end
 
   end
+
+  private
+
+  def word_wrap(text, columns)
+    text.split("\n").collect do |line|
+      line.length > columns ? line.gsub(/(.{1,#{columns}})(\s+|$)/, "\\1\n").strip : line
+    end * "\n"
+  end
+
 end

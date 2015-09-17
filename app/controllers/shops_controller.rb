@@ -7,13 +7,13 @@ class ShopsController < AuthenticatedController
 
   def edit
     @shop = Shop.find(params[:id])
-    if params.has_key?(:template)
-      @template = params[:template]
-    end
   end
 
   def update
     @shop = Shop.find(params[:id])
+    @shop.update_attributes(shop_params)
+    flash[:success] = "Setting updated"
+    redirect_to root_url
   end
 
   private

@@ -8,6 +8,12 @@
 .navbar-shopify {
   border-bottom: 2px solid;
 }
+.navbar-brand {
+  padding: 0px;
+  img {
+    height: 100%;
+  }
+}
 
 /* Wizard pages */
 .wizard_template_box {

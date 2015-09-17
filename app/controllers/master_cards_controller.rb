@@ -27,7 +27,12 @@ class MasterCardsController < ApplicationController
   def update
     #TODO: Refactor S3 upload stuff
     @master_card = MasterCard.find(params[:id])
+    @current_shop.new_sess
     unless params.has_key?(:template)
+      @master_card.title_front = card_params[:title_front]
+      @master_card.text_front = card_params[:text_front]
+      # Coupon stuff here
+
       s3 = Aws::S3::Client.new
       if card_params.has_key?(:image_back)
         image_back_key = card_params[:image_back].original_filename
@@ -42,7 +47,6 @@ class MasterCardsController < ApplicationController
         # Setup variables for Shopify theme asset creation
         key = "assets\/" + image_back_key
         src_url = obj.public_url.to_s
-        @current_shop.new_sess
         theme_id = ShopifyAPI::Theme.where(:role => "main")[0].id
 
         begin
