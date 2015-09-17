@@ -37,6 +37,7 @@ class Shop < ActiveRecord::Base
     require 'slack_notify'
     #Add the uninstall webhook if there is none
     if self.uninstall_id == nil
+      self.new_sess
       #Create new hook
       if ENV['RAILS_ENV'] == "production"
         new_hook = ShopifyAPI::Webhook.create(
@@ -63,6 +64,7 @@ class Shop < ActiveRecord::Base
   def new_order_hook
     #Add the uninstall webhook if there is none
     if self.webhook_id == nil
+      self.new_sess
       #Create new hook
       if ENV['RAILS_ENV'] == "production"
         new_hook = ShopifyAPI::Webhook.create(
