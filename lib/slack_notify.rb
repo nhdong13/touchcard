@@ -5,7 +5,10 @@ class SlackNotify
     payload = {
       text: "A new shop has installed Touchcart: #{domain}"
     }
-    send_to_slack(payload)
+    #send_to_slack(payload)
+    @slack_url = "https://hooks.slack.com/services/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"
+    resp = RestClient.post(@slack_url, payload.to_json)
+    resp.code
   end
 
   def self.uninstall(domain)
