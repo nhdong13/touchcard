@@ -1,4 +1,4 @@
-class MasterCardsController < ApplicationController
+class MasterCardsController < AuthenticatedController
   before_action :current_shop
   def show
     @master_card = MasterCard.find(params[:id])
