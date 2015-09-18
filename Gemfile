@@ -30,6 +30,9 @@ gem 'jquery-ui-rails'
 # Image Manipulation
 gem 'rmagick'
 
+# Lob integration
+gem 'lob'
+
 # Newrelic for monitoring
 gem 'newrelic_rpm'
 
