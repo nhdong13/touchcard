@@ -7,10 +7,12 @@ class Shop < ActiveRecord::Base
     if shop == nil
       shop = self.new(domain: session.url, token: session.token)
       shop.save!
+      shop.get_shopify_id
       shop.uninstall_hook
       shop.new_order_hook
     else
       shop.token = session.token
+      shop.get_shopify_id
       shop.uninstall_hook
       shop.new_order_hook
       shop.save!
@@ -32,6 +34,18 @@ class Shop < ActiveRecord::Base
   def new_sess
     ShopifyAPI::Base.activate_session(Shop.retrieve(self.id))
   end
+
+  def get_shopify_id
+    # Add the shopify_id if it's empty
+    if self.shopify_id == nil
+      self.new_sess
+      self.shopify_id = ShopifyAPI::Shop.current.id
+      self.save!
+    else
+      return
+    end
+  end
+
 
   def uninstall_hook
     require 'slack_notify'
