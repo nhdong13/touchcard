@@ -18,12 +18,14 @@
         <div class="custom_background_box" id="bg_box_back" style="display:none">
           <%= f.label :image_back, "Custom Background" %>
           <%= f.file_field :image_back, :class => "form-control" %>
+          <%= link_to "remove", image_remove_master_card_path(:id => @master_card.id, :image_remove => "back") %>
         </div>
 
         <!-- Custom Logo -->
         <div class="logo_box">
-          <%= f.label :logo, "Upload Logo" %>
+          <%= f.label :logo, "Upload a Logo" %>
           <%= f.file_field :logo, :class => "form-control" %>
+          <%= link_to "remove", image_remove_master_card_path(:id => @master_card.id, :image_remove => "logo") %>
         </div>
 
       </div>
@@ -56,6 +58,7 @@
         <div class="custom_background_box" id="bg_box_front">
           <%= f.label :image_front, "Custom Background" %>
           <%= f.file_field :image_front, :class => "form-control" %>
+          <%= link_to "remove", image_remove_master_card_path(:id => @master_card.id, :image_remove => "front") %>
         </div>
       </div>
     </div>

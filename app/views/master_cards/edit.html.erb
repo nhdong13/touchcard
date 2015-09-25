@@ -2,38 +2,34 @@
 <% if @master_card.template == "thank you" %>
   <div class="row">
     <div class="col-md-3 col-md-offset-9">
-      <%= form_for @master_card do |f| %>
-        <%= f.submit :name => 'template', :value => 'Switch to Coupon Template', :class => "template_switch" %>
-        </div>
-      </div>
-      <h1> Create Your <%= @master_card.template.titleize %> Card</h1>
-      <div class="row">
-        <div class="col-md-10">
-          <h4>Get started with our postcard builder.
-            You can choose to remove editable areas and upload custom backgrounds.
-            To add a dynamic coupon area, 
-            <%= f.submit :name => 'template', :value => 'switch to the coupon card template', :class => "template_switch" %>
-          </h4>
-        <% end %>
-      </div>
+      <%= link_to "Switch to Coupon Template", template_switch_master_card_path(@master_card), :class => "template_switch" %>
     </div>
-    <%= render 'master_cards/edit_thank' %>
-  <% else %>
-    <%= form_for @master_card do |f| %>
-      <div class="row">
-        <div class="col-md-3 col-md-offset-9">
-          <%= f.submit :name => 'template', :value => 'Switch to Thank You Template', :class => "template_switch"%>
-        </div>
-      </div>
-      <h1> Create Your <%= @master_card.template.titleize %> Card</h1>
-      <div class="row">
-        <div class="col-md-10">
-          <h4>Get stated with our postcard builder.
-            You can choose to remove editable areas and upload custom backgrounds.
-            To remove the coupon area, 
-            <%= f.submit :name => 'template', :value => 'switch to the thank you card template', :class => "template_switch" %>
-        <% end %>
-          </h4>
+  </div>
+  <h1> Create Your <%= @master_card.template.titleize %> Card</h1>
+  <div class="row">
+    <div class="col-md-10">
+      <h4>Get started with our postcard builder.
+        You can choose to remove editable areas and upload custom backgrounds.
+        To add a dynamic coupon area, 
+        <%= link_to "switch to the coupon card template", template_switch_master_card_path(@master_card), :class => "template_switch" %>
+      </h4>
+    </div>
+  </div>
+  <%= render 'master_cards/edit_thank' %>
+<% else %>
+  <div class="row">
+    <div class="col-md-3 col-md-offset-9">
+      <%= link_to "Switch to Thank You Template", template_switch_master_card_path(@master_card), :class => "template_switch" %>
+    </div>
+  </div>
+  <h1> Create Your <%= @master_card.template.titleize %> Card</h1>
+  <div class="row">
+    <div class="col-md-10">
+      <h4>Get stated with our postcard builder.
+        You can choose to remove editable areas and upload custom backgrounds.
+        To remove the coupon area, 
+        <%= link_to "switch to the thank you card template", template_switch_master_card_path(@master_card), :class => "template_switch" %>
+      </h4>
     </div>
   </div>
   <%= render 'master_cards/edit_coupon' %>

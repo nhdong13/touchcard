@@ -1,8 +1,17 @@
 <h1>General Settings</h1>
-<h1>**Add Billing Settings here**</h1>
-<div class="row">
-  <div class="well col-md-6 col-md-offset-3">
-    <%= form_for @shop do |f| %>
+<%= form_for @shop do |f| %>
+  <div class="row">
+    <div class="well colo-md-6 col-md-offset-3">
+      <h3>Billing options</h3>
+      <p><b>Current Credits Remaining:</b> <%= @shop.credit %></p>
+      <p>I want to send cards to <%= radio_button_tag(:customer_pct, 50) %><%= label_tag(:customer_pct_50, "50%") %> or
+      <%= radio_button_tag(:customer_pct, 100) %><%= label_tag(:customer_pct_100, "100%") %> of my customers</p>
+      <p>Credits Purchased Monthly: <%= @shop.last_month %></p>
+      <p>New Customers in the last month: <%= @last_month %>
+    </div>
+  </div>
+  <div class="row">
+    <div class="well col-md-6 col-md-offset-3">
 
       <div class="form-group">
         <%= f.label :enabled, "Enable App?" %>

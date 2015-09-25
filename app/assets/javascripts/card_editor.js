@@ -1,3 +1,19 @@
+// Remove the custom background image on the front
+function removeCustomFront(){
+
+}
+
+// Remove the custom background image on the back
+function removeCustomBack(){
+
+}
+
+// Remove the custom logo
+function removeLogo(){
+
+}
+
+// function to show/hide front text boxes
 function removeFrontText(){
   document.getElementById("master_card_title_front").value = "";
   document.getElementById("master_card_text_front").value = "";
@@ -9,6 +25,7 @@ function removeFrontText(){
   }
 }
 
+// Function to show the custom background image box for the back side
 function customBackground(){
   $("#bg_box_back").fadeToggle(500, "swing");
   if(document.getElementById("custom_background_back").innerHTML == "Go Custom - Add Background") {
@@ -18,7 +35,13 @@ function customBackground(){
   }
 }
 
+// Make the coupon box draggable
 $(function() {
   $(".coupon_box").draggable({ containment: "#front_display" });
-  $(".coupon_box").css({'top': -100, 'left' : 20});
 });
+
+// Show/hide the coupon fields
+function flipCoupon(){
+  $(".coupon_display").toggle();
+  $(".coupon_form").toggle();
+}

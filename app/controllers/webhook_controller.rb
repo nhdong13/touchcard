@@ -1,10 +1,23 @@
 class WebhookController < AuthenticatedController
-  before_filter :verify_webhook, only: [:order, :uninstall]
+  before_filter :verify_webhook, only: [:new_order, :uninstall]
 
-  def order
+  def new_order
     domain = request.headers["X-Shopify-Shop-Domain"]
     head :ok
-    # Start background process for a new order with id: params[:id]
+    shop = Shop.find_by(:domain => domain)
+    shop.new_sess
+    order = ShopifyAPI::Order.find(params[:id])
+    customer = order.customer
+    puts customer.order_count
+
+    # Check if this is the customer's first order
+    if customer.order_count == 0
+      # Create a new card and schedule to send
+      #TODO: Have a new card created and scheduled to send
+    end
+
+    # Respond to webhook again...
+    head :ok
   end
 
   def uninstall

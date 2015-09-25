@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150918053808) do
+ActiveRecord::Schema.define(version: 20150921190135) do
 
   create_table "active_admin_comments", force: :cascade do |t|
     t.string   "namespace"
@@ -86,7 +86,7 @@ ActiveRecord::Schema.define(version: 20150918053808) do
     t.string   "preview_front"
     t.string   "preview_back"
     t.integer  "coupon_pct"
-    t.integer  "coupon_exp"
+    t.datetime "coupon_exp"
     t.string   "coupon_loc"
   end
 
@@ -102,6 +102,12 @@ ActiveRecord::Schema.define(version: 20150918053808) do
     t.integer  "send_delay",              default: 2
     t.integer  "webhook_id",    limit: 8
     t.integer  "uninstall_id",  limit: 8
+    t.integer  "customer_pct",            default: 100
+    t.integer  "last_month"
+    t.integer  "charge_id",     limit: 8
+    t.float    "charge_amount"
+    t.datetime "charge_date"
+    t.boolean  "send_next",               default: true,  null: false
   end
 
   add_index "shops", ["domain"], name: "index_shops_on_domain", unique: true

@@ -3,14 +3,17 @@ class MasterCard < ActiveRecord::Base
   has_many :cards, through: :shop
   validates :shop_id, presence: true
 
+
   def create_preview_front
     require 'rmagick'
     bg    = Magick::ImageList.new(self.image_front)
+    bg.scale!(WIDTH, HEIGHT)
 
     if self.title_front != nil or self.text_front != nil
+      # Add shaded area on right half of image
       shade = Magick::Image.new((bg.columns/2), bg.rows) { self.background_color = "#00000088" }
 
-      # Add text to shade image
+      # Add text to shaded area
       text = Magick::Draw.new
       text.font_family = 'helvetica'
       text.pointsize = 30
@@ -33,10 +36,11 @@ class MasterCard < ActiveRecord::Base
       #Add coupon here
     end
 
-
+    # Image save set up
     local_path = "#{Rails.root}/tmp/preview_front.jpg"
     image_key = "#{self.shop_id}-preview_front.jpg"
 
+    # Save to local file system
     bg.write(local_path)
 
     # Initialize S3 bucket
@@ -55,6 +59,7 @@ class MasterCard < ActiveRecord::Base
     theme_id = ShopifyAPI::Theme.where(:role => "main")[0].id
 
     begin
+      # Upload to Shopify theme assets and save path
       preview_front = ShopifyAPI::Asset.create({:key => key, :src => src_url, :theme_id => theme_id})
       self.preview_front = preview_front.public_url
       self.save!
@@ -65,24 +70,29 @@ class MasterCard < ActiveRecord::Base
     end
   end
 
+
   def create_preview_back
     require 'rmagick'
     bg      = Magick::ImageList.new(self.image_back)
     logo    = Magick::ImageList.new(self.logo)
     address = Magick::Image.read("#{Rails.root}/app/assets/images/postage-area-image.png").first
 
-    address.scale!(bg.columns, bg.rows)
+    # Set background to postcard size
+    bg.scale!(WIDTH, HEIGHT)
 
+    # Add logo and address area to background
     bg.composite!(logo, 20, 20, Magick::OverCompositeOp)
     bg.composite!(address, 0, 0, Magick::OverCompositeOp)
 
-    if self.text_back != nil
-      # Add text here
-    end
+    # if self.text_back != nil
+    # Add text here
+    # end
 
+    # Image save set up
     local_path = "#{Rails.root}/tmp/preview_back.jpg"
     image_key = "#{self.shop_id}-preview_back.jpg"
 
+    # Save to local file system
     bg.write(local_path)
 
     # Initialize S3 bucket
@@ -101,6 +111,7 @@ class MasterCard < ActiveRecord::Base
     theme_id = ShopifyAPI::Theme.where(:role => "main")[0].id
 
     begin
+      # Upload image to Shopify theme assets and save path
       preview_back = ShopifyAPI::Asset.create({:key => key, :src => src_url, :theme_id => theme_id})
       self.preview_back = preview_back.public_url
       self.save!
@@ -112,9 +123,12 @@ class MasterCard < ActiveRecord::Base
 
   end
 
+
   private
 
+
   def word_wrap(text, columns)
+    # Logic to wrap text in the shaded region
     text.split("\n").collect do |line|
       line.length > columns ? line.gsub(/(.{1,#{columns}})(\s+|$)/, "\\1\n").strip : line
     end * "\n"

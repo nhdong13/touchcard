@@ -7,6 +7,8 @@ class ShopsController < AuthenticatedController
 
   def edit
     @shop = Shop.find(params[:id])
+    @shop.new_sess
+    @last_month = ShopifyAPI::Customer.where(:created_at_min => (Time.now - 1.month)).count
   end
 
   def update

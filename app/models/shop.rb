@@ -99,4 +99,54 @@ class Shop < ActiveRecord::Base
       return
     end
   end
+
+  def new_charge
+    # Create a new recurring charge for the shop
+    self.new_sess
+
+    # Set the price based on last month's numbers and the % of customers to send to
+    price = self.last_month * (self.customer_pct / 100) * 0.99
+
+    #Set charge values based on environment
+    if ENV['RAILS_ENV'] == "development"
+      name = "Touchcard-dev"
+      test = true
+      return_url = "https://localhost:3000/charge/activate"
+    elsif ENV['RAILS_ENV'] == "production"
+      name = "Touchcard"
+      test = true #TODO: Change this when app is released in Beta
+      return_url = "https://touchcard.herokuapp.com/charge/activate"
+    end
+
+    #Create application charge on Shopify
+    @charge = ShopifyAPI::RecurringApplicationCharge.create(
+      name: name,
+      price: price,
+      test: test,
+      return_url: return_url,
+    )
+
+    #Put some information about the new store charge in the log
+    puts "*************************************"
+    puts "current shop id: #{self.id}"
+    puts "current shop domain: #{self.domain}"
+    puts "*************************************"
+
+    #Save the charge info to the local db and go to Shopify confirmation url
+    self.charge_id = @charge.id
+    self.save!
+
+    return @charge.confirmation_url
+  end
+
+  def self.top_up_all
+    # Daily top-up of all shops with today as a billing date
+    @credit_shops = Shop.where(:charge_date => Date.today)
+    @credit_shop.each do |shop|
+      credits = (shop.charge_amount/0.99).ceil
+      shop.credit += credits
+      shop.save!
+    end
+  end
+
 end

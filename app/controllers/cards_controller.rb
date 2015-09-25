@@ -67,7 +67,7 @@ class CardsController < AuthenticatedController
   private
 
   def card_params
-    params.require(:card).permit(:template, :image_front, :image_back, :text_front, :text_back)
+    params.require(:card).permit(:template, :image_front, :image_back, :text_front, :text_back, :coupon_pct, :coupon_exp)
   end
 
 #  def initialize_api
