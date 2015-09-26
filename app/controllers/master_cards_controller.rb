@@ -39,6 +39,7 @@ class MasterCardsController < AuthenticatedController
       @master_card.text_front = card_params[:text_front]
       @master_card.coupon_pct = card_params[:coupon_pct]
       @master_card.coupon_exp = card_params[:coupon_exp]
+      @master_card.coupon_loc = card_params[:coupon_loc]
 
       if card_params.has_key?(:image_back)
         image_back_key = card_params[:image_back].original_filename

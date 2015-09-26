@@ -63,7 +63,9 @@
 
             <%= f.label :coupon_exp, "Coupon Expiration" %>
             <%= f.date_field :coupon_exp, :class => "form-control" %>
+
           </div>
+          <%= f.hidden_field :coupon_loc, :value => @master_card.coupon_loc, :class => "coupon_loc form-control", :id => "coupon_loc" %>
         </div>
 
         <!-- Custom Text Boxes -->
@@ -89,5 +91,5 @@
 <% end %>
 
 <script>
-
+<%= javascript_include_tag "card_editor" %>
 </script>
