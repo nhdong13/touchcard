@@ -58,8 +58,8 @@ class MasterCardsController < AuthenticatedController
 
       begin
         @master_card.save!
-       # @master_card.create_preview_front
-       # @master_card.create_preview_back
+        @master_card.create_preview_front
+        @master_card.create_preview_back
         flash[:success] = "Settings updated"
         render 'show'
       rescue

@@ -33,6 +33,17 @@
   padding-left: 0px;
 }
 
+/* Card Displays */
+.preview:hover a{
+  display: block !important;
+}
+.card_display {
+  width: 100%;
+  border: 2px solid;
+  border-radius: 2px;
+}
+
+/* Master Card Editor Page */
 .card_editor {
   margin-top: 5%;
   img {
@@ -63,8 +74,7 @@
   position: absolute;
   width: 28.3% !important;
   height: 25% !important;
-//  background-color: #FFFFFF;
-  border: 3px dashed;
+  border: 1px dashed;
   padding: 10px;
   text-align: center;
   color: #FFFFFF;
@@ -135,26 +145,6 @@
   }
 }
 
-/* Card Displays */
-.preview:hover a{
-  display: block !important;
-}
-.card_display {
-  width: 100%;
-  border: 2px solid;
-  border-radius: 2px;
-}
-.address_overlay {
-  width: 100%;
-  position: absolute !important;
-  top: 0px;
-}
-.address_logo {
-  width: 30%;
-  position: absolute !important;
-  top: 2%;
-  left: 2%;
-}
 
 /* Settings table */
 .shop_settings {

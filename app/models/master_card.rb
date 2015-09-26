@@ -16,24 +16,55 @@ class MasterCard < ActiveRecord::Base
       # Add text to shaded area
       text = Magick::Draw.new
       text.font_family = 'helvetica'
-      text.pointsize = 30
+      text.pointsize = 72
       text.fill = 'white'
       text.gravity = Magick::NorthWestGravity
-      text.annotate(shade, 0,0,10,(bg.rows/100 * 5), self.title_front)
-      text.pointsize = 18
+      text.annotate(shade, 0,0,40,60, self.title_front)
+      text.pointsize = 54
       #text.annotate(shade, 0,0,10,(bg.rows/100 * 10), self.text_front)
-      position = bg.rows/100 * 10
+      position = 180
       message = word_wrap(self.text_front, 40)
       message.split('\n').each do |row|
-        text.annotate(shade, 0, 0, 20, position += 20, row)
+        text.annotate(shade, 0, 0, 40, position += 20, row)
       end
 
       # Add shade and text to background
       bg.composite!(shade, (bg.columns/2), 0, Magick::OverCompositeOp)
     end
 
-    if self.coupon_loc != nil
-      #Add coupon here
+    if self.template == "coupon"
+      puts "coupon"
+      coupon_area = Magick::Image.new(510, 300) { self.background_color = "#00000000" }
+      xval = (self.coupon_loc.split(",")[0].to_f/100) * WIDTH
+      yval = (self.coupon_loc.split(",")[1].to_f/100) * HEIGHT
+
+      # Add text to coupon area
+      coupon_text = self.coupon_pct.to_s + "% OFF"
+      coupon_off = Magick::Draw.new
+      coupon_off.font_family = 'helvetica'
+      coupon_off.pointsize = 72
+      coupon_off.fill = 'white'
+      coupon_off.gravity = Magick::NorthGravity
+      coupon_off.annotate(coupon_area, 0,0,0,30, coupon_text)
+
+      coupon_code = Magick::Draw.new
+      coupon_code.font_family = 'helvetica'
+      coupon_code.pointsize = 54
+      coupon_code.fill = 'white'
+      coupon_code.gravity = Magick::CenterGravity
+      coupon_code.annotate(coupon_area, 0,0,0,0, "Coupon-Code-123")
+
+      expire_text = "EXPIRE " + self.coupon_exp.strftime("%D").to_s
+      coupon_expire = Magick::Draw.new
+      coupon_expire.font_family = 'helvetica'
+      coupon_expire.pointsize = 42
+      coupon_expire.fill = 'white'
+      coupon_expire.gravity = Magick::SouthGravity
+      coupon_expire.annotate(coupon_area, 0,0,0,15, expire_text)
+
+      # Add coupon area and text to background
+
+      bg.composite!(coupon_area, xval, yval, Magick::OverCompositeOp)
     end
 
     # Image save set up
