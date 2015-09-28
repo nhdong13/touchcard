@@ -99,7 +99,7 @@ class Shop < ActiveRecord::Base
           :topic    =>  "orders/create",
           :format   =>  "json",
           :fields   =>  ["id", "customer"],
-          :address  =>  "http://touchcard.herokuapp.com/uninstall"
+          :address  =>  "http://touchcard.herokuapp.com/new_order"
            )
         self.webhook_id = new_hook.id
         self.save!
