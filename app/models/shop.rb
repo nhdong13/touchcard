@@ -12,10 +12,10 @@ class Shop < ActiveRecord::Base
       shop.new_order_hook
     else
       shop.token = session.token
+      shop.save!
       shop.get_shopify_id
       shop.uninstall_hook
       shop.new_order_hook
-      shop.save!
       ShopifyAPI::Session.new(shop.domain, shop.token)
     end
     shop.id
@@ -35,6 +35,21 @@ class Shop < ActiveRecord::Base
     ShopifyAPI::Base.activate_session(Shop.retrieve(self.id))
   end
 
+  def new_discount(code)
+    self.new_sess
+    ShopifyAPI::Discount.new(
+      :type => "percentage",
+      :amount => self.master_card.coupon_pct.to_i,
+      :code => code,
+      :ends_at => self.master_card.coupon_exp,
+      :starts_at => Time.now,
+      :status => enabled,
+      :usage_limit => 1,
+      :applies_once => true,
+    )
+  end
+
+
   def get_shopify_id
     # Add the shopify_id if it's empty
     if self.shopify_id == nil
@@ -45,7 +60,6 @@ class Shop < ActiveRecord::Base
       return
     end
   end
-
 
   def uninstall_hook
     require 'slack_notify'
