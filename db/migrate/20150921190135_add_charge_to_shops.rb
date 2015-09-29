@@ -3,7 +3,7 @@ class AddChargeToShops < ActiveRecord::Migration
     add_column :shops, :customer_pct,   :int, default: 100
     add_column :shops, :last_month,     :int
     add_column :shops, :charge_id,      :bigint
-    add_column :shops, :charge_amount,  :int
+    add_column :shops, :charge_amount,  :int, default: 0
     add_column :shops, :charge_date,    :datetime
     add_column :shops, :send_next,      :boolean, null: false, default: true
   end
