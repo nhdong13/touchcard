@@ -58,6 +58,17 @@
 .editor_images {
   position: relative;
 }
+.address_overlay {
+  width: 100%;
+  position: absolute !important;
+  top: 0px;
+}
+.address_logo {
+  width: 30%;
+  position: absolute !important;
+  top: 2%;
+  left: 2%;
+}
 #bg_box_back {
   position: absolute;
   width: 30%;
@@ -125,6 +136,10 @@
   background-color: #DDDDDD;
   color: #FFFFFF;
   border-radius: 4px;
+}
+.bottom_row {
+  margin-top: 30px;
+  margin-bottom: 50px;
 }
 
 /* Dashboard page */

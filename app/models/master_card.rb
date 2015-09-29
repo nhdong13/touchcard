@@ -6,7 +6,13 @@ class MasterCard < ActiveRecord::Base
 
   def create_preview_front
     require 'rmagick'
-    bg    = Magick::ImageList.new(self.image_front)
+    unless self.image_front == nil
+      bg    = Magick::ImageList.new(self.image_front)
+    else
+      puts "in else"
+      bg = Magick::ImageList.new("#{Rails.root}/app/assets/images/thankyou-bg.png")
+    end
+    puts "out of unless"
     bg.scale!(WIDTH, HEIGHT)
 
     if self.title_front != nil or self.text_front != nil
@@ -54,7 +60,7 @@ class MasterCard < ActiveRecord::Base
       coupon_code.gravity = Magick::CenterGravity
       coupon_code.annotate(coupon_area, 0,0,0,0, "Coupon-Code-123")
 
-      expire_text = "EXPIRE " + self.coupon_exp.strftime("%D").to_s
+      expire_text = "EXPIRE " + (Time.now + self.shop.send_delay.weeks + (self.coupon_exp || 2).weeks).strftime("%D").to_s
       coupon_expire = Magick::Draw.new
       coupon_expire.font_family = 'helvetica'
       coupon_expire.pointsize = 42
@@ -104,15 +110,26 @@ class MasterCard < ActiveRecord::Base
 
   def create_preview_back
     require 'rmagick'
-    bg      = Magick::ImageList.new(self.image_back)
-    logo    = Magick::ImageList.new(self.logo)
+
+    unless self.image_back == nil
+      bg = Magick::ImageList.new(self.image_back)
+    else
+      bg = Magick::ImageList.new("#{Rails.root}/app/assets/images/postage-area-image.png")
+      bg.border!(0,0,"white")
+    end
+
+    unless self.logo == nil
+      logo    = Magick::ImageList.new(self.logo)
+    end
     address = Magick::Image.read("#{Rails.root}/app/assets/images/postage-area-image.png").first
 
     # Set background to postcard size
     bg.scale!(WIDTH, HEIGHT)
 
     # Add logo and address area to background
-    bg.composite!(logo, 20, 20, Magick::OverCompositeOp)
+    unless self.logo == nil
+      bg.composite!(logo, 20, 20, Magick::OverCompositeOp)
+    end
     bg.composite!(address, 0, 0, Magick::OverCompositeOp)
 
     # if self.text_back != nil

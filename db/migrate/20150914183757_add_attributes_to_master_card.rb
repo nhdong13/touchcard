@@ -10,7 +10,7 @@ class AddAttributesToMasterCard < ActiveRecord::Migration
     add_column :master_cards, :preview_front,  :string
     add_column :master_cards, :preview_back,   :string
     add_column :master_cards, :coupon_pct,     :int
-    add_column :master_cards, :coupon_exp,     :datetime
+    add_column :master_cards, :coupon_exp,     :int
     add_column :master_cards, :coupon_loc,     :string
   end
 

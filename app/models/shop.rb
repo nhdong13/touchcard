@@ -114,14 +114,15 @@ class Shop < ActiveRecord::Base
     end
   end
 
-  def new_charge
+  def new_charge(amount)
     # Create a new recurring charge for the shop
     self.new_sess
 
-    # Set the price based on last month's numbers and the % of customers to send to
-    price = self.last_month * (self.customer_pct / 100) * 0.99
+    price = amount * 0.99
+    puts price
 
     #Set charge values based on environment
+    puts ENV['RAILS_ENV']
     if ENV['RAILS_ENV'] == "development"
       name = "Touchcard-dev"
       test = true
@@ -137,13 +138,14 @@ class Shop < ActiveRecord::Base
       name: name,
       price: price,
       test: test,
-      return_url: return_url,
+      return_url: return_url
     )
 
     #Put some information about the new store charge in the log
     puts "*************************************"
-    puts "current shop id: #{self.id}"
-    puts "current shop domain: #{self.domain}"
+    puts "New charge with id: #{@charge.id}"
+    puts "Current shop id: #{self.id}"
+    puts "Current shop domain: #{self.domain}"
     puts "*************************************"
 
     #Save the charge info to the local db and go to Shopify confirmation url

@@ -1,12 +1,12 @@
 <h1>General Settings</h1>
 <%= form_for @shop do |f| %>
   <div class="row">
-    <div class="well colo-md-6 col-md-offset-3">
+    <div class="well col-md-6 col-md-offset-3">
       <h3>Billing options</h3>
       <p><b>Current Credits Remaining:</b> <%= @shop.credit %></p>
-      <p>I want to send cards to <%= radio_button_tag(:customer_pct, 50) %><%= label_tag(:customer_pct_50, "50%") %> or
-      <%= radio_button_tag(:customer_pct, 100) %><%= label_tag(:customer_pct_100, "100%") %> of my customers</p>
-      <p>Credits Purchased Monthly: <%= @shop.last_month %></p>
+      <p>I want to send cards to <%= f.radio_button :customer_pct, 50 %><%= f.label :customer_pct_50, "50%" %> or
+      <%= f.radio_button :customer_pct, 100 %><%= f.label :customer_pct_100, "100%" %> of my customers</p>
+      <p>Current Plan: <%= f.number_field :charge_amount, :class => "form-control", :step => 1 %> Credits/Month</p>
       <p>New Customers in the last month: <%= @last_month %>
     </div>
   </div>

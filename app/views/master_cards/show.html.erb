@@ -9,7 +9,7 @@
       <% else %>
         <%= image_tag('postage-area-image.png', :class=> "card_display") %>
       <% end %>
-      <%= link_to 'Edit', edit_master_card_path(:id => @current_shop.master_card.id), :class => "btn btn-lg btn-primary", :style => "position: absolute; top: 50%; left: 40%; display: none;"%>
+      <%= link_to 'Edit', edit_master_card_path(:id => @master_card.id), :class => "btn btn-lg btn-primary", :style => "position: absolute; top: 50%; left: 40%; display: none;"%>
     </div>
     <div class="preview message_side col-xs-5" id="tester1">
       <h3>Message Side</h3>
@@ -18,7 +18,7 @@
       <% else %>
         <%= image_tag('thankyou_example.png', :class => "card_display") %>
       <% end %>
-      <%= link_to 'Edit', edit_master_card_path(:id => @current_shop.master_card.id), :class => "btn btn-lg btn-primary", :style => "position: absolute; top: 50%; left: 40%; display: none;"%>
+      <%= link_to 'Edit', edit_master_card_path(:id => @master_card.id), :class => "btn btn-lg btn-primary", :style => "position: absolute; top: 50%; left: 40%; display: none;"%>
     </div>
   </div>
 
@@ -26,13 +26,13 @@
     <div class="col-xs-10">
       <h3>Settings</h3>
       <div class="well shop_settings">
-        <%= link_to "", edit_shop_path({:id => @master_card.shop.id}),:class => "glyphicon glyphicon-cog", :id => "settings_link" %>
+        <%= link_to "Edit", edit_shop_path({:id => @master_card.shop.id}),:class => "glyphicon glyphicon-cog", :id => "settings_link" %>
       <div class="setting">
           <p style="margin: 0px;"><span class="shop_indicator <%= @master_card.shop.enabled? ? 'enabled' : 'not-enabled' %>">&nbsp;</span>
           <% if @master_card.shop.enabled? %>
-            <b>ACTIVE!</b></p>
+            <b><%= link_to 'ACTIVE!', edit_shop_path(:id => @master_card.shop.id) %></b></p>
           <% else %>
-            <b>INACTIVE</b></p>
+            <b><% link_to 'INACTIVE', edit_shop_path(:id => @master_card.shop.id) %></b></p>
             <% if @master_card.shop.credit == 0 %>
               add credits to turn on <!-- Make this a link to purchase credit page -->
             <% end %>
@@ -40,13 +40,13 @@
         </div>
         <div class="setting">
           <!-- link to edit card -->
-          Send a card <%= @current_shop.send_delay %> weeks after a new customer purchases
+          Send a card <%= link_to "#{@current_shop.send_delay} weeks", edit_shop_path(:id => @master_card.shop.id) %> after a new customer purchases
         </div>
         <div class="last_setting">
           <!-- indicator/ajax switch -->
           <p>
             <span class="shop_indicator <%= @master_card.shop.international? ? 'enabled' : 'not-enabled' %>">&nbsp;</span>
-            <b>Send Postcards to International Addresses</b></p>
+            <b><%= link_to 'Send Postcards to International Addresses', edit_shop_path(:id => @master_card.shop.id) %></b></p>
           <p>Any Country outside the US - 2 credits each</p>
         </div>
       </div>

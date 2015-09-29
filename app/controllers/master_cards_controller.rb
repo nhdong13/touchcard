@@ -15,6 +15,8 @@ class MasterCardsController < AuthenticatedController
     @master_card.shop_id = @current_shop.id
     @master_card.title_front = "Thank You!"
     @master_card.text_front = "We're glad we could share our products with you. We hope you're enjoying your purchase!"
+    @master_card.coupon_pct = 10
+    @master_card.coupon_loc = "10.00,65.00"
     if @master_card.save!
       redirect_to edit_master_card_path(:id => @master_card.id)
     else
@@ -24,11 +26,13 @@ class MasterCardsController < AuthenticatedController
 
   def edit
     @master_card = MasterCard.find(params[:id])
+    @expire = Time.now + @master_card.shop.send_delay.weeks + 2.weeks
   end
 
   def update
     #TODO: Refactor S3 upload stuff
     @master_card = MasterCard.find(params[:id])
+    @expire = Time.now + @master_card.shop.send_delay.weeks + 2.weeks
 
     if card_params.has_key?(:template)
       update_tamplate()

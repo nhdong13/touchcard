@@ -13,8 +13,10 @@ class ChargeController < AuthenticatedController
       begin
         shopify_charge.activate
         shop.charge_date = Date.today
-        shop.charge_amount = shopify_charge.price
+        shop.credit += shop.charge_amount
         shop.save!
+        flash[:success] = "New plan activated!"
+        redirect_to root_url
       rescue
         #SlackNotify.error(shop.domain, error) #Send error to slack if charge isn't activated
         #TODO Add error display
@@ -32,7 +34,7 @@ class ChargeController < AuthenticatedController
         puts shopify_charge.status
       end
       flash[:error] = "Not activated"
-      redirect_to root_path
+      redirect_to root_url
     end
   end
 

@@ -53,7 +53,7 @@
             <h3>Coupon-Code-123</h3>
           <p>
             <a href="#/" class="btn btn-sm btn-primary" onClick="flipCoupon()">Edit</a><br>
-            EXPIRE <%= @master_card.coupon_exp.strftime("%D") %>
+            EXPIRE <%= (Time.now + @master_card.shop.send_delay.weeks + (@master_card.coupon_exp || 2).weeks).strftime("%D") %>
           </p>
           </div>
           <div class="coupon_form" style="display: none;">
@@ -61,11 +61,11 @@
             <%= f.label :coupon_pct, "Coupon Percentage" %>
             <%= f.number_field :coupon_pct, :class => "form-control" %>
 
-            <%= f.label :coupon_exp, "Coupon Expiration" %>
-            <%= f.date_field :coupon_exp, :class => "form-control" %>
+            <%= f.label :coupon_exp, "Weeks after sent until coupon expires" %>
+            <%= f.number_field :coupon_exp, :class => "form-control", :value => @master_card.coupon_exp || 2 %>
 
           </div>
-          <%= f.hidden_field :coupon_loc, :value => @master_card.coupon_loc, :class => "coupon_loc form-control", :id => "coupon_loc" %>
+          <%= f.hidden_field :coupon_loc, :value => (@master_card.coupon_loc || "10.00,65.00"), :class => "coupon_loc form-control", :id => "coupon_loc" %>
         </div>
 
         <!-- Custom Text Boxes -->
@@ -87,7 +87,11 @@
     </div>
   </div>
 
-  <%= f.submit "Next", onClick: "ShopifyApp.Bar.loadingOn()", class: "btn btn-lg btn-primary", id: "wizard2_submit" %>
+  <div class="row bottom_row">
+    <div class="col-sm-10">
+      <%= f.submit "Update", onClick: "ShopifyApp.Bar.loadingOn()", class: "btn btn-lg btn-primary", id: "wizard2_submit" %>
+    </div>
+  </div>
 <% end %>
 
 <script>

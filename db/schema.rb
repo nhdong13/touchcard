@@ -86,7 +86,7 @@ ActiveRecord::Schema.define(version: 20150921190135) do
     t.string   "preview_front"
     t.string   "preview_back"
     t.integer  "coupon_pct"
-    t.datetime "coupon_exp"
+    t.integer  "coupon_exp"
     t.string   "coupon_loc"
   end
 
@@ -105,7 +105,7 @@ ActiveRecord::Schema.define(version: 20150921190135) do
     t.integer  "customer_pct",            default: 100
     t.integer  "last_month"
     t.integer  "charge_id",     limit: 8
-    t.float    "charge_amount"
+    t.integer  "charge_amount"
     t.datetime "charge_date"
     t.boolean  "send_next",               default: true,  null: false
   end
