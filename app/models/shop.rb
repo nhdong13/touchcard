@@ -118,19 +118,18 @@ class Shop < ActiveRecord::Base
     # Create a new recurring charge for the shop
     self.new_sess
 
-    price = amount * 0.99
-    puts price
+    price = (amount.to_i * 0.99).round(2)
 
     #Set charge values based on environment
-    puts ENV['RAILS_ENV']
-    if ENV['RAILS_ENV'] == "development"
-      name = "Touchcard-dev"
-      test = true
-      return_url = "https://localhost:3000/charge/activate"
-    elsif ENV['RAILS_ENV'] == "production"
+    puts "Environment: #{ENV['RAILS_ENV']}"
+    unless ENV['RAILS_ENV'] == "development" or ENV['RAILS_ENV'] == "test"
       name = "Touchcard"
       test = true #TODO: Change this when app is released in Beta
       return_url = "https://touchcard.herokuapp.com/charge/activate"
+    else
+      name = "Touchcard-dev"
+      test = true
+      return_url = "https://localhost:3000/charge/activate"
     end
 
     #Create application charge on Shopify
@@ -141,9 +140,10 @@ class Shop < ActiveRecord::Base
       return_url: return_url
     )
 
+    puts return_url
+    puts @charge.confirmation_url
     #Put some information about the new store charge in the log
     puts "*************************************"
-    puts "New charge with id: #{@charge.id}"
     puts "Current shop id: #{self.id}"
     puts "Current shop domain: #{self.domain}"
     puts "*************************************"

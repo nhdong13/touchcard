@@ -1,7 +1,6 @@
 class ChargeController < AuthenticatedController
 
   def activate
-    require 'slack_notify'
 
     #retrieve the shop and start new session with Shopify
     shop = Shop.find_by(:charge_id => params[:charge_id])

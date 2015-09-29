@@ -22,7 +22,9 @@ class ShopsController < AuthenticatedController
 
     # Check if a billing attribute has been changed or not
     unless changed[:charge_amount] == nil
-      redirect_to @shop.new_charge(shop_params[:charge_amount])
+      charge_url = @shop.new_charge(shop_params[:charge_amount])
+      puts charge_url
+      render :text => "<html><body><script type='text/javascript' charset='utf-8'>parent.location.href = '#{charge_url}';</script></body></html>"
     else
       flash[:success] = "Shop setting updated"
       redirect_to root_url
