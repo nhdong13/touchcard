@@ -7,6 +7,7 @@ Rails.application.routes.draw do
   resources :master_cards do
     get 'template_switch', :on => :member
     get 'image_remove', :on => :member
+    post 'coupon_confirm', :on => :member
   end
 
   # Routes for Cards

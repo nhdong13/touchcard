@@ -9,10 +9,8 @@ class MasterCard < ActiveRecord::Base
     unless self.image_front == nil
       bg    = Magick::ImageList.new(self.image_front)
     else
-      puts "in else"
-      bg = Magick::ImageList.new("#{Rails.root}/app/assets/images/thankyou-bg.png")
+      bg = Magick::ImageList.new("#{Rails.root}/app/assets/images/coupon-bg.png")
     end
-    puts "out of unless"
     bg.scale!(WIDTH, HEIGHT)
 
     if self.title_front != nil or self.text_front != nil
@@ -29,7 +27,7 @@ class MasterCard < ActiveRecord::Base
       text.pointsize = 54
       #text.annotate(shade, 0,0,10,(bg.rows/100 * 10), self.text_front)
       position = 180
-      message = word_wrap(self.text_front, 40)
+      message = word_wrap(self.text_front, 36)
       message.split('\n').each do |row|
         text.annotate(shade, 0, 0, 40, position += 20, row)
       end
@@ -39,7 +37,6 @@ class MasterCard < ActiveRecord::Base
     end
 
     if self.template == "coupon"
-      puts "coupon"
       coupon_area = Magick::Image.new(510, 300) { self.background_color = "#00000000" }
       xval = (self.coupon_loc.split(",")[0].to_f/100) * WIDTH
       yval = (self.coupon_loc.split(",")[1].to_f/100) * HEIGHT

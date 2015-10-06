@@ -41,7 +41,7 @@
       <!-- Images -->
       <div class="editor_images">
         <% if @master_card.image_front == nil %>
-          <%= image_tag('thankyou-bg.png', :class => "card_display", :id => "front_display") %>
+          <%= image_tag('coupon-bg.png', :class => "card_display", :id => "front_display") %>
         <% else %>
           <%= image_tag(@master_card.image_front, :class => "card_display", :id => "front_display") %>
         <% end %>
@@ -59,11 +59,12 @@
           <div class="coupon_form" style="display: none;">
             <a href="#/"  onClick="flipCoupon()" class="coupon_form_close">X</a>
             <%= f.label :coupon_pct, "Coupon Percentage" %>
-            <%= f.number_field :coupon_pct, :class => "form-control" %>
+            <%= f.number_field :coupon_pct, :class => "form-control", :id =>"coupon_pct_field"%>
 
             <%= f.label :coupon_exp, "Weeks after sent until coupon expires" %>
-            <%= f.number_field :coupon_exp, :class => "form-control", :value => @master_card.coupon_exp || 2 %>
+            <%= f.number_field :coupon_exp, :class => "form-control", :value => @master_card.coupon_exp || 2, :id => "coupon_exp_field" %>
 
+            <%= f.submit "Save", class: "btn btn-sm btn-primary", id: "coupon_save_button", remote: true %>
           </div>
           <%= f.hidden_field :coupon_loc, :value => (@master_card.coupon_loc || "10.00,65.00"), :class => "coupon_loc form-control", :id => "coupon_loc" %>
         </div>

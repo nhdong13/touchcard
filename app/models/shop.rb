@@ -121,7 +121,6 @@ class Shop < ActiveRecord::Base
     price = (amount.to_i * 0.99).round(2)
 
     #Set charge values based on environment
-    puts "Environment: #{ENV['RAILS_ENV']}"
     unless ENV['RAILS_ENV'] == "development" or ENV['RAILS_ENV'] == "test"
       name = "Touchcard"
       test = true #TODO: Change this when app is released in Beta
@@ -140,8 +139,6 @@ class Shop < ActiveRecord::Base
       return_url: return_url
     )
 
-    puts return_url
-    puts @charge.confirmation_url
     #Put some information about the new store charge in the log
     puts "*************************************"
     puts "Current shop id: #{self.id}"

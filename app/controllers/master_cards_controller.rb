@@ -30,44 +30,56 @@ class MasterCardsController < AuthenticatedController
   end
 
   def update
-    #TODO: Refactor S3 upload stuff
-    @master_card = MasterCard.find(params[:id])
-    @expire = Time.now + @master_card.shop.send_delay.weeks + 2.weeks
+    if params[:commit] == "Save"
+      puts "coupon confirm!"
+      @master_card = MasterCard.find(params[:id])
+      @master_card.update_attributes(coupon_params)
 
-    if card_params.has_key?(:template)
-      update_tamplate()
-      render 'edit'
+      respond_to do |format|
+        format.html { redirect_to edit_master_card_path(@master_card) }
+        format.json { render json: @master_card }
+        format.js   {}
+      end
     else
-      @current_shop.new_sess
-      @master_card.title_front = card_params[:title_front]
-      @master_card.text_front = card_params[:text_front]
-      @master_card.coupon_pct = card_params[:coupon_pct]
-      @master_card.coupon_exp = card_params[:coupon_exp]
-      @master_card.coupon_loc = card_params[:coupon_loc]
+      #TODO: Refactor S3 upload stuff
+      @master_card = MasterCard.find(params[:id])
+      @expire = Time.now + @master_card.shop.send_delay.weeks + 2.weeks
 
-      if card_params.has_key?(:image_back)
-        image_back_key = card_params[:image_back].original_filename
-        asset_upload(card_params[:image_back], image_back_key, "image_back")
-      end
-
-      if card_params.has_key?(:image_front)
-        image_front_key = card_params[:image_front].original_filename
-       asset_upload(card_params[:image_front], image_front_key, "image_front")
-      end
-
-      if card_params.has_key?(:logo)
-        logo_key = card_params[:logo].original_filename
-        asset_upload(card_params[:logo], logo_key, "logo")
-      end
-
-      begin
-        @master_card.save!
-        @master_card.create_preview_front
-        @master_card.create_preview_back
-        flash[:success] = "Settings updated"
-        render 'show'
-      rescue
+      if card_params.has_key?(:template)
+        update_tamplate()
         render 'edit'
+      else
+        @current_shop.new_sess
+        @master_card.title_front = card_params[:title_front]
+        @master_card.text_front = card_params[:text_front]
+        @master_card.coupon_pct = card_params[:coupon_pct]
+        @master_card.coupon_exp = card_params[:coupon_exp]
+        @master_card.coupon_loc = card_params[:coupon_loc]
+
+        if card_params.has_key?(:image_back)
+          image_back_key = card_params[:image_back].original_filename
+          asset_upload(card_params[:image_back], image_back_key, "image_back")
+        end
+
+        if card_params.has_key?(:image_front)
+          image_front_key = card_params[:image_front].original_filename
+         asset_upload(card_params[:image_front], image_front_key, "image_front")
+        end
+
+        if card_params.has_key?(:logo)
+          logo_key = card_params[:logo].original_filename
+          asset_upload(card_params[:logo], logo_key, "logo")
+        end
+
+        begin
+          @master_card.save!
+          @master_card.create_preview_front
+          @master_card.create_preview_back
+          flash[:success] = "Card template updated"
+          render 'show'
+        rescue
+          render 'edit'
+        end
       end
     end
   end
@@ -104,6 +116,18 @@ class MasterCardsController < AuthenticatedController
     redirect_to edit_master_card_path(@master_card)
   end
 
+  def coupon_confirm
+    puts "coupon confirm!"
+    @master_card = MasterCard.find(params[:id])
+    @master_card.update_attributes(coupon_params)
+
+    respond_to do |format|
+      format.html { redirect_to edit_master_card_path(@master_card) }
+      format.json { render json: @master_card }
+      format.js   {}
+    end
+  end
+
   private
 
   def new_params
@@ -124,6 +148,13 @@ class MasterCardsController < AuthenticatedController
       :coupon_exp,
       :coupon_loc,
       :image_remove)
+  end
+
+  def coupon_params
+    params.require(:master_card).permit(
+      :id,
+      :coupon_pct,
+      :coupon_exp)
   end
 
   def update_template
