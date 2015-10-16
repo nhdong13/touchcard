@@ -16,7 +16,7 @@ class WebhookController < ApplicationController
       puts customer.orders_count
 
       # Check if this is the customer's first order
-      if customer.orders_count == 0
+      if customer.orders_count <= 1
 
         #Check if there is a card already (duplicate webhook)
         duplicate = Card.where(:order_id => order.id)[0] || nil
