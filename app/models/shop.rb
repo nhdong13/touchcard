@@ -36,17 +36,22 @@ class Shop < ActiveRecord::Base
   end
 
   def new_discount(code)
-    self.new_sess
-    ShopifyAPI::Discount.new(
-      :type => "percentage",
-      :amount => self.master_card.coupon_pct.to_i,
-      :code => code,
-      :ends_at => self.master_card.coupon_exp,
-      :starts_at => Time.now,
-      :status => enabled,
-      :usage_limit => 1,
-      :applies_once => true,
+    url = self.shopify_api_path + "/discounts.json"
+    puts url
+
+    response = HTTParty.post(url,
+      :body => {
+        :discount => {
+          :discount_type  => "percentage",
+          :value          => self.master_card.coupon_pct.to_s,
+          :code           => code,
+          :ends_at      => (Time.now + (self.master_card.coupon_exp || 3).weeks),
+          :starts_at      => Time.now,
+          :usage_limit    => 1
+        }
+      }
     )
+    puts response.body
   end
 
 

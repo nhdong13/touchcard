@@ -40,6 +40,9 @@ gem 'lob'
 # Newrelic for monitoring
 gem 'newrelic_rpm'
 
+# Httparty for debug
+gem 'httparty'
+
 # Rest Client for Slack notifications
 gem 'rest-client'
 

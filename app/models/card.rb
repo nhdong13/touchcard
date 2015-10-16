@@ -44,8 +44,7 @@ class Card < ActiveRecord::Base
       if self.template == 'coupon'
         generated_code = ('A'..'Z').to_a.shuffle[0,9].join
         generated_code = generated_code[0...3] + "-" + generated_code[3...6] + "-" + generated_code[6...9]
-        #shop = Shop.find(self.shop_id)
-        #shop.new_discount(generated_code)
+        self.shop.new_discount(generated_code)
         self.coupon = generated_code
       end
 
