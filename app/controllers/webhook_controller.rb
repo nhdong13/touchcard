@@ -5,32 +5,42 @@ class WebhookController < AuthenticatedController
     domain = request.headers["X-Shopify-Shop-Domain"]
     head :ok
     shop = Shop.find_by(:domain => domain)
-    shop.new_sess
-    order = ShopifyAPI::Order.find(params[:id])
-    customer = order.customer
-    puts customer.order_count
+    puts "***********************"
+    puts "New order from #{domain}"
+    puts "***********************"
+    if shop.enabled and shop.credit >= 1
+      shop.new_sess
+      order = ShopifyAPI::Order.find(params[:id])
+      customer = order.customer
+      puts customer.order_count
 
-    # Check if this is the customer's first order
-    if customer.order_count == 0
-      # Create a new card and schedule to send
-      mc = shop.master_card
-      shop.cards.create(
-        :logo           => mc.logo,
-        :image_front    => mc.image_front,
-        :image_back     => mc.image_back,
-        :title_back     => mc.title_front,
-        :text_front     => mc.text_front,
-        :text_back      => mc.text_back,
-        :customer_name  => customer.first_name + " " + customer.last_name,
-        :customer_id    => customer.id,
-        :addr1          => order.shipping_address.address1,
-        :addr2          => order.shipping_address.address2,
-        :city           => order.shipping_address.city,
-        :state          => order.shipping_address.provice_code,
-        :country        => order.shipping_address.country_code,
-        :zip            => order.shipping_address.zip,
-        :send_date      => (Date.today + shop.send_delay)
-      )
+      # Check if this is the customer's first order
+      if customer.order_count == 0
+        # Create a new card and schedule to send
+        mc = shop.master_card
+        card = shop.cards.create(
+          :logo           => mc.logo,
+          :image_front    => mc.image_front,
+          :image_back     => mc.image_back,
+          :title_back     => mc.title_front,
+          :text_front     => mc.text_front,
+          :text_back      => mc.text_back,
+          :customer_name  => customer.first_name + " " + customer.last_name,
+          :customer_id    => customer.id,
+          :addr1          => order.shipping_address.address1,
+          :addr2          => order.shipping_address.address2,
+          :city           => order.shipping_address.city,
+          :state          => order.shipping_address.provice_code,
+          :country        => order.shipping_address.country_code,
+          :zip            => order.shipping_address.zip,
+          :send_date      => (Date.today + shop.send_delay)
+        )
+      end
+
+      # TODO: Remove after alpha
+      card.send_card
+    else
+      puts "Recieved new order from #{domain}, but shop is not enabled or has no credits"
     end
 
     # Respond to webhook again...

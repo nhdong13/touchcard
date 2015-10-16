@@ -7,7 +7,8 @@ class Card < ActiveRecord::Base
   def self.send_all
     @to_send = Card.were("sent = ? and send_date <= ?", false, Time.now )
     @to_send.each do |card|
-      card.delay.send_card
+      #card.delay.send_card
+      card.send_card
     end
   end
 
@@ -78,6 +79,7 @@ class Card < ActiveRecord::Base
 
     else
       puts "No credits left on shop #{self.shop.domain}"
+      #TODO possibly delete the card and S3 files here
     end
   end
 
@@ -85,7 +87,6 @@ class Card < ActiveRecord::Base
   private
 
   def create_front_image(generated_code)
-   #TODO: Add 75px white border to images for trim size
     require 'rmagick'
     bg    = Magick::ImageList.new(self.image_front)
     bg.scale!(WIDTH, HEIGHT)
@@ -169,7 +170,6 @@ class Card < ActiveRecord::Base
   end
 
   def create_back_image
-   #TODO: Add 75px white border to images for trim size
     require 'rmagick'
     bg      = Magick::ImageList.new(self.image_back)
     logo    = Magick::ImageList.new(self.logo)
