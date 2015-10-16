@@ -46,7 +46,7 @@ class MasterCard < ActiveRecord::Base
       yval = (self.coupon_loc.split(",")[1].to_f/100) * HEIGHT
 
       # Add text to coupon area
-      coupon_text = self.coupon_pct.to_s + "% OFF"
+      coupon_text = self.coupon_pct.to_s + "&#37; OFF"
       coupon_off = Magick::Draw.new
       coupon_off.font_family = 'helvetica'
       coupon_off.pointsize = 72
@@ -64,10 +64,10 @@ class MasterCard < ActiveRecord::Base
       expire_text = "EXPIRE " + (Time.now + self.shop.send_delay.weeks + (self.coupon_exp || 2).weeks).strftime("%D").to_s
       coupon_expire = Magick::Draw.new
       coupon_expire.font_family = 'helvetica'
-      coupon_expire.pointsize = 42
+      coupon_expire.pointsize = 36
       coupon_expire.fill = 'white'
       coupon_expire.gravity = Magick::SouthGravity
-      coupon_expire.annotate(coupon_area, 0,0,0,15, expire_text)
+      coupon_expire.annotate(coupon_area, 0,0,0,35, expire_text)
 
       # Add coupon area and text to background
 
