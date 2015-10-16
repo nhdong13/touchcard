@@ -25,6 +25,7 @@ class WebhookController < ApplicationController
           # Create a new card and schedule to send
           mc = shop.master_card
           card = shop.cards.create(
+            :template       => mc.template,
             :logo           => mc.logo,
             :image_front    => mc.image_front,
             :image_back     => mc.image_back,
