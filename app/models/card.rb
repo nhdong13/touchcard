@@ -134,7 +134,7 @@ class Card < ActiveRecord::Base
       yval = (self.master_card.coupon_loc.split(",")[1].to_f/100) * HEIGHT
 
       # Add text to coupon area
-      coupon_text = self.master_card.coupon_pct.to_s + "/% OFF"
+      coupon_text = self.master_card.coupon_pct.to_s + "%% OFF"
       coupon_off = Magick::Draw.new
       coupon_off.font_family = 'helvetica'
       coupon_off.pointsize = 72
