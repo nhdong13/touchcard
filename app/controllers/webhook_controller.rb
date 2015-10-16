@@ -16,7 +16,7 @@ class WebhookController < ApplicationController
       puts customer.order_count
 
       # Check if this is the customer's first order
-      if customer.order_count == 0
+      if customer.orders_count == 0
         # Create a new card and schedule to send
         mc = shop.master_card
         card = shop.cards.create(
