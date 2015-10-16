@@ -104,7 +104,7 @@ class Card < ActiveRecord::Base
     end
     bg.scale!(WIDTH, HEIGHT)
 
-    if self.title_back != nil or self.text_front != nil
+    if self.title_back != ("" or nil) or self.text_front != ("" or nil)
       # Add shaded area on right half of image
       shade = Magick::Image.new((bg.columns/2), bg.rows) { self.background_color = "#00000088" }
 
