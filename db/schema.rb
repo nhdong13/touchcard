@@ -67,7 +67,7 @@ ActiveRecord::Schema.define(version: 20151016132452) do
     t.datetime "send_date"
     t.boolean  "sent",                    default: false, null: false
     t.datetime "date_sent"
-    t.integer  "postcard_id",   limit: 8
+    t.string   "postcard_id",   limit: 8
     t.datetime "created_at",                              null: false
     t.datetime "updated_at",                              null: false
     t.integer  "order_id",      limit: 8
