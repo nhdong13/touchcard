@@ -50,6 +50,8 @@ class WebhookController < ApplicationController
           puts "Duplicate card found"
           head :ok
         end
+      else
+        puts "Not a new customer"
       end
     else
       puts "Recieved new order from #{domain}, but shop is not enabled or has no credits"
