@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150921190135) do
+ActiveRecord::Schema.define(version: 20151016132452) do
 
   create_table "active_admin_comments", force: :cascade do |t|
     t.string   "namespace"
@@ -70,6 +70,7 @@ ActiveRecord::Schema.define(version: 20150921190135) do
     t.integer  "postcard_id",   limit: 8
     t.datetime "created_at",                              null: false
     t.datetime "updated_at",                              null: false
+    t.integer  "order_id",      limit: 8
   end
 
   create_table "master_cards", force: :cascade do |t|

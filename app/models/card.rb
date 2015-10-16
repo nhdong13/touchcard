@@ -88,7 +88,15 @@ class Card < ActiveRecord::Base
 
   def create_front_image(generated_code)
     require 'rmagick'
-    bg    = Magick::ImageList.new(self.image_front)
+    unless self.image_front == nil
+      bg    = Magick::ImageList.new(self.image_front)
+    else
+      if self.template == "coupon"
+        bg    = Magick::ImageList.new("#{Rails.root}/app/assets/images/coupon-bg.png")
+      else
+        bg    = Magick::ImageList.new("#{Rails.root}/app/assets/images/thankyou-bg.png")
+      end
+    end
     bg.scale!(WIDTH, HEIGHT)
 
     if self.title_back != nil or self.text_front != nil
@@ -171,7 +179,12 @@ class Card < ActiveRecord::Base
 
   def create_back_image
     require 'rmagick'
-    bg      = Magick::ImageList.new(self.image_back)
+    unless self.image_back == nil
+      bg = Magick::ImageList.new(self.image_back)
+    else
+      bg = Magick::ImageList.new("#{Rails.root}/app/assets/images/postage-area-image.png")
+      bg.border!(0,0,"white")
+    end
     logo    = Magick::ImageList.new(self.logo)
     address = Magick::Image.read("#{Rails.root}/app/assets/images/address-side-clear.png").first
 

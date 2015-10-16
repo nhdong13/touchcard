@@ -9,7 +9,11 @@ class MasterCard < ActiveRecord::Base
     unless self.image_front == nil
       bg    = Magick::ImageList.new(self.image_front)
     else
-      bg = Magick::ImageList.new("#{Rails.root}/app/assets/images/coupon-bg.png")
+      if self.template == "coupon"
+        bg    = Magick::ImageList.new("#{Rails.root}/app/assets/images/coupon-bg.png")
+      else
+        bg    = Magick::ImageList.new("#{Rails.root}/app/assets/images/thankyou-bg.png")
+      end
     end
     bg.scale!(WIDTH, HEIGHT)
 

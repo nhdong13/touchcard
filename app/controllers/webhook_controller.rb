@@ -17,29 +17,38 @@ class WebhookController < ApplicationController
 
       # Check if this is the customer's first order
       if customer.orders_count == 0
-        # Create a new card and schedule to send
-        mc = shop.master_card
-        card = shop.cards.create(
-          :logo           => mc.logo,
-          :image_front    => mc.image_front,
-          :image_back     => mc.image_back,
-          :title_back     => mc.title_front,
-          :text_front     => mc.text_front,
-          :text_back      => mc.text_back,
-          :customer_name  => customer.first_name + " " + customer.last_name,
-          :customer_id    => customer.id,
-          :addr1          => order.shipping_address.address1,
-          :addr2          => order.shipping_address.address2,
-          :city           => order.shipping_address.city,
-          :state          => order.shipping_address.province_code,
-          :country        => order.shipping_address.country_code,
-          :zip            => order.shipping_address.zip,
-          :send_date      => (Date.today + shop.send_delay)
-        )
-      end
 
-      # TODO: Remove after alpha
-      card.send_card
+        #Check if there is a card already (duplicate webhook)
+        duplicate = Card.where(:order_id => order.id) || nil
+
+        if duplicate == nil
+          # Create a new card and schedule to send
+          mc = shop.master_card
+          card = shop.cards.create(
+            :logo           => mc.logo,
+            :image_front    => mc.image_front,
+            :image_back     => mc.image_back,
+            :title_back     => mc.title_front,
+            :text_front     => mc.text_front,
+            :text_back      => mc.text_back,
+            :customer_name  => customer.first_name + " " + customer.last_name,
+            :customer_id    => customer.id,
+            :addr1          => order.shipping_address.address1,
+            :addr2          => order.shipping_address.address2,
+            :city           => order.shipping_address.city,
+            :state          => order.shipping_address.province_code,
+            :country        => order.shipping_address.country_code,
+            :zip            => order.shipping_address.zip,
+            :send_date      => (Date.today + shop.send_delay),
+            :order_id       => order.id
+          )
+        end
+
+        # TODO: Remove after alpha
+        card.send_card
+      else
+        puts "Duplicate card found"
+      end
     else
       puts "Recieved new order from #{domain}, but shop is not enabled or has no credits"
     end
