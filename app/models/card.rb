@@ -194,7 +194,9 @@ class Card < ActiveRecord::Base
     bg.scale!(WIDTH, HEIGHT)
 
     # Add logo and address area to background
-    bg.composite!(logo, 20, 20, Magick::OverCompositeOp)
+    unless self.logo == nil
+      bg.composite!(logo, 20, 20, Magick::OverCompositeOp)
+    end
     bg.composite!(address, 0, 0, Magick::OverCompositeOp)
 
     # if self.text_back != nil
