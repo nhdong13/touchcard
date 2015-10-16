@@ -150,7 +150,7 @@ class Card < ActiveRecord::Base
       coupon_code.gravity = Magick::CenterGravity
       coupon_code.annotate(coupon_area, 0,0,0,0, generated_code)
 
-      expire_text = "EXPIRE " + self.master_card.coupon_exp.strftime("%D").to_s
+      expire_text = "EXPIRE " + (Time.now + (self.master_card.coupon_exp || 2).weeks).strftime("%D").to_s
       coupon_expire = Magick::Draw.new
       coupon_expire.font_family = 'helvetica'
       coupon_expire.pointsize = 42
