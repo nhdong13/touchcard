@@ -62,7 +62,7 @@ class Card < ActiveRecord::Base
          back: back_url,
        )
 
-       puts send_card
+       puts sent_card
 
        puts "Postcard from #{self.shop.domain} sent!"
 
