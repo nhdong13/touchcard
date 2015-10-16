@@ -72,7 +72,7 @@ class Shop < ActiveRecord::Base
           :topic    =>  "app/uninstalled",
           :format   =>  "json",
           :fields   =>  ["id", "domain"],
-          :address  =>  "http://touchcard.herokuapp.com/uninstall"
+          :address  =>  "https://touchcard.herokuapp.com/uninstall"
            )
         self.uninstall_id = new_hook.id
         self.save!
@@ -99,7 +99,7 @@ class Shop < ActiveRecord::Base
           :topic    =>  "orders/create",
           :format   =>  "json",
           :fields   =>  ["id", "customer"],
-          :address  =>  "http://touchcard.herokuapp.com/new_order"
+          :address  =>  "https://touchcard.herokuapp.com/new_order"
            )
         self.webhook_id = new_hook.id
         self.save!
