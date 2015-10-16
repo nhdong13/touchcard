@@ -31,7 +31,7 @@ class WebhookController < ApplicationController
           :addr1          => order.shipping_address.address1,
           :addr2          => order.shipping_address.address2,
           :city           => order.shipping_address.city,
-          :state          => order.shipping_address.provice_code,
+          :state          => order.shipping_address.province_code,
           :country        => order.shipping_address.country_code,
           :zip            => order.shipping_address.zip,
           :send_date      => (Date.today + shop.send_delay)
