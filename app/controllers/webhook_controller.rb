@@ -1,5 +1,5 @@
 class WebhookController < AuthenticatedController
-  skip_before_filter  :verify_authenticity_token, only: [:new_orer, :uninstall]
+  skip_before_action :verify_authenticity_token
   before_filter :verify_webhook, only: [:new_order, :uninstall]
 
   def new_order
