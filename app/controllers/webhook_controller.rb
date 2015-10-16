@@ -13,7 +13,7 @@ class WebhookController < ApplicationController
       shop.new_sess
       order = ShopifyAPI::Order.find(params[:id])
       customer = order.customer
-      puts customer.order_count
+      puts customer.orders_count
 
       # Check if this is the customer's first order
       if customer.orders_count == 0
