@@ -1,5 +1,4 @@
-class WebhookController < AuthenticatedController
-  around_filter :shopify_session
+class WebhookController < ApplicationController
   skip_before_action :verify_authenticity_token
   before_action :verify_webhook, only: [:new_order, :uninstall]
 
