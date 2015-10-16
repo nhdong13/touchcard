@@ -13,7 +13,11 @@ class Card < ActiveRecord::Base
   end
 
   def send_card
-    @lob = Lob.load
+    # Test lob
+    @lob = Lob.load(api_key: ENV['LOB_TEST_API_KEY'])
+
+    # Live Lob
+    # @lob = Lob.load(api_key: ENV['LOB_TEST_API_KEY'])
 
     if self.shop.credit >= 1
 
