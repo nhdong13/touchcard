@@ -53,7 +53,7 @@ class Card < ActiveRecord::Base
       front_url = create_front_image(generated_code)
       back_url = create_back_image
 
-      begin
+      #begin
        sent_card = @lob.postcards.create(
          description: "A #{self.template} card sent by #{self.shop.domain}",
          to: customer_address,
@@ -77,9 +77,9 @@ class Card < ActiveRecord::Base
        self.shop.credit -= 1
        self.shop.save
 
-      rescue
-        puts "Postcard not sent"
-      end
+      #rescue
+       # puts "Postcard not sent"
+      #end
 
     else
       puts "No credits left on shop #{self.shop.domain}"
