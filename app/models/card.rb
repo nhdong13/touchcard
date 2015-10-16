@@ -185,7 +185,9 @@ class Card < ActiveRecord::Base
       bg = Magick::ImageList.new("#{Rails.root}/app/assets/images/postage-area-image.png")
       bg.border!(0,0,"white")
     end
-    logo    = Magick::ImageList.new(self.logo)
+    unless logo == nil
+      logo    = Magick::ImageList.new(self.logo)
+    end
     address = Magick::Image.read("#{Rails.root}/app/assets/images/address-side-clear.png").first
 
     # Set background to postcard size

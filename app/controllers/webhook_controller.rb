@@ -48,9 +48,11 @@ class WebhookController < ApplicationController
         card.send_card
       else
         puts "Duplicate card found"
+        head :ok
       end
     else
       puts "Recieved new order from #{domain}, but shop is not enabled or has no credits"
+      head :ok
     end
 
     # Respond to webhook again...
