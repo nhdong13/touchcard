@@ -118,7 +118,7 @@ class Card < ActiveRecord::Base
       text.pointsize = 54
       #text.annotate(shade, 0,0,10,(bg.rows/100 * 10), self.text_front)
       position = 180
-      message = word_wrap(self.text_front, 40)
+      message = word_wrap(self.text_front, 36)
       message.split('\n').each do |row|
         text.annotate(shade, 0, 0, 40, position += 20, row)
       end
