@@ -1,6 +1,7 @@
 class WebhookController < AuthenticatedController
+  around_filter :shopify_session
   skip_before_action :verify_authenticity_token
-  before_filter :verify_webhook, only: [:new_order, :uninstall]
+  before_action :verify_webhook, only: [:new_order, :uninstall]
 
   def new_order
     domain = request.headers["X-Shopify-Shop-Domain"]
