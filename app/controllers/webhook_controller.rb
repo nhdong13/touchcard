@@ -19,7 +19,7 @@ class WebhookController < ApplicationController
       if customer.orders_count == 0
 
         #Check if there is a card already (duplicate webhook)
-        duplicate = Card.where(:order_id => order.id) || nil
+        duplicate = Card.where(:order_id => order.id)[0] || nil
 
         if duplicate == nil
           # Create a new card and schedule to send
@@ -43,13 +43,13 @@ class WebhookController < ApplicationController
             :send_date      => (Date.today + shop.send_delay),
             :order_id       => order.id
           )
-        end
 
-        # TODO: Remove after alpha
-        card.send_card
-      else
-        puts "Duplicate card found"
-        head :ok
+          # TODO: Remove after alph
+          card.send_card
+        else
+          puts "Duplicate card found"
+          head :ok
+        end
       end
     else
       puts "Recieved new order from #{domain}, but shop is not enabled or has no credits"
