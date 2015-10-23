@@ -1,6 +1,8 @@
 class Shop < ActiveRecord::Base
-  has_one :master_card, dependent: :destroy
-  has_many :cards, dependent: :destroy
+  has_many :card_templates, dependent: :destroy
+  has_one :postsale_template
+  has_one :bulk_template
+  has_many :postcards, through: :card_templates
 
   def self.store(session)
     shop = Shop.find_by(:domain => session.url)
@@ -146,7 +148,6 @@ class Shop < ActiveRecord::Base
 
     #Put some information about the new store charge in the log
     puts "*************************************"
-    puts "Current shop id: #{self.id}"
     puts "Current shop domain: #{self.domain}"
     puts "*************************************"
 

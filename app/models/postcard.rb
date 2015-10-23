@@ -1,7 +1,7 @@
-class Card < ActiveRecord::Base
-  belongs_to :shop
-  validates :shop_id, presence: true
-  has_one :master_card, through: :shop
+class Postcard < ActiveRecord::Base
+  belongs_to :card_template
+  validates :card_template_id, presence: true
+  has_one :shop, through: :card_template
 
 
   def self.send_all
@@ -58,7 +58,7 @@ class Card < ActiveRecord::Base
          to: customer_address,
          # from: shop_address,
          front: front_url,
-         back: back_url,
+         back: back_url
        )
 
        puts sent_card
@@ -93,10 +93,10 @@ class Card < ActiveRecord::Base
 
   def create_front_image(generated_code)
     require 'rmagick'
-    unless self.image_front == nil
+    unless self.card_template.image_front == nil
       bg    = Magick::ImageList.new(self.image_front)
     else
-      if self.template == "coupon"
+      if self.card_template.style == "coupon"
         bg    = Magick::ImageList.new("#{Rails.root}/app/assets/images/coupon-bg.png")
       else
         bg    = Magick::ImageList.new("#{Rails.root}/app/assets/images/thankyou-bg.png")
@@ -104,7 +104,7 @@ class Card < ActiveRecord::Base
     end
     bg.scale!(WIDTH, HEIGHT)
 
-    if self.title_back != ("" or nil) or self.text_front != ("" or nil)
+    if self.card_template.title_front != ("" or nil) or self.card_template.text_front != ("" or nil)
       # Add shaded area on right half of image
       shade = Magick::Image.new((bg.columns/2), bg.rows) { self.background_color = "#00000088" }
 
@@ -114,11 +114,11 @@ class Card < ActiveRecord::Base
       text.pointsize = 72
       text.fill = 'white'
       text.gravity = Magick::NorthWestGravity
-      text.annotate(shade, 0,0,40,60, self.title_back)
+      text.annotate(shade, 0,0,40,60, self.card_template.title_front)
       text.pointsize = 54
       #text.annotate(shade, 0,0,10,(bg.rows/100 * 10), self.text_front)
       position = 180
-      message = word_wrap(self.text_front, 36)
+      message = word_wrap(self.card_template.text_front, 36)
       message.split('\n').each do |row|
         text.annotate(shade, 0, 0, 40, position += 20, row)
       end
@@ -127,14 +127,14 @@ class Card < ActiveRecord::Base
       bg.composite!(shade, (bg.columns/2), 0, Magick::OverCompositeOp)
     end
 
-    if self.template == "coupon"
+    if self.card_template.style == "coupon"
 
       coupon_area = Magick::Image.new(510, 300) { self.background_color = "#00000000" }
-      xval = (self.master_card.coupon_loc.split(",")[0].to_f/100) * WIDTH
-      yval = (self.master_card.coupon_loc.split(",")[1].to_f/100) * HEIGHT
+      xval = (self.card_template.coupon_loc.split(",")[0].to_f/100) * WIDTH
+      yval = (self.card_template.coupon_loc.split(",")[1].to_f/100) * HEIGHT
 
       # Add text to coupon area
-      coupon_text = self.master_card.coupon_pct.to_s + "%% OFF"
+      coupon_text = self.card_template.coupon_pct.to_s + "%% OFF"
       coupon_off = Magick::Draw.new
       coupon_off.font_family = 'helvetica'
       coupon_off.pointsize = 72
@@ -149,7 +149,7 @@ class Card < ActiveRecord::Base
       coupon_code.gravity = Magick::CenterGravity
       coupon_code.annotate(coupon_area, 0,0,0,0, generated_code)
 
-      expire_text = "EXPIRE " + (Time.now + (self.master_card.coupon_exp || 2).weeks).strftime("%D").to_s
+      expire_text = "EXPIRE " + (Time.now + (self.card_template.coupon_exp || 2).weeks).strftime("%D").to_s
       coupon_expire = Magick::Draw.new
       coupon_expire.font_family = 'helvetica'
       coupon_expire.pointsize = 36
@@ -173,25 +173,24 @@ class Card < ActiveRecord::Base
 
     # Image save set up
     local_path = "#{Rails.root}/tmp/image_front.jpg"
-    image_key = "#{self.shop_id}-image_front.jpg"
+    image_key = "#{self.shop.id}-image_front.jpg"
 
     # Save to local file system
     bg.write(local_path)
 
     return upload_to_s3(image_key, local_path)
-
   end
 
   def create_back_image
     require 'rmagick'
-    unless self.image_back == nil
-      bg = Magick::ImageList.new(self.image_back)
+    unless self.card_template.image_back == nil
+      bg = Magick::ImageList.new(self.card_template.image_back)
     else
       bg = Magick::ImageList.new("#{Rails.root}/app/assets/images/postage-area-image.png")
       bg.border!(0,0,"white")
     end
-    unless logo == nil
-      logo    = Magick::ImageList.new(self.logo)
+    unless self.card_template.logo == nil
+      logo    = Magick::ImageList.new(self.card_template.logo)
     end
     address = Magick::Image.read("#{Rails.root}/app/assets/images/address-side-clear.png").first
 
@@ -199,7 +198,7 @@ class Card < ActiveRecord::Base
     bg.scale!(WIDTH, HEIGHT)
 
     # Add logo and address area to background
-    unless self.logo == nil
+    unless self.card_template.logo == nil
       bg.composite!(logo, 20, 20, Magick::OverCompositeOp)
     end
     bg.composite!(address, 0, 0, Magick::OverCompositeOp)
@@ -219,7 +218,7 @@ class Card < ActiveRecord::Base
 
     # Image save set up
     local_path = "#{Rails.root}/tmp/image_back.jpg"
-    image_key = "#{self.shop_id}-image_back.jpg"
+    image_key = "#{self.shop.id}-image_back.jpg"
 
     # Save to local file system
     bg.write(local_path)

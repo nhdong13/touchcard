@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151016132452) do
+ActiveRecord::Schema.define(version: 20151022040604) do
 
   create_table "active_admin_comments", force: :cascade do |t|
     t.string   "namespace"
@@ -46,18 +46,35 @@ ActiveRecord::Schema.define(version: 20151016132452) do
   add_index "admin_users", ["email"], name: "index_admin_users_on_email", unique: true
   add_index "admin_users", ["reset_password_token"], name: "index_admin_users_on_reset_password_token", unique: true
 
-  create_table "cards", force: :cascade do |t|
+  create_table "card_templates", force: :cascade do |t|
     t.integer  "shop_id"
-    t.string   "template"
+    t.string   "type"
+    t.string   "style"
     t.string   "logo"
     t.string   "image_front"
     t.string   "image_back"
+    t.string   "title_front"
     t.string   "text_front"
-    t.string   "title_back"
-    t.string   "text_back"
+    t.string   "preview_front"
+    t.string   "preview_back"
+    t.integer  "coupon_pct"
+    t.integer  "coupon_exp"
+    t.string   "coupon_loc"
+    t.boolean  "enabled",       default: false, null: false
+    t.boolean  "international", default: false, null: false
+    t.integer  "send_delay"
+    t.integer  "cards_sent"
+    t.float    "revenue"
+    t.datetime "created_at",                    null: false
+    t.datetime "updated_at",                    null: false
+  end
+
+  create_table "postcards", force: :cascade do |t|
+    t.integer  "card_template_id"
     t.string   "coupon"
+    t.integer  "order_id",         limit: 8
+    t.integer  "customer_id",      limit: 8
     t.string   "customer_name"
-    t.integer  "customer_id",   limit: 8
     t.string   "addr1"
     t.string   "addr2"
     t.string   "city"
@@ -65,50 +82,31 @@ ActiveRecord::Schema.define(version: 20151016132452) do
     t.string   "country"
     t.string   "zip"
     t.datetime "send_date"
-    t.boolean  "sent",                    default: false, null: false
+    t.boolean  "sent",                       default: false, null: false
     t.datetime "date_sent"
-    t.string   "postcard_id",   limit: 8
-    t.datetime "created_at",                              null: false
-    t.datetime "updated_at",                              null: false
-    t.integer  "order_id",      limit: 8
-  end
-
-  create_table "master_cards", force: :cascade do |t|
-    t.integer  "shop_id"
-    t.datetime "created_at",    null: false
-    t.datetime "updated_at",    null: false
-    t.string   "template"
-    t.string   "logo"
-    t.string   "image_front"
-    t.string   "image_back"
-    t.string   "title_front"
-    t.string   "text_front"
-    t.string   "text_back"
-    t.string   "preview_front"
-    t.string   "preview_back"
-    t.integer  "coupon_pct"
-    t.integer  "coupon_exp"
-    t.string   "coupon_loc"
+    t.string   "postcard_id"
+    t.boolean  "return_customer",            default: false, null: false
+    t.float    "purchase2"
+    t.datetime "created_at",                                 null: false
+    t.datetime "updated_at",                                 null: false
   end
 
   create_table "shops", force: :cascade do |t|
-    t.string   "domain",                                  null: false
-    t.string   "token",                                   null: false
+    t.string   "domain",                                 null: false
+    t.string   "token",                                  null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "shopify_id",    limit: 8
     t.integer  "credit",                  default: 0
-    t.boolean  "enabled",                 default: false, null: false
-    t.boolean  "international",           default: false, null: false
-    t.integer  "send_delay",              default: 2
     t.integer  "webhook_id",    limit: 8
     t.integer  "uninstall_id",  limit: 8
+    t.integer  "charge_id",     limit: 8
+    t.integer  "charge_amount",           default: 0
+    t.datetime "charge_date"
     t.integer  "customer_pct",            default: 100
     t.integer  "last_month"
-    t.integer  "charge_id",     limit: 8
-    t.integer  "charge_amount"
-    t.datetime "charge_date"
-    t.boolean  "send_next",               default: true,  null: false
+    t.boolean  "send_next",               default: true, null: false
+    t.datetime "last_login"
   end
 
   add_index "shops", ["domain"], name: "index_shops_on_domain", unique: true

@@ -9,6 +9,8 @@ class HomeController < AuthenticatedController
       # TODO: get array of repeat orders from past card recipients (private method)
 
       @sent_cards = current_shop.cards.where(:sent => true);
+      #@current_shop.last_login = Time.now
+      #@current_shop.save!
     else
       redirect_to new_master_card_path
 

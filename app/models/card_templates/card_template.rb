@@ -1,6 +1,6 @@
-class MasterCard < ActiveRecord::Base
+class CardTemplate < ActiveRecord::Base
   belongs_to :shop
-  has_many :cards, through: :shop
+  has_many :postcards
   validates :shop_id, presence: true
 
 
@@ -9,7 +9,7 @@ class MasterCard < ActiveRecord::Base
     unless self.image_front == nil
       bg    = Magick::ImageList.new(self.image_front)
     else
-      if self.template == "coupon"
+      if self.style == "coupon"
         bg    = Magick::ImageList.new("#{Rails.root}/app/assets/images/coupon-bg.png")
       else
         bg    = Magick::ImageList.new("#{Rails.root}/app/assets/images/thankyou-bg.png")
@@ -40,7 +40,7 @@ class MasterCard < ActiveRecord::Base
       bg.composite!(shade, (bg.columns/2), 0, Magick::OverCompositeOp)
     end
 
-    if self.template == "coupon"
+    if self.style == "coupon"
       coupon_area = Magick::Image.new(510, 300) { self.background_color = "#00000000" }
       xval = (self.coupon_loc.split(",")[0].to_f/100) * WIDTH
       yval = (self.coupon_loc.split(",")[1].to_f/100) * HEIGHT
@@ -81,31 +81,10 @@ class MasterCard < ActiveRecord::Base
     # Save to local file system
     bg.write(local_path)
 
-    # Initialize S3 bucket
-    obj = S3_BUCKET.object(image_key)
-    obj.upload_file(local_path)
-
-    # Set access on S3 to public
-    s3 = Aws::S3::Client.new
-    s3.put_object_acl(bucket: ENV['S3_BUCKET_NAME'], key: image_key, acl: 'public-read')
-
-    # Setup variables for Shopify theme asset creation
-    key = "assets\/touchcard_preview_front.jpg"
-    src_url = obj.public_url.to_s
-    @shop = Shop.find(self.shop_id)
-    @shop.new_sess
-    theme_id = ShopifyAPI::Theme.where(:role => "main")[0].id
-
-    begin
-      # Upload to Shopify theme assets and save path
-      preview_front = ShopifyAPI::Asset.create({:key => key, :src => src_url, :theme_id => theme_id})
-      self.preview_front = preview_front.public_url
-      self.save!
-      puts "Saved Front"
-      S3_BUCKET.objects.delete(image_key)
-    rescue
-      puts "There was a problem with the image creation"
-    end
+    # Upload to S3 and save the url
+    self.preview_front = upload_to_s3(image_key)
+    self.save!
+    puts "Saved Front"
   end
 
 
@@ -144,7 +123,16 @@ class MasterCard < ActiveRecord::Base
     # Save to local file system
     bg.write(local_path)
 
-    # Initialize S3 bucket
+    # Upload to S3 and save the url
+    self.preview_back = upload_to_s3(image_key)
+    self.save!
+    puts "Saved Back"
+  end
+
+  private
+
+  def upload_to_s3(image_key)
+    # Initialize s3
     obj = S3_BUCKET.object(image_key)
     obj.upload_file(local_path)
 
@@ -152,29 +140,9 @@ class MasterCard < ActiveRecord::Base
     s3 = Aws::S3::Client.new
     s3.put_object_acl(bucket: ENV['S3_BUCKET_NAME'], key: image_key, acl: 'public-read')
 
-    # Setup variables for Shopify theme asset creation
-    key = "assets\/touchcard_preview_back.jpg"
-    src_url = obj.public_url.to_s
-    @shop = Shop.find(self.shop_id)
-    @shop.new_sess
-    theme_id = ShopifyAPI::Theme.where(:role => "main")[0].id
-
-    begin
-      # Upload image to Shopify theme assets and save path
-      preview_back = ShopifyAPI::Asset.create({:key => key, :src => src_url, :theme_id => theme_id})
-      self.preview_back = preview_back.public_url
-      self.save!
-      puts "Saved Back"
-      S3_BUCKET.objects.delete(image_key)
-    rescue
-      puts "There was a problem with the image creation"
-    end
-
+    # return the public url
+    return obj.public_url.to_s
   end
-
-
-  private
-
 
   def word_wrap(text, columns)
     # Logic to wrap text in the shaded region

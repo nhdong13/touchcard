@@ -1,0 +1,2 @@
+class BulkTemplate < CardTemplate
+end

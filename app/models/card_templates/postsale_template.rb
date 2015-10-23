@@ -1,0 +1,2 @@
+class PostsaleTemplate < CardTemplate
+end

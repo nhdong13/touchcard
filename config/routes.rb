@@ -3,17 +3,17 @@ Rails.application.routes.draw do
   # Routes for Shops
   resources :shops
 
-  # Routes for Master Cards
-  resources :master_cards do
+  # Routes for Card Templates
+  resources :card_templates do
     get 'template_switch', :on => :member
     get 'image_remove', :on => :member
     post 'coupon_confirm', :on => :member
   end
 
   # Routes for Cards
-  resources :cards
+  resources :postcards
 
-  # Routes for Admin
+  # Routes for Admins
   devise_for :admin_users, ActiveAdmin::Devise.config
   ActiveAdmin.routes(self)
 
