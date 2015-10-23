@@ -2,18 +2,16 @@ class HomeController < AuthenticatedController
   before_action :current_shop
 
   def index
-    unless current_shop.master_card == nil
+    if current_shop.card_templates.any?
+      @current_shop.update(last_login: Time.now)
       @income = 0.00
 
       @follow_ups = []
       # TODO: get array of repeat orders from past card recipients (private method)
 
-      @sent_cards = current_shop.cards.where(:sent => true);
-      #@current_shop.last_login = Time.now
-      #@current_shop.save!
+      @sent_cards = current_shop.postcards.where(:sent => true);
     else
-      redirect_to new_master_card_path
-
+      redirect_to new_postsale_template_path
     end
   end
 

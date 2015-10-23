@@ -3,6 +3,8 @@ class Postcard < ActiveRecord::Base
   validates :card_template_id, presence: true
   has_one :shop, through: :card_template
 
+  # Include S3 utilities
+  include AwsUtils
 
   def self.send_all
     @to_send = Card.were("sent = ? and send_date <= ?", false, Time.now )
@@ -71,8 +73,8 @@ class Postcard < ActiveRecord::Base
        self.save
 
        # Remove images from S3
-       delete_from_s3(front_url)
-       delete_from_s3(back_url)
+       AwsUtils.delete_from_s3(front_url)
+       AwsUtils.delete_from_s3(back_url)
 
        # Deduct 1 credit
        self.shop.credit -= 1
@@ -178,7 +180,8 @@ class Postcard < ActiveRecord::Base
     # Save to local file system
     bg.write(local_path)
 
-    return upload_to_s3(image_key, local_path)
+    # Upload to S3
+    return AwsUtils.upload_to_s3(image_key, local_path)
   end
 
   def create_back_image
@@ -224,22 +227,7 @@ class Postcard < ActiveRecord::Base
     bg.write(local_path)
 
     # Upload to S3
-    return upload_to_s3(image_key, local_path)
-  end
-
-  def upload_to_s3(image_key, local_path)
-    begin
-      # Initialize S3 bucket
-      obj = S3_BUCKET.object(image_key)
-      obj.upload_file(local_path)
-
-      # Set access on S3 to public
-      s3 = Aws::S3::Client.new
-      s3.put_object_acl(bucket: ENV['S3_BUCKET_NAME'], key: image_key, acl: 'public-read')
-    rescue
-      puts "Problem with s3 upload"
-    end
-    return obj.public_url.to_s
+    return AwsUtils.upload(image_key, local_path)
   end
 
   def word_wrap(text, columns)
@@ -249,11 +237,4 @@ class Postcard < ActiveRecord::Base
     end * "\n"
   end
 
-  def delete_from_s3(image_url)
-    S3_BUCKET.objects.each do |obj|
-      if obj.public_url.to_s == image_url
-        S3_BUCKET.objects.delete(obj.key)
-      end
-    end
-  end
 end

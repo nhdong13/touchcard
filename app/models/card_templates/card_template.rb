@@ -3,6 +3,8 @@ class CardTemplate < ActiveRecord::Base
   has_many :postcards
   validates :shop_id, presence: true
 
+  # Include S3 utilities
+  include AwsUtils
 
   def create_preview_front
     require 'rmagick'

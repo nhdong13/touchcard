@@ -10,6 +10,9 @@ Rails.application.routes.draw do
     post 'coupon_confirm', :on => :member
   end
 
+  resources :postsale_templates,  :controller => "card_templates", :type => "PostsaleTemplate"
+  resources :bulk_templates,      :controller => "card_templates", :type => "BulkTemplate"
+
   # Routes for Cards
   resources :postcards
 

@@ -1,7 +1,7 @@
 class Shop < ActiveRecord::Base
   has_many :card_templates, dependent: :destroy
-  has_one :postsale_template
-  has_one :bulk_template
+  has_many :postsale_template
+  has_many :bulk_template
   has_many :postcards, through: :card_templates
 
   def self.store(session)

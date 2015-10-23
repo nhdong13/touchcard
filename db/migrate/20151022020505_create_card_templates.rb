@@ -21,6 +21,7 @@ class CreateCardTemplates < ActiveRecord::Migration
       t.datetime    :arrive_by
       t.datetime    :customers_before
       t.datetime    :customers_after
+      t.bigint      :transaction_id
       t.boolean     :archive, null: false, default: false
       t.integer     :cards_sent
       t.float       :revenue

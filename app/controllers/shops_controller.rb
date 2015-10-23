@@ -35,10 +35,7 @@ class ShopsController < AuthenticatedController
   def shop_params
     params.require(:shop).permit(
       :customer_pct,
-      :charge_amount,
-      :enabled,
-      :international,
-      :send_delay)
+      :charge_amount)
   end
 
   def current_shop
