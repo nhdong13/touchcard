@@ -1,5 +1,4 @@
 class CardTemplatesController < AuthenticatedController
-  before_action :current_shop
   attr_accessor :image_remove
 
   def show
@@ -26,7 +25,7 @@ class CardTemplatesController < AuthenticatedController
 
   def edit
     @card_template = CardTemplate.find(params[:id])
-    @expire = Time.now + @card_template.shop.send_delay.weeks + 2.weeks
+    @expire = Time.now + @card_template.send_delay.weeks + 2.weeks
   end
 
   def update
@@ -40,36 +39,35 @@ class CardTemplatesController < AuthenticatedController
         format.json { render json: @card_template }
         format.js   {}
       end
+
     else
       #TODO: Refactor S3 upload stuff
       @card_template = CardTemplate.find(params[:id])
       @expire = Time.now + @card_template.send_delay.weeks + 2.weeks
 
+      # TODO: Refactor with params[:commit]
       if card_params.has_key?(:style)
-        update_tamplate()
+        update_style()
         render 'edit'
       else
-        @current_shop.new_sess
-        @card_template.title_front = card_params[:title_front]
-        @card_template.text_front = card_params[:text_front]
-        @card_template.coupon_pct = card_params[:coupon_pct]
-        @card_template.coupon_exp = card_params[:coupon_exp]
-        @card_template.coupon_loc = card_params[:coupon_loc]
+        @card_template.title_front  = card_params[:title_front]
+        @card_template.text_front   = card_params[:text_front]
+        @card_template.coupon_pct   = card_params[:coupon_pct]
+        @card_template.coupon_exp   = card_params[:coupon_exp]
+        @card_template.coupon_loc   = card_params[:coupon_loc]
+
+        if card_params.has_key?(:logo)
+          @card_template.logo = AwsUtils.upload_to_s3(card_params[:logo].original_filename, card_params[:logo].path)
+        end
 
         if card_params.has_key?(:image_back)
-          image_back_key = card_params[:image_back].original_filename
-          asset_upload(card_params[:image_back], image_back_key, "image_back")
+          @card_template.logo = AwsUtils.upload_to_s3(card_params[:image_back].original_filename, card_params[:image_back].path)
         end
 
         if card_params.has_key?(:image_front)
-          image_front_key = card_params[:image_front].original_filename
-         asset_upload(card_params[:image_front], image_front_key, "image_front")
+          @card_template.logo = AwsUtils.upload_to_s3(card_params[:image_front].original_filename, card_params[:image_front].path)
         end
 
-        if card_params.has_key?(:logo)
-          logo_key = card_params[:logo].original_filename
-          asset_upload(card_params[:logo], logo_key, "logo")
-        end
 
         begin
           @card_template.save!
@@ -135,7 +133,7 @@ class CardTemplatesController < AuthenticatedController
   end
 
   def template_type
-    params[:type].constantize if params[:type].in? template_types
+    params[:type].constantize if params[:type].constantize.in? template_types
   end
 
   def new_params
@@ -174,34 +172,10 @@ class CardTemplatesController < AuthenticatedController
 
   def update_style
     if card_params[:style].downcase.include?("thank you")
-      @card_template.style = "thank you"
+      @card_template.update(:style => "thank you")
     else
-      @card_template.style = "coupon"
+      @card_template.update(:style => "coupon")
     end
-    @card_template.save!
   end
 
-  def asset_upload(file, image_key, image_type)
-    # Initialize S3 bucket
-    s3 = Aws::S3::Client.new
-    obj = S3_BUCKET.object(image_key)
-    obj.upload_file(file.path)
-
-    # Initialize S3 bucket
-    s3.put_object_acl(bucket: ENV['S3_BUCKET_NAME'], key: image_key, acl: 'public-read')
-
-      # Image type case statement
-      case image_type
-      when "logo"
-        @card_template.logo = obj.public_url.to_s
-      when "image_front"
-        @card_template.image_front = obj.public_url.to_s
-      when "image_back"
-        @card_template.image_back = obj.public_url.to_s
-      end
-  end
-
-  def current_shop
-    @current_shop ||= Shop.find(session[:shopify])
-  end
 end

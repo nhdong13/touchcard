@@ -9,49 +9,47 @@ class WebhookController < ApplicationController
     puts "***********************"
     puts "New order from #{domain}"
     puts "***********************"
-    if shop.enabled and shop.credit >= 1
+    if shop.credit >= 1
       shop.new_sess
       order = ShopifyAPI::Order.find(params[:id])
       customer = order.customer
-      puts customer.orders_count
 
       # Check if this is the customer's first order
       if customer.orders_count <= 1
 
         #Check if there is a card already (duplicate webhook)
-        duplicate = Card.where(:order_id => order.id)[0] || nil
+        duplicate = Postcard.where(:order_id => order.id)[0] || nil
 
-        if duplicate == nil
+        if duplicate.nil?
           # Create a new card and schedule to send
-          mc = shop.master_card
-          card = shop.cards.create(
-            :template       => mc.template,
-            :logo           => mc.logo,
-            :image_front    => mc.image_front,
-            :image_back     => mc.image_back,
-            :title_back     => mc.title_front,
-            :text_front     => mc.text_front,
-            :text_back      => mc.text_back,
-            :customer_name  => customer.first_name + " " + customer.last_name,
-            :customer_id    => customer.id,
-            :addr1          => order.shipping_address.address1,
-            :addr2          => order.shipping_address.address2,
-            :city           => order.shipping_address.city,
-            :state          => order.shipping_address.province_code,
-            :country        => order.shipping_address.country_code,
-            :zip            => order.shipping_address.zip,
-            :send_date      => (Date.today + shop.send_delay),
-            :order_id       => order.id
-          )
+          ps_template = shop.postsale_template.where(:archive => false).first
+          if ps_template.enabled?
+            card = ps_template.postcards.create(
+              :order_id       => order.id,
+              :customer_id    => customer.id,
+              :customer_name  => customer.first_name + " " + customer.last_name,
+              :addr1          => order.shipping_address.address1,
+              :addr2          => order.shipping_address.address2,
+              :city           => order.shipping_address.city,
+              :state          => order.shipping_address.province_code,
+              :country        => order.shipping_address.country_code,
+              :zip            => order.shipping_address.zip,
+              :send_date      => (Date.today + shop.send_delay),
+            )
 
-          # TODO: Remove after alph
-          card.send_card
+            # TODO: Remove after alpha
+            card.send_card
+          else
+            puts "Not Enabled"
+            head :ok
+          end
         else
           puts "Duplicate card found"
           head :ok
         end
       else
         puts "Not a new customer"
+        head :ok
       end
     else
       puts "Recieved new order from #{domain}, but shop is not enabled or has no credits"

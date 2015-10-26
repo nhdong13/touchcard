@@ -4,7 +4,7 @@ class CardTemplate < ActiveRecord::Base
   validates :shop_id, presence: true
 
   # Include S3 utilities
-  include AwsUtils
+  require 'aws_utils'
 
   def create_preview_front
     require 'rmagick'

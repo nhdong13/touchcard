@@ -1,5 +1,4 @@
 class ShopsController < AuthenticatedController
-  before_action :current_shop
 
   def show
     @shop = Shop.find(params[:id])
@@ -38,7 +37,4 @@ class ShopsController < AuthenticatedController
       :charge_amount)
   end
 
-  def current_shop
-    @current_shop ||= Shop.find(session[:shopify])
-  end
 end

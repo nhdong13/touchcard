@@ -9,11 +9,11 @@
     <h4>What type of cards do you want to surprise your customers with?</h4>
     <div class="row">
       <div class="col-xs-6">
-      <%= form_for @master_card do |f| %>
-        <%= f.submit 'Coupon Postcard', :name => 'template', :value => "coupon",  :class => "btn btn-primary" %>
+      <%= form_for @card_template do |f| %>
+        <%= f.submit 'Coupon Postcard', :name => 'style', :value => "coupon",  :class => "btn btn-primary" %>
       </div>
       <div class="col-xs-6">
-        <%= f.submit 'Thank You Postcard', :name => 'template', :value => 'thank you', :class => "btn btn-primary" %>
+        <%= f.submit 'Thank You Postcard', :name => 'style', :value => 'thank you', :class => "btn btn-primary" %>
       <% end %>
       </div>
     </div>

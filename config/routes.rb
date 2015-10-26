@@ -5,7 +5,7 @@ Rails.application.routes.draw do
 
   # Routes for Card Templates
   resources :card_templates do
-    get 'template_switch', :on => :member
+    get 'style_switch', :on => :member
     get 'image_remove', :on => :member
     post 'coupon_confirm', :on => :member
   end

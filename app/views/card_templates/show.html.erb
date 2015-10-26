@@ -1,0 +1,55 @@
+<div class="container-fluid">
+  <h1>Manage Cards</h1>
+
+  <div class="row">
+    <div class="preview address_side col-xs-5">
+      <h3>Address Side</h3>
+      <% unless @card_template.preview_back == nil %>
+        <%= image_tag(@card_template.preview_back, :class => "card_display") %>
+      <% else %>
+        <%= image_tag('postage-area-image.png', :class=> "card_display") %>
+      <% end %>
+      <%= link_to 'Edit', edit_polymorphic_path(@card_template), :class => "btn btn-lg btn-primary", :style => "position: absolute; top: 50%; left: 40%; display: none;"%>
+    </div>
+    <div class="preview message_side col-xs-5" id="tester1">
+      <h3>Message Side</h3>
+      <% unless @card_template.preview_front == nil %>
+        <%= image_tag(@card_template.preview_front, :class => "card_display") %>
+      <% else %>
+        <%= image_tag('thankyou_example.png', :class => "card_display") %>
+      <% end %>
+      <%= link_to 'Edit', edit_polymorphic_path(@card_template), :class => "btn btn-lg btn-primary", :style => "position: absolute; top: 50%; left: 40%; display: none;"%>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-xs-10">
+      <h3>Settings</h3>
+      <div class="well shop_settings">
+        <%= link_to "Edit", edit_shop_path(@card_template.shop),:class => "glyphicon glyphicon-cog", :id => "settings_link" %>
+      <div class="setting">
+          <p style="margin: 0px;"><span class="shop_indicator <%= @card_template.enabled? ? 'enabled' : 'not-enabled' %>">&nbsp;</span>
+          <% if @card_template.enabled? %>
+            <b>ACTIVE</b></p>
+          <% else %>
+            <b>INACTIVE</b></p>
+            <% if @card_template.shop.credit == 0 %>
+              add credits to turn on <!-- Make this a link to purchase credit page -->
+            <% end %>
+          <% end %>
+        </div>
+        <div class="setting">
+          <!-- link to edit card -->
+          Send a card #{@card_template.send_delay} weeks after a new customer purchases
+        </div>
+        <div class="last_setting">
+          <!-- indicator/ajax switch -->
+          <p>
+            <span class="shop_indicator <%= @card_template.international? ? 'enabled' : 'not-enabled' %>">&nbsp;</span>
+            <b>Send Postcards to International Addresses</b></p>
+          <p>Any Country outside the US - 2 credits each</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
