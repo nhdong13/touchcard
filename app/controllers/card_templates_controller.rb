@@ -1,8 +1,8 @@
 class CardTemplatesController < AuthenticatedController
   attr_accessor :image_remove
+  before_action :set_card_template, only: [:update, :destroy, :show]
 
   def show
-    @card_template = CardTemplate.find(params[:id])
   end
 
   def new
@@ -24,14 +24,12 @@ class CardTemplatesController < AuthenticatedController
   end
 
   def edit
-    @card_template = CardTemplate.find(params[:id])
     @expire = Time.now + @card_template.send_delay.weeks + 2.weeks
   end
 
   def update
     if params[:commit] == "Save"
       puts "coupon confirm!"
-      @card_template = CardTemplate.find(params[:id])
       @card_template.update_attributes(coupon_params)
 
       respond_to do |format|
@@ -42,7 +40,6 @@ class CardTemplatesController < AuthenticatedController
 
     else
       #TODO: Refactor S3 upload stuff
-      @card_template = CardTemplate.find(params[:id])
       @expire = Time.now + @card_template.send_delay.weeks + 2.weeks
 
       # TODO: Refactor with params[:commit]
@@ -127,6 +124,14 @@ class CardTemplatesController < AuthenticatedController
   end
 
   private
+
+  def set_card_template
+    @card_template = CardTemplate.find_by(id: params[:id], shop_id: @current_shop.id)
+    if @card_template.nil?
+      # TODO: Add 404 page here
+      puts "404 here"
+    end
+  end
 
   def template_types
     [PostsaleTemplate, BulkTemplate]
