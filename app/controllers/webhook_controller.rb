@@ -40,12 +40,12 @@ class WebhookController < ApplicationController
             :state          => order.shipping_address.province_code,
             :country        => order.shipping_address.country_code,
             :zip            => order.shipping_address.zip,
-            :send_date      => (Date.today + shop.send_delay),
+            :send_date      => (Date.today + shop.send_delay.weeks),
             :order_id       => order.id
           )
 
           # TODO: Remove after alph
-          card.send_card
+          #card.send_card
         else
           puts "Duplicate card found"
           head :ok
