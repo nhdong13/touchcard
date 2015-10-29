@@ -128,7 +128,7 @@ class Shop < ActiveRecord::Base
     #Set charge values based on environment
     unless ENV['RAILS_ENV'] == "development" or ENV['RAILS_ENV'] == "test"
       name = "Touchcard"
-      test = true #TODO: Change this when app is released in Beta
+      test = false
       return_url = "https://touchcard.herokuapp.com/charge/activate"
     else
       name = "Touchcard-dev"
