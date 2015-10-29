@@ -15,7 +15,7 @@ class ChargeController < AuthenticatedController
         shop.credit += shop.charge_amount
         shop.save!
         flash[:success] = "New plan activated!"
-        redirect_to root_url
+        redirect_to edit_shop_path(shop)
       rescue
         #SlackNotify.error(shop.domain, error) #Send error to slack if charge isn't activated
         #TODO Add error display

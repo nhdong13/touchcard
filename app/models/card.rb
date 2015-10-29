@@ -3,12 +3,11 @@ class Card < ActiveRecord::Base
   validates :shop_id, presence: true
   has_one :master_card, through: :shop
 
-
   def self.send_all
     @to_send = Card.were("sent = ? and send_date <= ?", false, Time.now )
     @to_send.each do |card|
       #card.delay.send_card
-      card.send_card
+      card.delay.send_card
     end
   end
 

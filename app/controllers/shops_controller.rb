@@ -9,6 +9,7 @@ class ShopsController < AuthenticatedController
     @shop = Shop.find(params[:id])
     @shop.new_sess
     @last_month = ShopifyAPI::Customer.where(:created_at_min => (Time.now - 1.month)).count
+    @shop.update(last_month: @last_month)
     @current = @shop.charge_amount || 0
   end
 
