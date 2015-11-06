@@ -1,5 +1,34 @@
 Rails.application.routes.draw do
 
+  # API routes
+  namespace :api, defaults: {format: 'json'} do
+    namespace :v1 do
+      resources :shops, only: [:show, :edit, :update]
+      resources :card_templates, only: [:index, :show, :new, :create, :edit, :update, :bulk_send]
+      resources :post_sale_templates, :controller => "card_templates", :type => "PostSaleTemplate", only: [:index, :show, :new, :create, :edit, :update]
+      resources :bulk_templates,      :controller => "card_templates", :type => "BulkTemplate", only: [:index, :show, :new, :create, :edit, :update]
+      resources :postcards, only: [:index, :show, :new, :create, :edit, :update]
+      resources :charges, only: [:index, :show, :new, :create]
+
+      # Routes for home
+      get 'home/dashboard'
+      get 'home/support'
+    end
+  end
+
+  # Routes for charge callbacks
+  get 'charge/activate'
+
+  # Webhook routes
+  post '/new_order',  to:   'webhook#new_order'
+  post '/uninstall',  to:   'webhook#uninstall'
+
+  # Routes for Admins
+  devise_for :admin_users, ActiveAdmin::Devise.config
+  ActiveAdmin.routes(self)
+
+  ######### Below is old ##########
+
   # Routes for Shops
   resources :shops
 
@@ -16,16 +45,7 @@ Rails.application.routes.draw do
   # Routes for Cards
   resources :postcards
 
-  # Routes for Admins
-  devise_for :admin_users, ActiveAdmin::Devise.config
-  ActiveAdmin.routes(self)
 
-  # Routes for charges
-  get 'charge/activate'
-
-  # Webhook routes
-  post '/new_order',  to:   'webhook#new_order'
-  post '/uninstall',  to:   'webhook#uninstall'
 
   # Support page
   get '/support',   to: 'home#support'

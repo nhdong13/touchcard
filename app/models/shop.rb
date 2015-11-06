@@ -158,6 +158,19 @@ class Shop < ActiveRecord::Base
     return @charge.confirmation_url
   end
 
+  def bulk_charge(amount)
+    self.new_sess
+
+    shopify_charge = ShopifyAPI::ApplicationCharge.create(
+      name: "Touchcard Bulk Send",
+      price: @charge.amount,
+      test: true,
+      return_url: "https://touchcard.herokuapp.com/charge/activate_bulk"
+    )
+
+    return shopify_charge
+  end
+
   def self.top_up_all
     # Daily top-up of all shops with today as a billing date
     @credit_shops = Shop.where(:charge_date => Date.today)

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151022040604) do
+ActiveRecord::Schema.define(version: 20151104052021) do
 
   create_table "active_admin_comments", force: :cascade do |t|
     t.string   "namespace"
@@ -67,6 +67,18 @@ ActiveRecord::Schema.define(version: 20151022040604) do
     t.float    "revenue"
     t.datetime "created_at",                    null: false
     t.datetime "updated_at",                    null: false
+  end
+
+  create_table "charges", force: :cascade do |t|
+    t.integer  "shop_id"
+    t.integer  "shopify_id",       limit: 8
+    t.float    "amount"
+    t.boolean  "recurring",                  default: false, null: false
+    t.string   "status",                     default: "new"
+    t.string   "shopify_redirect"
+    t.string   "last_page"
+    t.datetime "created_at",                                 null: false
+    t.datetime "updated_at",                                 null: false
   end
 
   create_table "postcards", force: :cascade do |t|

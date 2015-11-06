@@ -14,6 +14,7 @@ gem 'uglifier', '>= 1.3.0'
 gem 'coffee-rails', '~> 4.1.0'
 
 gem 'jquery-rails'
+gem 'momentjs-rails', '>= 2.8.1'
 gem 'turbolinks'
 gem 'jbuilder', '~> 2.0'
 gem 'sdoc', '~> 0.4.0', group: :doc
@@ -24,6 +25,10 @@ gem 'foreigner'
 # Admin interface
 gem 'devise'
 gem 'activeadmin', github: 'activeadmin'
+
+# API serializer
+#gem 'active_model_serializers'
+gem 'jsonapi-resources'
 
 # Shopify app
 gem 'shopify_app'
@@ -41,7 +46,7 @@ gem 'rmagick'
 gem 'lob'
 
 # Newrelic for monitoring
-gem 'newrelic_rpm'
+#gem 'newrelic_rpm'
 
 # Httparty for debug
 gem 'httparty'
@@ -54,8 +59,6 @@ gem 'unicorn'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
-
-gem 'momentjs-rails', '>= 2.8.1'
 
 # Background tasks
 gem 'delayed_job_active_record'
