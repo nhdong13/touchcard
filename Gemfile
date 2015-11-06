@@ -27,8 +27,7 @@ gem 'devise'
 gem 'activeadmin', github: 'activeadmin'
 
 # API serializer
-#gem 'active_model_serializers'
-gem 'jsonapi-resources'
+gem "active_model_serializers", "~> 0.8.0"
 
 # Shopify app
 gem 'shopify_app'

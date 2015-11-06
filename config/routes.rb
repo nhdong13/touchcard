@@ -8,16 +8,13 @@ Rails.application.routes.draw do
       resources :post_sale_templates, :controller => "card_templates", :type => "PostSaleTemplate", only: [:index, :show, :new, :create, :edit, :update]
       resources :bulk_templates,      :controller => "card_templates", :type => "BulkTemplate", only: [:index, :show, :new, :create, :edit, :update]
       resources :postcards, only: [:index, :show, :new, :create, :edit, :update]
-      resources :charges, only: [:index, :show, :new, :create]
+      resources :charges, only: [:index, :show, :new, :create, :edit, :update]
 
       # Routes for home
       get 'home/dashboard'
       get 'home/support'
     end
   end
-
-  # Routes for charge callbacks
-  get 'charge/activate'
 
   # Webhook routes
   post '/new_order',  to:   'webhook#new_order'
@@ -27,23 +24,26 @@ Rails.application.routes.draw do
   devise_for :admin_users, ActiveAdmin::Devise.config
   ActiveAdmin.routes(self)
 
-  ######### Below is old ##########
+# ######### Below is old ##########
 
-  # Routes for Shops
-  resources :shops
+# # Routes for charge callbacks
+# get 'charge/activate'
 
-  # Routes for Card Templates
-  resources :card_templates do
-    get 'style_switch', :on => :member
-    get 'image_remove', :on => :member
-    post 'coupon_confirm', :on => :member
-  end
+# # Routes for Shops
+# resources :shops
 
-  resources :postsale_templates,  :controller => "card_templates", :type => "PostsaleTemplate"
-  resources :bulk_templates,      :controller => "card_templates", :type => "BulkTemplate"
+# # Routes for Card Templates
+# resources :card_templates do
+#   get 'style_switch', :on => :member
+#   get 'image_remove', :on => :member
+#   post 'coupon_confirm', :on => :member
+# end
 
-  # Routes for Cards
-  resources :postcards
+# resources :postsale_templates,  :controller => "card_templates", :type => "PostsaleTemplate"
+# resources :bulk_templates,      :controller => "card_templates", :type => "BulkTemplate"
+
+# # Routes for Cards
+# resources :postcards
 
 
 
@@ -55,4 +55,5 @@ Rails.application.routes.draw do
 
   # Shopify Engine
   mount ShopifyApp::Engine, at: '/'
+
 end

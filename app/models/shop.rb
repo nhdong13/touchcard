@@ -121,11 +121,13 @@ class Shop < ActiveRecord::Base
     end
   end
 
-  def new_charge(amount)
+  def new_recurring_charge(amount)
     # Create a new recurring charge for the shop
     self.new_sess
 
     price = (amount.to_i * 0.99).round(2)
+
+    charge = serf.charge.new(amount: price, recurring: true, status: "new")
 
     #Set charge values based on environment
     unless ENV['RAILS_ENV'] == "development" or ENV['RAILS_ENV'] == "test"
@@ -139,7 +141,7 @@ class Shop < ActiveRecord::Base
     end
 
     #Create application charge on Shopify
-    @charge = ShopifyAPI::RecurringApplicationCharge.create(
+    @shopify_charge = ShopifyAPI::RecurringApplicationCharge.create(
       name: name,
       price: price,
       test: test,
@@ -151,11 +153,15 @@ class Shop < ActiveRecord::Base
     puts "Current shop domain: #{self.domain}"
     puts "*************************************"
 
-    #Save the charge info to the local db and go to Shopify confirmation url
-    self.charge_id = @charge.id
-    self.save!
+    # Set old charge status to "canceling"
+    Charge.find(self.charge_id).canceling
 
-    return @charge.confirmation_url
+    #Save the charge info to the local db and go to Shopify confirmation url
+    charge.shopify_id = @shopify_charge.id
+    charge.shopify_redirect = @shopify_charge.confirmation_url
+    charge.save!
+    self.charge_id = charge.id
+    self.save!
   end
 
   def bulk_charge(amount)
@@ -169,6 +175,12 @@ class Shop < ActiveRecord::Base
     )
 
     return shopify_charge
+  end
+
+  def top_up
+    credits = (self.charge_amount/0.99).ceil
+    new_credits = self.credit + credits
+    self.update_attribute(:credit, new_credits)
   end
 
   def self.top_up_all

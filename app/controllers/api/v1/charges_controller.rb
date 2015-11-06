@@ -1,57 +1,60 @@
 class API::V1::ChargesController < BaseApiController
 
-  def activate
-
-    #retrieve the shop and start new session with Shopify
-    shop = Shop.find_by(:charge_id => params[:charge_id])
-    shop.new_sess
-
-    #Find the charge on Shopify's end, and check that it is accepted
-    shopify_charge = ShopifyAPI::RecurringApplicationCharge.find(params[:charge_id])
-    if shopify_charge.status == "accepted"
-      begin
-        shopify_charge.activate
-        shop.charge_date = Date.today
-        shop.credit += shop.charge_amount
-        shop.save!
-        flash[:success] = "New plan activated!"
-        redirect_to root_url
-      rescue
-        #SlackNotify.error(shop.domain, error) #Send error to slack if charge isn't activated
-        #TODO Add error display
-        redirect_to root_url
-      end
-
-    #Handle duplicate charge accepted callback from Shopify
-    elsif shopify_charge.status == "active"
-      puts "duplicate charge callback"
-      redirect_to root_url
-
-    #Handle a declined charge activation
-    else
-      if ENV['RAILS_ENV'] == "development"
-        puts shopify_charge.status
-      end
-      flash[:error] = "Not activated"
-      redirect_to root_url
-    end
+  def index
   end
 
-  def activate_bulk
-    # Find the shop and start a session
-    shop = Charge.find(params[:charge_id]).shop
+  def show
+    @charge = Charge.find_by(id: params[:id], shop_id: @current_shop.id)
+    render json: @charge, serializer: ChargeSerializer
+  end
+
+  def new
+  end
+
+  def create
+  end
+
+  def edit
+    @charge = Charge.find_by(id: params[:id], shop_id: @current_shop.id)
+    render json: @charge, serializer: ChargeSerializer
+  end
+
+  def update
+    # get the charge
+    @charge = Charge.find(params[:charge_id])
+    shop = @charge.shop
     shop.new_sess
 
-    # Check the status of the charge
-    shopify_charge = ShopifyAPI::ApplicationCharge.find(params[:charge_id])
+    # Recurring or application?
+    if @charge.recurring?
+      old_charge = Charge.find_by(:status => "canceling", :shop_id => shop.id)
 
-    if shopify_charge.status == "accepted"
-      shopify_charge.activate
+      #Find the charge on Shopify's end, and check that it is accepted
+      shopify_charge = ShopifyAPI::RecurringApplicationCharge.find(params[:charge_id])
+      if shopify_charge.status == "accepted"
+        shopify_charge.activate
+        @charge.update_attribute(:status, "active")
+        old_charge.update_attribute(:status, "cancelled")
 
+        # Update shop data and credits
+        shop.update_attributes(:charge_id => @charge.id, :amount => (@charge.amount/0.99).to_i , :charge_date => Date.today )
+        shop.top_up
+
+      elsif shopify_charge.status == "active"
+        puts "duplicate charge callback"
+      end
     else
-
+      # Bulk Charge
+      shopify_charge = ShopifyAPI::ApplicationCharge.find(params[:charge_id])
+      if shopify_charge.status == "accepted"
+        shopify_charge.activate
+        @charge.update_attribute(:status, "active")
+      elsif shopify_charge.status == "active"
+        puts "duplicate charge callback"
+      end
     end
 
+    render json: @charge, serializer: ChargeSerializer
 
   end
 

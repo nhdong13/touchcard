@@ -2,6 +2,7 @@ class API::V1::PostcardsController < BaseApiController
 
   def index
     @postcards = @current_shop.postcards
+    render json: @postcards, serializer: PostcardSerializer
   end
 
   def new
