@@ -1,4 +1,4 @@
-class API::V1::CardTemplatesController < BaseApiController
+class API::V1::CardTemplatesController < BaseController
   before_action :set_card_template, only: [:show, :update, :destroy]
 
   def index

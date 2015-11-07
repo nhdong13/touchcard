@@ -1,4 +1,4 @@
-class API::V1::ShopsController < BaseApiController
+class API::V1::ShopsController < BaseController
 
   def show
     render json: @current_shop, serializer: ShopSerializer

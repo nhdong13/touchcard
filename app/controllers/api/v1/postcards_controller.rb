@@ -1,4 +1,4 @@
-class API::V1::PostcardsController < BaseApiController
+class API::V1::PostcardsController < BaseController
 
   def index
     @postcards = @current_shop.postcards

@@ -1,4 +1,4 @@
-class API::V1::HomeController < BaseApiController
+class API::V1::HomeController < BaseController
 
   def index
     if @current_shop.card_templates.any?
@@ -11,6 +11,7 @@ class API::V1::HomeController < BaseApiController
       @sent_cards = current_shop.postcards.where(:sent => true);
 
       render :json => @sent_cards, serializer: PostcardSerializer
+    end
   end
 
   def support
