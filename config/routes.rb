@@ -9,7 +9,7 @@ Rails.application.routes.draw do
       resources :bulk_templates,      :controller => "card_templates", :type => "BulkTemplate", only: [:index, :show, :new, :create, :edit, :update]
       resources :postcards, only: [:index, :show, :new, :create, :edit, :update]
       resources :charges, only: [:index, :show, :new, :create, :edit, :update] do
-        get 'activate' on: :member
+        get 'activate', on: :member
       end
 
       # Routes for home
