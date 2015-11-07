@@ -10,4 +10,8 @@ class BaseController < AuthenticatedController
   def not_found!
     return api_error(status: 404, errors: 'Not found')
   end
+
+  def unprocessable
+    return api_error(status: 422, error: 'Unprocessable entity')
+  end
 end

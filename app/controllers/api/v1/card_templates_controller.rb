@@ -17,15 +17,17 @@ class API::V1::CardTemplatesController < BaseController
 # end
 
   def create
-    @card_template = template_type.new(card_params)
-    @card_template.shop_id = params[:shop_id]
-#   @card_template.title_front = "Thank You!"
+    @card_template = card_template.new(card_params)
 #   @card_template.text_front = "We're glad we could share our products with you. We hope you're enjoying your purchase!"
     @card_template.coupon_pct = 10
     @card_template.coupon_loc = "10.00,65.00"
-    @card_template.save!
+    if @card_template.save
+      render json: @card_template, serializer: CardTemplateSerializer
+    else
+      # return 422 error
+      render json: @card_template.errors
+    end
 
-    render json: @card_template, serializer: CardTemplateSerializer
   end
 
 # def edit
