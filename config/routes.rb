@@ -8,7 +8,9 @@ Rails.application.routes.draw do
       resources :post_sale_templates, :controller => "card_templates", :type => "PostSaleTemplate", only: [:index, :show, :new, :create, :edit, :update]
       resources :bulk_templates,      :controller => "card_templates", :type => "BulkTemplate", only: [:index, :show, :new, :create, :edit, :update]
       resources :postcards, only: [:index, :show, :new, :create, :edit, :update]
-      resources :charges, only: [:index, :show, :new, :create, :edit, :update]
+      resources :charges, only: [:index, :show, :new, :create, :edit, :update] do
+        get 'activate' on: :member
+      end
 
       # Routes for home
       get 'home/dashboard'

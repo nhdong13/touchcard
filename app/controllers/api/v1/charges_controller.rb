@@ -1,5 +1,7 @@
 class API::V1::ChargesController < BaseApiController
 
+  validates :amount, customers: true
+
   def index
   end
 
@@ -12,18 +14,24 @@ class API::V1::ChargesController < BaseApiController
   end
 
   def create
+    @charge = @current_shop.charge.create(charge_params)
+    @charge.new_shopify_charge
+    render json: @charge, serializer: ChargeSerializer
   end
 
   def edit
-    @charge = Charge.find_by(id: params[:id], shop_id: @current_shop.id)
-    render json: @charge, serializer: ChargeSerializer
   end
 
   def update
     # get the charge
-    @charge = Charge.find(params[:charge_id])
-    shop = @charge.shop
-    shop.new_sess
+    @charge = Charge.find(params[:charge_id], :shop => @current_shop)
+    @charge.update_attributes(charge_params)
+    render json: @charge, serializer: ChargeSerializer
+
+  end
+
+  def activate
+    @charge = Chrage.find_by(:shopify_id => params[:charge_id])
 
     # Recurring or application?
     if @charge.recurring?
@@ -54,8 +62,20 @@ class API::V1::ChargesController < BaseApiController
       end
     end
 
-    render json: @charge, serializer: ChargeSerializer
+    redirect_to @charge.last_page
+  end
 
+  private
+
+  def charge_params
+    params.require(:charge).permit(
+      :id,
+      :shopify_id,
+      :amount,
+      :recurring,
+      :status,
+      :shopify_redirect,
+      :last_page)
   end
 
 end
