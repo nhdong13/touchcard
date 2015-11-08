@@ -21,9 +21,9 @@ describe API::V1::PostcardsController do
         expect(response.status).to eq(200)
       end
 
-      it "should return both postcards" do
+      it "should return 2 postcards" do
         login(postcard.shop)
-        create(:postcard, :card_template => postcard.card_template)
+        create_list(:postcard, 2, { :card_template => postcard.card_template, :sent => true })
         get :index
 
         json = JSON.parse(response.body)
