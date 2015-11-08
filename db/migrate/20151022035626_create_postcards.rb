@@ -1,5 +1,5 @@
 class CreatePostcards < ActiveRecord::Migration
-  def self.up
+  def change
     create_table :postcards do |t|
       t.belongs_to  :card_template
       t.string      :coupon
@@ -21,9 +21,5 @@ class CreatePostcards < ActiveRecord::Migration
 
       t.timestamps null: false
     end
-  end
-
-  def self.down
-    drop_table :postcards
   end
 end

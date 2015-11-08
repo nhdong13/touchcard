@@ -4,7 +4,6 @@ class CreateCardTemplates < ActiveRecord::Migration
       t.belongs_to  :shop
       t.string      :type
       t.string      :style
-      t.string      :logo
       t.string      :image_front
       t.string      :image_back
       t.string      :logo

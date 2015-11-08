@@ -1,5 +1,5 @@
 class API::V1::CardTemplatesController < API::BaseController
-  before_action :set_card_template, only: [:show, :update, :destroy]
+  #before_action :set_card_template, only: [:show, :update, :destroy]
 
   def index
     @card_templates = CardTemplate.where(shop_id: @current_shop.id)
@@ -8,7 +8,12 @@ class API::V1::CardTemplatesController < API::BaseController
 
   def show
     @card_template = CardTemplate.find_by(id: params[:id], shop_id: @current_shop.id)
-    render json: @card_template, serializer: CardTemplateSerializer
+
+    unless @card_template.nil?
+      render json: @card_template, serializer: CardTemplateSerializer
+    else
+      render json: { error: "not-found" }, status: 404
+    end
   end
 
 # def new

@@ -8,7 +8,7 @@ describe API::V1::ShopsController do
 
     describe "without session" do
 
-      it "should respond with 404" do
+      it "should respond with 302" do
         get :show, id: shop.id
 
         expect(response.status).to eq(302)

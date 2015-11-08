@@ -3,4 +3,8 @@ FactoryGirl.define do
     domain  "testshop.myshopify.com"
     token   "123test"
   end
+
+  factory :card_template do
+    shop
+  end
 end
