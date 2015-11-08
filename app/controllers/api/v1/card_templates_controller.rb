@@ -1,5 +1,5 @@
 class API::V1::CardTemplatesController < API::BaseController
-  #before_action :set_card_template, only: [:show, :update, :destroy]
+  before_action :set_card_template, only: [:show, :update, :destroy]
 
   def index
     @card_templates = CardTemplate.where(shop_id: @current_shop.id)
@@ -22,7 +22,7 @@ class API::V1::CardTemplatesController < API::BaseController
 # end
 
   def create
-    @card_template = card_template.new(card_params)
+    @card_template = CardTemplate.new(card_params)
 #   @card_template.text_front = "We're glad we could share our products with you. We hope you're enjoying your purchase!"
     @card_template.coupon_pct = 10
     @card_template.coupon_loc = "10.00,65.00"
@@ -30,7 +30,7 @@ class API::V1::CardTemplatesController < API::BaseController
       render json: @card_template, serializer: CardTemplateSerializer
     else
       # return 422 error
-      render json: { errors: @card_template.errors }
+      render json: { errors: @card_template.errors }, status: 422
     end
 
   end
@@ -54,25 +54,30 @@ class API::V1::CardTemplatesController < API::BaseController
       @card_template.image_front = AwsUtils.upload_to_s3(card_params[:image_front].original_filename, card_params[:image_front].path)
     end
 
-    @card_template.save!
-    @card_template.create_preview_front
-    @card_template.create_preview_back
+    if @card_template.save
+      @card_template.create_preview_front
+      @card_template.create_preview_back
 
-    if @card_template.status == "sending" and @card_template.status != old_status
-      # Bulk send
-      @current_shop.new_sess
-      customers = ShopifyAPI::Customer.count(:created_at_min => params[:customers_after], :created_at_max => params[:customers_before])
-      amount = (customers * 0.99).round(2)
-      @charge = @current_shop.charge.create(amount: amount, recurring: false, status: "new")
+      if @card_template.status == "sending" and @card_template.status != old_status
+        # Bulk send
+        @current_shop.new_sess
+        customers = ShopifyAPI::Customer.count(:created_at_min => params[:customers_after], :created_at_max => params[:customers_before])
+        amount = (customers * 0.99).round(2)
+        @charge = @current_shop.charge.create(amount: amount, recurring: false, status: "new")
 
-      # Create the charge in Shopify
-      shopify_charge = @current_shop.bulk_charge(@charge.amount)
+        # Create the charge in Shopify
+        shopify_charge = @current_shop.bulk_charge(@charge.amount)
 
-      # Set the charge id in the bulk_template
-      @card_template.transaction_id = shopify_charge.id
-    end
+        # Set the charge id in the bulk_template
+        @card_template.transaction_id = shopify_charge.id
+      end
 
       render json: @card_template, serializer: CardTemplateSerializer
+
+    else
+
+      render json: { error: @card_template.errors }, status: 422
+    end
 
   end
 
@@ -100,6 +105,7 @@ class API::V1::CardTemplatesController < API::BaseController
   def card_params
     params.require(:card_template).permit(
       :id,
+      :shop_id,
       :type,
       :style,
       #:logo,

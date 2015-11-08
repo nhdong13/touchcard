@@ -40,6 +40,7 @@ class API::V1::ShopsController < API::BaseController
       :id,
       :token,
       :charge_amount,
+      :customer_pct,
       :last_month)
   end
 

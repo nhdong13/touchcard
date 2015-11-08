@@ -35,12 +35,11 @@ describe API::V1::ShopsController do
 
   describe "Update a Shop" do
 
-    describe "with an ivalid param" do
+    describe "with an invalid param" do
 
-      # TODO: figure out why this is returning 200
       it "should respond with 422" do
         login(shop)
-        patch :update, id: shop.id, :shop => {id: shop.id, token: true }
+        patch :update, id: shop.id, :shop => {id: shop.id, customer_pct: "test" }
         expect(response.status).to eq(422)
       end
     end

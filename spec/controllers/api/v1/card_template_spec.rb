@@ -35,4 +35,37 @@ describe API::V1::CardTemplatesController do
       end
     end
   end
+
+  describe "Create card_template" do
+
+    describe "With bad params" do
+      it "Should respond with 422" do
+        login(card_template.shop)
+        post :create, :card_template => { style: "thank you" }
+
+        expect(response.status).to eq(422)
+      end
+    end
+
+    describe "With good params" do
+      it "should respond with 200" do
+        login(card_template.shop)
+        post :create, :card_template => { shop_id: card_template.shop.id }
+
+        expect(response.status).to eq(200)
+      end
+    end
+  end
+
+# describe "Update card_template" do
+
+#   describe "With bad params" do
+
+#     it "should respond with 422" do
+#       login(card_template.shop)
+#       patch :update, id: card_template.id, :card_template => { id: card_template.id, shop_id: nil }
+#       expect(response.status).to eq(422)
+#     end
+#   end
+# end
 end

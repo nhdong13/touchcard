@@ -1,4 +1,5 @@
 class Shop < ActiveRecord::Base
+  validates :customer_pct, numericality: true
   has_many :card_templates, dependent: :destroy
   has_many :postsale_templates
   has_many :bulk_templates
