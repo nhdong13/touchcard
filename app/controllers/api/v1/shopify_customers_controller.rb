@@ -1,4 +1,4 @@
-class API::V1::ShopifyCustomersController < BaseController
+class API::V1::ShopifyCustomersController < API::BaseController
 
   def shopify_customers
     require 'customer_check'

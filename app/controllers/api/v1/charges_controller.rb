@@ -1,4 +1,4 @@
-class API::V1::ChargesController < BaseController
+class API::V1::ChargesController < API::BaseController
 
   validates :amount, customers: true
 

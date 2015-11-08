@@ -1,4 +1,4 @@
-class API::V1::HomeController < BaseController
+class API::V1::HomeController < API::BaseController
 
   def index
     if @current_shop.card_templates.any?

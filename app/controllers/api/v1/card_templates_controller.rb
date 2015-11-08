@@ -1,4 +1,4 @@
-class API::V1::CardTemplatesController < BaseController
+class API::V1::CardTemplatesController < API::BaseController
   before_action :set_card_template, only: [:show, :update, :destroy]
 
   def index
@@ -25,7 +25,7 @@ class API::V1::CardTemplatesController < BaseController
       render json: @card_template, serializer: CardTemplateSerializer
     else
       # return 422 error
-      render json: @card_template.errors
+      render json: { errors: @card_template.errors }
     end
 
   end

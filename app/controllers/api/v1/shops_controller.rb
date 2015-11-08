@@ -1,4 +1,4 @@
-class API::V1::ShopsController < BaseController
+class API::V1::ShopsController < API::BaseController
 
   def show
     render json: @current_shop, serializer: ShopSerializer
@@ -19,21 +19,28 @@ class API::V1::ShopsController < BaseController
 
     # Save which attributes are updated
     changed =  @shop.changed_attributes
-    @shop.save!
+    if @shop.save
 
-    # Check if a billing attribute has been changed or not
-    unless changed[:charge_amount] == nil
-      @shop.new_recurring_charge(shop_params[:charge_amount])
+      # Check if a billing attribute has been changed or not
+      unless changed[:charge_amount] == nil
+        @shop.new_recurring_charge(shop_params[:charge_amount])
+      end
+
+      render json: @shop, serializer: ShopSerializer
+
+    else
+      render json: { errors: @shop.errors.full_messages }, status: 422
     end
-
-    render json: @shop, serializer: ShopSerializer
   end
 
   private
 
   def shop_params
     params.require(:shop).permit(
-      :charge_amount)
+      :id,
+      :token,
+      :charge_amount,
+      :last_month)
   end
 
 end

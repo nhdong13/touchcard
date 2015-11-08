@@ -84,6 +84,7 @@ group :development, :test do
   gem 'sqlite3'
   gem "less-rails-bootstrap"
   gem 'rspec-rails', '~> 3.0'
+  gem 'factory_girl_rails'
 end
 
 group :production do
