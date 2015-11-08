@@ -3,7 +3,7 @@ class API::V1::CardTemplatesController < API::BaseController
 
   def index
     @card_templates = CardTemplate.where(shop_id: @current_shop.id)
-    render @card_templates, serializer: CardTemplateSerializer
+    render @card_templates, each_serializer: CardTemplateSerializer
   end
 
   def show
@@ -38,7 +38,7 @@ class API::V1::CardTemplatesController < API::BaseController
 
   def update
     #@card_template = CardTemplate.find_by(id: params[:id], shop_id: @current_shop.id)
-    @card_template.update_attributes(coupon_params)
+    @card_template.assign_attributes(coupon_params)
 
     if card_params.has_key?(:image_back)
       @card_template.image_back = AwsUtils.upload_to_s3(card_params[:image_back].original_filename, card_params[:image_back].path)

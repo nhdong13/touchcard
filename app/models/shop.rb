@@ -4,6 +4,7 @@ class Shop < ActiveRecord::Base
   has_many :postsale_templates
   has_many :bulk_templates
   has_many :postcards, through: :card_templates
+  has_many :charges
 
   def self.store(session)
     shop = Shop.find_by(:domain => session.url)

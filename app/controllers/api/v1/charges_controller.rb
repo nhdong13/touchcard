@@ -1,12 +1,12 @@
 class API::V1::ChargesController < API::BaseController
-
-  validates :amount, customers: true
+  before_action :set_charge, only: [:show, :update, :destroy]
 
   def index
+    @charges = Charge.where(shop_id: @current_shop.id)
+    render json: @charges, each_serializer: ChargeSerializer
   end
 
   def show
-    @charge = Charge.find_by(id: params[:id], shop_id: @current_shop.id)
     render json: @charge, serializer: ChargeSerializer
   end
 
@@ -14,19 +14,25 @@ class API::V1::ChargesController < API::BaseController
   end
 
   def create
-    @charge = @current_shop.charge.create(charge_params)
-    @charge.new_shopify_charge
-    render json: @charge, serializer: ChargeSerializer
+    @charge = Charge.new(charge_params)
+    if @charge.save
+      @charge.new_shopify_charge
+      render json: @charge, serializer: ChargeSerializer
+    else
+      render json: { errors: @charge.errors }, status: 422
+    end
   end
 
   def edit
   end
 
   def update
-    # get the charge
-    @charge = Charge.find(params[:charge_id], :shop => @current_shop)
-    @charge.update_attributes(charge_params)
-    render json: @charge, serializer: ChargeSerializer
+    @charge.assign_attributes(charge_params)
+    if @charge.save
+      render json: @charge, serializer: ChargeSerializer
+    else
+      render json: { errors: @charge.errors }, status: 422
+    end
 
   end
 
@@ -67,9 +73,18 @@ class API::V1::ChargesController < API::BaseController
 
   private
 
+  def set_charge
+    @charge = Charge.find_by(id: params[:id], shop_id: @current_shop.id)
+    if @charge.nil?
+      render json: { errors: "not-found" }, status: 404
+    end
+  end
+
   def charge_params
     params.require(:charge).permit(
       :id,
+      :shop_id,
+      :card_template_id,
       :shopify_id,
       :amount,
       :recurring,

@@ -8,4 +8,8 @@ module SpecTestHelper
   def current_shop
     Shop.find(request.session[:shopify])
   end
+
+  def logout
+    session[:shopify] = nil
+  end
 end

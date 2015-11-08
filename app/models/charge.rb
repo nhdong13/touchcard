@@ -2,6 +2,8 @@ class Charge < ActiveRecord::Base
   belongs_to :shop
   belongs_to :card_template
 
+  validates :shop_id, presence: true
+
   def new_shopify_charge
     shop = self.shop
     shop.new_sess

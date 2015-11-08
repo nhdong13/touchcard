@@ -11,4 +11,8 @@ FactoryGirl.define do
   factory :postcard do
     card_template
   end
+
+  factory :charge do
+    shop
+  end
 end

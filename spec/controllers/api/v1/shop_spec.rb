@@ -4,7 +4,7 @@ describe API::V1::ShopsController do
 
   let(:shop) { create(:shop) }
 
-  describe "Get shop" do
+  describe "Show shop" do
 
     describe "without session" do
 
