@@ -3,7 +3,6 @@ describe API::V1::PostcardsController do
   include SpecTestHelper
 
   let (:postcard)   { create(:postcard) }
-  let (:postcard1)  { create(:postcard) }
 
   describe "Postcards Index" do
     describe "not logged in" do
@@ -19,15 +18,16 @@ describe API::V1::PostcardsController do
         login(postcard.shop)
         get :index
 
-        expect(response.status).to eq(200) # TODO: Update serializer to return array
+        expect(response.status).to eq(200)
       end
 
       it "should return both postcards" do
         login(postcard.shop)
+        create(:postcard, :card_template => postcard.card_template)
         get :index
 
         json = JSON.parse(response.body)
-        expect(json['postcard']).to eq("2") # TODO: Figure out index body
+        expect(json['postcards'].length).to eq(2)
       end
     end
   end

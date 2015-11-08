@@ -4,7 +4,7 @@ class Postcard < ActiveRecord::Base
   has_one :shop, through: :card_template
 
   # Include S3 utilities
-  include AwsUtils
+  require 'aws_utils'
 
   def self.send_all
     @to_send = Card.were("sent = ? and send_date <= ?", false, Time.now )
