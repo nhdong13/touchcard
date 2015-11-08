@@ -38,14 +38,14 @@ describe API::V1::CardTemplatesController do
 
   describe "Create card_template" do
 
-    describe "With bad params" do
-      it "Should respond with 422" do
-        login(card_template.shop)
-        post :create, :card_template => { style: "thank you" }
+#   describe "With bad params" do
+#     it "Should respond with 422" do
+#       login(card_template.shop)
+#       post :create, :card_template => { style: "thank you" }
 
-        expect(response.status).to eq(422)
-      end
-    end
+#       expect(response.status).to eq(422)
+#     end
+#   end
 
     describe "With good params" do
       it "should respond with 200" do
@@ -57,15 +57,33 @@ describe API::V1::CardTemplatesController do
     end
   end
 
-# describe "Update card_template" do
+  describe "Update card_template" do
+
+    describe "with unknkown id" do
+      it "should respond with 404" do
+        login(card_template.shop)
+        patch :update, id: (card_template.id + 1), :card_template => { id: (card_template.id + 1) }
+
+        expect(response.status).to eq(404)
+      end
+    end
 
 #   describe "With bad params" do
 
 #     it "should respond with 422" do
 #       login(card_template.shop)
-#       patch :update, id: card_template.id, :card_template => { id: card_template.id, shop_id: nil }
+#       patch :update, id: card_template.id, :card_template => { id: card_template.id, shop_id: "test" }
 #       expect(response.status).to eq(422)
 #     end
 #   end
-# end
+
+    describe "with good params" do
+      it "should respond with 200" do
+      login(card_template.shop)
+      patch :update, id: card_template.id, :card_template => { id: card_template.id, enabled: true }
+
+      expect(response.status).to eq(200)
+      end
+    end
+  end
 end

@@ -7,13 +7,7 @@ class API::V1::CardTemplatesController < API::BaseController
   end
 
   def show
-    @card_template = CardTemplate.find_by(id: params[:id], shop_id: @current_shop.id)
-
-    unless @card_template.nil?
-      render json: @card_template, serializer: CardTemplateSerializer
-    else
-      render json: { error: "not-found" }, status: 404
-    end
+    render json: @card_template, serializer: CardTemplateSerializer
   end
 
 # def new
@@ -23,6 +17,7 @@ class API::V1::CardTemplatesController < API::BaseController
 
   def create
     @card_template = CardTemplate.new(card_params)
+    @card_template.shop_id = @current_shop.id
 #   @card_template.text_front = "We're glad we could share our products with you. We hope you're enjoying your purchase!"
     @card_template.coupon_pct = 10
     @card_template.coupon_loc = "10.00,65.00"
@@ -42,8 +37,7 @@ class API::V1::CardTemplatesController < API::BaseController
 # end
 
   def update
-    @card_template = CardTemplate.find_by(id: params[:id], shop_id: @current_shop.id)
-    old_status = @card_template.status
+    #@card_template = CardTemplate.find_by(id: params[:id], shop_id: @current_shop.id)
     @card_template.update_attributes(coupon_params)
 
     if card_params.has_key?(:image_back)
@@ -55,21 +49,9 @@ class API::V1::CardTemplatesController < API::BaseController
     end
 
     if @card_template.save
-      @card_template.create_preview_front
-      @card_template.create_preview_back
-
-      if @card_template.status == "sending" and @card_template.status != old_status
-        # Bulk send
-        @current_shop.new_sess
-        customers = ShopifyAPI::Customer.count(:created_at_min => params[:customers_after], :created_at_max => params[:customers_before])
-        amount = (customers * 0.99).round(2)
-        @charge = @current_shop.charge.create(amount: amount, recurring: false, status: "new")
-
-        # Create the charge in Shopify
-        shopify_charge = @current_shop.bulk_charge(@charge.amount)
-
-        # Set the charge id in the bulk_template
-        @card_template.transaction_id = shopify_charge.id
+      if card_params.has_key?(:image_back) or card_params.has_key?(:image_front) or card_params.has_key?(:coupon_loc)
+        @card_template.create_preview_front
+        @card_template.create_preview_back
       end
 
       render json: @card_template, serializer: CardTemplateSerializer
@@ -89,8 +71,7 @@ class API::V1::CardTemplatesController < API::BaseController
   def set_card_template
     @card_template = CardTemplate.find_by(id: params[:id], shop_id: @current_shop.id)
     if @card_template.nil?
-      # TODO: Add 404 page here
-      puts "404 here"
+      render json: { errors: "not-found" }, status: 404
     end
   end
 
@@ -105,7 +86,6 @@ class API::V1::CardTemplatesController < API::BaseController
   def card_params
     params.require(:card_template).permit(
       :id,
-      :shop_id,
       :type,
       :style,
       #:logo,
