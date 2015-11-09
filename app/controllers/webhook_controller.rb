@@ -22,32 +22,14 @@ class WebhookController < ApplicationController
       if duplicate.nil?
         # Create a new card and schedule to send
         ps_template = shop.postsale_templates.where(:status => "sending").first
-        if ps_template.enabled?
-          postcard = ps_template.postcards.new(
-            :order_id       => order.id,
-            :customer_id    => customer.id,
-            :customer_name  => customer.first_name + " " + customer.last_name,
-            :addr1          => order.shipping_address.address1,
-            :addr2          => order.shipping_address.address2,
-            :city           => order.shipping_address.city,
-            :state          => order.shipping_address.province_code,
-            :country        => order.shipping_address.country_code,
-            :zip            => order.shipping_address.zip,
-            :send_date      => (Date.today + shop.send_delay),
-          )
 
-          if postcard.country == "US" and shop.credit >= 1
-            postcard.save
-            postcard.delay.send_card
-          elsif postcard.country != "US" and ps_template.international? and shop.credit >= 2
-            postcard.save
-            postcard.delay.send_card
-          else
-            return
-          end
-
+        # Create a new postcard if sending is enabled and they have enough credits
+        if ps_template.enabled? and customer.default_address.country_code == "US" and shop.credit >= 1
+          Postcard.create_postcard(ps_template.id, customer, order.id)
+        elsif ps_template.enabled? and customer.default_address.country_code != "US" and ps_teplate.international? and shop.credit >= 2
+          Postcard.create_postcard(ps_template.id, customer, order.id)
         else
-          puts "Not Enabled"
+          puts "Not Enabled or not enough credits"
           head :ok
         end
       else

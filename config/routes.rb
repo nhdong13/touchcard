@@ -9,8 +9,9 @@ Rails.application.routes.draw do
       resources :bulk_templates,      :controller => "card_templates", :type => "BulkTemplate", only: [:index, :show, :create, :update]
       resources :postcards, only: [:index, :show, :create, :update]
       resources :charges, only: [:index, :show, :create, :update] do
-        get 'activate', on: :member
+        get 'activate', on: :collection
       end
+      resources :shopify_customers, only: [:index]
 
       # Routes for home
       get 'home/dashboard'

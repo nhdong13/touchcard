@@ -35,7 +35,7 @@ class API::V1::ChargesController < API::BaseController
 
     # Recurring or application?
     if @charge.recurring?
-      old_charge = Charge.find_by(:status => "canceling", :shop_id => shop.id)
+      old_charge = Charge.find_by(:status => "active", :shop_id => shop.id)
 
       #Find the charge on Shopify's end, and check that it is accepted
       shopify_charge = ShopifyAPI::RecurringApplicationCharge.find(params[:charge_id])
@@ -57,6 +57,12 @@ class API::V1::ChargesController < API::BaseController
       if shopify_charge.status == "accepted"
         shopify_charge.activate
         @charge.update_attribute(:status, "active")
+
+        # Do the bulk send
+        # NOTE: Should this be a card template, or a bulk_template? - Probably bulk
+        @charge.bulk_template.update_attributes(status: "sending")
+        @charge.bulk_template.bulk_send
+
       elsif shopify_charge.status == "active"
         puts "duplicate charge callback"
       end

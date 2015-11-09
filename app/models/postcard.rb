@@ -6,6 +6,35 @@ class Postcard < ActiveRecord::Base
   # Include S3 utilities
   require 'aws_utils'
 
+  def self.create_postcard(template_id, customer, order_id)
+    card_template = CardTemplate.find(template_id)
+    if card_template.type = "PostsaleTemplate"
+      send_date = Date.today + card_template.send_delay.weeks
+    else
+      send_date = card_template.arrive_by - 1.weeks
+    end
+    new_card = Postcard.new(
+      order_id:       order_id,
+      card_template:  card_template.id,
+      customer_id:    customer.id,
+      customer_name:  customer.first_name + " " + customer.last_name,
+      addr1:          customer.default_address.address1,
+      addr2:          customer.default_address.address2,
+      city:           customer.default_address.city,
+      state:          customer.default_address.province_code,
+      country:        customer.default_address.country_code,
+      zip:            customer.default_address.zip,
+      send_date:      send_date
+    )
+
+    if new_card.save
+      return new_card
+    else
+      # TODO: Add error logging
+      return nil
+    end
+  end
+
   def self.send_all
     @to_send = Card.were("sent = ? and send_date <= ?", false, Time.now )
     @to_send.each do |card|
