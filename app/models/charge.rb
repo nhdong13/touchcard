@@ -46,4 +46,17 @@ class Charge < ActiveRecord::Base
 
     self.update_attributes(:shopify_id => shopify_charge.id)
   end
+
+  def cancel_plan
+    # Update the shop
+    shop = self.shop
+    shop.update_attributes(charge_id: nil, charge_amount: 0, charge_date: nil)
+
+    # Delete the plan on shopify
+    shop.new_sess
+    ShopifyAPI::RecurringApplicationCharge.delete(self.shopify_id)
+
+    # Update self's data
+    self.update_attributes(:shopify_id => nil, :shopify_redirect => nil)
+  end
 end
