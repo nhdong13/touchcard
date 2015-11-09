@@ -21,9 +21,10 @@ class API::V1::ChargesController < API::BaseController
   end
 
   def update
+    old_charge = @charge
     @charge.assign_attributes(charge_params)
     if @charge.save
-      if @charge.status == "canceled"
+      if @charge.status != old_charge.stats and @charge.status == "canceled"
         @charge.cancel_plan
       end
       render json: @charge, serializer: ChargeSerializer
