@@ -10,17 +10,8 @@ class API::V1::CardTemplatesController < API::BaseController
     render json: @card_template, serializer: CardTemplateSerializer
   end
 
-# def new
-#   @card_template = template_type.new
-#   render json: @card_template, serializer: CardTemplateSerializer
-# end
-
   def create
     @card_template = CardTemplate.new(card_params)
-    @card_template.shop_id = @current_shop.id
-#   @card_template.text_front = "We're glad we could share our products with you. We hope you're enjoying your purchase!"
-    @card_template.coupon_pct = 10
-    @card_template.coupon_loc = "10.00,65.00"
     if @card_template.save
       render json: @card_template, serializer: CardTemplateSerializer
     else
@@ -30,14 +21,7 @@ class API::V1::CardTemplatesController < API::BaseController
 
   end
 
-# def edit
-#   @card_template = CardTemplate.find_by(id: params[:id], shop_id: @current_shop.id)
-#   render json: @card_template, serializer: CardTemplateSerializer
-#   #@expire = Time.now + @card_template.send_delay.weeks + 2.weeks
-# end
-
   def update
-    #@card_template = CardTemplate.find_by(id: params[:id], shop_id: @current_shop.id)
     @card_template.assign_attributes(coupon_params)
 
     if card_params.has_key?(:image_back)

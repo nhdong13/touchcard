@@ -4,15 +4,6 @@ class API::V1::ShopsController < API::BaseController
     render json: @current_shop, serializer: ShopSerializer
   end
 
-  def edit
-#   @current_shop = Shop.find_by(params[:id])
-#   @current_shop.new_sess
-#   @last_month = ShopifyAPI::Customer.where(:created_at_min => (Time.now - 1.month)).count
-#   @current_shop.update_attribute(:last_month, @last_month)
-
-#   render json: @current_shop, serializer: ShopSerializer
-  end
-
   def update
     @shop = Shop.find(params[:id])
     @shop.assign_attributes(shop_params)

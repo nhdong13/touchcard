@@ -13,9 +13,6 @@ class API::V1::PostcardsController < API::BaseController
     render json: @postcard, serializer: PostcardSerializer
   end
 
-  def edit
-  end
-
   def update
   end
 

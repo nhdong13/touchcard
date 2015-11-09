@@ -3,12 +3,12 @@ Rails.application.routes.draw do
   # API routes
   namespace :api, defaults: {format: 'json'} do
     namespace :v1 do
-      resources :shops, only: [:show, :edit, :update]
-      resources :card_templates, only: [:index, :show, :new, :create, :edit, :update, :bulk_send]
-      resources :post_sale_templates, :controller => "card_templates", :type => "PostSaleTemplate", only: [:index, :show, :new, :create, :edit, :update]
-      resources :bulk_templates,      :controller => "card_templates", :type => "BulkTemplate", only: [:index, :show, :new, :create, :edit, :update]
-      resources :postcards, only: [:index, :show, :new, :create, :edit, :update]
-      resources :charges, only: [:index, :show, :new, :create, :edit, :update] do
+      resources :shops, only: [:show, :update]
+      resources :card_templates, only: [:index, :show, :create, :update]
+      resources :post_sale_templates, :controller => "card_templates", :type => "PostSaleTemplate", only: [:index, :show, :create, :update]
+      resources :bulk_templates,      :controller => "card_templates", :type => "BulkTemplate", only: [:index, :show, :create, :update]
+      resources :postcards, only: [:index, :show, :create, :update]
+      resources :charges, only: [:index, :show, :create, :update] do
         get 'activate', on: :member
       end
 

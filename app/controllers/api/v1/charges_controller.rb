@@ -10,9 +10,6 @@ class API::V1::ChargesController < API::BaseController
     render json: @charge, serializer: ChargeSerializer
   end
 
-  def new
-  end
-
   def create
     @charge = Charge.new(charge_params)
     if @charge.save
@@ -21,9 +18,6 @@ class API::V1::ChargesController < API::BaseController
     else
       render json: { errors: @charge.errors }, status: 422
     end
-  end
-
-  def edit
   end
 
   def update
