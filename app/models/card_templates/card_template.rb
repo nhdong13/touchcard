@@ -6,6 +6,48 @@ class CardTemplate < ActiveRecord::Base
   # Include S3 utilities
   require 'aws_utils'
 
+  def self.update_all_revenues
+    CardTemplate.all.each do |template|
+      template.delay.track_revenue
+    end
+  end
+
+  def track_revenue
+    postcards = self.postcards
+    shop = self.shop
+    shop.new_sess
+
+    postcards.each do |card|
+        # TODO: refactor shopify calls to be safer and DRY-er
+      begin
+        customer = ShopifyAPI::Customer.find(card.customer_id)
+      rescue #Shopify API limit
+        wait(2)
+        customer = ShopifyAPI::Customer.find(card.customer_id)
+      end
+
+      order = customer.last_order
+      if order.id != card.order_id
+        # TODO: refactor shopify calls to be safer and DRY-er
+        begin
+          new_order = ShopifyAPI::Order.find(order.id)
+        rescue # Shopify API limit
+          wait(2)
+          new_order = ShopifyAPI::Order.find(order.id)
+        end
+
+        # Save the info in the postcard
+        card.update_attributes(:return_customer => true, :purchase2 => new_order.total_price.to_f)
+
+        # Add the revenue to the card_template's total
+        self.revenue += new_order.total_price.to_f
+        self.save
+      else
+        # Do nothing
+      end
+    end
+  end
+
   def create_preview_front
     require 'rmagick'
     unless self.image_front == nil
