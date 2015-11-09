@@ -123,75 +123,17 @@ class Shop < ActiveRecord::Base
     end
   end
 
-  def new_recurring_charge(amount)
-    # Create a new recurring charge for the shop
-    self.new_sess
-
-    price = (amount.to_i * 0.99).round(2)
-
-    charge = serf.charge.new(amount: price, recurring: true, status: "new")
-
-    #Set charge values based on environment
-    unless ENV['RAILS_ENV'] == "development" or ENV['RAILS_ENV'] == "test"
-      name = "Touchcard"
-      test = true #TODO: Change this when app is released in Beta
-      return_url = "https://touchcard.herokuapp.com/charge/activate"
-    else
-      name = "Touchcard-dev"
-      test = true
-      return_url = "https://localhost:3000/charge/activate"
-    end
-
-    #Create application charge on Shopify
-    @shopify_charge = ShopifyAPI::RecurringApplicationCharge.create(
-      name: name,
-      price: price,
-      test: test,
-      return_url: return_url
-    )
-
-    #Put some information about the new store charge in the log
-    puts "*************************************"
-    puts "Current shop domain: #{self.domain}"
-    puts "*************************************"
-
-    # Set old charge status to "canceling"
-    Charge.find(self.charge_id).canceling
-
-    #Save the charge info to the local db and go to Shopify confirmation url
-    charge.shopify_id = @shopify_charge.id
-    charge.shopify_redirect = @shopify_charge.confirmation_url
-    charge.save!
-    self.charge_id = charge.id
-    self.save!
-  end
-
-  def bulk_charge(amount)
-    self.new_sess
-
-    shopify_charge = ShopifyAPI::ApplicationCharge.create(
-      name: "Touchcard Bulk Send",
-      price: @charge.amount,
-      test: true,
-      return_url: "https://touchcard.herokuapp.com/charge/activate_bulk"
-    )
-
-    return shopify_charge
-  end
-
   def top_up
-    credits = (self.charge_amount/0.99).ceil
+    credits = self.charge_amount
     new_credits = self.credit + credits
     self.update_attribute(:credit, new_credits)
   end
 
   def self.top_up_all
     # Daily top-up of all shops with today as a billing date
-    @credit_shops = Shop.where(:charge_date => Date.today)
-    @credit_shop.each do |shop|
-      credits = (shop.charge_amount/0.99).ceil
-      shop.credit += credits
-      shop.save!
+    shops = Shop.where(:charge_date => Date.today)
+    shops.each do |shop|
+      shop.top_up
     end
   end
 

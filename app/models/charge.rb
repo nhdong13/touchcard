@@ -32,9 +32,6 @@ class Charge < ActiveRecord::Base
         return_url: return_url
       )
 
-      # Set old charge status to "canceling"
-      Charge.find(self.shop.charge_id).canceling
-
       #Save the charge info to the local db and go to Shopify confirmation url
       self.update_attributes(shopify_charge: shopify_charge.id, shopify_redirect: shopify_charge.confirmation_url, status: "pending")
 
@@ -48,9 +45,5 @@ class Charge < ActiveRecord::Base
     end
 
     self.update_attributes(:shopify_id => shopify_charge.id)
-  end
-
-  def canceling
-    self.update_attribute(:status, "canceling")
   end
 end

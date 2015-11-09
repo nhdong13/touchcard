@@ -35,7 +35,7 @@ class API::V1::ChargesController < API::BaseController
 
     # Recurring or application?
     if @charge.recurring?
-      old_charge = Charge.find_by(:status => "active", :shop_id => shop.id)
+      old_charge = Charge.find_by(:status => "active", :recurring => true, :shop_id => shop.id)
 
       #Find the charge on Shopify's end, and check that it is accepted
       shopify_charge = ShopifyAPI::RecurringApplicationCharge.find(params[:charge_id])
@@ -45,7 +45,7 @@ class API::V1::ChargesController < API::BaseController
         old_charge.update_attribute(:status, "cancelled")
 
         # Update shop data and credits
-        shop.update_attributes(:charge_id => @charge.id, :amount => (@charge.amount/0.99).to_i , :charge_date => Date.today )
+        shop.update_attributes(:charge_id => @charge.id, :amount => @charge.amount, :charge_date => Date.today )
         shop.top_up
 
       elsif shopify_charge.status == "active"
