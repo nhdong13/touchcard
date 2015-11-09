@@ -137,4 +137,10 @@ class Shop < ActiveRecord::Base
     end
   end
 
+  def get_last_month
+    self.new_sess
+    last_month = ShopifyAPI::Customer.count(:created_at_min => (Time.now - 1.month))
+    self.update_attribute(:last_month, last_month)
+  end
+
 end
