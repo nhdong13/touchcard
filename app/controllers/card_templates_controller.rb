@@ -28,87 +28,29 @@ class CardTemplatesController < AuthenticatedController
   end
 
   def update
-    if params[:commit] == "Save"
-      puts "coupon confirm!"
-      @card_template.update_attributes(coupon_params)
+    @card_template.assign_attributes(coupon_params)
 
-      respond_to do |format|
-        format.html { redirect_to edit_polymorphic_path(@card_template) }
-        format.json { render json: @card_template }
-        format.js   {}
+    if card_params.has_key?(:image_back)
+      @card_template.image_back = AwsUtils.upload_to_s3(card_params[:image_back].original_filename, card_params[:image_back].path)
+    end
+
+    if card_params.has_key?(:image_front)
+      @card_template.image_front = AwsUtils.upload_to_s3(card_params[:image_front].original_filename, card_params[:image_front].path)
+    end
+
+    if @card_template.save
+      if card_params.has_key?(:image_back) or card_params.has_key?(:image_front) or card_params.has_key?(:coupon_loc)
+        @card_template.create_preview_front
+        @card_template.create_preview_back
       end
+      render 'show'
 
     else
-      #TODO: Refactor S3 upload stuff
-      @expire = Time.now + @card_template.send_delay.weeks + 2.weeks
-
-      # TODO: Refactor with params[:commit]
-      if card_params.has_key?(:style)
-        update_style()
-        render 'edit'
-      else
-        @card_template.title_front  = card_params[:title_front]
-        @card_template.text_front   = card_params[:text_front]
-        @card_template.coupon_pct   = card_params[:coupon_pct]
-        @card_template.coupon_exp   = card_params[:coupon_exp]
-        @card_template.coupon_loc   = card_params[:coupon_loc]
-
-        if card_params.has_key?(:logo)
-          @card_template.logo = AwsUtils.upload_to_s3(card_params[:logo].original_filename, card_params[:logo].path)
-        end
-
-        if card_params.has_key?(:image_back)
-          @card_template.logo = AwsUtils.upload_to_s3(card_params[:image_back].original_filename, card_params[:image_back].path)
-        end
-
-        if card_params.has_key?(:image_front)
-          @card_template.logo = AwsUtils.upload_to_s3(card_params[:image_front].original_filename, card_params[:image_front].path)
-        end
-
-
-        begin
-          @card_template.save!
-          @card_template.create_preview_front
-          @card_template.create_preview_back
-          flash[:success] = "Card template updated"
-          render 'show'
-        rescue
-          render 'edit'
-        end
-      end
+      render 'edit'
     end
   end
 
   def destroy
-  end
-
-  def style_switch
-    @card_template = CardTemplate.find(params[:id])
-    if @card_template.style == "thank you"
-      @card_template.style = "coupon"
-    else
-      @card_template.style = "thank you"
-    end
-
-    @card_template.save!
-
-    redirect_to edit_card_template_path(@card_template)
-  end
-
-  def image_remove
-    @card_template = CardTemplate.find(params[:id])
-    case params[:image_remove]
-    when "front"
-      @card_template.image_front = nil
-    when "back"
-      @card_template.image_back = nil
-    when "logo"
-      @card_template.logo = nil
-    end
-
-    @card_template.save!
-    #render :nothing => true
-    redirect_to edit_card_template_path(@card_template)
   end
 
   def coupon_confirm

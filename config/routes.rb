@@ -22,32 +22,12 @@ Rails.application.routes.draw do
   post '/new_order',  to:   'webhook#new_order'
   post '/uninstall',  to:   'webhook#uninstall'
 
+  # HTML Routes for Card Templates
+  resources :card_templates, only: [:update]
+
   # Routes for Admins
   devise_for :admin_users, ActiveAdmin::Devise.config
   ActiveAdmin.routes(self)
-
-# ######### Below is old ##########
-
-# # Routes for charge callbacks
-# get 'charge/activate'
-
-# # Routes for Shops
-# resources :shops
-
-# # Routes for Card Templates
-# resources :card_templates do
-#   get 'style_switch', :on => :member
-#   get 'image_remove', :on => :member
-#   post 'coupon_confirm', :on => :member
-# end
-
-# resources :postsale_templates,  :controller => "card_templates", :type => "PostsaleTemplate"
-# resources :bulk_templates,      :controller => "card_templates", :type => "BulkTemplate"
-
-# # Routes for Cards
-# resources :postcards
-
-
 
   # Support page
   get '/support',   to: 'home#support'
@@ -58,4 +38,19 @@ Rails.application.routes.draw do
   # Shopify Engine
   mount ShopifyApp::Engine, at: '/'
 
+######### Old HTML paths ##########
+
+# # Routes for Shops
+# resources :shops
+
+# resources :card_templates, only: [:index, :show, :new, :create, :edit, :update, :destroy]
+
+# resources :postsale_templates,  :controller => "card_templates", :type => "PostsaleTemplate"
+# resources :bulk_templates,      :controller => "card_templates", :type => "BulkTemplate"
+
+# # Routes for Cards
+# resources :postcards
+
+# # Routes for charge callbacks
+# get 'charge/activate'
 end
