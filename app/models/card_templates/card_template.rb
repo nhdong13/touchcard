@@ -19,28 +19,6 @@ class CardTemplate < ActiveRecord::Base
     end
     bg.scale!(WIDTH, HEIGHT)
 
-    if self.title_front != nil or self.text_front != nil
-      # Add shaded area on right half of image
-      shade = Magick::Image.new((bg.columns/2), bg.rows) { self.background_color = "#00000088" }
-
-      # Add text to shaded area
-      text = Magick::Draw.new
-      text.font_family = 'helvetica'
-      text.pointsize = 72
-      text.fill = 'white'
-      text.gravity = Magick::NorthWestGravity
-      text.annotate(shade, 0,0,40,60, self.title_front)
-      text.pointsize = 54
-      #text.annotate(shade, 0,0,10,(bg.rows/100 * 10), self.text_front)
-      position = 180
-      message = word_wrap(self.text_front, 36)
-      message.split('\n').each do |row|
-        text.annotate(shade, 0, 0, 40, position += 20, row)
-      end
-
-      # Add shade and text to background
-      bg.composite!(shade, (bg.columns/2), 0, Magick::OverCompositeOp)
-    end
 
     if self.style == "coupon"
       coupon_area = Magick::Image.new(510, 300) { self.background_color = "#00000000" }
@@ -84,9 +62,13 @@ class CardTemplate < ActiveRecord::Base
     bg.write(local_path)
 
     # Upload to S3 and save the url
-    self.preview_front = upload_to_s3(image_key)
-    self.save!
-    puts "Saved Front"
+    self.preview_front = AwsUtils.upload_to_s3(image_key, local_path)
+    if self.save
+      puts "Saved Front"
+    else
+      #TODO: Error handling in front save
+      puts "problem saving front"
+    end
   end
 
 
@@ -100,23 +82,21 @@ class CardTemplate < ActiveRecord::Base
       bg.border!(0,0,"white")
     end
 
-    unless self.logo == nil
-      logo    = Magick::ImageList.new(self.logo)
-    end
+    # NOTE: Logic for a custom logo on the back of the postcard
+#   unless self.logo == nil
+#     logo    = Magick::ImageList.new(self.logo)
+#   end
     address = Magick::Image.read("#{Rails.root}/app/assets/images/postage-area-image.png").first
 
     # Set background to postcard size
     bg.scale!(WIDTH, HEIGHT)
 
     # Add logo and address area to background
-    unless self.logo == nil
-      bg.composite!(logo, 20, 20, Magick::OverCompositeOp)
-    end
+#   unless self.logo == nil
+#     bg.composite!(logo, 20, 20, Magick::OverCompositeOp)
+#   end
     bg.composite!(address, 0, 0, Magick::OverCompositeOp)
 
-    # if self.text_back != nil
-    # Add text here
-    # end
 
     # Image save set up
     local_path = "#{Rails.root}/tmp/preview_back.jpg"
@@ -126,31 +106,15 @@ class CardTemplate < ActiveRecord::Base
     bg.write(local_path)
 
     # Upload to S3 and save the url
-    self.preview_back = upload_to_s3(image_key)
-    self.save!
-    puts "Saved Back"
+    self.preview_back = AwsUtils.upload_to_s3(image_key, local_path)
+    if self.save
+      puts "Saved Back"
+    else
+      #TODO: Error handling in back save
+      puts "problem saving back"
+    end
   end
 
   private
-
-  def upload_to_s3(image_key)
-    # Initialize s3
-    obj = S3_BUCKET.object(image_key)
-    obj.upload_file(local_path)
-
-    # Set access on S3 to public
-    s3 = Aws::S3::Client.new
-    s3.put_object_acl(bucket: ENV['S3_BUCKET_NAME'], key: image_key, acl: 'public-read')
-
-    # return the public url
-    return obj.public_url.to_s
-  end
-
-  def word_wrap(text, columns)
-    # Logic to wrap text in the shaded region
-    text.split("\n").collect do |line|
-      line.length > columns ? line.gsub(/(.{1,#{columns}})(\s+|$)/, "\\1\n").strip : line
-    end * "\n"
-  end
 
 end

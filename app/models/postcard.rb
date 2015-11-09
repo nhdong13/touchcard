@@ -9,8 +9,7 @@ class Postcard < ActiveRecord::Base
   def self.send_all
     @to_send = Card.were("sent = ? and send_date <= ?", false, Time.now )
     @to_send.each do |card|
-      #card.delay.send_card
-      card.send_card
+      card.delay.send_card
     end
   end
 
@@ -21,7 +20,7 @@ class Postcard < ActiveRecord::Base
     # Live Lob
     # @lob = Lob.load(api_key: ENV['LOB_TEST_API_KEY'])
 
-    if self.shop.credit >= 1
+    if (self.country == "US" and self.shop.credit >= 1) or self.shop.credit >= 2
 
       # Customer Address
       customer_address = {
@@ -33,15 +32,17 @@ class Postcard < ActiveRecord::Base
         :address_country  => self.country,
         :address_zip      => self.zip}
 
-      # # Shop address
-      # shop_address = {
-      #   :name             => 
-      #   :address_line1    => 
-      #   :address_line2    => 
-      #   :address_city     => 
-      #   :address_state    => 
-      #   :address_country  => 
-      #   :address_zip      => }
+
+        # NOTE: For adding a return address
+#       # Shop address
+#       shop_address = {
+#         :name             => 
+#         :address_line1    => 
+#         :address_line2    => 
+#         :address_city     => 
+#         :address_state    => 
+#         :address_country  => 
+#         :address_zip      => }
 
       if self.template == 'coupon'
         generated_code = ('A'..'Z').to_a.shuffle[0,9].join
@@ -58,31 +59,27 @@ class Postcard < ActiveRecord::Base
        sent_card = @lob.postcards.create(
          description: "A #{self.template} card sent by #{self.shop.domain}",
          to: customer_address,
-         # from: shop_address,
+         # from: shop_address, # Return address for Shop
          front: front_url,
          back: back_url
        )
 
-       puts sent_card
-
-       puts "Postcard from #{self.shop.domain} sent!"
-
        self.sent = true
        self.postcard_id = sent_card["id"]
        self.date_sent = Date.today
-       self.save
+       self.save # TODO: Add error handling here
 
        # Remove images from S3
        AwsUtils.delete_from_s3(front_url)
        AwsUtils.delete_from_s3(back_url)
 
-       # Deduct 1 credit
-       self.shop.credit -= 1
+       # Deduct 1 credit for US, 2 for international
+       if self.country == "US"
+         self.shop.credit -= 1
+       else
+         self.shop.credit -= 2
+       end
        self.shop.save
-
-      #rescue
-       # puts "Postcard not sent"
-      #end
 
     else
       puts "No credits left on shop #{self.shop.domain}"
@@ -105,29 +102,6 @@ class Postcard < ActiveRecord::Base
       end
     end
     bg.scale!(WIDTH, HEIGHT)
-
-    if self.card_template.title_front != ("" or nil) or self.card_template.text_front != ("" or nil)
-      # Add shaded area on right half of image
-      shade = Magick::Image.new((bg.columns/2), bg.rows) { self.background_color = "#00000088" }
-
-      # Add text to shaded area
-      text = Magick::Draw.new
-      text.font_family = 'helvetica'
-      text.pointsize = 72
-      text.fill = 'white'
-      text.gravity = Magick::NorthWestGravity
-      text.annotate(shade, 0,0,40,60, self.card_template.title_front)
-      text.pointsize = 54
-      #text.annotate(shade, 0,0,10,(bg.rows/100 * 10), self.text_front)
-      position = 180
-      message = word_wrap(self.card_template.text_front, 36)
-      message.split('\n').each do |row|
-        text.annotate(shade, 0, 0, 40, position += 20, row)
-      end
-
-      # Add shade and text to background
-      bg.composite!(shade, (bg.columns/2), 0, Magick::OverCompositeOp)
-    end
 
     if self.card_template.style == "coupon"
 
@@ -192,9 +166,12 @@ class Postcard < ActiveRecord::Base
       bg = Magick::ImageList.new("#{Rails.root}/app/assets/images/postage-area-image.png")
       bg.border!(0,0,"white")
     end
-    unless self.card_template.logo == nil
-      logo    = Magick::ImageList.new(self.card_template.logo)
-    end
+
+    #NOTE: For custom logo on the back
+#   unless self.card_template.logo == nil
+#     logo    = Magick::ImageList.new(self.card_template.logo)
+#   end
+
     address = Magick::Image.read("#{Rails.root}/app/assets/images/address-side-clear.png").first
 
     # Set background to postcard size
@@ -205,10 +182,6 @@ class Postcard < ActiveRecord::Base
       bg.composite!(logo, 20, 20, Magick::OverCompositeOp)
     end
     bg.composite!(address, 0, 0, Magick::OverCompositeOp)
-
-    # if self.text_back != nil
-    # Add text here
-    # end
 
     # Add trim border to image
     bg.border!(38, 38, 'white')
@@ -228,13 +201,6 @@ class Postcard < ActiveRecord::Base
 
     # Upload to S3
     return AwsUtils.upload(image_key, local_path)
-  end
-
-  def word_wrap(text, columns)
-    # Logic to wrap text in the shaded region
-    text.split("\n").collect do |line|
-      line.length > columns ? line.gsub(/(.{1,#{columns}})(\s+|$)/, "\\1\n").strip : line
-    end * "\n"
   end
 
 end
