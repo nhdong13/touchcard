@@ -3,6 +3,7 @@ class Charge < ActiveRecord::Base
   belongs_to :card_template
 
   validates :shop_id, presence: true
+  # TODO validation for customer number
 
   def new_shopify_charge
     shop = self.shop
@@ -15,7 +16,7 @@ class Charge < ActiveRecord::Base
       return_url: "https://touchcard.herokuapp.com/charge/activate_bulk"
     )
 
-    self.update_attribute(:shopify_id => shopify_charge.id)
+    self.update_attributes(:shopify_id => shopify_charge.id)
   end
 
   def canceling
