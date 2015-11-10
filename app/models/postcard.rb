@@ -35,13 +35,6 @@ class Postcard < ActiveRecord::Base
     end
   end
 
-  def self.send_all
-    @to_send = Card.were("sent = ? and send_date <= ?", false, Time.now )
-    @to_send.each do |card|
-      card.delay.send_card
-    end
-  end
-
   def send_card
     # Test lob
     @lob = Lob.load(api_key: ENV['LOB_TEST_API_KEY'])
