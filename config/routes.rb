@@ -33,20 +33,4 @@ Rails.application.routes.draw do
 
   # Shopify Engine
   mount ShopifyApp::Engine, at: '/'
-
-######### Old HTML paths ##########
-
-# # Routes for Shops
-# resources :shops
-
-# resources :card_orders, only: [:index, :show, :new, :create, :edit, :update, :destroy]
-
-# resources :postsale_templates,  :controller => "card_orders", :type => "PostsaleTemplate"
-# resources :bulk_templates,      :controller => "card_orders", :type => "BulkTemplate"
-
-# # Routes for Cards
-# resources :postcards
-
-# # Routes for charge callbacks
-# get 'charge/activate'
 end
