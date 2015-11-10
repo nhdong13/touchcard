@@ -63,9 +63,8 @@ describe API::V1::ChargesController do
   end
 
   describe "Create Charge" do
-    describe "while not logged in" do
-      it "should have status 404" do
-        login(charge.shop)
+    describe "while logged out" do
+      it "should have status 302" do
         post :create, :charge => { shop_id: charge.shop_id }
 
         expect(response.status).to eq(302)
@@ -76,7 +75,7 @@ describe API::V1::ChargesController do
       describe "with invalid params" do
         it "should have status 422" do
           login(charge.shop)
-          post :create, :charge => { amount: 10 }
+          post :create, :charge => { recurring: true, amount: 10 }
 
           expect(response.status).to eq(422)
         end

@@ -14,5 +14,6 @@ FactoryGirl.define do
 
   factory :charge do
     shop
+    recurring   true
   end
 end

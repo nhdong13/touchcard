@@ -24,7 +24,7 @@ class API::V1::ChargesController < API::BaseController
     old_charge = @charge
     @charge.assign_attributes(charge_params)
     if @charge.save
-      if @charge.status != old_charge.stats and @charge.status == "canceled"
+      if @charge.status != old_charge.status and @charge.status == "canceled"
         @charge.cancel_plan
       end
       render json: @charge, serializer: ChargeSerializer
@@ -39,7 +39,7 @@ class API::V1::ChargesController < API::BaseController
 
     # Recurring or application?
     if @charge.recurring?
-      old_charge = Charge.find_by(status: "active", :recurring: true, shop_id: shop.id)
+      old_charge = Charge.find_by(status: "active", recurring: true, shop_id: shop.id)
 
       #Find the charge on Shopify's end, and check that it is accepted
       shopify_charge = ShopifyAPI::RecurringApplicationCharge.find(params[:charge_id])

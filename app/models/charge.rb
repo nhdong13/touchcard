@@ -3,12 +3,14 @@ class Charge < ActiveRecord::Base
   belongs_to :card_template
 
   validates :shop_id, presence: true
-  validates :customer_number, on: :create, unless: :recurring?
+  validate :customer_number, on: :create
 
   def customer_number
-    require 'customer_check'
-    unless amount == get_customer_number(@current_shop, start_date, end_date)
-      errors.add(:amount, "Amount does not match shop data")
+    unless self.recurring?
+      require 'customer_check'
+      unless amount == get_customer_number(@current_shop, self.card_template.start_date, self.card_template.end_date)
+        errors.add(:amount, "Amount does not match shop data")
+      end
     end
   end
 

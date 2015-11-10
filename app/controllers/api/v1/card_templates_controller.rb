@@ -16,6 +16,8 @@ class API::V1::CardTemplatesController < API::BaseController
       render json: @card_template, serializer: CardTemplateSerializer
     else
       # return 422 error
+      puts @card_template.errors.full_messages
+      puts @card_template.shop_id
       render json: { errors: @card_template.errors }, status: 422
     end
 
@@ -70,6 +72,7 @@ class API::V1::CardTemplatesController < API::BaseController
   def card_params
     params.require(:card_template).permit(
       :id,
+      :shop_id,
       :type,
       :style,
       #:logo,
