@@ -23,7 +23,7 @@ describe API::V1::PostcardsController do
 
       it "should return 2 postcards" do
         login(postcard.shop)
-        create_list(:postcard, 2, { :card_template => postcard.card_template, :sent => true })
+        create_list(:postcard, 2, { :card_order => postcard.card_order, :sent => true })
         get :index
 
         json = JSON.parse(response.body)

@@ -1,6 +1,6 @@
 class Charge < ActiveRecord::Base
   belongs_to :shop
-  belongs_to :card_template
+  belongs_to :card_order
 
   validates :shop_id, presence: true
   validate :customer_number, on: :create
@@ -8,7 +8,7 @@ class Charge < ActiveRecord::Base
   def customer_number
     unless self.recurring?
       require 'customer_check'
-      unless amount == get_customer_number(@current_shop, self.card_template.start_date, self.card_template.end_date)
+      unless amount == get_customer_number(@current_shop, self.card_order.start_date, self.card_order.end_date)
         errors.add(:amount, "Amount does not match shop data")
       end
     end

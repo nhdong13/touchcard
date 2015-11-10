@@ -4,8 +4,8 @@ RSpec.describe Api::V1::CardSidesController, type: :controller do
   let(:json) { JSON.parse(response.body) }
   let(:shop) { create(:shop) }
   let(:other_shop) { create(:shop) }
-  let(:card_template) { create(:card_template, shop: shop) }
-  let(:card_side) { card_template.card_side_front }
+  let(:card_order) { create(:card_order, shop: shop) }
+  let(:card_side) { card_order.card_side_front }
 
   context 'when not signed in' do
     describe '#show' do
@@ -46,7 +46,7 @@ RSpec.describe Api::V1::CardSidesController, type: :controller do
       end
 
       context 'when card_side not owned by user' do
-        before(:each) { card_template.update_attributes!(shop: other_shop) }
+        before(:each) { card_order.update_attributes!(shop: other_shop) }
 
         it '401s' do
           get :show, id: card_side.id
@@ -78,7 +78,7 @@ RSpec.describe Api::V1::CardSidesController, type: :controller do
       end
 
       context 'when card_side not owned by user' do
-        before(:each) { card_template.update_attributes!(shop: other_shop) }
+        before(:each) { card_order.update_attributes!(shop: other_shop) }
 
         it '401s' do
           put :update, id: card_side.id, card_side: { image: 'New Image' }

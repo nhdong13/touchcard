@@ -3,7 +3,7 @@ class CustomersValidator < ActiveModel::EachValidator
   def validate(record, attribute, value)
     unless record.recurring?
       require 'customer_check'
-      bulk_template = record.card_template
+      bulk_template = record.card_order
       amount = get_customer_number(record.shop_id, bulk_temlate.customers_after, bulk_template.customers_before)
 
       unless value == amount

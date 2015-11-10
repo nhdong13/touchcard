@@ -1,2 +1,2 @@
-class PostsaleTemplate < CardTemplate
+class PostsaleTemplate < CardOrder
 end

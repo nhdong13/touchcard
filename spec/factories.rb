@@ -9,14 +9,14 @@ FactoryGirl.define do
     sequence(:token) { |n| "shopif_token_#{n}" }
   end
 
-  factory :card_template do
+  factory :card_order do
     shop
     association :card_side_front, factory: :card_side
     association :card_side_back, factory: :card_side
   end
 
   factory :postcard do
-    card_template
+    card_order
   end
 
   factory :charge do

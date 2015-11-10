@@ -1,9 +1,9 @@
 class Shop < ActiveRecord::Base
   validates :customer_pct, numericality: true
-  has_many :card_templates, dependent: :destroy
+  has_many :card_orders, dependent: :destroy
   has_many :postsale_templates
   has_many :bulk_templates
-  has_many :postcards, through: :card_templates
+  has_many :postcards, through: :card_orders
   has_many :charges
 
   def self.store(session)

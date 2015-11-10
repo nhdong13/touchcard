@@ -5,7 +5,7 @@ Rails.application.routes.draw do
     namespace :v1 do
       resources :card_sides, only: [:show, :update]
       resources :shops, only: [:show, :update]
-      resources :card_templates, only: [:index, :show, :create, :update]
+      resources :card_orders, only: [:index, :show, :create, :update]
       resources :postcards, only: [:index, :show, :create, :update]
       resources :charges, only: [:index, :show, :create, :update] do
         get 'activate', on: :collection
@@ -19,7 +19,7 @@ Rails.application.routes.draw do
   post '/uninstall',  to:   'webhook#uninstall'
 
   # HTML Routes for Card Templates
-  resources :card_templates, only: [:update]
+  resources :card_orders, only: [:update]
 
   # Routes for Admins
   devise_for :admin_users, ActiveAdmin::Devise.config
@@ -39,10 +39,10 @@ Rails.application.routes.draw do
 # # Routes for Shops
 # resources :shops
 
-# resources :card_templates, only: [:index, :show, :new, :create, :edit, :update, :destroy]
+# resources :card_orders, only: [:index, :show, :new, :create, :edit, :update, :destroy]
 
-# resources :postsale_templates,  :controller => "card_templates", :type => "PostsaleTemplate"
-# resources :bulk_templates,      :controller => "card_templates", :type => "BulkTemplate"
+# resources :postsale_templates,  :controller => "card_orders", :type => "PostsaleTemplate"
+# resources :bulk_templates,      :controller => "card_orders", :type => "BulkTemplate"
 
 # # Routes for Cards
 # resources :postcards

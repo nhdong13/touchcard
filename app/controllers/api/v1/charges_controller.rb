@@ -88,7 +88,7 @@ class API::V1::ChargesController < API::BaseController
     params.require(:charge).permit(
       :id,
       :shop_id,
-      :card_template_id,
+      :card_order_id,
       :shopify_id,
       :amount,
       :recurring,

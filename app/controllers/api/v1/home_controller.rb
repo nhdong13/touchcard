@@ -1,7 +1,7 @@
 class API::V1::HomeController < API::BaseController
 
   def index
-    if @current_shop.card_templates.any?
+    if @current_shop.card_orders.any?
       @current_shop.update(last_login: Time.now)
       @income = 0.00
 

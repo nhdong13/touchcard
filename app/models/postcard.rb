@@ -1,21 +1,21 @@
 class Postcard < ActiveRecord::Base
-  belongs_to :card_template
-  validates :card_template_id, presence: true
-  has_one :shop, through: :card_template
+  belongs_to :card_order
+  validates :card_order_id, presence: true
+  has_one :shop, through: :card_order
 
   # Include S3 utilities
   require 'aws_utils'
 
   def self.create_postcard(template_id, customer, order_id)
-    card_template = CardTemplate.find(template_id)
-    if card_template.type = "PostsaleTemplate"
-      send_date = Date.today + card_template.send_delay.weeks
+    card_order = CardOrder.find(template_id)
+    if card_order.type = "PostsaleTemplate"
+      send_date = Date.today + card_order.send_delay.weeks
     else
-      send_date = card_template.arrive_by - 1.weeks
+      send_date = card_order.arrive_by - 1.weeks
     end
     new_card = Postcard.new(
       order_id: order_id,
-      card_template: card_template.id,
+      card_order: card_order.id,
       customer_id: customer.id,
       customer_name: customer.first_name + " " + customer.last_name,
       addr1: customer.default_address.address1,
@@ -114,10 +114,10 @@ class Postcard < ActiveRecord::Base
 
   def create_front_image(generated_code)
     require 'rmagick'
-    unless self.card_template.image_front == nil
+    unless self.card_order.image_front == nil
       bg    = Magick::ImageList.new(self.image_front)
     else
-      if self.card_template.style == "discount"
+      if self.card_order.style == "discount"
         bg    = Magick::ImageList.new("#{Rails.root}/app/assets/images/discount-bg.png")
       else
         bg    = Magick::ImageList.new("#{Rails.root}/app/assets/images/thankyou-bg.png")
@@ -125,14 +125,14 @@ class Postcard < ActiveRecord::Base
     end
     bg.scale!(WIDTH, HEIGHT)
 
-    if self.card_template.style == "discount"
+    if self.card_order.style == "discount"
 
       discount_area = Magick::Image.new(510, 300) { self.background_color = "#00000000" }
-      xval = (self.card_template.discount_loc.split(",")[0].to_f/100) * WIDTH
-      yval = (self.card_template.discount_loc.split(",")[1].to_f/100) * HEIGHT
+      xval = (self.card_order.discount_loc.split(",")[0].to_f/100) * WIDTH
+      yval = (self.card_order.discount_loc.split(",")[1].to_f/100) * HEIGHT
 
       # Add text to discount area
-      discount_text = self.card_template.discount_pct.to_s + "%% OFF"
+      discount_text = self.card_order.discount_pct.to_s + "%% OFF"
       discount_off = Magick::Draw.new
       discount_off.font_family = 'helvetica'
       discount_off.pointsize = 72
@@ -147,7 +147,7 @@ class Postcard < ActiveRecord::Base
       discount_code.gravity = Magick::CenterGravity
       discount_code.annotate(discount_area, 0,0,0,0, generated_code)
 
-      expire_text = "EXPIRE " + (Time.now + (self.card_template.discount_exp || 2).weeks).strftime("%D").to_s
+      expire_text = "EXPIRE " + (Time.now + (self.card_order.discount_exp || 2).weeks).strftime("%D").to_s
       discount_expire = Magick::Draw.new
       discount_expire.font_family = 'helvetica'
       discount_expire.pointsize = 36
@@ -182,16 +182,16 @@ class Postcard < ActiveRecord::Base
 
   def create_back_image
     require 'rmagick'
-    unless self.card_template.image_back == nil
-      bg = Magick::ImageList.new(self.card_template.image_back)
+    unless self.card_order.image_back == nil
+      bg = Magick::ImageList.new(self.card_order.image_back)
     else
       bg = Magick::ImageList.new("#{Rails.root}/app/assets/images/postage-area-image.png")
       bg.border!(0,0,"white")
     end
 
     #NOTE: For custom logo on the back
-#   unless self.card_template.logo == nil
-#     logo    = Magick::ImageList.new(self.card_template.logo)
+#   unless self.card_order.logo == nil
+#     logo    = Magick::ImageList.new(self.card_order.logo)
 #   end
 
     address = Magick::Image.read("#{Rails.root}/app/assets/images/address-side-clear.png").first
@@ -200,7 +200,7 @@ class Postcard < ActiveRecord::Base
     bg.scale!(WIDTH, HEIGHT)
 
     # Add logo and address area to background
-    unless self.card_template.logo == nil
+    unless self.card_order.logo == nil
       bg.composite!(logo, 20, 20, Magick::OverCompositeOp)
     end
     bg.composite!(address, 0, 0, Magick::OverCompositeOp)

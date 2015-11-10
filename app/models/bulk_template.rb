@@ -1,4 +1,4 @@
-class BulkTemplate < CardTemplate
+class BulkTemplate < CardOrder
 
   def bulk_send
     shop = self.shop

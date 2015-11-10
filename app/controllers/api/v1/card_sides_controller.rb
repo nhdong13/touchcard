@@ -20,11 +20,11 @@ class Api::V1::CardSidesController < API::BaseController
   def set_card_side
     @card_side = CardSide.find_by(id: params[:id])
     return render_not_found if @card_side.nil?
-    card_template_count = CardTemplate.where("
+    card_order_count = CardOrder.where("
       shop_id=? AND
       (card_side_back_id=? OR card_side_front_id=?)
     ", @current_shop.id, params[:id], params[:id]).count
-    return render_authorization_error unless card_template_count > 0
+    return render_authorization_error unless card_order_count > 0
     @card_side
   end
 end

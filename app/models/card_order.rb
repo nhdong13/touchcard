@@ -1,4 +1,4 @@
-class CardTemplate < ActiveRecord::Base
+class CardOrder < ActiveRecord::Base
   belongs_to :shop
   belongs_to :card_side_front, class_name: 'CardSide', foreign_key: 'card_side_front_id'
   belongs_to :card_side_back, class_name: 'CardSide', foreign_key: 'card_side_back_id'
@@ -10,7 +10,7 @@ class CardTemplate < ActiveRecord::Base
   require 'aws_utils'
 
   def self.update_all_revenues
-    CardTemplate.all.each do |template|
+    CardOrder.all.each do |template|
       template.delay.track_revenue
     end
   end
@@ -42,7 +42,7 @@ class CardTemplate < ActiveRecord::Base
         # Save the info in the postcard
         card.update_attributes(return_customer: true, purchase2: new_order.total_price.to_f)
 
-        # Add the revenue to the card_template's total
+        # Add the revenue to the card_order's total
         self.revenue += new_order.total_price.to_f
         self.save
       else
