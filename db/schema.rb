@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151109051044) do
+ActiveRecord::Schema.define(version: 20151110134902) do
 
   create_table "active_admin_comments", force: :cascade do |t|
     t.string   "namespace"
@@ -57,9 +57,9 @@ ActiveRecord::Schema.define(version: 20151109051044) do
     t.string   "text_front"
     t.string   "preview_front"
     t.string   "preview_back"
-    t.integer  "coupon_pct"
-    t.integer  "coupon_exp"
-    t.string   "coupon_loc"
+    t.integer  "discount_pct"
+    t.integer  "discount_exp"
+    t.string   "discount_loc"
     t.boolean  "enabled",                    default: false, null: false
     t.boolean  "international",              default: false, null: false
     t.integer  "send_delay"
@@ -150,7 +150,7 @@ ActiveRecord::Schema.define(version: 20151109051044) do
 
   create_table "postcards", force: :cascade do |t|
     t.integer  "card_template_id"
-    t.string   "coupon"
+    t.string   "discount_code"
     t.integer  "order_id",         limit: 8
     t.integer  "customer_id",      limit: 8
     t.string   "customer_name"

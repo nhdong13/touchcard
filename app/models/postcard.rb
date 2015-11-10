@@ -77,7 +77,7 @@ class Postcard < ActiveRecord::Base
         generated_code = ('A'..'Z').to_a.shuffle[0,9].join
         generated_code = generated_code[0...3] + "-" + generated_code[3...6] + "-" + generated_code[6...9]
         self.shop.new_discount(generated_code)
-        self.discount = generated_code
+        self.discount_code = generated_code
       end
 
 

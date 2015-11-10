@@ -7,7 +7,7 @@ describe API::V1::CardTemplatesController do
 
   describe "Show card_template" do
 
-    describe "with unknown id" do
+    context "with unknown id" do
 
       it "should respond with 404" do
         login(card_template.shop)
@@ -17,7 +17,7 @@ describe API::V1::CardTemplatesController do
       end
     end
 
-    describe "with known id" do
+    context "with known id" do
 
       it "should respond with 200" do
         login(card_template.shop)
@@ -47,7 +47,7 @@ describe API::V1::CardTemplatesController do
 #     end
 #   end
 
-    describe "With good params" do
+    context "With good params" do
       it "should respond with 200" do
         login(card_template.shop)
         post :create, :card_template => { shop_id: card_template.shop.id }
@@ -59,7 +59,7 @@ describe API::V1::CardTemplatesController do
 
   describe "Update card_template" do
 
-    describe "with unknkown id" do
+    context "with unknkown id" do
       it "should respond with 404" do
         login(card_template.shop)
         patch :update, id: (card_template.id + 1), :card_template => { id: (card_template.id + 1) }
@@ -77,7 +77,7 @@ describe API::V1::CardTemplatesController do
 #     end
 #   end
 
-    describe "with good params" do
+    context "with good params" do
       it "should respond with 200" do
       login(card_template.shop)
       patch :update, id: card_template.id, :card_template => { id: card_template.id, enabled: true }

@@ -5,8 +5,8 @@ describe API::V1::ChargesController do
   let(:charge)    { create(:charge) }
   let(:charge2)   { create(:charge, shop => charge.shop) }
 
-  describe "Charge Index" do
-    describe "not loggeed on" do
+  describe ":index" do
+    context "not loggeed on" do
       it "should have status 302" do
         get :index
 
@@ -14,7 +14,7 @@ describe API::V1::ChargesController do
       end
     end
 
-    describe "logged in" do
+    context "logged in" do
       it "should have status 200" do
         login(charge.shop)
         get :index
@@ -24,17 +24,17 @@ describe API::V1::ChargesController do
     end
   end
 
-  describe "Show Charge" do
-    describe "not logged in" do
+  describe ":show" do
+    context "not logged in" do
       it "should have status 302" do
         get :show, id: charge.id
 
         expect(response.status).to eq(302)
       end
     end
-    describe "while logged in" do
+    context "while logged in" do
 
-      describe "with invalid id" do
+      context "with invalid id" do
         it "should have status 404" do
           login(charge.shop)
           get :show, id: (charge.id + 1)
@@ -43,7 +43,7 @@ describe API::V1::ChargesController do
         end
       end
 
-      describe "with valid id" do
+      context "with valid id" do
         it "should have status 200" do
           login(charge.shop)
           get :show, id: charge.id
@@ -63,7 +63,7 @@ describe API::V1::ChargesController do
   end
 
   describe "Create Charge" do
-    describe "while logged out" do
+    context "while logged out" do
       it "should have status 302" do
         post :create, :charge => { shop_id: charge.shop_id }
 
@@ -72,7 +72,7 @@ describe API::V1::ChargesController do
     end
 
     describe "while logged in" do
-      describe "with invalid params" do
+      context "with invalid params" do
         it "should have status 422" do
           login(charge.shop)
           post :create, :charge => { recurring: true, amount: 10 }
@@ -93,7 +93,7 @@ describe API::V1::ChargesController do
     end
   end
   describe "Update charge" do
-    describe "while logged out" do
+    context "while logged out" do
       it "should have status 302" do
         patch :update, id: charge.id, :charge => { amount: 100 }
 
@@ -101,8 +101,8 @@ describe API::V1::ChargesController do
       end
     end
 
-    describe "while logged in" do
-      describe "with invalid params" do
+    context "while logged in" do
+      context "with invalid params" do
         it "should respond with 422" do
           login(charge.shop)
           patch :update, id: charge.id, :charge => { id: charge.id, shop_id: nil }
@@ -111,7 +111,7 @@ describe API::V1::ChargesController do
         end
       end
 
-      describe "with valid params" do
+      context "with valid params" do
         it "should have status 200" do
           login(charge.shop)
           patch :update, id: charge.id, :charge => { id: charge.id, amount: 100 }
