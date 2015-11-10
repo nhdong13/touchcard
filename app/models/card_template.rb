@@ -53,8 +53,8 @@ class CardTemplate < ActiveRecord::Base
     unless self.image_front == nil
       bg    = Magick::ImageList.new(self.image_front)
     else
-      if self.style == "coupon"
-        bg    = Magick::ImageList.new("#{Rails.root}/app/assets/images/coupon-bg.png")
+      if self.style == "discount"
+        bg    = Magick::ImageList.new("#{Rails.root}/app/assets/images/discount-bg.png")
       else
         bg    = Magick::ImageList.new("#{Rails.root}/app/assets/images/thankyou-bg.png")
       end
@@ -62,38 +62,38 @@ class CardTemplate < ActiveRecord::Base
     bg.scale!(WIDTH, HEIGHT)
 
 
-    if self.style == "coupon"
-      coupon_area = Magick::Image.new(510, 300) { self.background_color = "#00000000" }
-      xval = (self.coupon_loc.split(",")[0].to_f/100) * WIDTH
-      yval = (self.coupon_loc.split(",")[1].to_f/100) * HEIGHT
+    if self.style == "discount"
+      discount_area = Magick::Image.new(510, 300) { self.background_color = "#00000000" }
+      xval = (self.discount_loc.split(",")[0].to_f/100) * WIDTH
+      yval = (self.discount_loc.split(",")[1].to_f/100) * HEIGHT
 
-      # Add text to coupon area
-      coupon_text = self.coupon_pct.to_s + "%% OFF"
-      coupon_off = Magick::Draw.new
-      coupon_off.font_family = 'helvetica'
-      coupon_off.pointsize = 72
-      coupon_off.fill = 'white'
-      coupon_off.gravity = Magick::NorthGravity
-      coupon_off.annotate(coupon_area, 0,0,0,30, coupon_text)
+      # Add text to discount area
+      discount_text = self.discount_pct.to_s + "%% OFF"
+      discount_off = Magick::Draw.new
+      discount_off.font_family = 'helvetica'
+      discount_off.pointsize = 72
+      discount_off.fill = 'white'
+      discount_off.gravity = Magick::NorthGravity
+      discount_off.annotate(discount_area, 0,0,0,30, discount_text)
 
-      coupon_code = Magick::Draw.new
-      coupon_code.font_family = 'helvetica'
-      coupon_code.pointsize = 54
-      coupon_code.fill = 'white'
-      coupon_code.gravity = Magick::CenterGravity
-      coupon_code.annotate(coupon_area, 0,0,0,0, "Coupon-Code-123")
+      discount_code = Magick::Draw.new
+      discount_code.font_family = 'helvetica'
+      discount_code.pointsize = 54
+      discount_code.fill = 'white'
+      discount_code.gravity = Magick::CenterGravity
+      discount_code.annotate(discount_area, 0,0,0,0, "discount-Code-123")
 
-      expire_text = "EXPIRE " + (Time.now + self.shop.send_delay.weeks + (self.coupon_exp || 2).weeks).strftime("%D").to_s
-      coupon_expire = Magick::Draw.new
-      coupon_expire.font_family = 'helvetica'
-      coupon_expire.pointsize = 36
-      coupon_expire.fill = 'white'
-      coupon_expire.gravity = Magick::SouthGravity
-      coupon_expire.annotate(coupon_area, 0,0,0,35, expire_text)
+      expire_text = "EXPIRE " + (Time.now + self.shop.send_delay.weeks + (self.discount_exp || 2).weeks).strftime("%D").to_s
+      discount_expire = Magick::Draw.new
+      discount_expire.font_family = 'helvetica'
+      discount_expire.pointsize = 36
+      discount_expire.fill = 'white'
+      discount_expire.gravity = Magick::SouthGravity
+      discount_expire.annotate(discount_area, 0,0,0,35, expire_text)
 
-      # Add coupon area and text to background
+      # Add discount area and text to background
 
-      bg.composite!(coupon_area, xval, yval, Magick::OverCompositeOp)
+      bg.composite!(discount_area, xval, yval, Magick::OverCompositeOp)
     end
 
     # Image save set up

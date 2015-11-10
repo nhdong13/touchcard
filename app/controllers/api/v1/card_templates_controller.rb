@@ -24,7 +24,7 @@ class API::V1::CardTemplatesController < API::BaseController
   end
 
   def update
-    @card_template.assign_attributes(coupon_params)
+    @card_template.assign_attributes(discount_params)
 
     if card_params.has_key?(:image_back)
       @card_template.image_back = AwsUtils.upload_to_s3(card_params[:image_back].original_filename, card_params[:image_back].path)
@@ -35,7 +35,7 @@ class API::V1::CardTemplatesController < API::BaseController
     end
 
     if @card_template.save
-      if card_params.has_key?(:image_back) or card_params.has_key?(:image_front) or card_params.has_key?(:coupon_loc)
+      if card_params.has_key?(:image_back) or card_params.has_key?(:image_front) or card_params.has_key?(:discount_loc)
         @card_template.create_preview_front
         @card_template.create_preview_back
       end
@@ -80,9 +80,9 @@ class API::V1::CardTemplatesController < API::BaseController
       :image_back,
       #:title_front,
       #:text_front,
-      :coupon_pct,
-      :coupon_exp,
-      :coupon_loc,
+      :discount_pct,
+      :discount_exp,
+      :discount_loc,
       :enabled,
       :international,
       :send_delay,
@@ -92,11 +92,11 @@ class API::V1::CardTemplatesController < API::BaseController
       :status)
   end
 
-  def coupon_params
+  def discount_params
     params.require(:card_template).permit(
       :id,
-      :coupon_pct,
-      :coupon_exp)
+      :discount_pct,
+      :discount_exp)
   end
 
 end

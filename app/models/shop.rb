@@ -47,9 +47,9 @@ class Shop < ActiveRecord::Base
       body: {
         discount: {
           discount_type: "percentage",
-          value: self.master_card.coupon_pct.to_s,
+          value: self.master_card.discount_pct.to_s,
           code: code,
-          ends_at: (Time.now + (self.master_card.coupon_exp || 3).weeks),
+          ends_at: (Time.now + (self.master_card.discount_exp || 3).weeks),
           starts_at: Time.now,
           usage_limit: 1
         }
