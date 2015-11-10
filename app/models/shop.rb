@@ -44,14 +44,14 @@ class Shop < ActiveRecord::Base
     puts url
 
     response = HTTParty.post(url,
-      :body => {
-        :discount => {
-          :discount_type  => "percentage",
-          :value          => self.master_card.coupon_pct.to_s,
-          :code           => code,
-          :ends_at      => (Time.now + (self.master_card.coupon_exp || 3).weeks),
-          :starts_at      => Time.now,
-          :usage_limit    => 1
+      body: {
+        discount: {
+          discount_type: "percentage",
+          value: self.master_card.coupon_pct.to_s,
+          code: code,
+          ends_at: (Time.now + (self.master_card.coupon_exp || 3).weeks),
+          starts_at: Time.now,
+          usage_limit: 1
         }
       }
     )
@@ -78,10 +78,10 @@ class Shop < ActiveRecord::Base
       #Create new hook
       if ENV['RAILS_ENV'] == "production"
         new_hook = ShopifyAPI::Webhook.create(
-          :topic    =>  "app/uninstalled",
-          :format   =>  "json",
-          :fields   =>  ["id", "domain"],
-          :address  =>  "https://touchcard.herokuapp.com/uninstall"
+          topic: "app/uninstalled",
+          format: "json",
+          fields: ["id", "domain"],
+          address: "https://touchcard.herokuapp.com/uninstall"
            )
         self.uninstall_id = new_hook.id
         self.save!
@@ -105,10 +105,10 @@ class Shop < ActiveRecord::Base
       #Create new hook
       if ENV['RAILS_ENV'] == "production"
         new_hook = ShopifyAPI::Webhook.create(
-          :topic    =>  "orders/create",
-          :format   =>  "json",
-          :fields   =>  ["id", "customer"],
-          :address  =>  "https://touchcard.herokuapp.com/new_order"
+          topic: "orders/create",
+          format: "json",
+          fields: ["id", "customer"],
+          address: "https://touchcard.herokuapp.com/new_order"
            )
         self.webhook_id = new_hook.id
         self.save!
@@ -131,7 +131,7 @@ class Shop < ActiveRecord::Base
 
   def self.top_up_all
     # Daily top-up of all shops with today as a billing date
-    shops = Shop.where(:charge_date => Date.today)
+    shops = Shop.where(charge_date: Date.today)
     shops.each do |shop|
       shop.top_up
     end
@@ -139,7 +139,7 @@ class Shop < ActiveRecord::Base
 
   def get_last_month
     self.new_sess
-    last_month = ShopifyAPI::Customer.count(:created_at_min => (Time.now - 1.month))
+    last_month = ShopifyAPI::Customer.count(created_at_min: (Time.now - 1.month))
     self.update_attribute(:last_month, last_month)
   end
 
