@@ -5,17 +5,11 @@ Rails.application.routes.draw do
     namespace :v1 do
       resources :shops, only: [:show, :update]
       resources :card_templates, only: [:index, :show, :create, :update]
-      resources :post_sale_templates, :controller => "card_templates", :type => "PostSaleTemplate", only: [:index, :show, :create, :update]
-      resources :bulk_templates,      :controller => "card_templates", :type => "BulkTemplate", only: [:index, :show, :create, :update]
       resources :postcards, only: [:index, :show, :create, :update]
       resources :charges, only: [:index, :show, :create, :update] do
         get 'activate', on: :collection
       end
       resources :shopify_customers, only: [:index]
-
-      # Routes for home
-      get 'home/dashboard'
-      get 'home/support'
     end
   end
 
