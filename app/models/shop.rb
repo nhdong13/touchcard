@@ -7,7 +7,7 @@ class Shop < ActiveRecord::Base
   has_many :charges
 
   def self.store(session)
-    shop = Shop.find_by(:domain => session.url)
+    shop = Shop.find_by(domain: session.url)
     if shop == nil
       shop = self.new(domain: session.url, token: session.token)
       shop.save!

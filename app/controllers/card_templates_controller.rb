@@ -119,9 +119,9 @@ class CardTemplatesController < AuthenticatedController
 
   def update_style
     if card_params[:style].downcase.include?("thank you")
-      @card_template.update(:style => "thank you")
+      @card_template.update(style: "thank you")
     else
-      @card_template.update(:style => "coupon")
+      @card_template.update(style: "coupon")
     end
   end
 

@@ -37,7 +37,7 @@ class CardTemplate < ActiveRecord::Base
         end
 
         # Save the info in the postcard
-        card.update_attributes(:return_customer => true, :purchase2 => new_order.total_price.to_f)
+        card.update_attributes(return_customer: true, purchase2: new_order.total_price.to_f)
 
         # Add the revenue to the card_template's total
         self.revenue += new_order.total_price.to_f

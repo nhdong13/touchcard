@@ -2,7 +2,7 @@ class API::V1::PostcardsController < API::BaseController
   before_action :set_postcard, only: [:show, :update, :destoy]
 
   def index
-    @postcards = @current_shop.postcards.where(:sent => true).limit(20)
+    @postcards = @current_shop.postcards.where(sent: true).limit(20)
     render json: @postcards, each_serializer: PostcardSerializer
   end
 

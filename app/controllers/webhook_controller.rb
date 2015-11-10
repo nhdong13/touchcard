@@ -5,7 +5,7 @@ class WebhookController < ApplicationController
   def new_order
     domain = request.headers["X-Shopify-Shop-Domain"]
     head :ok
-    shop = Shop.find_by(:domain => domain)
+    shop = Shop.find_by(domain: domain)
     puts "***********************"
     puts "New order from #{domain}"
     puts "***********************"
@@ -17,11 +17,11 @@ class WebhookController < ApplicationController
     if customer.orders_count <= 1
 
       #Check if there is a card already (duplicate webhook)
-      duplicate = Postcard.where(:order_id => order.id)[0] || nil
+      duplicate = Postcard.where(order_id: order.id)[0] || nil
 
       if duplicate.nil?
         # Create a new card and schedule to send
-        ps_template = shop.postsale_templates.where(:status => "sending").first
+        ps_template = shop.postsale_templates.where(status: "sending").first
 
         # Create a new postcard if sending is enabled and they have enough credits
         if ps_template.enabled? and customer.default_address.country_code == "US" and shop.credit >= 1
@@ -45,7 +45,7 @@ class WebhookController < ApplicationController
   def uninstall
     require 'slack_notify'
     head :ok
-    shop = Shop.find_by(:shopify_id => params[:id])
+    shop = Shop.find_by(shopify_id: params[:id])
     unless shop.nil?
       #delete shop
       shop.destroy

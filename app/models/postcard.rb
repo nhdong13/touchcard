@@ -14,17 +14,17 @@ class Postcard < ActiveRecord::Base
       send_date = card_template.arrive_by - 1.weeks
     end
     new_card = Postcard.new(
-      order_id:       order_id,
-      card_template:  card_template.id,
-      customer_id:    customer.id,
-      customer_name:  customer.first_name + " " + customer.last_name,
-      addr1:          customer.default_address.address1,
-      addr2:          customer.default_address.address2,
-      city:           customer.default_address.city,
-      state:          customer.default_address.province_code,
-      country:        customer.default_address.country_code,
-      zip:            customer.default_address.zip,
-      send_date:      send_date
+      order_id: order_id,
+      card_template: card_template.id,
+      customer_id: customer.id,
+      customer_name: customer.first_name + " " + customer.last_name,
+      addr1: customer.default_address.address1,
+      addr2: customer.default_address.address2,
+      city: customer.default_address.city,
+      state: customer.default_address.province_code,
+      country: customer.default_address.country_code,
+      zip: customer.default_address.zip,
+      send_date: send_date
     )
 
     if new_card.save
@@ -53,25 +53,25 @@ class Postcard < ActiveRecord::Base
 
       # Customer Address
       customer_address = {
-        :name             => self.customer_name,
-        :address_line1    => self.addr1,
-        :address_line2    => self.addr2,
-        :address_city     => self.city,
-        :address_state    => self.state,
-        :address_country  => self.country,
-        :address_zip      => self.zip}
+        name: self.customer_name,
+        address_line1: self.addr1,
+        address_line2: self.addr2,
+        address_city: self.city,
+        address_state: self.state,
+        address_country: self.country,
+        address_zip: self.zip}
 
 
         # NOTE: For adding a return address
 #       # Shop address
 #       shop_address = {
-#         :name             => 
-#         :address_line1    => 
-#         :address_line2    => 
-#         :address_city     => 
-#         :address_state    => 
-#         :address_country  => 
-#         :address_zip      => }
+#         name:
+#         address_line1:
+#         address_line2:
+#         address_city:
+#         address_state:
+#         address_country:
+#         address_zip: }
 
       if self.template == 'coupon'
         generated_code = ('A'..'Z').to_a.shuffle[0,9].join

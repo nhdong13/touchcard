@@ -8,7 +8,7 @@ class HomeController < AuthenticatedController
       @follow_ups = []
       # TODO: get array of repeat orders from past card recipients (private method)
 
-      @sent_cards = current_shop.postcards.where(:sent => true);
+      @sent_cards = current_shop.postcards.where(sent: true);
     else
       redirect_to new_postsale_template_path
     end

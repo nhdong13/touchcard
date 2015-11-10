@@ -3,7 +3,7 @@ class ChargeController < AuthenticatedController
   def activate
 
     #retrieve the shop and start new session with Shopify
-    shop = Shop.find_by(:charge_id => params[:charge_id])
+    shop = Shop.find_by(charge_id: params[:charge_id])
     shop.new_sess
 
     #Find the charge on Shopify's end, and check that it is accepted

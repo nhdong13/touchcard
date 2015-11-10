@@ -7,7 +7,7 @@ class ShopsController < AuthenticatedController
   def edit
     @shop = Shop.find(params[:id])
     @shop.new_sess
-    @last_month = ShopifyAPI::Customer.where(:created_at_min => (Time.now - 1.month)).count
+    @last_month = ShopifyAPI::Customer.where(created_at_min: (Time.now - 1.month)).count
     @current = @shop.charge_amount || 0
   end
 
@@ -22,7 +22,7 @@ class ShopsController < AuthenticatedController
     # Check if a billing attribute has been changed or not
     unless changed[:charge_amount] == nil
       charge_url = @shop.new_charge(shop_params[:charge_amount])
-      render :text => "<html><body><script type='text/javascript' charset='utf-8'>parent.location.href = '#{charge_url}';</script></body></html>"
+      render text: "<html><body><script type='text/javascript' charset='utf-8'>parent.location.href = '#{charge_url}';</script></body></html>"
     else
       flash[:success] = "Shop setting updated"
       redirect_to root_url

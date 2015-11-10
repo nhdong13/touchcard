@@ -8,9 +8,9 @@ class API::V1::HomeController < API::BaseController
       @follow_ups = []
       # TODO: get array of repeat orders from past card recipients (private method)
 
-      @sent_cards = current_shop.postcards.where(:sent => true);
+      @sent_cards = current_shop.postcards.where(sent: true);
 
-      render :json => @sent_cards, serializer: PostcardSerializer
+      render json: @sent_cards, serializer: PostcardSerializer
     end
   end
 

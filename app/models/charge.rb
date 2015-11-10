@@ -44,7 +44,7 @@ class Charge < ActiveRecord::Base
       )
     end
 
-    self.update_attributes(:shopify_id => shopify_charge.id)
+    self.update_attributes(shopify_id: shopify_charge.id)
   end
 
   def cancel_plan
@@ -57,6 +57,6 @@ class Charge < ActiveRecord::Base
     ShopifyAPI::RecurringApplicationCharge.delete(self.shopify_id)
 
     # Update self's data
-    self.update_attributes(:shopify_id => nil, :shopify_redirect => nil)
+    self.update_attributes(shopify_id: nil, shopify_redirect: nil)
   end
 end
