@@ -11,7 +11,7 @@ class API::V1::CardTemplatesController < API::BaseController
   end
 
   def create
-    @card_template = CardTemplate.new(card_params)
+    @card_template = CardTemplate.new(create_params)
     if @card_template.save
       render json: @card_template, serializer: CardTemplateSerializer
     else
@@ -26,16 +26,16 @@ class API::V1::CardTemplatesController < API::BaseController
   def update
     @card_template.assign_attributes(discount_params)
 
-    if card_params.has_key?(:image_back)
-      @card_template.image_back = AwsUtils.upload_to_s3(card_params[:image_back].original_filename, card_params[:image_back].path)
+    if create_params.has_key?(:image_back)
+      @card_template.image_back = AwsUtils.upload_to_s3(create_params[:image_back].original_filename, create_params[:image_back].path)
     end
 
-    if card_params.has_key?(:image_front)
-      @card_template.image_front = AwsUtils.upload_to_s3(card_params[:image_front].original_filename, card_params[:image_front].path)
+    if create_params.has_key?(:image_front)
+      @card_template.image_front = AwsUtils.upload_to_s3(create_params[:image_front].original_filename, create_params[:image_front].path)
     end
 
     if @card_template.save
-      if card_params.has_key?(:image_back) or card_params.has_key?(:image_front) or card_params.has_key?(:discount_loc)
+      if create_params.has_key?(:image_back) or create_params.has_key?(:image_front) or create_params.has_key?(:discount_loc)
         @card_template.create_preview_front
         @card_template.create_preview_back
       end
@@ -43,8 +43,7 @@ class API::V1::CardTemplatesController < API::BaseController
       render json: @card_template, serializer: CardTemplateSerializer
 
     else
-
-      render json: { error: @card_template.errors }, status: 422
+      render_validation_errors(@card_template)
     end
 
   end
@@ -56,33 +55,16 @@ class API::V1::CardTemplatesController < API::BaseController
 
   def set_card_template
     @card_template = CardTemplate.find_by(id: params[:id], shop_id: @current_shop.id)
-    if @card_template.nil?
-      render json: { errors: "not-found" }, status: 404
-    end
+    render_not_found if @card_template.nil?
   end
 
-  def template_types
-    [PostsaleTemplate, BulkTemplate]
-  end
-
-  def template_type
-    params[:type].constantize if params[:type].constantize.in? template_types
-  end
-
-  def card_params
+  def create_params
     params.require(:card_template).permit(
       :id,
       :shop_id,
       :type,
-      :style,
-      #:logo,
-      :image_front,
-      :image_back,
-      #:title_front,
-      #:text_front,
       :discount_pct,
       :discount_exp,
-      :discount_loc,
       :enabled,
       :international,
       :send_delay,
@@ -91,12 +73,4 @@ class API::V1::CardTemplatesController < API::BaseController
       :customers_after,
       :status)
   end
-
-  def discount_params
-    params.require(:card_template).permit(
-      :id,
-      :discount_pct,
-      :discount_exp)
-  end
-
 end
