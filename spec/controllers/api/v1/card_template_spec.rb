@@ -79,10 +79,10 @@ describe API::V1::CardTemplatesController do
 
     context "with good params" do
       it "should respond with 200" do
-      login(card_template.shop)
-      patch :update, id: card_template.id, :card_template => { id: card_template.id, enabled: true }
+        login(card_template.shop)
+        patch :update, id: card_template.id, :card_template => { id: card_template.id, enabled: true }
 
-      expect(response.status).to eq(200)
+        expect(response.status).to eq(200)
       end
     end
   end
