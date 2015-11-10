@@ -1,0 +1,30 @@
+class Api::V1::CardSidesController < API::BaseController
+  before_action :set_card_side, only: [:show, :update]
+
+  def show
+    render json: @card_side
+  end
+
+  def update
+    success = @card_side.update_attributes(update_params)
+    return render json: @card_side if success
+    render_validation_errors(@card_side)
+  end
+
+  private
+
+  def update_params
+    params.require(:card_side).permit(:image, :discount_x, :discount_y)
+  end
+
+  def set_card_side
+    @card_side = CardSide.find_by(id: params[:id])
+    return render_not_found if @card_side.nil?
+    card_template_count = CardTemplate.where("
+      shop_id=? AND
+      (card_side_back_id=? OR card_side_front_id=?)
+    ", @current_shop.id, params[:id], params[:id]).count
+    return render_authorization_error unless card_template_count > 0
+    @card_side
+  end
+end

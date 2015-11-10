@@ -1,3 +1,4 @@
 class CardSide < ActiveRecord::Base
-  validates :image, :is_back, presence: true
+  validates :image, presence: true
+  validates :is_back, inclusion: { in: [true, false] }
 end

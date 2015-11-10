@@ -8,7 +8,7 @@ class Shop < ActiveRecord::Base
 
   def self.store(session)
     shop = Shop.find_by(domain: session.url)
-    if shop == nil
+    if shop.nil?
       shop = self.new(domain: session.url, token: session.token)
       shop.save!
       shop.get_shopify_id
