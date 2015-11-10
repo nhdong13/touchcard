@@ -7,7 +7,6 @@ class AuthenticatedController < ApplicationController
   private
 
   def set_current_shop
-    return unless session[:shopify]
     @current_shop ||= Shop.find(session[:shopify])
   end
 end
