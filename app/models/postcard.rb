@@ -1,6 +1,6 @@
 # Include S3 utilities
-require 'aws_utils'
-require 'card_html'
+require "aws_utils"
+require "card_html"
 
 class Postcard < ActiveRecord::Base
   belongs_to :card_order
@@ -26,33 +26,33 @@ class Postcard < ActiveRecord::Base
 
   def to_address
     {
-      name: self.customer_name,
-      address_line1: self.addr1,
-      address_line2: self.addr2,
-      address_city: self.city,
-      address_state: self.state,
-      address_country: self.country,
-      address_zip: self.zip
+      name: customer_name,
+      address_line1: addr1,
+      address_line2: addr2,
+      address_city: city,
+      address_state: state,
+      address_country: country,
+      address_zip: zip
     }
   end
 
   def generate_discount_code
-    code = ('A'..'Z').to_a.shuffle[0,9].join
+    code = ("A".."Z").to_a.sample(9).join
     code[0...3] + "-" + code[3...6] + "-" + code[6...9]
-    self.card_order.shop.new_discount(code)
+    card_order.shop.new_discount(code)
     code
   end
 
   def send_card
-    # TODO all kinds of error handling
+    # TODO: all kinds of error handling
     # Test lob
-    @lob = Lob.load(api_key: ENV['LOB_TEST_API_KEY'])
+    @lob = Lob.load(api_key: ENV["LOB_TEST_API_KEY"])
 
-    if (self.country == "US" && self.shop.credit >= 1) || self.shop.credit >= 2
-      self.discount_code = generate_discount_code if self.card_order.discount?
+    if (country == "US" && shop.credit >= 1) || shop.credit >= 2
+      self.discount_code = generate_discount_code if card_order.discount?
       front_html, back_html = [
-          card_order.card_side_front,
-          card_order.card_side_back
+        card_order.card_side_front,
+        card_order.card_side_back
       ].map do |card_side|
         CardHtml.generate(
           background_image: card_side.image,
@@ -65,7 +65,7 @@ class Postcard < ActiveRecord::Base
       end
 
       sent_card = @lob.postcards.create(
-        description: "A #{self.template} card sent by #{self.shop.domain}",
+        description: "A #{template} card sent by #{shop.domain}",
         to: to_address,
         # from: shop_address, # Return address for Shop
         front: front_html,
@@ -74,15 +74,15 @@ class Postcard < ActiveRecord::Base
       self.sent = true
       self.postcard_id = sent_card["id"]
       self.date_sent = Date.today
-      self.save # TODO: Add error handling here
+      save # TODO: Add error handling here
 
       # Deduct 1 credit for US, 2 for international
-      cost = self.country == "US" ? 1 : 2
-      self.shop.credits -= cost
-      self.shop.save
+      cost = country == "US" ? 1 : 2
+      shop.credits -= cost
+      shop.save
     else
-      puts "No credits left on shop #{self.shop.domain}"
-      #TODO possibly delete the card and S3 files here
+      puts "No credits left on shop #{shop.domain}"
+      # TODO: possibly delete the card and S3 files here
     end
   end
 end

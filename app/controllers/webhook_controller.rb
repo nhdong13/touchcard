@@ -16,7 +16,7 @@ class WebhookController < ApplicationController
     # Check if this is the customer's first order
     if customer.orders_count <= 1
 
-      #Check if there is a card already (duplicate webhook)
+      # Check if there is a card already (duplicate webhook)
       duplicate = Postcard.where(order_id: order.id)[0] || nil
 
       if duplicate.nil?
@@ -24,9 +24,9 @@ class WebhookController < ApplicationController
         ps_template = shop.postsale_templates.where(status: "sending").first
 
         # Create a new postcard if sending is enabled and they have enough credits
-        if ps_template.enabled? and customer.default_address.country_code == "US" and shop.credit >= 1
+        if ps_template.enabled? && customer.default_address.country_code == "US" && shop.credit >= 1
           Postcard.create_postcard(ps_template.id, customer, order.id)
-        elsif ps_template.enabled? and customer.default_address.country_code != "US" and ps_teplate.international? and shop.credit >= 2
+        elsif ps_template.enabled? && customer.default_address.country_code != "US" && ps_teplate.international? && shop.credit >= 2
           Postcard.create_postcard(ps_template.id, customer, order.id)
         else
           puts "Not Enabled or not enough credits"
@@ -43,17 +43,17 @@ class WebhookController < ApplicationController
   end
 
   def uninstall
-    require 'slack_notify'
+    require "slack_notify"
     head :ok
     shop = Shop.find_by(shopify_id: params[:id])
     unless shop.nil?
-      #delete shop
+      # delete shop
       shop.destroy
 
-      #send notification to slack
+      # send notification to slack
       SlackNotify.uninstall(shop.domain)
 
-      #respond to webhook again
+      # respond to webhook again
       head :ok
     end
   end
@@ -62,12 +62,10 @@ class WebhookController < ApplicationController
 
   def verify_webhook
     data = request.body.read.to_s
-    hmac_header = request.headers['HTTP_X_SHOPIFY_HMAC_SHA256']
-    digest  = OpenSSL::Digest::Digest.new('sha256')
-    calculated_hmac = Base64.encode64(OpenSSL::HMAC.digest(digest, ENV['SHOPIFY_CLIENT_API_SECRET'], data)).strip
-    unless calculated_hmac == hmac_header
-      head :unauthorized
-    end
+    hmac_header = request.headers["HTTP_X_SHOPIFY_HMAC_SHA256"]
+    digest = OpenSSL::Digest::Digest.new("sha256")
+    calculated_hmac = Base64.encode64(OpenSSL::HMAC.digest(digest, ENV["SHOPIFY_CLIENT_API_SECRET"], data)).strip
+    head :unauthorized unless calculated_hmac == hmac_header
     request.body.rewind
   end
 end

@@ -2,3 +2,5 @@ Style/StringLiterals:
   EnforcedStyle: double_quotes
 AllCops:
   RunRailsCops: true
+Style/AlignParameters:
+  EnforcedStyle: with_fixed_indentation
