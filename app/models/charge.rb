@@ -4,7 +4,7 @@ class Charge < ActiveRecord::Base
   belongs_to :shop
   belongs_to :card_order
 
-  validates :shop_id, presence: true
+  validates :shop, :card_order, :amount, :last_page, :status, presence: true
   validate :customer_number, on: :create
 
   after_initialize :ensure_defaults
