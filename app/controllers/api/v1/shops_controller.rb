@@ -22,12 +22,7 @@ class API::V1::ShopsController < API::BaseController
   end
 
   def shop_params
-    params.require(:shop).permit(
-      :id,
-      :token,
-      :charge_amount,
-      :customer_pct,
-      :last_month)
+    params.require(:shop).permit(:charge_amount)
   end
 
 end
