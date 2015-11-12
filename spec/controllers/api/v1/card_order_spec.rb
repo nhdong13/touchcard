@@ -80,7 +80,7 @@ describe API::V1::CardOrdersController do
     context "with good params" do
       it "should respond with 200" do
         login(card_order.shop)
-        patch :update, id: card_order.id, :card_order => { id: card_order.id, enabled: true }
+        patch :update, id: card_order.id, card_order: { id: card_order.id, enabled: true }
 
         expect(response.status).to eq(200)
       end
