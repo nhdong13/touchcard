@@ -5,6 +5,7 @@ class WebhookController < ApplicationController
   before_action :verify_webhook, only: [:new_order, :uninstall]
 
   def new_order
+    # TODO: get rid of all the puts!! Should be using rails logger
     domain = request.headers["X-Shopify-Shop-Domain"]
     head :ok
     shop = Shop.find_by(domain: domain)
