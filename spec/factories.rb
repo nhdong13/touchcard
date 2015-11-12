@@ -21,6 +21,10 @@ FactoryGirl.define do
 
   factory :charge do
     shop
-    recurring   true
+    recurring true
+    card_order
+    amount 1
+    last_page "last_page"
+    status "new"
   end
 end

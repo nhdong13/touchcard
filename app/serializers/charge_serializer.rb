@@ -1,5 +1,4 @@
 class ChargeSerializer < ActiveModel::Serializer
-  attributes :id, :shopify_id, :card_order_id, :amount, :recurring, :status, :shopify_redirect, :last_page
-
-  has_one :shop, embed: :ids
+  attributes :id, :recurring, :card_order_id, :amount, :status,
+   :shopify_redirect, :last_page
 end

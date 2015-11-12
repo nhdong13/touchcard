@@ -39,7 +39,7 @@ class API::V1::ChargesController < API::BaseController
 
   def set_card_order
     @card_order = CardOrder.find_by(id: params[:card_order_id])
-    return render json: { errors: { card_order: "must be present"} } unless @card_order
+    return render json: { errors: { card_order: "must be present"} }, status: 422 unless @card_order
     render_authorization_error unless @card_order.shop_id == @current_shop.id
   end
 
