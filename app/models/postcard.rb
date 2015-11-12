@@ -38,7 +38,7 @@ class Postcard < ActiveRecord::Base
 
   def generate_discount_code
     code = ("A".."Z").to_a.sample(9).join
-    code[0...3] + "-" + code[3...6] + "-" + code[6...9]
+    "#{code[0...3]}-#{code[3...6]}-#{code[6...9]}"
     card_order.shop.new_discount(code)
     code
   end
