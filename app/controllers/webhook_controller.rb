@@ -1,3 +1,5 @@
+require "slack_notify"
+
 class WebhookController < ApplicationController
   skip_before_action :verify_authenticity_token
   before_action :verify_webhook, only: [:new_order, :uninstall]
@@ -12,50 +14,30 @@ class WebhookController < ApplicationController
     shop.new_sess
     order = ShopifyAPI::Order.find(params[:id])
     customer = order.customer
+    international = customer.default_address.country_code == "US"
 
     # Check if this is the customer's first order
-    if customer.orders_count <= 1
+    return puts "Not a new customer" if customer.orders_count <= 1
 
-      # Check if there is a card already (duplicate webhook)
-      duplicate = Postcard.find_by(triggering_shopify_order_id: order.id)
+    # Check if there is a card already (duplicate webhook)
+    duplicate = Postcard.find_by(triggering_shopify_order_id: order.id)
+    return puts "Duplicate card found" if duplicate
 
-      if duplicate.nil?
-        # Create a new card and schedule to send
-        post_sale_order = shop.postsale_templates.where(status: "sending").first
-
-        # Create a new postcard if sending is enabled and they have enough credits
-        if post_sale_order.enabled? && customer.default_address.country_code == "US" && shop.credit >= 1
-          Postcard.create_postcard(post_sale_order.id, customer, order.id)
-        elsif post_sale_order.enabled? && customer.default_address.country_code != "US" && ps_teplate.international? && shop.credit >= 2
-          Postcard.create_postcard(post_sale_order.id, customer, order.id)
-        else
-          puts "Not Enabled or not enough credits"
-          head :ok
-        end
-      else
-        puts "Duplicate card found"
-        head :ok
-      end
-    else
-      puts "Not a new customer"
-      head :ok
-    end
+    # Create a new card and schedule to send
+    post_sale_order = shop.postsale_templates.find_by(status: "sending")
+    return puts "Card not setup" if post_sale_order.nil?
+    return puts "Card not enabled" if post_sale_order.enabled?
+    return puts "Internatinal customer not enabled" if internatinal && !post_sale_order.internatinal?
+    Postcard.create_postcard!(post_sale_order, customer, order.id)
   end
 
   def uninstall
-    require "slack_notify"
     head :ok
     shop = Shop.find_by(shopify_id: params[:id])
-    unless shop.nil?
-      # delete shop
-      shop.destroy
-
-      # send notification to slack
-      SlackNotify.uninstall(shop.domain)
-
-      # respond to webhook again
-      head :ok
-    end
+    fail "Uninstall non existing shop #{params[:id]}" if shop.nil?
+    # TODO have a better uninstall path, we probably don't want to be deleting
+    SlackNotify.uninstall(shop.domain)
+    shop.destroy
   end
 
   private
@@ -64,7 +46,9 @@ class WebhookController < ApplicationController
     data = request.body.read.to_s
     hmac_header = request.headers["HTTP_X_SHOPIFY_HMAC_SHA256"]
     digest = OpenSSL::Digest::Digest.new("sha256")
-    calculated_hmac = Base64.encode64(OpenSSL::HMAC.digest(digest, ENV["SHOPIFY_CLIENT_API_SECRET"], data)).strip
+    api_secret = ENV["SHOPIFY_CLIENT_API_SECRET"]
+    digested = OpenSSL::HMAC.digest(digest, api_secret, data)
+    calculated_hmac = Base64.encode64(digested).strip
     head :unauthorized unless calculated_hmac == hmac_header
     request.body.rewind
   end
