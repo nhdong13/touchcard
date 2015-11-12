@@ -7,7 +7,7 @@ Rails.application.routes.draw do
       resources :shops, only: [:show, :update]
       resources :card_orders, only: [:index, :show, :create, :update]
       resources :postcards, only: [:index, :show, :create, :update]
-      resources :charges, only: [:index, :show, :create, :update] do
+      resources :charges, only: [:show, :create, :update] do
         get 'activate', on: :collection
       end
       resources :shopify_customers, only: [:index]
