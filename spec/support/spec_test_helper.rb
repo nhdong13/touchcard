@@ -1,7 +1,6 @@
 module SpecTestHelper
-
   def login(shop)
-    shop = Shop.find_by(:id => shop.id)
+    shop = Shop.find_by(id: shop.id)
     session[:shopify] = shop.id
   end
 

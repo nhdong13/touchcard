@@ -1,7 +1,7 @@
 desc "Heroku scheduler task for sending cards"
 task :daily_send_cards => :environment do
   puts "Sending Cards"
-  Card.send_all
+  Postcard.send_all
 end
 
 desc "Poll customers for second purchase"

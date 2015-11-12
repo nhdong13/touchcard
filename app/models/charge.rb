@@ -85,7 +85,7 @@ class Charge < ActiveRecord::Base
   end
 
   def activate_recurring_charge
-    #Find the charge on Shopify's end, and check that it is accepted
+    # Find the charge on Shopify's end, and check that it is accepted
     old_charge = Charge.find_by(
       status: "active",
       recurring: true,

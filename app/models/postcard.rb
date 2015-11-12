@@ -43,7 +43,11 @@ class Postcard < ActiveRecord::Base
     code
   end
 
-  def send_card
+  def self.send_all
+    Postcard.were("sent = ? and send_date <= ?", false, Time.now).each(&:send_card)
+  end
+
+  def send
     # TODO: all kinds of error handling
     # Test lob
     @lob = Lob.load(api_key: ENV["LOB_TEST_API_KEY"])

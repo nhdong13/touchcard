@@ -36,7 +36,7 @@ class WebhookController < ApplicationController
     head :ok
     shop = Shop.find_by(shopify_id: params[:id])
     fail "Uninstall non existing shop #{params[:id]}" if shop.nil?
-    # TODO have a better uninstall path, we probably don't want to be deleting
+    # TODO: have a better uninstall path, we probably don't want to be deleting
     SlackNotify.uninstall(shop.domain)
     shop.destroy
   end
