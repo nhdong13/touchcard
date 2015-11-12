@@ -1,33 +1,33 @@
 class Shop < ActiveRecord::Base
   validates :customer_pct, numericality: true
   has_many :card_orders, dependent: :destroy
-  has_many :postsale_templates
-  has_many :bulk_templates
   has_many :postcards, through: :card_orders
   has_many :charges
 
-  def self.store(session)
-    shop = Shop.find_by(domain: session.url)
-    if shop.nil?
-      shop = self.new(domain: session.url, token: session.token)
-      shop.save!
-      shop.get_shopify_id
-      shop.uninstall_hook
-      shop.new_order_hook
-    else
-      shop.token = session.token
-      shop.save!
-      shop.get_shopify_id
-      shop.uninstall_hook
-      shop.new_order_hook
-      ShopifyAPI::Session.new(shop.domain, shop.token)
+  class << self
+    def store(session)
+      shop = Shop.find_by(domain: session.url)
+      if shop.nil?
+        shop = self.new(domain: session.url, token: session.token)
+        shop.save!
+        shop.get_shopify_id
+        shop.uninstall_hook
+        shop.new_order_hook
+      else
+        shop.token = session.token
+        shop.save!
+        shop.get_shopify_id
+        shop.uninstall_hook
+        shop.new_order_hook
+        ShopifyAPI::Session.new(shop.domain, shop.token)
+      end
+      shop.id
     end
-    shop.id
-  end
 
-  def self.retrieve(id)
-    if shop = self.where(id: id).first
-      ShopifyAPI::Session.new(shop.domain, shop.token)
+    def retrieve(id)
+      if shop = self.where(id: id).first
+        ShopifyAPI::Session.new(shop.domain, shop.token)
+      end
     end
   end
 
