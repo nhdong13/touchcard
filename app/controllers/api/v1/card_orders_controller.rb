@@ -2,7 +2,7 @@ class API::V1::CardOrdersController < API::BaseController
   before_action :set_card_order, only: [:show, :update, :destroy]
 
   def index
-    @card_orders = CardOrder.where(shop_id: @current_shop.id)
+    @card_orders = @current_shop.card_orders
     render @card_orders, each_serializer: CardOrderSerializer
   end
 
@@ -20,7 +20,6 @@ class API::V1::CardOrdersController < API::BaseController
       puts @card_order.shop_id
       render json: { errors: @card_order.errors }, status: 422
     end
-
   end
 
   def update

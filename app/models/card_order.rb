@@ -24,37 +24,32 @@ class CardOrder < ActiveRecord::Base
   end
 
   def track_revenue
-    postcards = self.postcards
-    shop = self.shop
     shop.new_sess
-
-    postcards.each do |card|
-        # TODO: refactor shopify calls to be safer and DRY-er
+    postcards.each do |postcard|
+      # TODO: refactor shopify calls to be safer and DRY-er
       begin
-        customer = ShopifyAPI::Customer.find(card.customer_id)
+        customer = ShopifyAPI::Customer.find(postcard.shopify_customer_id)
       rescue #Shopify API limit
         wait(2)
-        customer = ShopifyAPI::Customer.find(card.customer_id)
+        retry
       end
 
       order = customer.last_order
-      if order.id != card.order_id
+      if order.id != postcard.order_id
         # TODO: refactor shopify calls to be safer and DRY-er
         begin
           new_order = ShopifyAPI::Order.find(order.id)
         rescue # Shopify API limit
           wait(2)
-          new_order = ShopifyAPI::Order.find(order.id)
+          retry
         end
 
         # Save the info in the postcard
-        card.update_attributes(return_customer: true, purchase2: new_order.total_price.to_f)
+        postcard.update_attributes(return_customer: true, purchase2: new_order.total_price.to_f)
 
         # Add the revenue to the card_order's total
         self.revenue += new_order.total_price.to_f
         self.save
-      else
-        # Do nothing
       end
     end
   end

@@ -8,7 +8,7 @@ class Postcard < ActiveRecord::Base
 
   validates :card_order, presence: true
 
-  def self.create_postcard!(card_order, shopify_customer, shopify_order_id)
+  def self.create_postcard!(card_order, shopify_customer, triggering_shopify_order_id)
     Postcard.create!(
       triggering_shopify_order_id: triggering_shopify_order_id,
       card_order: card_order,
@@ -44,6 +44,7 @@ class Postcard < ActiveRecord::Base
   end
 
   def send_card
+    # TODO all kinds of error handling
     # Test lob
     @lob = Lob.load(api_key: ENV['LOB_TEST_API_KEY'])
 
