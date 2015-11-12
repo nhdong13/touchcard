@@ -33,7 +33,7 @@ class CardOrder < ActiveRecord::Base
       end
 
       order = customer.last_order
-      next unless order.id != postcard.order_id
+      next unless order.id != postcard.triggering_shopify_order_id
       begin
         new_order = ShopifyAPI::Order.find(order.id)
       rescue # Shopify API limit

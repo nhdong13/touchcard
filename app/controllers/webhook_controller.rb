@@ -17,17 +17,17 @@ class WebhookController < ApplicationController
     if customer.orders_count <= 1
 
       # Check if there is a card already (duplicate webhook)
-      duplicate = Postcard.where(order_id: order.id)[0] || nil
+      duplicate = Postcard.find_by(triggering_shopify_order_id: order.id)
 
       if duplicate.nil?
         # Create a new card and schedule to send
-        ps_template = shop.postsale_templates.where(status: "sending").first
+        post_sale_order = shop.postsale_templates.where(status: "sending").first
 
         # Create a new postcard if sending is enabled and they have enough credits
-        if ps_template.enabled? && customer.default_address.country_code == "US" && shop.credit >= 1
-          Postcard.create_postcard(ps_template.id, customer, order.id)
-        elsif ps_template.enabled? && customer.default_address.country_code != "US" && ps_teplate.international? && shop.credit >= 2
-          Postcard.create_postcard(ps_template.id, customer, order.id)
+        if post_sale_order.enabled? && customer.default_address.country_code == "US" && shop.credit >= 1
+          Postcard.create_postcard(post_sale_order.id, customer, order.id)
+        elsif post_sale_order.enabled? && customer.default_address.country_code != "US" && ps_teplate.international? && shop.credit >= 2
+          Postcard.create_postcard(post_sale_order.id, customer, order.id)
         else
           puts "Not Enabled or not enough credits"
           head :ok
