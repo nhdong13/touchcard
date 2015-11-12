@@ -49,8 +49,7 @@ class API::V1::ChargesController < API::BaseController
       :amount,
       :last_page).merge(
         recurring: @card_order.type == 'PostSaleOrder',
-        status: 'new'
-      )
+        status: 'new')
   end
 
   def update_params
