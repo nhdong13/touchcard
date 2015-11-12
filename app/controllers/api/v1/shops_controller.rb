@@ -1,30 +1,25 @@
 class API::V1::ShopsController < API::BaseController
-
+  before_action :set_shop, only: [:show, :update]
   def show
-    render json: @current_shop, serializer: ShopSerializer
+    render json: @shop, serializer: ShopSerializer
   end
 
   def update
-    @shop = Shop.find(params[:id])
-    @shop.assign_attributes(shop_params)
-
-    # Save which attributes are updated
-    changed =  @shop.changed_attributes
-    if @shop.save
-
-      # Check if a billing attribute has been changed or not
-      unless changed[:charge_amount] == nil
-        @shop.new_recurring_charge(shop_params[:charge_amount])
-      end
-
-      render json: @shop, serializer: ShopSerializer
-
-    else
-      render json: { errors: @shop.errors.full_messages }, status: 422
+    success = @shop.update_attributes(shop_params)
+    return render_validation_errors unless success
+    # Check if a billing attribute has been changed or not
+    if @shop.charge_amount_changed?
+      @shop.new_recurring_charge(shop_params[:charge_amount])
     end
+    render json: @shop, serializer: ShopSerializer
   end
 
   private
+
+  def set_shop
+    @shop = @current_shop
+    render_authorization_error unless params[:id] == @shop.id
+  end
 
   def shop_params
     params.require(:shop).permit(

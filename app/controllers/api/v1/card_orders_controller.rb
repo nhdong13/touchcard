@@ -15,10 +15,7 @@ class API::V1::CardOrdersController < API::BaseController
     if @card_order.save
       render json: @card_order, serializer: CardOrderSerializer
     else
-      # return 422 error
-      puts @card_order.errors.full_messages
-      puts @card_order.shop_id
-      render json: { errors: @card_order.errors }, status: 422
+      render_validation_errors(@card_order)
     end
   end
 

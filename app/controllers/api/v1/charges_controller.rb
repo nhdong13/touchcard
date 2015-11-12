@@ -16,7 +16,7 @@ class API::V1::ChargesController < API::BaseController
       @charge.new_shopify_charge
       render json: @charge, serializer: ChargeSerializer
     else
-      render json: { errors: @charge.errors }, status: 422
+      render_validation_errors(@charge)
     end
   end
 
@@ -29,7 +29,7 @@ class API::V1::ChargesController < API::BaseController
       end
       render json: @charge, serializer: ChargeSerializer
     else
-      render json: { errors: @charge.errors }, status: 422
+      render_validation_errors(@charge)
     end
 
   end
@@ -71,17 +71,15 @@ class API::V1::ChargesController < API::BaseController
         puts "duplicate charge callback"
       end
     end
-
     redirect_to @charge.last_page
   end
 
   private
 
   def set_charge
-    @charge = Charge.find_by(id: params[:id], shop_id: @current_shop.id)
-    if @charge.nil?
-      render json: { errors: "not-found" }, status: 404
-    end
+    @charge = Charge.find_by(id: params[:id])
+    return render_not_found unless @charge
+    render_authorization_error if @current_shop.id != @charge.shop_id
   end
 
   def charge_params

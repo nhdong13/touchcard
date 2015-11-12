@@ -35,11 +35,11 @@ class CardOrder < ActiveRecord::Base
       order = customer.last_order
       next unless order.id != postcard.order_id
       begin
-                new_order = ShopifyAPI::Order.find(order.id)
-              rescue # Shopify API limit
-                wait(2)
-                retry
-              end
+        new_order = ShopifyAPI::Order.find(order.id)
+      rescue # Shopify API limit
+        wait(2)
+        retry
+      end
 
       # Save the info in the postcard
       postcard.update_attributes(return_customer: true, purchase2: new_order.total_price.to_f)
