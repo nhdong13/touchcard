@@ -1,4 +1,4 @@
-class API::V1::ShopsController < API::BaseController
+class Api::V1::ShopsController < API::BaseController
   before_action :set_shop, only: [:show, :update]
   def show
     render json: @shop, serializer: ShopSerializer
@@ -12,6 +12,10 @@ class API::V1::ShopsController < API::BaseController
       @shop.new_recurring_charge(shop_params[:charge_amount])
     end
     render json: @shop, serializer: ShopSerializer
+  end
+
+  def current
+    render json: @current_shop, serializer: ShopSerializer
   end
 
   private
