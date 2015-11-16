@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe API::V1::ChargesController do
+describe Api::V1::ChargesController do
   let(:json) { JSON.parse(response.body) }
   let(:shop) { create(:shop) }
   let(:other_shop) { create(:shop) }
@@ -67,7 +67,6 @@ describe API::V1::ChargesController do
       # TODO: This relies on creating a real shopify charge
       # describe "with valid params" do
       #   it "should have status 200" do
-      #     login(charge.shop)
       #     post :create, :charge => { shop_id: charge.shop_id }
       #
       #     expect(response.status).to eq(200)
@@ -76,57 +75,13 @@ describe API::V1::ChargesController do
     end
 
     describe "#update" do
+      # This needs to hit the shopify api
+      # it "should have status 200" do
+      #   put :update, id: charge.id, charge: { id: charge.id, status: "canceled" }
+      #   expect(response.status).to eq(200)
+      # end
 
+      # it should block changing the status to something that is not canceled
     end
   end
-
-#   end
-#
-#   describe ":show" do
-#     context "while logged in" do
-#
-#
-#
-#       context "with valid id" do
-#
-#       end
-#     end
-#   end
-#
-#   describe "Create Charge" do
-#
-#     describe "while logged in" do
-#
-#     end
-#   end
-#   describe "Update charge" do
-#     context "while logged in" do
-#       context "with invalid params" do
-#         it "should respond with 422" do
-#           login(charge.shop)
-#           patch :update, id: charge.id, :charge => { id: charge.id, shop_id: nil }
-#
-#           expect(response.status).to eq(422)
-#         end
-#       end
-#
-#       context "with valid params" do
-#         it "should have status 200" do
-#           login(charge.shop)
-#           patch :update, id: charge.id, :charge => { id: charge.id, amount: 100 }
-#
-#           expect(response.status).to eq(200)
-#         end
-#
-#         it "should have new amount" do
-#           login(charge.shop)
-#           patch :update, id: charge.id, :charge => { id: charge.id, amount: 100 }
-#           json = JSON.parse(response.body)
-#
-#           expect(json['charge']['amount']).to eq(100)
-#         end
-#
-#       end
-#     end
-#   end
 end

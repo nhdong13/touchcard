@@ -1,9 +1,9 @@
-class API::V1::CardOrdersController < API::BaseController
+class Api::V1::CardOrdersController < API::BaseController
   before_action :set_card_order, only: [:show, :update, :destroy]
 
   def index
     @card_orders = @current_shop.card_orders
-    render @card_orders, each_serializer: CardOrderSerializer
+    render json: @card_orders, each_serializer: CardOrderSerializer
   end
 
   def show
@@ -56,8 +56,6 @@ class API::V1::CardOrdersController < API::BaseController
 
   def create_params
     params.require(:card_order).permit(
-      :id,
-      :shop_id,
       :type,
       :discount_pct,
       :discount_exp,
@@ -67,6 +65,6 @@ class API::V1::CardOrdersController < API::BaseController
       :arrive_by,
       :customers_before,
       :customers_after,
-      :status)
+      :status).merge(shop_id: @current_shop.id)
   end
 end

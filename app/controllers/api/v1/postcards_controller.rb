@@ -1,4 +1,4 @@
-class API::V1::PostcardsController < API::BaseController
+class Api::V1::PostcardsController < API::BaseController
   before_action :set_postcard, only: [:show, :update, :destoy]
 
   def index

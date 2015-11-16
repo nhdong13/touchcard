@@ -1,4 +1,4 @@
-class API::V1::ChargesController < API::BaseController
+class Api::V1::ChargesController < API::BaseController
   before_action :set_charge, only: [:show, :update, :destroy]
   before_action :set_card_order, only: [:create]
 
@@ -15,7 +15,7 @@ class API::V1::ChargesController < API::BaseController
 
   def update
     success = @charge.update_attributes(charge_params)
-    # TODO validation check for status cancelled
+    # TODO validation check that the status moved to canceled
     return @charge.save unless render_validation_errors(@charge)
     @charge.cancel if @charge.status_changed? && @charge.status == "canceled"
     render json: @charge, serializer: ChargeSerializer

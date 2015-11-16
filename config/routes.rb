@@ -1,10 +1,13 @@
 Rails.application.routes.draw do
 
+  root :to => 'root#index'
   # API routes
   namespace :api, defaults: {format: 'json'} do
     namespace :v1 do
       resources :card_sides, only: [:show, :update]
-      resources :shops, only: [:show, :update]
+      resources :shops, only: [:show, :update] do
+        collection { get :current }
+      end
       resources :card_orders, only: [:index, :show, :create, :update]
       resources :postcards, only: [:index, :show, :create, :update]
       resources :charges, only: [:show, :create, :update] do
@@ -28,11 +31,8 @@ Rails.application.routes.draw do
   # Support page
   get '/support',   to: 'home#support'
 
-  # Set root path
-  root :to => 'root#app'
-
   # Shopify Engine
   mount ShopifyApp::Engine, at: '/'
-
-  get '/*path' => 'root#app'
+  get '/app' => 'root#app'
+  get '/app/*path' => 'root#app'
 end

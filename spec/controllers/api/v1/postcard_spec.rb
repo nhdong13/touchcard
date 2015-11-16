@@ -1,4 +1,4 @@
-describe API::V1::PostcardsController do
+describe Api::V1::PostcardsController do
   require 'spec_helper'
   include SpecTestHelper
 

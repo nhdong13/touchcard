@@ -1,4 +1,4 @@
-describe API::V1::CardOrdersController do
+describe Api::V1::CardOrdersController do
   require 'spec_helper'
   include SpecTestHelper
 

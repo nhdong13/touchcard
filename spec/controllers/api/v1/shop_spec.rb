@@ -1,4 +1,4 @@
-describe API::V1::ShopsController do
+describe Api::V1::ShopsController do
   require 'spec_helper'
   include SpecTestHelper
 
