@@ -13,7 +13,9 @@ Rails.application.routes.draw do
       resources :charges, only: [:show, :create, :update] do
         get 'activate', on: :collection
       end
-      resources :shopify_customers, only: [:index]
+      resources :shopify_customers, only: [] do
+        collection { get :count }
+      end
     end
   end
 
