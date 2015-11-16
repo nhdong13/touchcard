@@ -85,7 +85,7 @@ group :development, :test do
   gem "less-rails-bootstrap"
   gem "rspec-rails", "~> 3.0"
   gem "factory_girl_rails"
-  gem "webmock"
+  # gem "webmock"
 end
 
 group :production do
