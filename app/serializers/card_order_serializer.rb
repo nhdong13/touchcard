@@ -1,10 +1,13 @@
 class CardOrderSerializer < ActiveModel::Serializer
-  attributes :id, :shop_id, :type, :style, :image_front, :image_back, :logo,
-    :title_front, :text_front, :preview_front, :preview_back, :discount_pct,
-    :discount_exp, :discount_loc, :enabled, :international, :send_delay, :arrive_by,
-    :customers_before, :customers_after, :transaction_id, :status, :cards_sent,
-    :revenue
+  embed :ids, include: true
+  attributes :id, :shop_id, :type,
+    :enabled, :international,
+    :discount_pct, :discount_exp,
+    :send_delay, :arrive_by,
+    :customers_before, :customers_after,
+    :status,
+    :cards_sent, :revenue
 
-  has_one :shop, embed: :ids
-  has_many :postcards, embed: :ids
+  has_one :card_side_front, root: :card_sides, serializer: CardSideSerializer
+  has_one :card_side_back, root: :card_sides, serializer: CardSideSerializer
 end

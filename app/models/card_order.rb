@@ -6,6 +6,13 @@ class CardOrder < ActiveRecord::Base
 
   validates :shop, :card_side_front, :card_side_back, presence: true
 
+  after_initialize :ensure_defaults
+
+  def ensure_defaults
+    self.card_side_front ||= CardSide.create!(is_back: false)
+    self.card_side_back ||= CardSide.create!(is_back: true)
+  end
+
   def discount?
     !discount_loc.nil? && !discount_pct.nil?
   end
