@@ -36,7 +36,7 @@ class Shop < ActiveRecord::Base
   end
 
   def new_sess
-    ShopifyApi::Base.activate_session(Shop.retrieve(id))
+    ShopifyAPI::Base.activate_session(Shop.retrieve(id))
   end
 
   def new_discount(code)
