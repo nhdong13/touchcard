@@ -4,6 +4,7 @@ Rails.application.routes.draw do
   # API routes
   namespace :api, defaults: {format: 'json'} do
     namespace :v1 do
+      get 'sign', to: 'aws#sign'
       resources :card_sides, only: [:show, :update]
       resources :shops, only: [:show, :update] do
         collection { get :current }

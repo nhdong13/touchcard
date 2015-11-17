@@ -1,4 +1,4 @@
-class Api::V1::CardSidesController < API::BaseController
+class Api::V1::CardSidesController < Api::BaseController
   before_action :set_card_side, only: [:show, :update]
 
   def show

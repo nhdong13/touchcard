@@ -1,4 +1,4 @@
-class Api::V1::ShopsController < API::BaseController
+class Api::V1::ShopsController < Api::BaseController
   before_action :set_shop, only: [:show, :update]
   def show
     render json: @shop, serializer: ShopSerializer

@@ -1,4 +1,4 @@
-class Api::V1::ChargesController < API::BaseController
+class Api::V1::ChargesController < Api::BaseController
   before_action :set_charge, only: [:show, :update, :destroy]
   before_action :set_card_order, only: [:create]
 

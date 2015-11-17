@@ -1,4 +1,4 @@
-class Api::V1::CardOrdersController < API::BaseController
+class Api::V1::CardOrdersController < Api::BaseController
   before_action :set_card_order, only: [:show, :update, :destroy]
 
   def index
