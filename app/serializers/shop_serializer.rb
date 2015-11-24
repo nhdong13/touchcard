@@ -1,6 +1,10 @@
 class ShopSerializer < ActiveModel::Serializer
   attributes :id, :credit, :subscription_id, :is_card_registered
 
+  def subscription_id
+    object.subscription_ids.first
+  end
+  
   def is_card_registered
     object.stripe_customer_id.present?
   end
