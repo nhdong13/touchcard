@@ -1,7 +1,13 @@
 desc "Heroku scheduler task for sending cards"
 task :daily_send_cards => :environment do
   puts "Sending Cards"
-  Card.send_all
+  Postcard.send_all
+end
+
+desc "Poll customers for second purchase"
+task :daily_revenue_poll => :environment do
+  puts "Calculating revenue"
+  CardTemplate.update_all_revenues
 end
 
 desc "Top up credit on all shops with a billing date of today"

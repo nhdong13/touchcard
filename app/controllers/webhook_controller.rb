@@ -1,93 +1,57 @@
+require "slack_notify"
+
 class WebhookController < ApplicationController
   skip_before_action :verify_authenticity_token
   before_action :verify_webhook, only: [:new_order, :uninstall]
 
   def new_order
+    # TODO: get rid of all the puts!! Should be using rails logger
     domain = request.headers["X-Shopify-Shop-Domain"]
-    head :ok
-    shop = Shop.find_by(:domain => domain)
+    head :ok # head ok to avoid timeout
+    shop = Shop.find_by(domain: domain)
     puts "***********************"
     puts "New order from #{domain}"
     puts "***********************"
-    if shop.enabled and shop.credit >= 1
-      shop.new_sess
-      order = ShopifyAPI::Order.find(params[:id])
-      customer = order.customer
-      puts customer.orders_count
+    shop.new_sess
+    order = ShopifyAPI::Order.find(params[:id])
+    customer = order.customer
+    international = customer.default_address.country_code == "US"
 
-      # Check if this is the customer's first order
-      if customer.orders_count <= 1
+    # Check if this is the customer's first order
+    return puts "Not a new customer" if customer.orders_count <= 1
 
-        #Check if there is a card already (duplicate webhook)
-        duplicate = Card.where(:order_id => order.id)[0] || nil
+    # Check if there is a card already (duplicate webhook)
+    duplicate = Postcard.find_by(triggering_shopify_order_id: order.id)
+    return puts "Duplicate card found" if duplicate
 
-        if duplicate == nil
-          # Create a new card and schedule to send
-          mc = shop.master_card
-          card = shop.cards.create(
-            :template       => mc.template,
-            :logo           => mc.logo,
-            :image_front    => mc.image_front,
-            :image_back     => mc.image_back,
-            :title_back     => mc.title_front,
-            :text_front     => mc.text_front,
-            :text_back      => mc.text_back,
-            :customer_name  => customer.first_name + " " + customer.last_name,
-            :customer_id    => customer.id,
-            :addr1          => order.shipping_address.address1,
-            :addr2          => order.shipping_address.address2,
-            :city           => order.shipping_address.city,
-            :state          => order.shipping_address.province_code,
-            :country        => order.shipping_address.country_code,
-            :zip            => order.shipping_address.zip,
-            :send_date      => (Date.today + shop.send_delay.weeks),
-            :order_id       => order.id
-          )
-
-          # TODO: Remove after alph
-          #card.send_card
-        else
-          puts "Duplicate card found"
-          head :ok
-        end
-      else
-        puts "Not a new customer"
-      end
-    else
-      puts "Recieved new order from #{domain}, but shop is not enabled or has no credits"
-      head :ok
-    end
-
-    # Respond to webhook again...
-    head :ok
+    # Create a new card and schedule to send
+    post_sale_order = shop.post_sale_orders.find_by(status: "sending")
+    return puts "Card not setup" if post_sale_order.nil?
+    return puts "Card not enabled" if post_sale_order.enabled?
+    return puts "Internatinal customer not enabled" if internatinal && !post_sale_order.internatinal?
+    Postcard.create_postcard!(post_sale_order, customer, order.id)
   end
 
   def uninstall
-    require 'slack_notify'
     head :ok
-    shop = Shop.find_by(:shopify_id => params[:id])
-    unless shop.nil?
-      #delete shop
-      shop.destroy
-
-      #send notification to slack
-      SlackNotify.uninstall(shop.domain)
-
-      #respond to webhook again
-      head :ok
-    end
+    shop = Shop.find_by(shopify_id: params[:id])
+    fail "Uninstall non existing shop #{params[:id]}" if shop.nil?
+    shop.subscriptions.each { |s| s.destroy }
+    # TODO: have a better uninstall path, we probably don't want to be deleting
+    SlackNotify.uninstall(shop.domain)
+    shop.destroy
   end
 
   private
 
   def verify_webhook
     data = request.body.read.to_s
-    hmac_header = request.headers['HTTP_X_SHOPIFY_HMAC_SHA256']
-    digest  = OpenSSL::Digest::Digest.new('sha256')
-    calculated_hmac = Base64.encode64(OpenSSL::HMAC.digest(digest, ShopifyApp.configuration.secret, data)).strip
-    unless calculated_hmac == hmac_header
-      head :unauthorized
-    end
+    hmac_header = request.headers["HTTP_X_SHOPIFY_HMAC_SHA256"]
+    digest = OpenSSL::Digest::Digest.new("sha256")
+    api_secret = ENV["SHOPIFY_CLIENT_API_SECRET"]
+    digested = OpenSSL::HMAC.digest(digest, api_secret, data)
+    calculated_hmac = Base64.encode64(digested).strip
+    head :unauthorized unless calculated_hmac == hmac_header
     request.body.rewind
   end
 end

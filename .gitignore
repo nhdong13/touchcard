@@ -21,3 +21,5 @@
 
 #ignore local cert files
 /server.*
+
+.DS_Store
