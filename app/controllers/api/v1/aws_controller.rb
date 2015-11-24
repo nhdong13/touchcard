@@ -1,13 +1,14 @@
 class Api::V1::AwsController < Api::BaseController
   def sign
-    bucket = Aws::S3::Resource.new.bucket("touchcard-user")
+    bucket_name = "touchcard-user"
+    bucket = Aws::S3::Resource.new.bucket(bucket_name)
     @s3_direct_post = bucket.presigned_post(
       key: "uploads/#{SecureRandom.uuid}/${filename}",
       success_action_status: "201",
       acl: "public-read",
       expires: 1.hours.from_now
     )
-    render json: @s3_direct_post.fields, status: :ok
+    render json: @s3_direct_post.fields.merge(bucket: bucket_name), status: :ok
   end
   # def sign
   #   @expires = 1.hours.from_now
