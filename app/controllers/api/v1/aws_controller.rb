@@ -30,7 +30,7 @@ class Api::V1::AwsController < Api::BaseController
       {
         expiration: @expires,
         conditions: [
-          { bucket: 'sandbox' },
+          { bucket: 'touchcard-user' },
           { acl: 'public-read' },
           { expires: @expires },
           { success_action_status: '201' },
