@@ -11,7 +11,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151028233150) do
+ActiveRecord::Schema.define(version: 20151123201307) do
+
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
   create_table "active_admin_comments", force: :cascade do |t|
     t.string   "namespace"
     t.text     "body"
@@ -105,6 +109,19 @@ ActiveRecord::Schema.define(version: 20151028233150) do
 
   add_index "delayed_jobs", ["priority", "run_at"], name: "delayed_jobs_priority", using: :btree
 
+  create_table "plans", force: :cascade do |t|
+    t.integer  "amount",                                 null: false
+    t.string   "interval",             default: "month", null: false
+    t.string   "name",                                   null: false
+    t.string   "currency",             default: "usd",   null: false
+    t.integer  "interval_count",       default: 1,       null: false
+    t.boolean  "on_stripe",            default: false,   null: false
+    t.integer  "trial_period_days"
+    t.text     "statement_descriptor"
+    t.datetime "created_at",                             null: false
+    t.datetime "updated_at",                             null: false
+  end
+
   create_table "postcards", force: :cascade do |t|
     t.integer  "card_order_id"
     t.string   "discount_code"
@@ -120,65 +137,48 @@ ActiveRecord::Schema.define(version: 20151028233150) do
     t.datetime "send_date"
     t.boolean  "sent",                                  default: false, null: false
     t.datetime "date_sent"
-    t.string   "postcard_id",   limit: 8
-    t.datetime "created_at",                              null: false
-    t.datetime "updated_at",                              null: false
-    t.integer  "order_id",      limit: 8
-  end
-
-  create_table "delayed_jobs", force: :cascade do |t|
-    t.integer  "priority",   default: 0, null: false
-    t.integer  "attempts",   default: 0, null: false
-    t.text     "handler",                null: false
-    t.text     "last_error"
-    t.datetime "run_at"
-    t.datetime "locked_at"
-    t.datetime "failed_at"
-    t.string   "locked_by"
-    t.string   "queue"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "delayed_jobs", ["priority", "run_at"], name: "delayed_jobs_priority"
-
-  create_table "master_cards", force: :cascade do |t|
-    t.integer  "shop_id"
-    t.datetime "created_at",    null: false
-    t.datetime "updated_at",    null: false
-    t.string   "template"
-    t.string   "logo"
-    t.string   "image_front"
-    t.string   "image_back"
-    t.string   "title_front"
-    t.string   "text_front"
-    t.string   "text_back"
-    t.string   "preview_front"
-    t.string   "preview_back"
-    t.integer  "coupon_pct"
-    t.integer  "coupon_exp"
-    t.string   "coupon_loc"
+    t.string   "postcard_id"
+    t.boolean  "return_customer",                       default: false, null: false
+    t.float    "purchase2"
+    t.datetime "created_at",                                            null: false
+    t.datetime "updated_at",                                            null: false
   end
 
   create_table "shops", force: :cascade do |t|
-    t.string   "domain",                                 null: false
-    t.string   "token",                                  null: false
+    t.string   "domain",                                      null: false
+    t.string   "token",                                       null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "shopify_id",    limit: 8
-    t.integer  "credit",                  default: 0
-    t.integer  "webhook_id",    limit: 8
-    t.integer  "uninstall_id",  limit: 8
-    t.integer  "charge_id",     limit: 8
-    t.integer  "charge_amount",           default: 0
+    t.integer  "shopify_id",         limit: 8
+    t.integer  "credit",                       default: 0
+    t.integer  "webhook_id",         limit: 8
+    t.integer  "uninstall_id",       limit: 8
+    t.integer  "charge_amount",                default: 0
     t.datetime "charge_date"
-    t.integer  "customer_pct",            default: 100
+    t.integer  "customer_pct",                 default: 100
     t.integer  "last_month"
-    t.boolean  "send_next",               default: true, null: false
+    t.boolean  "send_next",                    default: true, null: false
     t.datetime "last_login"
+    t.string   "stripe_customer_id"
+    t.integer  "plan_id"
   end
 
   add_index "shops", ["domain"], name: "index_shops_on_domain", unique: true, using: :btree
+  add_index "shops", ["plan_id"], name: "index_shops_on_plan_id", using: :btree
+
+  create_table "subscriptions", force: :cascade do |t|
+    t.integer  "quantity",             null: false
+    t.integer  "plan_id"
+    t.integer  "shop_id"
+    t.integer  "shopify_id",           null: false
+    t.datetime "current_period_start", null: false
+    t.datetime "current_period_end",   null: false
+    t.datetime "created_at",           null: false
+    t.datetime "updated_at",           null: false
+  end
+
+  add_index "subscriptions", ["plan_id"], name: "index_subscriptions_on_plan_id", using: :btree
+  add_index "subscriptions", ["shop_id"], name: "index_subscriptions_on_shop_id", using: :btree
 
   add_foreign_key "card_orders", "card_sides", column: "card_side_back_id"
   add_foreign_key "card_orders", "card_sides", column: "card_side_front_id"
@@ -186,4 +186,7 @@ ActiveRecord::Schema.define(version: 20151028233150) do
   add_foreign_key "charges", "card_orders"
   add_foreign_key "charges", "shops"
   add_foreign_key "postcards", "card_orders"
+  add_foreign_key "shops", "plans"
+  add_foreign_key "subscriptions", "plans"
+  add_foreign_key "subscriptions", "shops"
 end
