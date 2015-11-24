@@ -6,7 +6,7 @@ class Api::V1::AwsController < Api::BaseController
       awsaccesskeyid: ENV['AWS_ACCESS_KEY_ID'],
       bucket: 'touchcard-user',
       expires: @expires,
-      key: "uploads/shop_#{@current_shop.id}_#{params[:name]}",
+      key: "uploads/#{params[:name]}",
       policy: policy,
       signature: signature,
       success_action_status: '201',
