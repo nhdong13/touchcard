@@ -6,7 +6,19 @@ class Api::V1::AwsController < Api::BaseController
       success_action_status: "201",
       acl: "public-read"
     )
-    render json: @s3_direct_post
+    @expires = 1.hours.from_now
+      render json: {
+        acl: "public-read",
+        awsaccesskeyid: ENV["AWS_ACCESS_KEY_ID"],
+        bucket: "touchcard-user",
+        expires: @expires,
+        key: "uploads/#{params[:name]}",
+        policy: policy,
+        signature: signature,
+        success_action_status: "201",
+        "Content-Type" => params[:type],
+        "Cache-Control" => "max-age=630720000, public"
+      }, status: :ok
   end
   # def sign
   #   @expires = 1.hours.from_now
