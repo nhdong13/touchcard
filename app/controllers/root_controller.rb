@@ -8,8 +8,9 @@ class RootController < AuthenticatedController
     return File.read("#{Rails.root}/private/index.html") unless Rails.env.production?
     index_key = redis.get("#{app}:index:current")
     if params[:index_key]
-      index_key = "<your-project-name>:index:#{params[:index_key]}"
+      index_key = "#{app}:index:#{params[:index_key]}"
     end
+    logger.debug(index_key)
     redis.get(index_key)
   end
 
