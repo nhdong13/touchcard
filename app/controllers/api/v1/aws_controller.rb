@@ -4,21 +4,10 @@ class Api::V1::AwsController < Api::BaseController
     @s3_direct_post = bucket.presigned_post(
       key: "uploads/#{SecureRandom.uuid}/${filename}",
       success_action_status: "201",
-      acl: "public-read"
+      acl: "public-read",
+      expires: 1.hours.from_now
     )
-    @expires = 1.hours.from_now
-      render json: {
-        acl: "public-read",
-        awsaccesskeyid: ENV["AWS_ACCESS_KEY_ID"],
-        bucket: "touchcard-user",
-        expires: @expires,
-        key: "uploads/#{params[:name]}",
-        policy: policy,
-        signature: signature,
-        success_action_status: "201",
-        "Content-Type" => params[:type],
-        "Cache-Control" => "max-age=630720000, public"
-      }, status: :ok
+    render json: @s3_direct_post.fields, status: :ok
   end
   # def sign
   #   @expires = 1.hours.from_now
