@@ -29,6 +29,9 @@ gem "active_model_serializers", "~> 0.8.0"
 # Shopify app
 gem "shopify_app"
 
+# Stripe
+gem 'stripe', git: 'https://github.com/stripe/stripe-ruby'
+
 # S3 connection
 gem "aws-sdk"
 

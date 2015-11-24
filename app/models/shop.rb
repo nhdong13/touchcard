@@ -3,6 +3,7 @@ class Shop < ActiveRecord::Base
   has_many :card_orders, dependent: :destroy
   has_many :postcards, through: :card_orders
   has_many :charges
+  has_many :subscriptions
 
   class << self
     def store(session)
@@ -29,6 +30,21 @@ class Shop < ActiveRecord::Base
         ShopifyAPI::Session.new(shop.domain, shop.token)
       end
     end
+  end
+
+  def stripe_customer
+    Stripe::Customer.retrieve(stripe_customer_id)
+  end
+
+  def create_stripe_customer(token)
+    if stripe_customer_id.present?
+      errors.add(:shopify_token, "already added")
+      return false
+    end
+    customer = Stripe::Customer.create(source: token)
+    return update_attribute(:stripe_customer_id, customer.id) if customer
+    errors.add(:shopify_token, "was invalid")
+    false
   end
 
   def shopify_api_path
@@ -121,15 +137,13 @@ class Shop < ActiveRecord::Base
   end
 
   def top_up
-    credits = charge_amount
-    new_credits = credit + credits
-    update_attribute(:credit, new_credits)
+    update_attribute(:credit, subscription.plan.quantity)
   end
 
   def self.top_up_all
     # Daily top-up of all shops with today as a billing date
-    shops = Shop.where(charge_date: Date.today)
-    shops.each(&:top_up)
+    # shops = Shop.where(charge_date: Date.today)
+    # shops.each(&:top_up)
   end
 
   def get_last_month

@@ -6,43 +6,4 @@
     });
   });
 </script>
-<div class="row">
-  <div class="col-xs-10 dashboard_section">
-    <h1>Dashboard</h1>
-    <% if @income > 0.0 %>
-      <h3 class="touchcard_income">You've made $<%= @income %> from Touchcards</h3>
-    <% end %>
-  </div>
-</div>
-
-<% if @follow_ups.length > 0 %>
-  <div class="row">
-    <div class="col-xs-10 dashboard_section">
-      <h5>Follow up Purchases from Postcard Recipients</h5>
-      <table class="table">
-      </table>
-    </div>
-  </div>
-<% end %>
-
-<div class="row">
-  <div class="col-xs-8 dashboard_section_last">
-    <h5>Cards Sent</h5>
-    <table class="table">
-      <thead>
-        <tr>
-          <td>Name</td>
-          <td>Location</td>
-          <td>Date Sent</td>
-        </tr>
-      </thead>
-      <% @sent_cards.each do |card| %>
-        <tr>
-          <td><%= card.customer_name %></td>
-          <td><%= card.state %>, <%= card.country %></td>
-          <td><%= card.date_sent.strftime("%D") %></td>
-        </tr>
-      <% end %>
-    </table>
-  </div>
-</div>
+<%= @current_shop.domain %>

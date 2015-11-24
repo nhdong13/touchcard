@@ -5,12 +5,12 @@ class Api::V1::ShopsController < Api::BaseController
   end
 
   def update
+    if shopify_token.present?
+      success = @shop.create_stripe_customer(shopify_token)
+      return render_validation_errors(@shop)
+    end
     success = @shop.update_attributes(shop_params)
     return render_validation_errors unless success
-    # Check if a billing attribute has been changed or not
-    if @shop.charge_amount_changed?
-      @shop.new_recurring_charge(shop_params[:charge_amount])
-    end
     render json: @shop, serializer: ShopSerializer
   end
 
@@ -29,4 +29,7 @@ class Api::V1::ShopsController < Api::BaseController
     params.require(:shop).permit(:charge_amount)
   end
 
+  def shopify_token
+    params.require(:shop)[:shopify_token]
+  end
 end

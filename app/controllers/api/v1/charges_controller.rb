@@ -9,7 +9,7 @@ class Api::V1::ChargesController < Api::BaseController
   def create
     @charge = @current_shop.charges.create(create_params)
     return render_validation_errors(@charge) unless @charge.valid?
-    @charge.create_shopify_charge
+    @charge.send_charge
     render json: @charge, serializer: ChargeSerializer
   end
 

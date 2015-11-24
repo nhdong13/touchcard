@@ -7,7 +7,7 @@ class WebhookController < ApplicationController
   def new_order
     # TODO: get rid of all the puts!! Should be using rails logger
     domain = request.headers["X-Shopify-Shop-Domain"]
-    head :ok
+    head :ok # head ok to avoid timeout
     shop = Shop.find_by(domain: domain)
     puts "***********************"
     puts "New order from #{domain}"
@@ -36,6 +36,7 @@ class WebhookController < ApplicationController
     head :ok
     shop = Shop.find_by(shopify_id: params[:id])
     fail "Uninstall non existing shop #{params[:id]}" if shop.nil?
+    shop.subscriptions.each { |s| s.destroy }
     # TODO: have a better uninstall path, we probably don't want to be deleting
     SlackNotify.uninstall(shop.domain)
     shop.destroy

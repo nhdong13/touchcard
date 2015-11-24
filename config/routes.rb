@@ -11,9 +11,12 @@ Rails.application.routes.draw do
       end
       resources :card_orders, only: [:index, :show, :create, :update]
       resources :postcards, only: [:index, :show, :create, :update]
-      resources :charges, only: [:show, :create, :update] do
-        get 'activate', on: :collection
-      end
+      resources :subscriptions, only: [:show, :create, :update]
+      resources :plans, only: [:show, :index]
+      # Switched to stripe this is not used for now
+      # resources :charges, only: [:show, :create, :update] do
+      #   get 'activate', on: :collection
+      # end
       resources :shopify_customers, only: [] do
         collection { get :count }
       end

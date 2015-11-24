@@ -1,4 +1,19 @@
 FactoryGirl.define do
+  factory :subscription do
+    quantity 1
+    plan nil
+    shop nil
+  end
+
+  factory :plan do
+    stripe_id 1
+    amount 1
+    interval "MyString"
+    name "MyString"
+    interval_count 1
+    trial_period_days 1
+  end
+
   factory :card_side do
     image "MyText"
     is_back false

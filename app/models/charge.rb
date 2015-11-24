@@ -4,13 +4,15 @@ class Charge < ActiveRecord::Base
   belongs_to :shop
   belongs_to :card_order
 
-  validates :shop, :card_order, :amount, :last_page, :status, presence: true
+  validates :shop, :card_order, :amount, :last_page, presence: true
   validate :customer_number, on: :create
+  validates :status, inclusion: { in: ["new", "pending", "accepted", "cancelled"] }
 
   after_initialize :ensure_defaults
 
   def ensure_defaults
     self.token ||= SecureRandom.urlsafe_base64(32)
+    self.status ||= "new"
   end
 
   def bulk?
@@ -19,6 +21,10 @@ class Charge < ActiveRecord::Base
 
   def price
     (amount.to_i * 0.99).round(2)
+  end
+
+  def price_cents
+    price * 100
   end
 
   def customer_number
@@ -30,42 +36,10 @@ class Charge < ActiveRecord::Base
     errors.add(:amount, amount_error_message) unless amount == expected_amount
   end
 
-  def create_shopify_charge
-    shop.new_sess
-    klass = ShopifyAPI::ApplicationCharge
-    create_params = {
-      price: price,
-      return_url: "https://touchcard.herokuapp.com/api/v1/charges/#{id}/activate?token=#{token}",
-      test: !Rails.env.production?,
-      name: "Touchcard Bulk Send"
-    }
-    if recurring?
-      klass = ShopifyAPI::RecurringApplicationCharge
-      create_params[:name] = "Touchcard Monthly Plan"
-    end
-    shopify_charge = klass.create(create_params)
-    update_attributes!(
-      shopify_redirect: shopify_charge.confirmation_url,
-      status: "pending",
-      shopify_id: shopify_charge.id
-    )
-  end
-
   def cancel
-    # Update the shop
+    # TODO: error handling
     shop.update_attributes(charge_id: nil, charge_amount: 0, charge_date: nil)
-
-    # Delete the plan on shopify
-    shop.new_sess
-    ShopifyAPI::RecurringApplicationCharge.delete(shopify_id)
-
-    # Update self's data
-    update_attributes(shopify_id: nil, shopify_redirect: nil)
-  end
-
-  def shopify_charge
-    return ShopifyAPI::RecurringApplicationCharge.find(shopify_id) if recurring?
-    ShopifyAPI::ApplicationCharge.find(shopify_id)
+    update_attributes(status: "cancelled")
   end
 
   def activate
@@ -76,6 +50,19 @@ class Charge < ActiveRecord::Base
     update_attribute(:status, "active")
     return activate_recurring_charge if recurring?
     activate_bulk_charge
+  end
+
+  def submit
+    update_attribute(:status, "pending")
+    
+  end
+
+  protected
+
+  def create_plan
+    plan = Plan.find_or_create_by(amount: price_cents)
+    plan.submit
+    store.update_attribute(:plan, plan)
   end
 
   def activate_bulk_charge
@@ -99,5 +86,40 @@ class Charge < ActiveRecord::Base
       amount: amount,
       charge_date: Date.today)
     shop.top_up
+  end
+
+  def create_shopify_charge
+    shop.new_sess
+    klass = ShopifyAPI::ApplicationCharge
+    create_params = {
+      price: price,
+      return_url: "https://touchcard.herokuapp.com/api/v1/charges/#{id}/activate?token=#{token}",
+      test: !Rails.env.production?,
+      name: "Touchcard Bulk Send"
+    }
+    if recurring?
+      klass = ShopifyAPI::RecurringApplicationCharge
+      create_params[:name] = "Touchcard Monthly Plan"
+    end
+    shopify_charge = klass.create(create_params)
+    update_attributes!(
+      shopify_redirect: shopify_charge.confirmation_url,
+      status: "pending",
+      shopify_id: shopify_charge.id
+    )
+  end
+
+  def cancel_shopify_charge
+    # Delete the plan on shopify
+    shop.new_sess
+    ShopifyAPI::RecurringApplicationCharge.delete(shopify_id)
+
+    # Update self's data
+    update_attributes(shopify_id: nil, shopify_redirect: nil)
+  end
+
+  def shopify_charge
+    return ShopifyAPI::RecurringApplicationCharge.find(shopify_id) if recurring?
+    ShopifyAPI::ApplicationCharge.find(shopify_id)
   end
 end

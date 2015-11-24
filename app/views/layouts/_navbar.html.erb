@@ -13,12 +13,9 @@
 
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-      <% if @current_shop.card_templates != nil %>
+      <% if @current_shop.card_orders != nil %>
         <ul class="nav navbar-nav navbar-right">
           <li><%= link_to 'Dashboard', root_path %></li>
-          <li><%= link_to 'Manage Post-sale Cards', postsale_templates_path  %></li>
-          <li><%= link_to 'Manage Bulk Cards', bulk_templates_path  %></li>
-          <li><%= link_to 'Settings', edit_shop_path({:id => @current_shop.id}) %></li>
           <li><a href="/support">Need help?</a></li>
         </ul>
       <% end %>
