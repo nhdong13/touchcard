@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151123201307) do
+ActiveRecord::Schema.define(version: 20151124182929) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -160,11 +160,9 @@ ActiveRecord::Schema.define(version: 20151123201307) do
     t.boolean  "send_next",                    default: true, null: false
     t.datetime "last_login"
     t.string   "stripe_customer_id"
-    t.integer  "plan_id"
   end
 
   add_index "shops", ["domain"], name: "index_shops_on_domain", unique: true, using: :btree
-  add_index "shops", ["plan_id"], name: "index_shops_on_plan_id", using: :btree
 
   create_table "subscriptions", force: :cascade do |t|
     t.integer  "quantity",             null: false
@@ -186,7 +184,6 @@ ActiveRecord::Schema.define(version: 20151123201307) do
   add_foreign_key "charges", "card_orders"
   add_foreign_key "charges", "shops"
   add_foreign_key "postcards", "card_orders"
-  add_foreign_key "shops", "plans"
   add_foreign_key "subscriptions", "plans"
   add_foreign_key "subscriptions", "shops"
 end
