@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151125172819) do
+ActiveRecord::Schema.define(version: 20151125182359) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -149,7 +149,7 @@ ActiveRecord::Schema.define(version: 20151125172819) do
     t.string   "token",                                       null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "stripe_id",          limit: 8
+    t.integer  "shopify_id",         limit: 8
     t.integer  "credit",                       default: 0
     t.integer  "webhook_id",         limit: 8
     t.integer  "uninstall_id",       limit: 8
@@ -168,11 +168,11 @@ ActiveRecord::Schema.define(version: 20151125172819) do
     t.integer  "quantity",             null: false
     t.integer  "plan_id"
     t.integer  "shop_id"
-    t.integer  "shopify_id",           null: false
     t.datetime "current_period_start", null: false
     t.datetime "current_period_end",   null: false
     t.datetime "created_at",           null: false
     t.datetime "updated_at",           null: false
+    t.string   "stripe_id",            null: false
   end
 
   add_index "subscriptions", ["plan_id"], name: "index_subscriptions_on_plan_id", using: :btree
