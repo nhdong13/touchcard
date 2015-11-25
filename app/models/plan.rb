@@ -26,7 +26,7 @@ class Plan < ActiveRecord::Base
       trial_period_days: trial_period_days,
       statement_descriptor: statement_descriptor
     )
-    update_attribute(on_stripe, true)
+    update_attribute(:on_stripe, true)
   end
 
   def helpers
