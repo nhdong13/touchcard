@@ -1,4 +1,5 @@
 module CardHtml
+  module_function
   def generate(options)
     discount_html = ""
     discount_html = "
