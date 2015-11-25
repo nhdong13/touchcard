@@ -22,7 +22,7 @@ class Api::V1::ShopsController < Api::BaseController
 
   def set_shop
     @shop = @current_shop
-    render_authorization_error unless params[:id] == @shop.id
+    render_authorization_error unless params[:id].to_i == @shop.id
   end
 
   def shop_params
