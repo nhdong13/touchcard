@@ -83,7 +83,7 @@ class Postcard < ActiveRecord::Base
 
       # Deduct 1 credit for US, 2 for international
       cost = country == "US" ? 1 : 2
-      shop.credits -= cost
+      shop.credit -= cost
       shop.save
     else
       puts "No credits left on shop #{shop.domain}"
