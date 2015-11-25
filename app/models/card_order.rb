@@ -11,7 +11,7 @@ class CardOrder < ActiveRecord::Base
   def ensure_defaults
     self.card_side_front ||= CardSide.create!(is_back: false)
     self.card_side_back ||= CardSide.create!(is_back: true)
-    self.send_delay = 0 if send_delay.nil? && type == "PostsaleOrder"
+    self.send_delay = 0 if send_delay.nil? && type == "PostSaleOrder"
     self.international = false if international.nil?
     self.enabled = false if enabled.nil?
     # TODO: add defaults to schema that can be added
@@ -22,10 +22,10 @@ class CardOrder < ActiveRecord::Base
   end
 
   def send_date
-    return Date.today + send_delay.weeks if type == "PostsaleOrder"
+    return Date.today + send_delay.weeks if type == "PostSaleOrder"
     # 4-6 business days delivery according to lob
     # TODO handle international + 5 to 7 business days
-    send_date = card_order.arrive_by - 1.week
+    send_date = arrive_by - 1.week
   end
 
   def self.update_all_revenues
