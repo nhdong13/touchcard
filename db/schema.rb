@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151124182929) do
+ActiveRecord::Schema.define(version: 20151125172819) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -149,7 +149,7 @@ ActiveRecord::Schema.define(version: 20151124182929) do
     t.string   "token",                                       null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "shopify_id",         limit: 8
+    t.integer  "stripe_id",          limit: 8
     t.integer  "credit",                       default: 0
     t.integer  "webhook_id",         limit: 8
     t.integer  "uninstall_id",       limit: 8
