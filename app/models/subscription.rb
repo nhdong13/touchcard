@@ -2,7 +2,7 @@ class Subscription < ActiveRecord::Base
   belongs_to :plan
   belongs_to :shop
 
-  validates :plan, :shop, :quantity, :shopify_id,
+  validates :plan, :shop, :quantity, :stripe_id,
     :current_period_start, :current_period_end, presence: true
   validate :only_one_subscription
 

@@ -5,8 +5,8 @@ class Api::V1::ShopsController < Api::BaseController
   end
 
   def update
-    if shopify_token.present?
-      success = @shop.create_stripe_customer(shopify_token)
+    if stripe_token.present?
+      success = @shop.create_stripe_customer(stripe_token)
       return render_validation_errors(@shop)
     end
     success = @shop.update_attributes(shop_params)
@@ -29,7 +29,7 @@ class Api::V1::ShopsController < Api::BaseController
     params.require(:shop).permit(:charge_amount)
   end
 
-  def shopify_token
-    params.require(:shop)[:shopify_token]
+  def stripe_token
+    params.require(:shop)[:stripe_token]
   end
 end

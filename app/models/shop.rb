@@ -42,12 +42,12 @@ class Shop < ActiveRecord::Base
 
   def create_stripe_customer(token)
     if stripe_customer_id.present?
-      errors.add(:shopify_token, "already added")
+      errors.add(:stripe_token, "already added")
       return false
     end
     customer = Stripe::Customer.create(source: token)
     return update_attribute(:stripe_customer_id, customer.id) if customer
-    errors.add(:shopify_token, "was invalid")
+    errors.add(:stripe_token, "was invalid")
     false
   end
 
