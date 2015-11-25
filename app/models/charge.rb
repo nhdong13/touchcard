@@ -29,7 +29,7 @@ class Charge < ActiveRecord::Base
 
   def customer_number
     return if recurring?
-    expected_amount = get_customer_number(shop,
+    expected_amount = CustomerCheck.get_customer_number(shop,
       card_order.start_date,
       card_order.end_date)
     amount_error_message = "Amount does not match shop data"
@@ -54,7 +54,7 @@ class Charge < ActiveRecord::Base
 
   def submit
     update_attribute(:status, "pending")
-    
+
   end
 
   protected
