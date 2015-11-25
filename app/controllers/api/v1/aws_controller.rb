@@ -8,7 +8,6 @@ class Api::V1::AwsController < Api::BaseController
       acl: "public-read",
       expires: 1.hours.from_now
     )
-    byebug
     render json: @s3_direct_post.fields.merge(bucket: bucket_name), status: :ok
   end
   # def sign
