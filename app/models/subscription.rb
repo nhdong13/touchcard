@@ -24,7 +24,7 @@ class Subscription < ActiveRecord::Base
       return super(params) unless shop && plan
       subscription = shop.stripe_customer.subscriptions.create(
         plan: plan.id,
-        quantity: quantity
+        quantity: params[:quantity]
       )
       instance = super(params.merge(
         stripe_id: subscription.id,
