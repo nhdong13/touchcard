@@ -1,6 +1,10 @@
 require 'customer_check'
 
 class Api::V1::ShopifyCustomersController < Api::BaseController
+  def index
+    render json: { meta: { count: 5 } }, status: 200
+  end
+
   def count
     @count = get_customer_number(@current_shop,
       params[:created_after],
