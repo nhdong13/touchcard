@@ -70,7 +70,7 @@ class Postcard < ActiveRecord::Base
       end
 
       sent_card = @lob.postcards.create(
-        description: "A #{template} card sent by #{shop.domain}",
+        description: "A #{card_order.type} card sent by #{shop.domain}",
         to: to_address,
         # from: shop_address, # Return address for Shop
         front: front_html,
