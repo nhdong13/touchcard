@@ -1,4 +1,4 @@
-class Api::V1::SubscriptionsController < ApplicationController
+class Api::V1::SubscriptionsController < Api::BaseController
   before_action :set_subscription, only: [:update, :show]
   def show
     render json: @subscription, serializer: SubscriptionSerializer
