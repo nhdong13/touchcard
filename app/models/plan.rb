@@ -7,7 +7,7 @@ class Plan < ActiveRecord::Base
   def ensure_defaults
     return if persisted?
     self.interval ||= "month"
-    self.name ||= "#{helpers.number_to_currency(amount/100)}/#{interval}"
+    self.name ||= "#{helpers.number_to_currency(amount/100.0)}/#{interval}"
     self.interval_count ||= 1
     self.currency ||= 'usd'
     self.on_stripe = false if self.on_stripe.nil?
