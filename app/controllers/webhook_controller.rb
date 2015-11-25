@@ -9,9 +9,9 @@ class WebhookController < ApplicationController
     domain = request.headers["X-Shopify-Shop-Domain"]
     head :ok # head ok to avoid timeout
     shop = Shop.find_by(domain: domain)
-    puts "***********************"
-    puts "New order from #{domain}"
-    puts "***********************"
+    logger.info "***********************"
+    logger.info "New order from #{domain}"
+    logger.info "***********************"
     shop.new_sess
     order = ShopifyAPI::Order.find(params[:id])
     customer = order.customer
@@ -22,13 +22,13 @@ class WebhookController < ApplicationController
 
     # Check if there is a card already (duplicate webhook)
     duplicate = Postcard.find_by(triggering_shopify_order_id: order.id)
-    return puts "Duplicate card found" if duplicate
+    return logger.info "Duplicate card found" if duplicate
 
     # Create a new card and schedule to send
     post_sale_order = shop.post_sale_orders.find_by(status: "sending")
-    return puts "Card not setup" if post_sale_order.nil?
-    return puts "Card not enabled" if post_sale_order.enabled?
-    return puts "Internatinal customer not enabled" if internatinal && !post_sale_order.internatinal?
+    return logger.info "Card not setup" if post_sale_order.nil?
+    return logger.info "Card not enabled" if post_sale_order.enabled?
+    return logger.info "Internatinal customer not enabled" if internatinal && !post_sale_order.internatinal?
     Postcard.create_postcard!(post_sale_order, customer, order.id)
   end
 
