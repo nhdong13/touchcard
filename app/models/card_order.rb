@@ -18,7 +18,7 @@ class CardOrder < ActiveRecord::Base
   end
 
   def discount?
-    !discount_loc.nil? && !discount_pct.nil?
+    !discount_exp.nil? && !discount_pct.nil?
   end
 
   def send_date
