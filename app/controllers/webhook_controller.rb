@@ -18,7 +18,7 @@ class WebhookController < ApplicationController
     international = customer.default_address.country_code == "US"
 
     # Check if this is the customer's first order
-    return puts "Not a new customer" if customer.orders_count <= 1
+    return puts "Not a new customer, order_count: #{customer.orders_count}" if customer.orders_count <= 1
 
     # Check if there is a card already (duplicate webhook)
     duplicate = Postcard.find_by(triggering_shopify_order_id: order.id)
