@@ -4,12 +4,8 @@ class Subscription < ActiveRecord::Base
 
   validates :plan, :shop, :quantity, :stripe_id,
     :current_period_start, :current_period_end, presence: true
-  validate :only_one_subscription
 
-  def only_one_subscription
-    return if shop.subscriptions.count == 0
-    errors.add(:shop, "already has a subscription")
-  end
+  # TODO validate only one subscription
 
   def on_stripe?
     stripe_id.present?
