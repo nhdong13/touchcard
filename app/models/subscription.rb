@@ -18,15 +18,16 @@ class Subscription < ActiveRecord::Base
   class << self
     def create(params)
       # TODO: error handling
-      shop = Shop.find_by(id: params[:shop_id])
-      plan = Plan.find_by(id: params[:plan_id])
+      shop = params[:shop] || Shop.find_by(id: params[:shop_id])
+      plan = params[:plan] || Plan.find_by(id: params[:plan_id])
+      # TODO return a better error it will currently show all the missing stripe fields too
       return super(params) unless shop && plan
       subscription = shop.stripe_customer.subscriptions.create(
         plan: plan.id,
         quantity: quantity
       )
       instance = super(params.merge(
-        shopify_id: subscription.id,
+        stripe_id: subscription.id,
         current_period_start: subscription.current_period_start,
         current_period_end: subscription.current_period_end
       ))
@@ -36,7 +37,7 @@ class Subscription < ActiveRecord::Base
   end
 
   def update_attributes(params)
-    subscription = shop.stripe_customer.subscriptions.retrieve(shopify_id)
+    subscription = shop.stripe_customer.subscriptions.retrieve(stripe_id)
     params.each { |key, value| subscription.send(key + '=', value) }
     subscription.save
     # TODO handle failure of saving of subscription
@@ -44,7 +45,7 @@ class Subscription < ActiveRecord::Base
   end
 
   def destroy
-    subscription = shop.stripe_customer.subscriptions.retrieve(shopify_id)
+    subscription = shop.stripe_customer.subscriptions.retrieve(stripe_id)
     subscription.delete
     super
   end
