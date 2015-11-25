@@ -26,7 +26,7 @@ class WebhookController < ApplicationController
 
     # Create a new card and schedule to send
     post_sale_order = shop.card_orders.find_by(
-      status: "sending",
+      enabled: true,
       type: "PostSaleOrder")
     return logger.info "Card not setup" if post_sale_order.nil?
     return logger.info "Card not enabled" if post_sale_order.enabled?
