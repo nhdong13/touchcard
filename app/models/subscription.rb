@@ -26,6 +26,7 @@ class Subscription < ActiveRecord::Base
         plan: plan.id,
         quantity: params[:quantity]
       )
+      logger.debug(subscription.to_yaml)
       instance = super(params.merge(
         stripe_id: subscription.id,
         current_period_start: subscription.current_period_start,
