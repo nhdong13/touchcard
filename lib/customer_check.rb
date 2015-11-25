@@ -1,4 +1,5 @@
 module CustomerCheck
+  module_function
 
   def get_customer_number(shop_id, start_date, end_date)
     shop = Shop.find(shop_id)
