@@ -26,11 +26,12 @@ class Subscription < ActiveRecord::Base
         plan: plan.id,
         quantity: params[:quantity]
       )
-      logger.debug(subscription.to_yaml)
+      logger.debug(subscription.current_period_start)
+      logger.debug(Time.at(subscription.current_period_start))
       instance = super(params.merge(
         stripe_id: subscription.id,
-        current_period_start: subscription.current_period_start,
-        current_period_end: subscription.current_period_end
+        current_period_start: Time.at(subscription.current_period_start),
+        current_period_end: Time.at(subscription.current_period_end)
       ))
       subscription.delete unless instance.valid?
       instance
