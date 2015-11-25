@@ -25,7 +25,9 @@ class WebhookController < ApplicationController
     return logger.info "Duplicate card found" if duplicate
 
     # Create a new card and schedule to send
-    post_sale_order = shop.post_sale_orders.find_by(status: "sending")
+    post_sale_order = shop.card_orders.find_by(
+      status: "sending",
+      type: "PostSaleOrder")
     return logger.info "Card not setup" if post_sale_order.nil?
     return logger.info "Card not enabled" if post_sale_order.enabled?
     return logger.info "Internatinal customer not enabled" if internatinal && !post_sale_order.internatinal?
