@@ -7,7 +7,7 @@ class Api::V1::ShopsController < Api::BaseController
   def update
     if stripe_token.present?
       success = @shop.create_stripe_customer(stripe_token)
-      return render_validation_errors(@shop)
+      return render_validation_errors(@shop) unless success
     end
     success = @shop.update_attributes(shop_params)
     return render_validation_errors unless success
