@@ -15,7 +15,7 @@ class WebhookController < ApplicationController
     shop.new_sess
     order = ShopifyAPI::Order.find(params[:id])
     customer = order.customer
-    international = customer.default_address.country_code == "US"
+    international = customer.default_address.country_code != "US"
 
     # Check if this is the customer's first order
     return puts "Not a new customer, order_count: #{customer.orders_count}" unless customer.orders_count.to_i <= 1
