@@ -6,12 +6,8 @@ class RootController < AuthenticatedController
 
   def bootstrap_index(index_key, app)
     return File.read("#{Rails.root}/private/index.html") unless Rails.env.production?
-    index_key = "#{app}:index:" + redis.get("#{app}:index:current")
-    if params[:index_key]
-      index_key = "#{app}:index:#{params[:index_key]}"
-    end
-    logger.debug(index_key)
-    redis.get(index_key)
+    index_key = params[:index_key] || redis.get("#{app}:index:current")
+    redis.get("#{app}:index:#{index_key}")
   end
 
   def index
