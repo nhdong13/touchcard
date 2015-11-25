@@ -32,6 +32,10 @@ class Shop < ActiveRecord::Base
     end
   end
 
+  def is_card_registered
+    stripe_customer_id.present?
+  end
+
   def stripe_customer
     Stripe::Customer.retrieve(stripe_customer_id)
   end
