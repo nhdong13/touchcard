@@ -5,8 +5,7 @@ class Api::V1::AwsController < Api::BaseController
     @s3_direct_post = bucket.presigned_post(
       key: "uploads/#{SecureRandom.uuid}/${filename}",
       success_action_status: "201",
-      acl: "public-read",
-      expires: 1.hours.from_now
+      acl: "public-read"
     )
     render json: @s3_direct_post.fields.merge(bucket: bucket_name), status: :ok
   end
