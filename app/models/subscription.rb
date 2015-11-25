@@ -38,7 +38,8 @@ class Subscription < ActiveRecord::Base
 
   def update_attributes(params)
     subscription = shop.stripe_customer.subscriptions.retrieve(stripe_id)
-    params.each { |key, value| subscription.send(key + '=', value) }
+    subscription.plan = params[:plan_id] || params[:plan].try(:id)
+    subscription.quantity = params[:quantity]
     subscription.save
     # TODO handle failure of saving of subscription
     super(params)
