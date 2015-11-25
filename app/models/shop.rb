@@ -141,7 +141,7 @@ class Shop < ActiveRecord::Base
   end
 
   def top_up
-    update_attribute(:credit, subscriptions.first.plan.quantity)
+    update_attribute(:credit, subscriptions.first.quantity)
   end
 
   def self.top_up_all
