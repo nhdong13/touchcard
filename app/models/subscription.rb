@@ -26,8 +26,12 @@ class Subscription < ActiveRecord::Base
         plan: plan.id,
         quantity: params[:quantity]
       )
+      logger.debug("==============")
       logger.debug(subscription.current_period_start)
+      logger.debug(subscription[:id])
+      logger.debug(subscription[:current_period_start])
       logger.debug(Time.at(subscription.current_period_start))
+      logger.debug("==============")
       instance = super(params.merge(
         stripe_id: subscription.id,
         current_period_start: Time.at(subscription.current_period_start),
