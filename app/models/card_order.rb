@@ -28,6 +28,10 @@ class CardOrder < ActiveRecord::Base
     send_date = arrive_by - 1.week
   end
 
+  def expiration_date
+    return Date.today + (1 + discount_exp).weeks if type == "PostSaleOrder"
+  end
+
   def self.update_all_revenues
     CardOrder.all.find_each(&:track_revenue)
   end
