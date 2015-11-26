@@ -59,22 +59,20 @@ class Shop < ActiveRecord::Base
     ShopifyAPI::Base.activate_session(Shop.retrieve(id))
   end
 
-  def new_discount(code)
+  def new_discount(card_order, code)
     url = shopify_api_path + "/discounts.json"
-    puts url
-
     response = HTTParty.post(url,
       body: {
         discount: {
           discount_type: "percentage",
-          value: master_card.discount_pct.to_s,
+          value: card_order.discount_pct.to_s,
           code: code,
-          ends_at: (Time.now + (master_card.discount_exp || 3).weeks),
+          ends_at: (Time.now + (card_order.discount_exp || 3).weeks),
           starts_at: Time.now,
           usage_limit: 1
         }
       })
-    puts response.body
+    logger.info response.body
   end
 
   def get_shopify_id
