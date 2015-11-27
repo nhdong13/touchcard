@@ -51,7 +51,7 @@ class Postcard < ActiveRecord::Base
   def send_card
     # TODO: all kinds of error handling
     # Test lob
-    @lob = Lob.load(api_key: ENV["LOB_TEST_API_KEY"])
+    @lob = Lob.load
 
     if (country == "US" && shop.credit >= 1) || shop.credit >= 2
       self.discount_code = generate_discount_code if card_order.discount?
