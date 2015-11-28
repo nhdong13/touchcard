@@ -65,7 +65,7 @@ class Postcard < ActiveRecord::Base
           discount_y: card_side.discount_y,
           discount_pct: card_order.discount_pct,
           discount_exp: card_order.expiration_date,
-          discount_code: discount_code
+          discount_code: card_side.is_back? ? nil : discount_code
         )
       end
 
