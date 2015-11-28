@@ -41,8 +41,8 @@ module CardHtml
 
           .discount {
             position: absolute;
-            top: 33%;
-            left: 40.5%;
+            top: #{options[:discount_y] || 0}%;
+            left: #{options[:discount_x] || 0}%;
             width: 28%;
             height: 25%;
             text-align: center;
