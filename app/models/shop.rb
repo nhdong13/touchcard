@@ -6,11 +6,11 @@ class Shop < ActiveRecord::Base
   has_many :subscriptions
 
   def cards_sent
-    postcards.sum(:cards_sent)
+    postcards.where(sent: true).count
   end
 
   def revenue
-    pastcards.sum(:revenue)
+    card_orders.sum(:revenue)
   end
 
   class << self
