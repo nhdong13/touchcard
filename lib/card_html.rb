@@ -46,7 +46,6 @@ module CardHtml
             width: 28%;
             height: 25%;
             text-align: center;
-            padding: 1%;
             font-family: 'Montserrat';
           }
 

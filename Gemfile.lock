@@ -91,6 +91,7 @@ GEM
       thor (~> 0.19)
     builder (3.2.2)
     byebug (6.0.2)
+    clipboard (1.0.6)
     coffee-rails (4.1.0)
       coffee-script (>= 2.2.0)
       railties (>= 4.0.0, < 5.0)
@@ -344,6 +345,7 @@ DEPENDENCIES
   aws-sdk
   bootstrap-sass
   byebug
+  clipboard
   coffee-rails (~> 4.1.0)
   daemons
   delayed_job_active_record
