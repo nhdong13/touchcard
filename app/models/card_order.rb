@@ -42,7 +42,7 @@ class CardOrder < ActiveRecord::Base
 
   def track_revenue
     shop.new_sess
-    postcards.each do |postcard|
+    postcards.where(return_customer: false).each do |postcard|
       # TODO: refactor shopify calls to be safer and DRY-er
       begin
         customer = ShopifyAPI::Customer.find(postcard.shopify_customer_id)

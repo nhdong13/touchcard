@@ -7,7 +7,7 @@ end
 desc "Poll customers for second purchase"
 task :daily_revenue_poll => :environment do
   puts "Calculating revenue"
-  CardTemplate.update_all_revenues
+  CardOrder.update_all_revenues
 end
 
 desc "Top up credit on all shops with a billing date of today"
