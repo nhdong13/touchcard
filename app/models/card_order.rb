@@ -8,6 +8,10 @@ class CardOrder < ActiveRecord::Base
 
   after_initialize :ensure_defaults
 
+  def cards_sent
+    postcards.where(sent: true).count
+  end
+
   def ensure_defaults
     self.card_side_front ||= CardSide.create!(is_back: false)
     self.card_side_back ||= CardSide.create!(is_back: true)
