@@ -5,6 +5,14 @@ class Shop < ActiveRecord::Base
   has_many :charges
   has_many :subscriptions
 
+  def cards_sent
+    postcards.sum(:cards_sent)
+  end
+
+  def revenue
+    pastcards.sum(:revenue)
+  end
+
   class << self
     def store(session)
       shop = Shop.find_by(domain: session.url)
