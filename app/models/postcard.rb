@@ -79,12 +79,12 @@ class Postcard < ActiveRecord::Base
       self.sent = true
       self.postcard_id = sent_card["id"]
       self.date_sent = Date.today
-      save # TODO: Add error handling here
+      self.save! # TODO: Add error handling here
 
       # Deduct 1 credit for US, 2 for international
       cost = country == "US" ? 1 : 2
       shop.credit -= cost
-      shop.save
+      shop.save!
     else
       puts "No credits left on shop #{shop.domain}"
       # TODO: possibly delete the card and S3 files here
