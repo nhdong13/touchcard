@@ -5,7 +5,6 @@ class WebhookController < ApplicationController
   before_action :verify_webhook, only: [:new_order, :uninstall]
 
   def new_order
-    # TODO: get rid of all the puts!! Should be using rails logger
     domain = request.headers["X-Shopify-Shop-Domain"]
     head :ok # head ok to avoid timeout
     shop = Shop.find_by(domain: domain)
@@ -18,7 +17,7 @@ class WebhookController < ApplicationController
     international = customer.default_address.country_code != "US"
 
     # Check if this is the customer's first order
-    return puts "Not a new customer, order_count: #{customer.orders_count}" unless customer.orders_count.to_i <= 1
+    return logger.info "Not a new customer, order_count: #{customer.orders_count}" unless customer.orders_count.to_i <= 1
 
     # Check if there is a card already (duplicate webhook)
     duplicate = Postcard.find_by(triggering_shopify_order_id: order.id)
