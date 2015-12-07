@@ -16,8 +16,12 @@ class Postcard < ActiveRecord::Base
     orders.sum(:total_price)
   end
 
+  def address
+    @address ||= customer.addresses.find_by(default: true)
+  end
+
   def to_address
-    customer.addresses.find_by(default: true).to_lob_address
+    address.to_lob_address
   end
 
   def generate_discount_code
