@@ -9,7 +9,7 @@ class BulkOrder < CardOrder
         created_at_max: customers_before
       )
     rescue # Shopify API limit
-      wait(2)
+      sleep(2)
       retry
     end
 

@@ -15,10 +15,15 @@ class RefactorPostcards < ActiveRecord::Migration
     Shop.all.each do |shop|
       shop.new_sess
       shop.postcards.each do |postcard|
+        order = Order.find_by(id: postcard.triggering_shopify_order_id)
+        if order
+          postcard.update_attributes!(customer: order.customer, order: order)
+          next
+        end
         begin
           shopify_order = ShopifyAPI::Order.find(postcard.triggering_shopify_order_id)
         rescue
-          wait 2
+          sleep 2
           retry
         end
         order = Order.from_shopify!(shopify_order)
