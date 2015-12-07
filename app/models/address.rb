@@ -18,6 +18,7 @@ class Address < ActiveRecord::Base
         :zip,
         :name,
         :text,
+        :default,
         :province_code).merge(shopify_id: address.id)
       inst = find_by(shopify_id: address.id)
       return create!(create_attrs) unless inst
