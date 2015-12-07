@@ -22,7 +22,7 @@ class PostcardSerializer < ActiveModel::Serializer
   end
 
   def state
-    object.address.state
+    object.address.province
   end
 
   def country
