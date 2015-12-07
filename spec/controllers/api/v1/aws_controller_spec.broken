@@ -1,0 +1,11 @@
+require 'rails_helper'
+
+RSpec.describe Api::V1::AwsController, type: :controller do
+  let(:json) { JSON.parse(response.body) }
+  let(:shop) { create(:shop) }
+  before(:each) { session[:shopify] = shop.id }
+  let(:json) { response.body }
+  it 'signs and uploads' do
+    get :sign, type: 'png', name: 'image_test'
+  end
+end

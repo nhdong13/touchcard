@@ -4,36 +4,20 @@ require "card_html"
 
 class Postcard < ActiveRecord::Base
   belongs_to :card_order
+  belongs_to :order
+  belongs_to :customer
   has_one :shop, through: :card_order
+  has_many :orders
 
+  # TODO add this validation back
   validates :card_order, presence: true
 
-  def self.create_postcard!(card_order, shopify_customer, triggering_shopify_order_id)
-    Postcard.create!(
-      triggering_shopify_order_id: triggering_shopify_order_id,
-      card_order: card_order,
-      shopify_customer_id: shopify_customer.id,
-      customer_name: "#{shopify_customer.first_name} #{shopify_customer.last_name}",
-      addr1: shopify_customer.default_address.address1,
-      addr2: shopify_customer.default_address.address2,
-      city: shopify_customer.default_address.city,
-      state: shopify_customer.default_address.province_code,
-      country: shopify_customer.default_address.country_code,
-      zip: shopify_customer.default_address.zip,
-      send_date: card_order.send_date
-    )
+  def revenue
+    orders.sum(:total_price)
   end
 
   def to_address
-    {
-      name: customer_name,
-      address_line1: addr1,
-      address_line2: addr2,
-      address_city: city,
-      address_state: state,
-      address_country: country,
-      address_zip: zip
-    }
+    customer.addresses.find_by(default: true).to_lob_address
   end
 
   def generate_discount_code

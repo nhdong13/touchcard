@@ -85,11 +85,13 @@ group :development, :test do
   # Call "byebug" anywhere in the code to stop execution and get a debugger console
   gem "byebug"
   gem "sqlite3"
-  gem "less-rails-bootstrap"
+  gem "clipboard"
+end
+
+group :test do
   gem "rspec-rails", "~> 3.0"
   gem "factory_girl_rails"
-  gem "clipboard"
-  # gem "webmock"
+  gem "webmock"
 end
 
 group :production do

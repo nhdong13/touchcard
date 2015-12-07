@@ -23,7 +23,7 @@ class BulkOrder < CardOrder
         limit: 250,
         page: page
       )
-
+      # TODO fix this
       # Loop through and create a card for each
       customer.each do |customer|
         Postcard.create_postcard!(self, customer, nil)

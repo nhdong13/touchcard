@@ -3,55 +3,73 @@ require "slack_notify"
 class WebhookController < ApplicationController
   skip_before_action :verify_authenticity_token
   before_action :verify_webhook, only: [:new_order, :uninstall]
+  before_action :check_order, only: [:new_order]
+  before_action :set_shop_session, only: [:new_order, :uninstall]
+  before_action :set_shopify_order, only: [:new_order]
 
   def new_order
-    domain = request.headers["X-Shopify-Shop-Domain"]
     head :ok # head ok to avoid timeout
-    shop = Shop.find_by(domain: domain)
-    logger.info "***********************"
-    logger.info "New order from #{domain}"
-    logger.info "***********************"
-    shop.new_sess
-    order = ShopifyAPI::Order.find(params[:id])
-    customer = order.customer
-    international = customer.default_address.country_code != "US"
+    # it's assumed that the check order function blocks any dulpicate actions
+    # which can occur according to the shopfiy documentation
+    order = Order.from_shopify!(@shopify_order)
+    order.connect_to_postcard
+    return logger.info "no customer" unless order.customer
+    default_address = @shopify_order.customer.default_address
+    return logger.info "no default address" unless default_address
+    international = default_address.country_code != "US"
 
-    # Check if this is the customer's first order
-    return logger.info "Not a new customer, order_count: #{customer.orders_count}" unless customer.orders_count.to_i <= 1
-
-    # Check if there is a card already (duplicate webhook)
-    duplicate = Postcard.find_by(triggering_shopify_order_id: order.id)
-    return logger.info "Duplicate card found" if duplicate
-
+    # Only new customers recieve postcards at the moment
+    return logger.info "Not a new customer" unless order.customer.new_customer?
     # Create a new card and schedule to send
-    post_sale_order = shop.card_orders.find_by(
+    post_sale_order = @shop.card_orders.find_by(
       enabled: true,
       type: "PostSaleOrder")
     return logger.info "Card not setup" if post_sale_order.nil?
     return logger.info "Card not enabled" unless post_sale_order.enabled?
     return logger.info "international customer not enabled" if international && !post_sale_order.international?
-    Postcard.create_postcard!(post_sale_order, customer, order.id)
+    Postcard.create!(
+      customer: order.customer,
+      order: order,
+      card_order: post_sale_order,
+      send_date: post_sale_order.send_date)
   end
 
   def uninstall
     head :ok
-    shop = Shop.find_by(shopify_id: params[:id])
-    fail "Uninstall non existing shop #{params[:id]}" if shop.nil?
-    shop.subscriptions.each { |s| s.destroy }
+    @shop.subscriptions.each { |s| s.destroy }
     # TODO: have a better uninstall path, we probably don't want to be deleting
     SlackNotify.uninstall(shop.domain)
-    shop.destroy
+    @shop.destroy
   end
 
   private
+  def set_shopify_order
+    @shopify_order = ShopifyAPI::Order.find(params[:id])
+    return head :not_found unless @shopify_order
+  end
+
+  def set_shop_session
+    domain = request.headers["X-Shopify-Shop-Domain"]
+    @shop = Shop.find_by(domain: domain)
+    head :not_found unless @shop
+    @shop.new_sess
+  end
+
+  def check_order
+    order = Order.find_by(shopify_id: params[:id])
+    return unless order
+    logger.info "order id:#{params[:id]} already processed"
+    head :ok
+  end
 
   def verify_webhook
     data = request.body.read.to_s
     hmac_header = request.headers["HTTP_X_SHOPIFY_HMAC_SHA256"]
-    digest = OpenSSL::Digest::Digest.new("sha256")
+    digest = OpenSSL::Digest.new("sha256")
     api_secret = ENV["SHOPIFY_CLIENT_API_SECRET"]
     digested = OpenSSL::HMAC.digest(digest, api_secret, data)
     calculated_hmac = Base64.encode64(digested).strip
+    byebug unless calculated_hmac == hmac_header
     head :unauthorized unless calculated_hmac == hmac_header
     request.body.rewind
   end

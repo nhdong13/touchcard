@@ -12,6 +12,11 @@ class CardOrder < ActiveRecord::Base
     postcards.where(sent: true).count
   end
 
+  def revenue
+    Order.joins(:postcard).where(postcards: { card_order_id: id })
+      .sum(:total_price)
+  end
+
   def ensure_defaults
     self.card_side_front ||= CardSide.create!(is_back: false)
     self.card_side_back ||= CardSide.create!(is_back: true)
@@ -34,38 +39,5 @@ class CardOrder < ActiveRecord::Base
 
   def expiration_date
     return Date.today + (1 + discount_exp).weeks if type == "PostSaleOrder"
-  end
-
-  def self.update_all_revenues
-    CardOrder.all.find_each(&:track_revenue)
-  end
-
-  def track_revenue
-    shop.new_sess
-    postcards.where(return_customer: false).each do |postcard|
-      # TODO: refactor shopify calls to be safer and DRY-er
-      begin
-        customer = ShopifyAPI::Customer.find(postcard.shopify_customer_id)
-      rescue # Shopify API limit
-        wait(2)
-        retry
-      end
-
-      order = customer.last_order
-      next unless order.id != postcard.triggering_shopify_order_id
-      begin
-        new_order = ShopifyAPI::Order.find(order.id)
-      rescue # Shopify API limit
-        wait(2)
-        retry
-      end
-
-      # Save the info in the postcard
-      postcard.update_attributes(return_customer: true, purchase2: new_order.total_price.to_f)
-
-      # Add the revenue to the card_order's total
-      self.revenue += new_order.total_price.to_f
-      save
-    end
   end
 end

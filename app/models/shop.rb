@@ -10,7 +10,9 @@ class Shop < ActiveRecord::Base
   end
 
   def revenue
-    card_orders.sum(:revenue)
+    Order.joins(postcard: :card_order)
+      .where(card_orders: { shop_id: id })
+      .sum(:total_price)
   end
 
   class << self
