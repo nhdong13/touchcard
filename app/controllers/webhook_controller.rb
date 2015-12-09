@@ -54,7 +54,7 @@ class WebhookController < ApplicationController
   def set_shop_session
     domain = request.headers["X-Shopify-Shop-Domain"]
     @shop = Shop.find_by(domain: domain)
-    head :not_found unless @shop
+    return head :not_found unless @shop
     @shop.new_sess
   end
 
