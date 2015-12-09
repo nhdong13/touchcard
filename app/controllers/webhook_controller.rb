@@ -44,6 +44,7 @@ class WebhookController < ApplicationController
 
   private
   def set_shopify_order
+    # TODO: this is actually passed in as params don't have an extra request!
     @shopify_order = ShopifyAPI::Order.find(params[:id])
     return head :not_found unless @shopify_order
   end
