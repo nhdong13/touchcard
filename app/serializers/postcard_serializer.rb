@@ -1,7 +1,11 @@
 class PostcardSerializer < ActiveModel::Serializer
   attributes :id,
     :customer_name, :addr1, :addr2, :city, :state, :country, :zip,
-    :send_date, :sent, :date_sent, :revenue, :card_order_id
+    :send_date, :sent, :date_sent, :revenue, :card_order_id, :is_paid
+
+  def is_paid
+    object.paid?
+  end
 
   def customer_name
     object.address.name

@@ -4,8 +4,8 @@ FactoryGirl.define do
     address2 "MyText"
     city "MyText"
     company "MyText"
-    country "MyText"
-    country_code "MyString"
+    country "United States"
+    country_code "US"
     first_name "MyString"
     last_name "MyString"
     latitude 1.5
@@ -15,7 +15,6 @@ FactoryGirl.define do
     zip "MyText"
     name "MyString"
     text "MyString"
-    country_code "MyString"
     province_code "MyString"
   end
 
@@ -91,6 +90,8 @@ FactoryGirl.define do
     card_order
     order
     customer
+    paid true
+    sent true
   end
 
   factory :charge do

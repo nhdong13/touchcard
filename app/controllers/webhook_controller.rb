@@ -27,11 +27,13 @@ class WebhookController < ApplicationController
     return logger.info "Card not setup" if post_sale_order.nil?
     return logger.info "Card not enabled" unless post_sale_order.enabled?
     return logger.info "international customer not enabled" if international && !post_sale_order.international?
-    Postcard.create!(
+    postcard = Postcard.new(
       customer: order.customer,
       order: order,
       card_order: post_sale_order,
-      send_date: post_sale_order.send_date)
+      send_date: post_sale_order.send_date,
+      paid: false)
+    postcard.pay.save! if postcard.can_afford?
   end
 
   def uninstall

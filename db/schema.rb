@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151125182359) do
+ActiveRecord::Schema.define(version: 20151209142322) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -30,6 +30,33 @@ ActiveRecord::Schema.define(version: 20151125182359) do
   add_index "active_admin_comments", ["author_type", "author_id"], name: "index_active_admin_comments_on_author_type_and_author_id", using: :btree
   add_index "active_admin_comments", ["namespace"], name: "index_active_admin_comments_on_namespace", using: :btree
   add_index "active_admin_comments", ["resource_type", "resource_id"], name: "index_active_admin_comments_on_resource_type_and_resource_id", using: :btree
+
+  create_table "addresses", force: :cascade do |t|
+    t.text     "address1"
+    t.text     "address2"
+    t.text     "city"
+    t.text     "company"
+    t.text     "country"
+    t.string   "country_code"
+    t.string   "first_name"
+    t.string   "last_name"
+    t.float    "latitude"
+    t.float    "longitude"
+    t.text     "phone"
+    t.text     "province"
+    t.text     "zip"
+    t.string   "name"
+    t.string   "text"
+    t.string   "province_code"
+    t.boolean  "default"
+    t.integer  "shopify_id",    limit: 8, null: false
+    t.datetime "created_at",              null: false
+    t.datetime "updated_at",              null: false
+    t.integer  "customer_id"
+  end
+
+  add_index "addresses", ["customer_id"], name: "index_addresses_on_customer_id", using: :btree
+  add_index "addresses", ["shopify_id"], name: "index_addresses_on_shopify_id", unique: true, using: :btree
 
   create_table "admin_users", force: :cascade do |t|
     t.string   "email",                  default: "", null: false
@@ -61,8 +88,6 @@ ActiveRecord::Schema.define(version: 20151125182359) do
     t.datetime "customers_before"
     t.datetime "customers_after"
     t.string   "status"
-    t.integer  "cards_sent"
-    t.float    "revenue"
     t.datetime "created_at",                         null: false
     t.datetime "updated_at",                         null: false
     t.integer  "card_side_front_id",                 null: false
@@ -93,6 +118,27 @@ ActiveRecord::Schema.define(version: 20151125182359) do
     t.text     "token",                                      null: false
   end
 
+  create_table "customers", force: :cascade do |t|
+    t.integer  "shopify_id",        limit: 8, null: false
+    t.string   "first_name"
+    t.string   "last_name"
+    t.string   "email"
+    t.boolean  "verified_email"
+    t.integer  "total_spent"
+    t.boolean  "tax_exempt"
+    t.text     "tags"
+    t.string   "state"
+    t.integer  "orders_count"
+    t.text     "note"
+    t.text     "last_order_name"
+    t.string   "last_order_id"
+    t.boolean  "accepts_marketing"
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
+  end
+
+  add_index "customers", ["shopify_id"], name: "index_customers_on_shopify_id", unique: true, using: :btree
+
   create_table "delayed_jobs", force: :cascade do |t|
     t.integer  "priority",   default: 0, null: false
     t.integer  "attempts",   default: 0, null: false
@@ -108,6 +154,35 @@ ActiveRecord::Schema.define(version: 20151125182359) do
   end
 
   add_index "delayed_jobs", ["priority", "run_at"], name: "delayed_jobs_priority", using: :btree
+
+  create_table "orders", force: :cascade do |t|
+    t.integer  "shopify_id",             limit: 8, null: false
+    t.string   "browser_ip"
+    t.text     "discount_codes"
+    t.string   "financial_status"
+    t.string   "fulfillment_status"
+    t.text     "tags"
+    t.text     "landing_site"
+    t.text     "referring_site"
+    t.integer  "total_discounts"
+    t.integer  "total_line_items_price"
+    t.integer  "total_price",                      null: false
+    t.integer  "total_tax",                        null: false
+    t.string   "processing_method"
+    t.datetime "processed_at"
+    t.integer  "customer_id"
+    t.integer  "billing_address_id"
+    t.integer  "shipping_address_id"
+    t.datetime "created_at",                       null: false
+    t.datetime "updated_at",                       null: false
+    t.integer  "postcard_id"
+  end
+
+  add_index "orders", ["billing_address_id"], name: "index_orders_on_billing_address_id", using: :btree
+  add_index "orders", ["customer_id"], name: "index_orders_on_customer_id", using: :btree
+  add_index "orders", ["postcard_id"], name: "index_orders_on_postcard_id", using: :btree
+  add_index "orders", ["shipping_address_id"], name: "index_orders_on_shipping_address_id", using: :btree
+  add_index "orders", ["shopify_id"], name: "index_orders_on_shopify_id", unique: true, using: :btree
 
   create_table "plans", force: :cascade do |t|
     t.integer  "amount",                                 null: false
@@ -125,24 +200,19 @@ ActiveRecord::Schema.define(version: 20151125182359) do
   create_table "postcards", force: :cascade do |t|
     t.integer  "card_order_id"
     t.string   "discount_code"
-    t.integer  "triggering_shopify_order_id", limit: 8
-    t.integer  "shopify_customer_id",         limit: 8
-    t.string   "customer_name"
-    t.string   "addr1"
-    t.string   "addr2"
-    t.string   "city"
-    t.string   "state"
-    t.string   "country"
-    t.string   "zip"
     t.datetime "send_date"
-    t.boolean  "sent",                                  default: false, null: false
+    t.boolean  "sent",          default: false, null: false
     t.datetime "date_sent"
     t.string   "postcard_id"
-    t.boolean  "return_customer",                       default: false, null: false
-    t.float    "purchase2"
-    t.datetime "created_at",                                            null: false
-    t.datetime "updated_at",                                            null: false
+    t.datetime "created_at",                    null: false
+    t.datetime "updated_at",                    null: false
+    t.integer  "customer_id"
+    t.integer  "order_id"
+    t.boolean  "paid",          default: false, null: false
   end
+
+  add_index "postcards", ["customer_id"], name: "index_postcards_on_customer_id", using: :btree
+  add_index "postcards", ["order_id"], name: "index_postcards_on_order_id", using: :btree
 
   create_table "shops", force: :cascade do |t|
     t.string   "domain",                                      null: false
@@ -178,12 +248,19 @@ ActiveRecord::Schema.define(version: 20151125182359) do
   add_index "subscriptions", ["plan_id"], name: "index_subscriptions_on_plan_id", using: :btree
   add_index "subscriptions", ["shop_id"], name: "index_subscriptions_on_shop_id", using: :btree
 
+  add_foreign_key "addresses", "customers"
   add_foreign_key "card_orders", "card_sides", column: "card_side_back_id"
   add_foreign_key "card_orders", "card_sides", column: "card_side_front_id"
   add_foreign_key "card_orders", "shops"
   add_foreign_key "charges", "card_orders"
   add_foreign_key "charges", "shops"
+  add_foreign_key "orders", "addresses", column: "billing_address_id"
+  add_foreign_key "orders", "addresses", column: "shipping_address_id"
+  add_foreign_key "orders", "customers"
+  add_foreign_key "orders", "postcards"
   add_foreign_key "postcards", "card_orders"
+  add_foreign_key "postcards", "customers"
+  add_foreign_key "postcards", "orders"
   add_foreign_key "subscriptions", "plans"
   add_foreign_key "subscriptions", "shops"
 end

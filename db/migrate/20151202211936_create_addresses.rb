@@ -16,7 +16,6 @@ class CreateAddresses < ActiveRecord::Migration
       t.text :zip
       t.string :name
       t.string :text
-      t.string :country_code
       t.string :province_code
       t.boolean :default
       t.integer :shopify_id, null: false, index: { unique: true }, limit: 8

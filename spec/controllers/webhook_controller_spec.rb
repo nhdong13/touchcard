@@ -72,9 +72,24 @@ RSpec.describe WebhookController, type: :controller do
         let(:s_order) { stub_order("everything") }
         before(:each) { post_new_order(id: s_order[:id]) }
 
-        context "vaild card order" do
+        context "valid card order" do
           it "creates postcard" do
             expect(Postcard.count).to eq 1
+          end
+
+          it "deducts shop credits" do
+            expect(Shop.find(shop.id).credit).to eq shop.credit - 1
+          end
+        end
+
+        context "shop not enough credits" do
+          before(:each) { shop.update_attributes(credit: 0) }
+          it "doesn't create postcard" do
+            expect(Postcard.count).to eq 1
+          end
+
+          it "doesn't deducts shop credits" do
+            expect(Shop.find(shop.id).credit).to eq shop.credit
           end
         end
 

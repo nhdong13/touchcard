@@ -32,50 +32,58 @@ class Postcard < ActiveRecord::Base
   end
 
   def self.send_all
-    Postcard.where("sent = ? and send_date <= ?", false, Time.now)
+    Postcard.where("paid = TRUE AND sent = FALSE AND send_date <= ?", Time.now)
       .each(&:send_card)
   end
 
+  def pay
+    # TODO make sure this is atomic
+    return logger.info "already paid for postcard:#{id}" if paid?
+    return logger.info "not enough credits postcard:#{id}" unless can_afford?
+    shop.credit -= cost
+    shop.save!
+    self.paid = true
+    self
+  end
+
+  def can_afford?
+    shop.credit >= cost
+  end
+
+  def cost
+    address.country_code == "US" ? 1 : 2
+  end
+
   def send_card
+    return logger.info "sending postcard:#{id} that is not paid for" unless paid?
     # TODO: all kinds of error handling
     # Test lob
     @lob = Lob.load
-
-    if (country == "US" && shop.credit >= 1) || shop.credit >= 2
-      self.discount_code = generate_discount_code if card_order.discount?
-      front_html, back_html = [
-        card_order.card_side_front,
-        card_order.card_side_back
-      ].map do |card_side|
-        CardHtml.generate(
-          background_image: card_side.image,
-          discount_x: card_side.discount_x,
-          discount_y: card_side.discount_y,
-          discount_pct: card_order.discount_pct,
-          discount_exp: card_order.expiration_date,
-          discount_code: card_side.is_back? ? nil : discount_code
-        )
-      end
-
-      sent_card = @lob.postcards.create(
-        description: "A #{card_order.type} card sent by #{shop.domain}",
-        to: to_address,
-        # from: shop_address, # Return address for Shop
-        front: front_html,
-        back: back_html
+    self.discount_code = generate_discount_code if card_order.discount?
+    front_html, back_html = [
+      card_order.card_side_front,
+      card_order.card_side_back
+    ].map do |card_side|
+      CardHtml.generate(
+        background_image: card_side.image,
+        discount_x: card_side.discount_x,
+        discount_y: card_side.discount_y,
+        discount_pct: card_order.discount_pct,
+        discount_exp: card_order.expiration_date,
+        discount_code: card_side.is_back? ? nil : discount_code
       )
-      self.sent = true
-      self.postcard_id = sent_card["id"]
-      self.date_sent = Date.today
-      self.save! # TODO: Add error handling here
-
-      # Deduct 1 credit for US, 2 for international
-      cost = country == "US" ? 1 : 2
-      shop.credit -= cost
-      shop.save!
-    else
-      puts "No credits left on shop #{shop.domain}"
-      # TODO: possibly delete the card and S3 files here
     end
+
+    sent_card = @lob.postcards.create(
+      description: "A #{card_order.type} card sent by #{shop.domain}",
+      to: to_address,
+      # from: shop_address, # Return address for Shop
+      front: front_html,
+      back: back_html
+    )
+    self.sent = true
+    self.postcard_id = sent_card["id"]
+    self.date_sent = Date.today
+    self.save! # TODO: Add error handling here
   end
 end
