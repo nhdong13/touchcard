@@ -1,6 +1,9 @@
 class Address < ActiveRecord::Base
   belongs_to :customer
 
+  validates :shopify_id, presence: true
+  validates :shopify_id, uniqueness: true
+
   class << self
     def from_shopify!(address)
       create_attrs = address.attributes.with_indifferent_access.slice(
