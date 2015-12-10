@@ -17,7 +17,7 @@ class Postcard < ActiveRecord::Base
   end
 
   def address
-    @address ||= customer.addresses.find_by(default: true)
+    customer.default_address
   end
 
   def to_address

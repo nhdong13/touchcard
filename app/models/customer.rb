@@ -6,6 +6,10 @@ class Customer < ActiveRecord::Base
   validates :shopify_id, presence: true
   validates :shopify_id, uniqueness: true
 
+  def default_address
+    @default_address ||= addresses.find_by(default: true)
+  end
+
   def new_customer?
     orders_count.to_i <= 1
   end
