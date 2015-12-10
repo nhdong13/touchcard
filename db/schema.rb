@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151209142322) do
+ActiveRecord::Schema.define(version: 20151210162610) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -176,12 +176,14 @@ ActiveRecord::Schema.define(version: 20151209142322) do
     t.datetime "created_at",                       null: false
     t.datetime "updated_at",                       null: false
     t.integer  "postcard_id"
+    t.integer  "shop_id"
   end
 
   add_index "orders", ["billing_address_id"], name: "index_orders_on_billing_address_id", using: :btree
   add_index "orders", ["customer_id"], name: "index_orders_on_customer_id", using: :btree
   add_index "orders", ["postcard_id"], name: "index_orders_on_postcard_id", using: :btree
   add_index "orders", ["shipping_address_id"], name: "index_orders_on_shipping_address_id", using: :btree
+  add_index "orders", ["shop_id"], name: "index_orders_on_shop_id", using: :btree
   add_index "orders", ["shopify_id"], name: "index_orders_on_shopify_id", unique: true, using: :btree
 
   create_table "plans", force: :cascade do |t|
@@ -258,6 +260,7 @@ ActiveRecord::Schema.define(version: 20151209142322) do
   add_foreign_key "orders", "addresses", column: "shipping_address_id"
   add_foreign_key "orders", "customers"
   add_foreign_key "orders", "postcards"
+  add_foreign_key "orders", "shops"
   add_foreign_key "postcards", "card_orders"
   add_foreign_key "postcards", "customers"
   add_foreign_key "postcards", "orders"

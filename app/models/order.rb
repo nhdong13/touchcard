@@ -1,4 +1,5 @@
 class Order < ActiveRecord::Base
+  belongs_to :shop
   belongs_to :customer
   belongs_to :postcard
   validates :total_price, :total_tax, :shopify_id, presence: true
@@ -7,7 +8,7 @@ class Order < ActiveRecord::Base
   serialize :discount_codes
 
   class << self
-    def from_shopify!(order)
+    def from_shopify!(order, shop)
       # this one doesn't try to find the order first because that should never
       # occur since orders are only created by the new_order webhook
       attrs = order.attributes.with_indifferent_access
@@ -28,7 +29,8 @@ class Order < ActiveRecord::Base
         total_tax: order.total_tax.to_f * 100,
         discount_codes: order.discount_codes.map(&:attributes),
         shopify_id: order.id,
-        customer: customer))
+        customer: customer,
+        shop: shop))
     end
   end
 

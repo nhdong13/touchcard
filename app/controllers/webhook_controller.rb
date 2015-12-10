@@ -11,7 +11,7 @@ class WebhookController < ApplicationController
     head :ok # head ok to avoid timeout
     # it's assumed that the check order function blocks any dulpicate actions
     # which can occur according to the shopfiy documentation
-    order = Order.from_shopify!(@shopify_order)
+    order = Order.from_shopify!(@shopify_order, @shop)
     order.connect_to_postcard
     return logger.info "no customer" unless order.customer
     default_address = @shopify_order.customer.default_address
