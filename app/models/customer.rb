@@ -7,7 +7,7 @@ class Customer < ActiveRecord::Base
   validates :shopify_id, uniqueness: true
 
   def default_address
-    @default_address ||= addresses.find_by(default: true)
+    @default_address ||= addresses.find_by(default: true) || addresses.last
   end
 
   def new_customer?
