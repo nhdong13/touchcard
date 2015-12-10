@@ -2,7 +2,7 @@ class Order < ActiveRecord::Base
   belongs_to :shop
   belongs_to :customer
   belongs_to :postcard
-  validates :total_price, :total_tax, :shopify_id, presence: true
+  validates :total_price, :total_tax, :shopify_id, :shop, presence: true
   validates :shopify_id, uniqueness: true
 
   serialize :discount_codes

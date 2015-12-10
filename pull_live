@@ -1,0 +1,2 @@
+rake db:drop
+PGUSER=postgres PGPASSWORD=password heroku pg:pull HEROKU_POSTGRESQL_ROSE touchcard_development --app touchcard
