@@ -36,7 +36,7 @@ class Address < ActiveRecord::Base
       address_line1: address1,
       address_line2: address2,
       address_city: city,
-      address_state: province,
+      address_state: province_code,
       address_country: country_code,
       address_zip: zip
     }
