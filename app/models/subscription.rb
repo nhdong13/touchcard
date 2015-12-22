@@ -24,13 +24,11 @@ class Subscription < ActiveRecord::Base
       return super(params) unless shop && plan
       subscription = shop.stripe_customer.subscriptions.create(
         plan: plan.id,
-        quantity: params[:quantity]
-      )
+        quantity: params[:quantity])
       instance = super(params.merge(
         stripe_id: subscription.id,
         current_period_start: Time.at(subscription.current_period_start),
-        current_period_end: Time.at(subscription.current_period_end)
-      ))
+        current_period_end: Time.at(subscription.current_period_end)))
       subscription.delete unless instance.valid?
       instance
     end

@@ -2,11 +2,22 @@ class CardOrder < ActiveRecord::Base
   belongs_to :shop
   belongs_to :card_side_front, class_name: "CardSide", foreign_key: "card_side_front_id"
   belongs_to :card_side_back, class_name: "CardSide", foreign_key: "card_side_back_id"
+  has_many :filters
   has_many :postcards
 
   validates :shop, :card_side_front, :card_side_back, presence: true
 
   after_initialize :ensure_defaults
+
+  def send_postcard?(order)
+    return true unless filters.count > 0
+    spend = order.total_line_items_price
+    filter = filters.first
+    # if the filters are nil assume they're unbounded
+    min = filter.filter_data["minimum"] || -1
+    max = filter.filter_data["maximum"] || 1_000_000_000
+    spend < max && spend > min
+  end
 
   def cards_sent
     postcards.where(sent: true).count

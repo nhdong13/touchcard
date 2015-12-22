@@ -21,6 +21,6 @@ class Api::BaseController < ActionController::Base
   end
 
   def render_validation_errors(model)
-    render json: { error: model.errors }, status: 422
+    render json: { errors: model.errors }, status: 422
   end
 end

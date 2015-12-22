@@ -27,6 +27,7 @@ class WebhookController < ApplicationController
     return logger.info "Card not setup" if post_sale_order.nil?
     return logger.info "Card not enabled" unless post_sale_order.enabled?
     return logger.info "international customer not enabled" if international && !post_sale_order.international?
+    return logger.info "order filtered out" unless post_sale_order.send_postcard?(order)
     postcard = Postcard.new(
       customer: order.customer,
       order: order,

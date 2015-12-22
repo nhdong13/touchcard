@@ -1,4 +1,9 @@
 FactoryGirl.define do
+  factory :filter do
+    card_order
+    filter_data { { "minimum" => 0, "maximum" => 1000 } }
+  end
+
   factory :address do
     address1 "MyText"
     address2 "MyText"
@@ -34,6 +39,7 @@ FactoryGirl.define do
     processing_method "MyString"
     processed_at "2015-12-02 16:49:13"
     customer nil
+    shop
   end
 
   factory :customer do

@@ -6,6 +6,7 @@ Rails.application.routes.draw do
     namespace :v1 do
       get 'sign', to: 'aws#sign'
       resources :card_sides, only: [:show, :update]
+      resources :filters, only: [:show, :update, :destroy, :create]
       resources :shops, only: [:show, :update] do
         collection { get :current }
       end
