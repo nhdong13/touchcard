@@ -34,7 +34,7 @@ class Subscription < ActiveRecord::Base
     # one off charge for the delta credits between the two quantities
     # essentially they're buying extra credits for the month
     shop.stripe_customer.add_invoice_item(
-      amount: delta_quantity,
+      amount: delta_quantity * 100,
       currency: "usd",
       description: "Plan upgrade from #{old_quantity} cards to #{new_quantity} cards adding #{delta_quantity} cards for this month")
     shop.update_attributes(credit: shop.credit + delta_quantity)
