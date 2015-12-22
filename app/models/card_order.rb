@@ -11,7 +11,7 @@ class CardOrder < ActiveRecord::Base
 
   def send_postcard?(order)
     return true unless filters.count > 0
-    spend = order.total_line_items_price
+    spend = order.total_line_items_price / 100.0
     filter = filters.first
     # if the filters are nil assume they're unbounded
     min = filter.filter_data["minimum"] || -1
