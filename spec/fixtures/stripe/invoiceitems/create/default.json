@@ -1,0 +1,8 @@
+{
+  "date": 1305974416,
+  "description": "One-time setup fee",
+  "currency": "usd",
+  "amount": 1000,
+  "object": "invoiceitem",
+  "id": "ii_EOsoCIs2mE"
+}

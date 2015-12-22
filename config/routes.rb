@@ -23,8 +23,10 @@ Rails.application.routes.draw do
       end
     end
   end
+  # Stripe wobhook routes
+  post '/stripe/events', to: 'stripe_webhook#create'
 
-  # Webhook routes
+  # Shopify webhook routes
   post '/new_order',  to:   'webhook#new_order'
   post '/uninstall',  to:   'webhook#uninstall'
 

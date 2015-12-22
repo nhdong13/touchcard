@@ -152,6 +152,10 @@ class Shop < ActiveRecord::Base
     update_attribute(:credit, subscriptions.first.quantity)
   end
 
+  def credits_used
+    credit - subscriptions.first.quantity
+  end
+
   def self.top_up_all
     # Daily top-up of all shops with today as a billing date
     # shops = Shop.where(charge_date: Date.today)

@@ -15,6 +15,31 @@ class Subscription < ActiveRecord::Base
     stripe_id.present?
   end
 
+  def change_quantity(new_quantity)
+    return true if new_quantity == quantity
+    delta_quantity = new_quantity - quantity
+    old_quantity = quantity
+    downgrade = new_quantity < quantity
+    # TODO assertion test that new_quantity - credits_used > 0
+    # TODO error handling on shop failure
+    subscription = shop.stripe_customer.subscriptions.retrieve(stripe_id)
+    subscription.quantity = new_quantity
+    subscription.prorate = false
+    subscription.save
+    update_attributes(quantity: new_quantity)
+    # don't need to do anything for downgrade as the billing won't change till
+    # next month
+    return true if downgrade
+    # if upgrading we want to immediately upgrade their credits by using a
+    # one off charge for the delta credits between the two quantities
+    # essentially they're buying extra credits for the month
+    shop.stripe_customer.add_invoice_item(
+      amount: delta_quantity,
+      currency: "usd",
+      description: "Plan upgrade from #{old_quantity} cards to #{new_quantity} cards adding #{delta_quantity} cards for this month")
+    shop.update_attributes(credit: shop.credit + delta_quantity)
+  end
+
   class << self
     def create(params)
       # TODO: error handling
@@ -32,15 +57,6 @@ class Subscription < ActiveRecord::Base
       subscription.delete unless instance.valid?
       instance
     end
-  end
-
-  def update_attributes(params)
-    subscription = shop.stripe_customer.subscriptions.retrieve(stripe_id)
-    subscription.plan = params[:plan_id] || params[:plan].try(:id)
-    subscription.quantity = params[:quantity]
-    subscription.save
-    # TODO handle failure of saving of subscription
-    super(params)
   end
 
   def destroy

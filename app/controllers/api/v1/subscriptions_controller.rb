@@ -12,7 +12,7 @@ class Api::V1::SubscriptionsController < Api::BaseController
   end
 
   def update
-    success = @subscription.update_attributes(update_params)
+    success = @subscription.change_quantity(update_params[:quantity].to_i)
     return render_validation_errors(@subscription) unless success
     render json: @subscription, serializer: SubscriptionSerializer
   end

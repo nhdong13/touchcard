@@ -1,4 +1,9 @@
 FactoryGirl.define do
+  factory :stripe_event do
+    stripe_id "evt_thisisanid"
+    status "processing"
+  end
+
   factory :filter do
     card_order
     filter_data { { "minimum" => 0, "maximum" => 1000 } }
@@ -61,17 +66,13 @@ FactoryGirl.define do
 
   factory :subscription do
     quantity 1
-    plan nil
-    shop nil
+    plan
+    shop
   end
 
   factory :plan do
-    stripe_id 1
-    amount 1
-    interval "MyString"
-    name "MyString"
-    interval_count 1
-    trial_period_days 1
+    amount 99
+    name "Test Plan"
   end
 
   factory :card_side do

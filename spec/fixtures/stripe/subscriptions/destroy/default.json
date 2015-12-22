@@ -1,0 +1,35 @@
+{
+  "id": "sub_7X0wyzQiwEKvoH",
+  "object": "subscription",
+  "application_fee_percent": null,
+  "cancel_at_period_end": false,
+  "canceled_at": null,
+  "current_period_end": 1452780169,
+  "current_period_start": 1450101769,
+  "customer": "cus_7WzvftqWMn0xy7",
+  "discount": null,
+  "ended_at": null,
+  "metadata": {
+  },
+  "plan": {
+    "id": "1",
+    "object": "plan",
+    "amount": 2000,
+    "created": 1386247539,
+    "currency": "usd",
+    "interval": "month",
+    "interval_count": 1,
+    "livemode": false,
+    "metadata": {
+    },
+    "name": "New plan name",
+    "statement_descriptor": null,
+    "trial_period_days": null
+  },
+  "quantity": 1,
+  "start": 1450101769,
+  "status": "active",
+  "tax_percent": null,
+  "trial_end": null,
+  "trial_start": null
+}

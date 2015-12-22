@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151210164548) do
+ActiveRecord::Schema.define(version: 20151218182319) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -155,6 +155,15 @@ ActiveRecord::Schema.define(version: 20151210164548) do
 
   add_index "delayed_jobs", ["priority", "run_at"], name: "delayed_jobs_priority", using: :btree
 
+  create_table "filters", force: :cascade do |t|
+    t.integer  "card_order_id"
+    t.text     "filter_data",   null: false
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
+  end
+
+  add_index "filters", ["card_order_id"], name: "index_filters_on_card_order_id", using: :btree
+
   create_table "orders", force: :cascade do |t|
     t.integer  "shopify_id",             limit: 8, null: false
     t.string   "browser_ip"
@@ -236,6 +245,13 @@ ActiveRecord::Schema.define(version: 20151210164548) do
 
   add_index "shops", ["domain"], name: "index_shops_on_domain", unique: true, using: :btree
 
+  create_table "stripe_events", force: :cascade do |t|
+    t.string   "stripe_id",  null: false
+    t.string   "status",     null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "subscriptions", force: :cascade do |t|
     t.integer  "quantity",             null: false
     t.integer  "plan_id"
@@ -256,6 +272,7 @@ ActiveRecord::Schema.define(version: 20151210164548) do
   add_foreign_key "card_orders", "shops"
   add_foreign_key "charges", "card_orders"
   add_foreign_key "charges", "shops"
+  add_foreign_key "filters", "card_orders"
   add_foreign_key "orders", "addresses", column: "billing_address_id"
   add_foreign_key "orders", "addresses", column: "shipping_address_id"
   add_foreign_key "orders", "customers"
