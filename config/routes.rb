@@ -1,6 +1,4 @@
 Rails.application.routes.draw do
-
-  root :to => 'root#index'
   # API routes
   namespace :api, defaults: {format: 'json'} do
     namespace :v1 do
@@ -41,6 +39,7 @@ Rails.application.routes.draw do
   get '/support',   to: 'home#support'
 
   # Shopify Engine
+  root :to => 'home#index'
   mount ShopifyApp::Engine, at: '/'
   get '/app' => 'root#app'
   get '/app/*path' => 'root#app'
