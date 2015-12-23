@@ -17,6 +17,7 @@ class RootController < AuthenticatedController
 
   def app
     text = bootstrap_index(params[:index_key], 'touchcard-app')
+    text.gsub!("https://{@shop_session.url}", @shop_session ? @shop_session.url : "")
     render text: text
   end
 end
