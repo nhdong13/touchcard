@@ -1,0 +1,9 @@
+<script type="text/javascript">
+  ShopifyApp.ready(function(){
+    ShopifyApp.Bar.initialize({
+      title: "Dashboard",
+      icon: "<%= asset_path('faveicon.png') %>"
+    });
+  });
+</script>
+<%= @current_shop.domain %>
