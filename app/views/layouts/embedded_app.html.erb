@@ -19,15 +19,17 @@
 
   <body>
     <div class="container">
-      <% unless request.path == "/login" %>
-        <%= render 'layouts/navbar' %>
-      <% end %>
+      
+      <script type="text/javascript">
+        ShopifyApp.ready(function(){
+          ShopifyApp.Bar.initialize({
+            title: "Dashboard",
+            icon: "<%= asset_path('faveicon.png') %>"
+          });
+        });
+      </script>
+      <%= @current_shop.domain %>
 
-      <div id="main_alert">
-        <%= render 'layouts/notice_banner' %>
-      </div>
-
-      <%= yield %>
 
     </div> <!-- /container -->
   </body>
