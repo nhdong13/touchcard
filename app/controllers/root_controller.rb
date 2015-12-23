@@ -11,7 +11,8 @@ class RootController < AuthenticatedController
   end
 
   def index
-    redirect_to '/app'
+    render text: "ROOOOT"
+  #   redirect_to '/app'
   end
 
   def app
