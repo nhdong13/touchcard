@@ -16,7 +16,7 @@ class CardOrder < ActiveRecord::Base
     # if the filters are nil assume they're unbounded
     min = filter.filter_data["minimum"] || -1
     max = filter.filter_data["maximum"] || 1_000_000_000
-    spend < max && spend > min
+    spend < max.to_f && spend > min.to_f
   end
 
   def cards_sent
