@@ -77,7 +77,7 @@ class Shop < ActiveRecord::Base
           discount_type: "percentage",
           value: card_order.discount_pct.to_s,
           code: code,
-          ends_at: (Time.now + (card_order.discount_exp || 3).weeks),
+          ends_at: card_order.expiration_date,
           starts_at: Time.now,
           usage_limit: 1
         }
