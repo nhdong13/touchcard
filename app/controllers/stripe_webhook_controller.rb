@@ -1,4 +1,5 @@
-class StripeWebhookController < ApplicationController
+class StripeWebhookController < ActionController::Base
+  skip_before_action :verify_authenticity_token
   before_action :set_stripe_event, only: :create
 
   def create
