@@ -20,6 +20,14 @@ class Postcard < ActiveRecord::Base
     customer.default_address
   end
 
+  def international?
+    address.country_code != "US"
+  end
+
+  def estimated_transit_days
+    international? ? 10 : 5
+  end
+
   def to_address
     address.to_lob_address
   end
@@ -27,7 +35,7 @@ class Postcard < ActiveRecord::Base
   def generate_discount_code
     code = ("A".."Z").to_a.sample(9).join
     code = "#{code[0...3]}-#{code[3...6]}-#{code[6...9]}"
-    card_order.shop.new_discount(card_order, code)
+    card_order.shop.new_discount(card_order.discount_pct, estimated_arrival, code)
     code
   end
 
@@ -51,7 +59,7 @@ class Postcard < ActiveRecord::Base
   end
 
   def cost
-    address.country_code == "US" ? 1 : 2
+    international? ? 2 : 1
   end
 
   def send_card
@@ -59,7 +67,11 @@ class Postcard < ActiveRecord::Base
     # TODO: all kinds of error handling
     # Test lob
     @lob = Lob.load
+    self.sent = true
+    self.date_sent = Date.today
+    self.estimated_arrival = estimated_transit_days.business_days.from_now
     self.discount_code = generate_discount_code if card_order.discount?
+
     front_html, back_html = [
       card_order.card_side_front,
       card_order.card_side_back
@@ -69,7 +81,7 @@ class Postcard < ActiveRecord::Base
         discount_x: card_side.discount_x,
         discount_y: card_side.discount_y,
         discount_pct: card_order.discount_pct,
-        discount_exp: card_order.expiration_date.strftime("%m/%d/%Y"),
+        discount_exp: estimated_arrival.strftime("%m/%d/%Y"),
         discount_code: card_side.show_discount? ? nil : discount_code
       )
     end
@@ -81,9 +93,7 @@ class Postcard < ActiveRecord::Base
       front: front_html,
       back: back_html
     )
-    self.sent = true
     self.postcard_id = sent_card["id"]
-    self.date_sent = Date.today
     self.save! # TODO: Add error handling here
   end
 end

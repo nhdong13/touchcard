@@ -1,0 +1,70 @@
+{
+  "id": "psc_14c1b66f31264c34",
+  "description": "Demo Postcard job",
+  "metadata": {},
+  "to": {
+    "id": "adr_fa533435bce2d94d",
+    "description": null,
+    "metadata": {},
+    "name": "Harry Zhang",
+    "phone": null,
+    "email": null,
+    "company": null,
+    "address_line1": "123 Test Street",
+    "address_line2": null,
+    "address_city": "Mountain View",
+    "address_state": "California",
+    "address_zip": "94041",
+    "address_country": "United States",
+    "date_created": "2015-04-27T19:01:08.685Z",
+    "date_modified": "2015-04-27T19:01:08.808Z",
+    "deleted": true,
+    "object": "address"
+  },
+  "from": {
+    "id": "adr_0654fd1038e46eac",
+    "description": null,
+    "metadata": {},
+    "name": "Ami Wang",
+    "phone": null,
+    "email": null,
+    "company": null,
+    "address_line1": "123 Test Avenue",
+    "address_line2": null,
+    "address_city": "Seattle",
+    "address_state": "Washington",
+    "address_zip": "94041",
+    "address_country": "United States",
+    "date_created": "2015-04-27T19:01:08.685Z",
+    "date_modified": "2015-04-27T19:01:08.821Z",
+    "deleted": true,
+    "object": "address"
+  },
+  "message": null,
+  "url": "https://s3-us-west-2.amazonaws.com/assets.lob.com/psc_14c1b66f31264c34.pdf?AWSAccessKeyId=AKIAJVT3IPSNH662QU6A&Expires=1449430428&Signature=j%2FTzUuHJkrlbAJZGNpCm3xfxgmE%3D",
+  "tracking": {
+    "id": "trk_5b4ac787b7f956ea",
+    "tracking_number": "901397106123456",
+    "carrier": "USPS",
+    "link": null,
+    "events": [],
+    "object": "tracking"
+  },
+  "thumbnails": [
+    {
+      "small": "https://s3-us-west-2.amazonaws.com/assets.lob.com/psc_14c1b66f31264c34_thumb_small_1.png?AWSAccessKeyId=AKIAJVT3IPSNH662QU6A&Expires=1449430428&Signature=j%2FTzUuHJkrlbAJZGNpCm3xfxgmE%3D",
+      "medium": "https://s3-us-west-2.amazonaws.com/assets.lob.com/psc_14c1b66f31264c34_thumb_medium_1.png?AWSAccessKeyId=AKIAJVT3IPSNH662QU6A&Expires=1449430428&Signature=j%2FTzUuHJkrlbAJZGNpCm3xfxgmE%3D",
+      "large": "https://s3-us-west-2.amazonaws.com/assets.lob.com/psc_14c1b66f31264c34_thumb_large_1.png?AWSAccessKeyId=AKIAJVT3IPSNH662QU6A&Expires=1449430428&Signature=j%2FTzUuHJkrlbAJZGNpCm3xfxgmE%3D"
+    },
+    {
+      "small": "https://s3-us-west-2.amazonaws.com/assets.lob.com/psc_14c1b66f31264c34_thumb_small_2.png?AWSAccessKeyId=AKIAJVT3IPSNH662QU6A&Expires=1449430428&Signature=j%2FTzUuHJkrlbAJZGNpCm3xfxgmE%3D",
+      "medium": "https://s3-us-west-2.amazonaws.com/assets.lob.com/psc_14c1b66f31264c34_thumb_medium_2.png?AWSAccessKeyId=AKIAJVT3IPSNH662QU6A&Expires=1449430428&Signature=j%2FTzUuHJkrlbAJZGNpCm3xfxgmE%3D",
+      "large": "https://s3-us-west-2.amazonaws.com/assets.lob.com/psc_14c1b66f31264c34_thumb_large_2.png?AWSAccessKeyId=AKIAJVT3IPSNH662QU6A&Expires=1449430428&Signature=j%2FTzUuHJkrlbAJZGNpCm3xfxgmE%3D"
+    }
+  ],
+  "size": "4x6",
+  "date_created": "2015-04-27T19:01:11.355Z",
+  "date_modified": "2015-04-27T19:01:11.427Z",
+  "expected_delivery_date": "2015-05-06",
+  "object": "postcard"
+}

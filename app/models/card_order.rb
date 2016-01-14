@@ -47,8 +47,4 @@ class CardOrder < ActiveRecord::Base
     # TODO handle international + 5 to 7 business days
     send_date = arrive_by - 1.week
   end
-
-  def expiration_date
-    return Date.today + (1 + discount_exp).weeks if type == "PostSaleOrder"
-  end
 end

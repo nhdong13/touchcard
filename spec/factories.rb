@@ -21,11 +21,12 @@ FactoryGirl.define do
     latitude 1.5
     longitude 1.5
     phone "MyText"
-    province "MyText"
+    province "New York"
     zip "MyText"
     name "MyString"
     text "MyString"
-    province_code "MyString"
+    province_code "NY"
+    sequence(:shopify_id)
   end
 
   factory :order do

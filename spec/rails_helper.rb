@@ -38,6 +38,9 @@ RSpec.configure do |config|
 
   # Add the support StripeHelper
   config.include StripeHelper, type: :controller
+  # XXX these helpers should probably be intergrated better and selectively
+  # loaded or loaded everywhere
+  config.include ShopifyHelper, type: :model
 
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false

@@ -70,6 +70,9 @@ gem "daemons"
 gem "wirble"
 gem "hirb"
 
+# calculate business days
+gem "business_time"
+
 group :assets do
   gem "therubyracer", platforms: :ruby
 end

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151218182319) do
+ActiveRecord::Schema.define(version: 20160112130410) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -212,14 +212,15 @@ ActiveRecord::Schema.define(version: 20151218182319) do
     t.integer  "card_order_id"
     t.string   "discount_code"
     t.datetime "send_date"
-    t.boolean  "sent",          default: false, null: false
+    t.boolean  "sent",              default: false, null: false
     t.datetime "date_sent"
     t.string   "postcard_id"
-    t.datetime "created_at",                    null: false
-    t.datetime "updated_at",                    null: false
+    t.datetime "created_at",                        null: false
+    t.datetime "updated_at",                        null: false
     t.integer  "customer_id"
     t.integer  "order_id"
-    t.boolean  "paid",          default: false, null: false
+    t.boolean  "paid",              default: false, null: false
+    t.datetime "estimated_arrival"
   end
 
   add_index "postcards", ["customer_id"], name: "index_postcards_on_customer_id", using: :btree
