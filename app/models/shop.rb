@@ -4,6 +4,7 @@ class Shop < ActiveRecord::Base
   has_many :postcards, through: :card_orders
   has_many :charges
   has_many :subscriptions
+  has_many :orders
 
   def cards_sent
     postcards.where(sent: true).count

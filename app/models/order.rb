@@ -13,7 +13,7 @@ class Order < ActiveRecord::Base
       # occur since orders are only created by the new_order webhook
       attrs = order.attributes.with_indifferent_access
       customer = Customer.from_shopify!(attrs[:customer]) if attrs[:customer]
-      create!(attrs.slice(
+      inst = create!(attrs.slice(
         :browser_ip,
         :financial_status,
         :fulfillment_status,
@@ -31,6 +31,8 @@ class Order < ActiveRecord::Base
         shopify_id: order.id,
         customer: customer,
         shop: shop))
+      order.line_items.each { |li| LineItem.from_shopify!(inst, li) }
+      inst
     end
   end
 

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160112130410) do
+ActiveRecord::Schema.define(version: 20160114232118) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -164,6 +164,32 @@ ActiveRecord::Schema.define(version: 20160112130410) do
 
   add_index "filters", ["card_order_id"], name: "index_filters_on_card_order_id", using: :btree
 
+  create_table "line_items", force: :cascade do |t|
+    t.integer  "order_id",                       null: false
+    t.integer  "fulfillable_quantity"
+    t.string   "fulfillment_service"
+    t.string   "fulfillment_status"
+    t.integer  "grams"
+    t.integer  "shopify_id",           limit: 8, null: false
+    t.string   "price"
+    t.integer  "product_id",           limit: 8
+    t.integer  "quantity"
+    t.boolean  "requires_shipping"
+    t.string   "sku"
+    t.string   "title"
+    t.integer  "variant_id",           limit: 8
+    t.string   "variant_title"
+    t.string   "vendor"
+    t.string   "name",                           null: false
+    t.boolean  "gift_card"
+    t.boolean  "taxable"
+    t.string   "total_discount"
+    t.datetime "created_at",                     null: false
+    t.datetime "updated_at",                     null: false
+  end
+
+  add_index "line_items", ["order_id"], name: "index_line_items_on_order_id", using: :btree
+
   create_table "orders", force: :cascade do |t|
     t.integer  "shopify_id",             limit: 8, null: false
     t.string   "browser_ip"
@@ -274,6 +300,7 @@ ActiveRecord::Schema.define(version: 20160112130410) do
   add_foreign_key "charges", "card_orders"
   add_foreign_key "charges", "shops"
   add_foreign_key "filters", "card_orders"
+  add_foreign_key "line_items", "orders"
   add_foreign_key "orders", "addresses", column: "billing_address_id"
   add_foreign_key "orders", "addresses", column: "shipping_address_id"
   add_foreign_key "orders", "customers"
