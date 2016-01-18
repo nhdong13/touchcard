@@ -82,7 +82,7 @@ class Postcard < ActiveRecord::Base
         discount_y: card_side.discount_y,
         discount_pct: card_order.discount_pct,
         discount_exp: estimated_arrival.strftime("%m/%d/%Y"),
-        discount_code: card_side.show_discount? ? nil : discount_code
+        discount_code: card_side.show_discount? ? discount_code : nil
       )
     end
 
