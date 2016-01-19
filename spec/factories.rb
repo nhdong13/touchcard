@@ -1,4 +1,10 @@
 FactoryGirl.define do
+  factory :line_item do
+    order
+    name "Test Product"
+    sequence(:shopify_id)
+  end
+
   factory :stripe_event do
     stripe_id "evt_thisisanid"
     status "processing"
@@ -30,7 +36,7 @@ FactoryGirl.define do
   end
 
   factory :order do
-    shopify_id 1
+    sequence(:shopify_id)
     browser_ip "MyString"
     discount_codes "MyText"
     financial_status "MyString"
@@ -49,7 +55,7 @@ FactoryGirl.define do
   end
 
   factory :customer do
-    shopify_id "MyString"
+    sequence(:shopify_id) { |n| "CustomerId#{n}" }
     first_name "MyString"
     last_name "MyString"
     email ""

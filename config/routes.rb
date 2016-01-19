@@ -10,6 +10,7 @@ Rails.application.routes.draw do
       end
       resources :card_orders, only: [:index, :show, :create, :update]
       resources :postcards, only: [:index, :show, :create, :update]
+      resources :line_items, only: [:index, :show]
       resources :subscriptions, only: [:show, :create, :update]
       resources :plans, only: [:show, :index]
       # Switched to stripe this is not used for now
