@@ -8,6 +8,7 @@ class CardOrderSerializer < ActiveModel::Serializer
     :status,
     :cards_sent, :revenue
 
+  has_many :filters, serializer: FilterSerializer
   has_one :card_side_front, root: :card_sides, serializer: CardSideSerializer
   has_one :card_side_back, root: :card_sides, serializer: CardSideSerializer
 end
