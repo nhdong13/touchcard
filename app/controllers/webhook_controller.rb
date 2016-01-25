@@ -41,7 +41,6 @@ class WebhookController < ApplicationController
     head :ok
     @shop.subscriptions.each { |s| s.destroy }
     @shop.update_attributes(credit: 0)
-    # TODO: have a better uninstall path, we probably don't want to be deleting
     SlackNotify.uninstall(@shop.domain)
   end
 
