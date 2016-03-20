@@ -10,7 +10,7 @@ class SlackNotify
 
   def self.uninstall(domain)
     payload = {
-      text: "A shop has uninstalled RPC: #{domain}."
+      text: "A shop has uninstalled Touchcart: #{domain}."
       }
     send_to_slack(payload)
   end
