@@ -108,7 +108,7 @@ class Shop < ActiveRecord::Base
           topic: "app/uninstalled",
           format: "json",
           fields: %w(id domain),
-          address: "https://touchcard.herokuapp.com/uninstall"
+          address: "#{ENV['APP_URL']}/uninstall"
         )
         self.uninstall_id = new_hook.id
         self.save!
@@ -134,7 +134,7 @@ class Shop < ActiveRecord::Base
           topic: "orders/create",
           format: "json",
           fields: %w(id customer),
-          address: "https://touchcard.herokuapp.com/new_order"
+          address: "#{ENV['APP_URL']}/new_order"
         )
         self.webhook_id = new_hook.id
         self.save!

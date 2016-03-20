@@ -93,7 +93,7 @@ class Charge < ActiveRecord::Base
     klass = ShopifyAPI::ApplicationCharge
     create_params = {
       price: price,
-      return_url: "https://touchcard.herokuapp.com/api/v1/charges/#{id}/activate?token=#{token}",
+      return_url: "#{ENV['APP_URL']}api/v1/charges/#{id}/activate?token=#{token}",
       test: !Rails.env.production?,
       name: "Touchcard Bulk Send"
     }
