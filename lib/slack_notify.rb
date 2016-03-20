@@ -26,7 +26,8 @@ class SlackNotify
   private
 
   def self.send_to_slack(payload)
-    @slack_url = "https://hooks.slack.com/services/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"
+    # WeeklyWins
+    @slack_url = "https://hooks.slack.com/services/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"
     resp = RestClient.post(@slack_url, payload.to_json)
     resp.code
   end
