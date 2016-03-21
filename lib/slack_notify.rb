@@ -3,14 +3,14 @@ require 'rest_client'
 class SlackNotify
   def self.install(domain)
     payload = {
-      text: "A new shop has installed Touchcart: #{domain}"
+      text: "A new shop has installed Touchcard: #{domain}"
     }
     send_to_slack(payload)
   end
 
   def self.uninstall(domain)
     payload = {
-      text: "A shop has uninstalled Touchcart: #{domain}."
+      text: "A shop has uninstalled Touchcard: #{domain}."
       }
     send_to_slack(payload)
   end
