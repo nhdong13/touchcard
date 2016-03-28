@@ -163,6 +163,28 @@ class Shop < ActiveRecord::Base
     # shops.each(&:top_up)
   end
 
+  # Console admin method for listing all stores that have activated with Stripe
+  def self.find_active
+    Shop.where.not(stripe_customer_id: nil).order(:domain).select(:id, :domain, :credit)
+  end
+
+  # Console admin method for adding credits to shop with particular id
+  def self.add_credit(shop_id, delta_credit)
+    shop = Shop.where(id: shop_id).first
+    existing_credit = shop.credit
+    if defined?(Rails::Console)
+      puts "Change #{shop.domain} [id: #{shop.id}] credits from #{existing_credit} to #{existing_credit + delta_credit} [Y/N]?"
+      response = gets.chomp
+      if not (0 == response.casecmp("y")) or (0 == response.casecmp("yes"))
+        puts "Aborting"
+        return
+      end
+    end
+    shop.update_attribute(:credit, existing_credit + delta_credit)
+    logger.info("Updated #{shop.domain} [id: #{shop.id}] credits from #{existing_credit} to #{shop.credit}")
+  end
+
+
   def get_last_month
     new_sess
     last_month = ShopifyAPI::Customer.count(created_at_min: (Time.now - 1.month))
