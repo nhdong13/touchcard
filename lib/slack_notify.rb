@@ -1,5 +1,4 @@
 require 'rest_client'
-require "byebug"
 
 class SlackNotify
   def self.install(domain)
