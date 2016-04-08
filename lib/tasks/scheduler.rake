@@ -1,7 +1,10 @@
 desc "Heroku scheduler task for sending cards"
 task :daily_send_cards => :environment do
   puts "Sending Cards"
-  Postcard.send_all
+  cards_sent = Postcard.send_all
+
+  puts "Notifying on #slack..."
+  SlackNotify.cards_sent(cards_sent)
 end
 
 desc "Top up credit on all shops with a billing date of today"

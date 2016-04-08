@@ -1,6 +1,6 @@
-# Include S3 utilities
 require "aws_utils"
 require "card_html"
+require "slack_notify"
 
 class Postcard < ActiveRecord::Base
   belongs_to :card_order
@@ -45,7 +45,7 @@ class Postcard < ActiveRecord::Base
   def self.send_all
     todays_cards = Postcard.where("paid = TRUE AND sent = FALSE AND send_date <= ?", Time.now)
     todays_cards.each(&:send_card)
-    SlackNotify.cards_sent(todays_cards.count)
+    todays_cards.size
   end
 
   def pay

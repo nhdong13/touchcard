@@ -1,4 +1,5 @@
 require 'rest_client'
+require "byebug"
 
 class SlackNotify
   def self.install(domain)
@@ -24,7 +25,7 @@ class SlackNotify
 
   def self.error(domain, error)
     payload = {
-      text: "There was a problem with shop: #{domain} at #{Time.now}. 
+      text: "There was a problem with shop: #{domain} at #{Time.now}
       The error was: #{error}"
     }
     send_to_slack(payload)
@@ -38,8 +39,7 @@ class SlackNotify
     RestClient.post(secondary_url, payload.to_json)
 
     # TeamTouchcard
-    @slack_url = "https://hooks.slack.com/services/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"
-    resp = RestClient.post(@slack_url, payload.to_json)
+    resp = RestClient.post(ENV["SLACK_URL"], payload.to_json)
     resp.code
   end
 end
