@@ -1,6 +1,5 @@
 require "aws_utils"
 require "card_html"
-require "slack_notify"
 
 class Postcard < ActiveRecord::Base
   belongs_to :card_order
