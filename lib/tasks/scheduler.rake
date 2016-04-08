@@ -1,3 +1,5 @@
+require "slack_notify"
+
 desc "Heroku scheduler task for sending cards"
 task :daily_send_cards => :environment do
   puts "Sending Cards"
