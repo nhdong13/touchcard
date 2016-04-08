@@ -43,8 +43,9 @@ class Postcard < ActiveRecord::Base
   end
 
   def self.send_all
-    Postcard.where("paid = TRUE AND sent = FALSE AND send_date <= ?", Time.now)
-      .each(&:send_card)
+    todays_cards = Postcard.where("paid = TRUE AND sent = FALSE AND send_date <= ?", Time.now)
+    todays_cards.each(&:send_card)
+    SlackNotify.cards_sent(todays_cards.count)
   end
 
   def pay
