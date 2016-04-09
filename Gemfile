@@ -20,58 +20,55 @@ gem "jbuilder", "~> 2.0"
 gem "sdoc", "~> 0.4.0", group: :doc
 
 # Admin interface
-gem "devise"
+gem "devise", "~> 3.5"
 gem "activeadmin", github: "activeadmin"
 
 # API serializer
 gem "active_model_serializers", "~> 0.8.0"
 
 # Shopify app
-gem "shopify_app"
+gem "shopify_app", "6.2.0"
 
 # Stripe
 gem 'stripe', git: 'https://github.com/stripe/stripe-ruby'
 
 # S3 connection
-gem "aws-sdk"
+gem "aws-sdk", "~> 2.1"
 
 # Card creator ui js
-gem "jquery-ui-rails"
+gem "jquery-ui-rails", "~> 5.0"
 
 # Image Manipulation
-gem "rmagick"
+gem "rmagick", "~> 2.15"
 
 # Lob integration
-gem "lob"
+gem "lob", "~> 2.1"
 
 # Newrelic for monitoring
 #gem "newrelic_rpm"
 
 # Key Value store
-gem "redis"
+gem "redis", "~> 3.2"
 
 # Httparty for debug
-gem "httparty"
+gem "httparty", "~> 0.13"
 
 # Rest Client for Slack notifications
-gem "rest-client"
+gem "rest-client", "1.8"
 
 # Use Unicorn as the app server
-gem "unicorn"
-
-# Use Capistrano for deployment
-# gem "capistrano-rails", group: :development
+gem "unicorn", "~> 4.9"
 
 # Background tasks
-gem "delayed_job_active_record"
-gem "daemons"
+gem "delayed_job_active_record", "~> 4.1"
+gem "daemons", "~> 1.2"
 
 # Better rails console
-gem "wirble"
-gem "hirb"
+gem "wirble", "~> 0.1"
+gem "hirb", "~> 0.7"
 
 # calculate business days
-gem "business_time"
+gem "business_time", "~> 0.7"
 
 group :assets do
   gem "therubyracer", platforms: :ruby
@@ -88,16 +85,17 @@ group :development, :test do
   # Call "byebug" anywhere in the code to stop execution and get a debugger console
   gem "byebug"
   gem "sqlite3"
-  gem "clipboard"
+  gem "clipboard", "~> 1.0"
 end
 
 group :test do
   gem "rspec-rails", "~> 3.0"
-  gem "factory_girl_rails"
-  gem "webmock"
+  gem "factory_girl_rails", "~> 4.5"
+  gem "webmock", "~> 1.22"
 end
 
 group :production do
   gem "pg"
   gem "rails_12factor"
+  gem "newrelic_rpm", "~> 3.15"
 end
