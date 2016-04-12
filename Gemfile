@@ -86,6 +86,7 @@ group :development, :test do
   gem "byebug"
   gem "sqlite3"
   gem "clipboard", "~> 1.0"
+  gem 'simplecov', :require => false
 end
 
 group :test do
