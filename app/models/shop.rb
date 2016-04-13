@@ -16,6 +16,17 @@ class Shop < ActiveRecord::Base
       .sum(:total_price)
   end
 
+  # this is hacky, we sould add column name to shop
+  # and insert that in out DB when new shop registers
+  # here we have dependecy to shopigy api
+  def name
+    session = ShopifyAPI::Session.new(domain, token)
+    ShopifyAPI::Base.activate_session(session)
+    name = ShopifyAPI::Shop.current.name
+    ShopifyAPI::Base.clear_session
+    name
+  end
+
   class << self
     def store(session)
       shop = Shop.find_by(domain: session.url)
