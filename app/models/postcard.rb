@@ -11,12 +11,12 @@ class Postcard < ActiveRecord::Base
   # TODO add this validation back
   validates :card_order, presence: true
 
-  # get all postcards whom estimated_arrival is more than 2 weeks ago
+  # get all postcards whom estimated_arrival is more than 3 days ago
   # and for which arrival notification is not sent
   def self.ready_for_arrival_notification
-    two_weeks_ago = Time.now - 2.weeks
-    where("arrival_notification_sent = false AND estimated_arrival < :two_weeks",
-          two_weeks: two_weeks_ago)
+    three_days_ago = Time.now - 3.days
+    where("arrival_notification_sent = false AND estimated_arrival < :three_days",
+          three_days: three_days_ago)
       .includes(card_order: :shop)
       .includes(:customer)
   end

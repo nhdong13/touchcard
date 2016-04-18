@@ -25,7 +25,7 @@ RSpec.describe Postcard, type: :model do
 
   describe ".ready_for_arrival_notification" do
     it "returns list of postcards where arrival_notification_sent is false" do
-      postcard = create(:postcard, estimated_arrival: 15.days.ago)
+      postcard = create(:postcard, estimated_arrival: 4.days.ago)
       sent_postcard = create(:postcard,
                              card_order: postcard.card_order,
                              customer: postcard.customer,
@@ -36,13 +36,13 @@ RSpec.describe Postcard, type: :model do
       expect(list.size).to eq 1
     end
 
-    it "returns list of postcards which arrived more than 2 weeks ago" do
-      postcard = create(:postcard, estimated_arrival: 15.days.ago)
+    it "returns list of postcards which arrived more than 3 days ago" do
+      postcard = create(:postcard, estimated_arrival: 4.days.ago)
       postcard_not_arrived = create(:postcard,
                              card_order: postcard.card_order,
                              customer: postcard.customer,
                              arrival_notification_sent: false,
-                             estimated_arrival: 7.days.ago)
+                             estimated_arrival: 2.days.ago)
 
       list = Postcard.ready_for_arrival_notification
 

@@ -16,6 +16,7 @@ class Shop < ActiveRecord::Base
       .sum(:total_price)
   end
 
+  # TODO: load name in our column when shop registers
   # this is hacky, we sould add column name to shop
   # and insert that in out DB when new shop registers
   # here we have dependecy to shopigy api

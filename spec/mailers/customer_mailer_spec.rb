@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe ShopperMailer do
+RSpec.describe CustomerMailer do
   describe ".card_arrived_notifiation" do
     before(:each) do
       ActionMailer::Base.delivery_method = :test
@@ -8,7 +8,7 @@ RSpec.describe ShopperMailer do
       ActionMailer::Base.deliveries = []
       @postcard = create(:postcard)
       stub_shop(@postcard.shop.domain)
-      ShopperMailer.card_arrived_notification(@postcard).deliver_now
+      CustomerMailer.card_arrived_notification(@postcard).deliver_now
     end
 
     after(:each) do
@@ -24,7 +24,8 @@ RSpec.describe ShopperMailer do
     end
 
     it "subject is correctly set" do
-      expect(ActionMailer::Base.deliveries.first.subject).to eq "You've got a Postcard!"
+      expect(ActionMailer::Base.deliveries.first.subject)
+        .to eq "You've got a Postcard from #{@postcard.shop.name}!"
     end
 
     it "renders the sender mail correctly" do

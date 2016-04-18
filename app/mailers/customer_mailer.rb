@@ -1,4 +1,4 @@
-class ShopperMailer < ApplicationMailer
+class CustomerMailer < ApplicationMailer
   def card_arrived_notification(postcard)
     shop = postcard.card_order.shop
     customer = postcard.customer

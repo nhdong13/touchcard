@@ -16,22 +16,22 @@ task :daily_credit_update => :environment do
   Shop.top_up_all
 end
 
-desc "Notify shopper about card arival"
-task :shopper_cards_arived_notify => :environment do
+desc "Notify customers about postcard arival"
+task :daily_cards_arrived_notify => :environment do
   postcards = Postcard.ready_for_arrival_notification
   postcards.each do |postcard|
     if postcard.customer.accepts_marketing
-      send_shopper_mail(postcard)
-      set_recipient_as_notified(postcard)
+      send_card_arrival_mail(postcard)
+      set_customer_as_notified(postcard)
     end
   end
 end
 
-def send_shopper_mail(postcard)
-  ShopperMailer.card_arrived_notification(postcard).deliver
+def send_card_arrival_mail(postcard)
+  CustomerMailer.card_arrived_notification(postcard).deliver
 end
 
-def set_recipient_as_notified(postcard)
+def set_customer_as_notified(postcard)
   postcard.update_attributes(arrival_notification_sent: true)
 end
 
