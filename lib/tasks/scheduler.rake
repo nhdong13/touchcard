@@ -20,18 +20,16 @@ desc "Notify customers about postcard arival"
 task :daily_cards_arrived_notify => :environment do
   postcards = Postcard.ready_for_arrival_notification
   postcards.each do |postcard|
+    # TODO: fix checking each customer for accepts_marketing.
+    # When we add shop name column to db. We can make one query
+    # and get everything needed
     if postcard.customer.accepts_marketing
       send_card_arrival_mail(postcard)
-      set_customer_as_notified(postcard)
     end
   end
 end
 
 def send_card_arrival_mail(postcard)
   CustomerMailer.card_arrived_notification(postcard).deliver
-end
-
-def set_customer_as_notified(postcard)
   postcard.update_attributes(arrival_notification_sent: true)
 end
-

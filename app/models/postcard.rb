@@ -17,8 +17,8 @@ class Postcard < ActiveRecord::Base
     three_days_ago = Time.now - 3.days
     where("arrival_notification_sent = false AND estimated_arrival < :three_days",
           three_days: three_days_ago)
-      .includes(card_order: :shop)
-      .includes(:customer)
+    .includes(card_order: :shop)
+    .includes(:customer)
   end
 
   def revenue
