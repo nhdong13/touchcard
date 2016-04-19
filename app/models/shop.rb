@@ -20,31 +20,68 @@ class Shop < ActiveRecord::Base
   # this is hacky, we sould add column name to shop
   # and insert that in out DB when new shop registers
   # here we have dependecy to shopigy api
-  def name
-    session = ShopifyAPI::Session.new(domain, token)
-    ShopifyAPI::Base.activate_session(session)
-    name = ShopifyAPI::Shop.current.name
-    ShopifyAPI::Base.clear_session
-    name
-  end
+  #def name
+  #  session = ShopifyAPI::Session.new(domain, token)
+  #  ShopifyAPI::Base.activate_session(session)
+  #  name = ShopifyAPI::Shop.current.name
+  #  ShopifyAPI::Base.clear_session
+  #  name
+  #end
 
   class << self
+
+    def shops_shopify_metadata(shop)
+      Hash.new.tap do |h|
+        h[:name] = shop.name
+        h[:email] = shop.email
+        h[:customer_email] = shop.customer_email
+        h[:plan_name] = shop.plan_name
+      end
+    end
+
+    def shopify_metadata(shopify_shop)
+      Hash.new.tap do |h|
+        h[:name] = shopify_shop.name
+        h[:email] = shopify_shop.email
+        h[:customer_email] = shopify_shop.customer_email
+        h[:plan_name] = shopify_shop.plan_name
+      end
+    end
+
+    def diff_shopify_metadata(local, shopifies)
+      shops_shopify_metadata(local)
+        .merge(shopify_metadata(shopifies))
+    end
+
+    def load_shopify_metadata(shop)
+      shop.new_sess
+      options = diff_shopify_metadata(shop, ShopifyAPI::Shop.current)
+      shop.name           = options[:name]
+      shop.email          = options[:email]
+      shop.customer_email = options[:customer_email]
+      shop.plan_name      = options[:plan_name]
+    end
+
     def store(session)
       shop = Shop.find_by(domain: session.url)
       if shop.nil?
         shop = new(domain: session.url, token: session.token)
+        load_shopify_metadata(shop)
         shop.save!
         shop.get_shopify_id
+        shop.get_name
         shop.uninstall_hook
         shop.new_order_hook
       else
         shop.token = session.token
+        load_shopify_metadata(shop)
         shop.save!
         shop.get_shopify_id
         shop.uninstall_hook
         shop.new_order_hook
         ShopifyAPI::Session.new(shop.domain, shop.token)
       end
+      byebug
       shop.id
     end
 
@@ -108,6 +145,7 @@ class Shop < ActiveRecord::Base
       return
     end
   end
+
 
   def uninstall_hook
     require "slack_notify"
