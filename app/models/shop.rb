@@ -23,7 +23,6 @@ class Shop < ActiveRecord::Base
         shop = new(domain: session.url, token: session.token)
         shop.save!
         shop.get_shopify_id
-        shop.get_name
         shop.uninstall_hook
         shop.new_order_hook
       else
