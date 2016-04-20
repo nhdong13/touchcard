@@ -1,3 +1,5 @@
+require 'card_html.rb'
+
 module CardUtil
   module_function
 
