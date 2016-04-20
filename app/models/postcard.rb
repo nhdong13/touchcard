@@ -8,6 +8,7 @@ class Postcard < ActiveRecord::Base
   has_one :shop, through: :card_order
   has_many :orders
 
+
   # TODO add this validation back
   validates :card_order, presence: true
 
@@ -52,7 +53,9 @@ class Postcard < ActiveRecord::Base
   end
 
   def self.send_all
-    todays_cards = Postcard.where("paid = TRUE AND sent = FALSE AND send_date <= ?", Time.now)
+    todays_cards = Postcard.joins(:shop)
+      .where("paid = TRUE AND sent = FALSE AND send_date <= ?
+              AND shops.approval_state != ?", Time.now, "denied")
     todays_cards.each(&:send_card)
     todays_cards.size
   end

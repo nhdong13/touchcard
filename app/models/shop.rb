@@ -1,10 +1,15 @@
 class Shop < ActiveRecord::Base
-  validates :customer_pct, numericality: true
   has_many :card_orders, dependent: :destroy
   has_many :postcards, through: :card_orders
   has_many :charges
   has_many :subscriptions
   has_many :orders
+
+  VALID_APPROVAL_STATES = ["new", "approved", "denied"]
+
+  validates :customer_pct, numericality: true
+  validates :approval_state, inclusion: { in: VALID_APPROVAL_STATES }
+  validates :approval_state, presence: true
 
   def cards_sent
     postcards.where(sent: true).count
