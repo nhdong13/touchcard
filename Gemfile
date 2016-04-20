@@ -44,9 +44,6 @@ gem "rmagick", "~> 2.15"
 # Lob integration
 gem "lob", "~> 2.1"
 
-# Newrelic for monitoring
-#gem "newrelic_rpm"
-
 # Key Value store
 gem "redis", "~> 3.2"
 
@@ -69,6 +66,9 @@ gem "hirb", "~> 0.7"
 
 # calculate business days
 gem "business_time", "~> 0.7"
+
+# send mails using mailgun
+gem "mailgunner", '~> 2.4'
 
 group :assets do
   gem "therubyracer", platforms: :ruby

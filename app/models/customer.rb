@@ -6,6 +6,8 @@ class Customer < ActiveRecord::Base
   validates :shopify_id, presence: true
   validates :shopify_id, uniqueness: true
 
+  scope :marketing_eligible, -> { where(accepts_marketing: true) }
+
   def default_address
     @default_address ||= addresses.find_by(default: true) || addresses.last
   end

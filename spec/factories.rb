@@ -1,4 +1,8 @@
 FactoryGirl.define do
+	sequence :email do |n|
+    "test#{n}@example.com"
+	end
+
   factory :line_item do
     order
     name "Test Product"
@@ -58,7 +62,7 @@ FactoryGirl.define do
     sequence(:shopify_id) { |n| "CustomerId#{n}" }
     first_name "MyString"
     last_name "MyString"
-    email ""
+    email
     verified_email false
     total_spent 1.5
     tax_exempt false
@@ -95,8 +99,8 @@ FactoryGirl.define do
   factory :card_order do
     enabled true
     type "PostSaleOrder"
-    shop
     association :card_side_front, factory: :card_side
+    shop
     association :card_side_back, factory: :card_side
   end
 
