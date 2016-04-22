@@ -49,7 +49,7 @@ RSpec.describe Postcard, type: :model do
       expect(list.size).to eq 1
     end
 
-    it "don't return postcards which are not arrived" do
+    it "doesn't return postcards which have not arrived" do
       postcard = create(:postcard, estimated_arrival: 1.days.from_now)
 
       list = Postcard.ready_for_arrival_notification

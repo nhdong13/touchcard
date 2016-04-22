@@ -247,7 +247,7 @@ ActiveRecord::Schema.define(version: 20160420071135) do
     t.integer  "order_id"
     t.boolean  "paid",                      default: false, null: false
     t.datetime "estimated_arrival"
-    t.boolean  "arrival_notification_sent", default: false
+    t.boolean  "arrival_notification_sent", default: false, null: false
   end
 
   add_index "postcards", ["customer_id"], name: "index_postcards_on_customer_id", using: :btree
