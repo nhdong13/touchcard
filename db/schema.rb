@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160413080758) do
+ActiveRecord::Schema.define(version: 20160420071135) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -254,8 +254,8 @@ ActiveRecord::Schema.define(version: 20160413080758) do
   add_index "postcards", ["order_id"], name: "index_postcards_on_order_id", using: :btree
 
   create_table "shops", force: :cascade do |t|
-    t.string   "domain",                                      null: false
-    t.string   "token",                                       null: false
+    t.string   "domain",                                       null: false
+    t.string   "token",                                        null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "shopify_id",         limit: 8
@@ -266,9 +266,17 @@ ActiveRecord::Schema.define(version: 20160413080758) do
     t.datetime "charge_date"
     t.integer  "customer_pct",                 default: 100
     t.integer  "last_month"
-    t.boolean  "send_next",                    default: true, null: false
+    t.boolean  "send_next",                    default: true,  null: false
     t.datetime "last_login"
     t.string   "stripe_customer_id"
+    t.string   "name"
+    t.string   "email"
+    t.string   "customer_email"
+    t.string   "plan_name"
+    t.string   "owner"
+    t.datetime "shopify_created_at"
+    t.datetime "shopify_updated_at"
+    t.string   "approval_state",               default: "new", null: false
   end
 
   add_index "shops", ["domain"], name: "index_shops_on_domain", unique: true, using: :btree

@@ -21,18 +21,6 @@ class Shop < ActiveRecord::Base
       .sum(:total_price)
   end
 
-  # TODO: load name in our column when shop registers
-  # this is hacky, we sould add column name to shop
-  # and insert that in out DB when new shop registers
-  # here we have dependecy to shopigy api
-  def name
-    session = ShopifyAPI::Session.new(domain, token)
-    ShopifyAPI::Base.activate_session(session)
-    name = ShopifyAPI::Shop.current.name
-    ShopifyAPI::Base.clear_session
-    name
-  end
-
   class << self
     def store(session)
       shop = Shop.find_by(domain: session.url)
@@ -50,6 +38,7 @@ class Shop < ActiveRecord::Base
         shop.new_order_hook
         ShopifyAPI::Session.new(shop.domain, shop.token)
       end
+      shop.sync_shopify_metadata
       shop.id
     end
 
@@ -113,6 +102,7 @@ class Shop < ActiveRecord::Base
       return
     end
   end
+
 
   def uninstall_hook
     require "slack_notify"
@@ -206,5 +196,21 @@ class Shop < ActiveRecord::Base
     new_sess
     last_month = ShopifyAPI::Customer.count(created_at_min: (Time.now - 1.month))
     update_attribute(:last_month, last_month)
+  end
+
+  # synch current shop metadata with shopify latest
+  # if we are updating existing shop rails is smart enough
+  # not to update columns with the same values
+  def sync_shopify_metadata
+    self.new_sess
+    metadata                = ShopifyAPI::Shop.current
+    self.name               = metadata.name
+    self.email              = metadata.email
+    self.customer_email     = metadata.customer_email
+    self.plan_name          = metadata.plan_name
+    self.owner              = metadata.shop_owner
+    self.shopify_created_at = metadata.created_at
+    self.shopify_updated_at = metadata.updated_at
+    self.save!
   end
 end
