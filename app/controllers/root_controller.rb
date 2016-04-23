@@ -24,7 +24,9 @@ class RootController < AuthenticatedController
     text = bootstrap_index(params[:index_key], 'touchcard-app')
     shopify_js = "//cdn.shopify.com/s/assets/external/app.js?"
     if text.present?
-      text.gsub!("https://{@shop_session.url}", @shop_session ? "https://#{@shop_session.url}" : "")
+      shopify_key = ENV['SHOPIFY_CLIENT_API_KEY']
+      text.gsub!("inject:shopify_client_api_key", shopify_key ? shopify_key : "")
+      text.gsub!("inject:shop_origin_url", @shop_session ? "https://#{@shop_session.url}" : "")
       text.gsub!(shopify_js, "#{shopify_js}#{Time.now.strftime('%Y%m%d%H')}")
     end
     render text: text
