@@ -5,12 +5,12 @@ class RootController < AuthenticatedController
     @redis ||= Redis.new(host: uri.host, port: uri.port, password: uri.password)
   end
 
-  # WARNING: PELASE DON'T CHNAGE THIS WITHOUT GOOD REASON
+  # WARNING: PLEASE DON'T CHANGE THIS WITHOUT GOOD REASON
   # this bootstraps ember through rails, so we can avoid CORS problems
-  # if we are in development environemt load local ember assets, else
+  # if we are in development environment load local ember assets, else
   # load from our redis in cloud
   def bootstrap_index(index_key, app)
-    return File.read("#{Rails.root}/public/index.html") unless Rails.env.production?
+    return File.read("#{Rails.root}/public/client/index.html") unless Rails.env.production?
     index_key = params[:index_key] || redis.get("#{app}:index:current")
     redis.get("#{app}:index:#{index_key}")
   end
