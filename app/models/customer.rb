@@ -51,10 +51,10 @@ class Customer < ActiveRecord::Base
     # TODO: this sould be removed, here is only for production debugging purposes
     # it will spit out message to rails log
     def no_default_address_debug(shopify_customer)
-      puts "lol" * 50
-      puts "Customer object data: "
-      puts shopify_customer.inspect
-      puts "lol" * 50
+      logger.info "lol" * 50
+      logger.info "Customer object data: "
+      logger.info shopify_customer.inspect
+      logger.info "lol" * 50
     end
 
     # Take only attributes we are using frmo shopify Customer object
