@@ -14,8 +14,8 @@ class WebhookController < ApplicationController
     order = Order.from_shopify!(@shopify_order, @shop)
     order.connect_to_postcard
     return logger.info "no customer" unless order.customer
+    return logger.info "no default address" unless @shopify_order.customer.respond_to?(:default_address)
     default_address = @shopify_order.customer.default_address
-    return logger.info "no default address" unless default_address
     international = default_address.country_code != "US"
 
     # Only new customers recieve postcards at the moment
