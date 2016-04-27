@@ -35,6 +35,8 @@ class Customer < ActiveRecord::Base
       customer
     end
 
+    private
+
     def update_or_create_default_address(customer, shopify_customer)
       existing_default = customer.addresses.find_by(default: true)
       existing_default.update_attributes!(default: false) if existing_default
@@ -42,21 +44,14 @@ class Customer < ActiveRecord::Base
     end
 
     def new_default_address(customer, shopify_customer)
-      if shopify_customer.respond_to?(:default_address)
+      # we need to check does object responds to method default_address
+      # becaus of shopifies bug when customer has no address, object
+      # doesn't respond to deault_address method
+      if shopify_customer.respond_to?(:default_address) &&
+         shopify_customer.default_address.blank? == false
         address = Address.from_shopify!(shopify_customer.default_address)
         address.update_attributes!(customer: customer)
-      else
-        no_default_address_debug(shopify_customer)
       end
-    end
-
-    # TODO: this sould be removed, here is only for production debugging purposes
-    # it will spit out message to rails log
-    def no_default_address_debug(shopify_customer)
-      logger.info "lol" * 50
-      logger.info "Customer object data: "
-      logger.info shopify_customer.inspect
-      logger.info "lol" * 50
     end
 
     # Take only attributes we are using frmo shopify Customer object
@@ -74,9 +69,7 @@ class Customer < ActiveRecord::Base
         :last_order_name,
         :last_order_id,
         :accepts_marketing,
-        :state,
-        :default).merge(shopify_id: shopify_customer.id)
+        :state).merge(shopify_id: shopify_customer.id)
     end
-
   end
 end
