@@ -44,9 +44,7 @@ class Customer < ActiveRecord::Base
     end
 
     def new_default_address(customer, shopify_customer)
-      # we need to check does object responds to method default_address
-      # becaus of shopifies bug when customer has no address, object
-      # doesn't respond to deault_address method
+      # Check if customer object responds to `default_address` method, because this isn't guaranteed
       if shopify_customer.respond_to?(:default_address) &&
          shopify_customer.default_address.blank? == false
         address = Address.from_shopify!(shopify_customer.default_address)
