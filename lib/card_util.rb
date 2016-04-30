@@ -1,5 +1,11 @@
 require 'card_html.rb'
 
+# This module is used for manually sending promo using `rake`. This is achieved
+# by connecting to a remote DB with a local version of the app, or running rake
+# on the remote environment directly.
+#
+# It's not perfect, but works for now. See Google Doc `SOP - Send Sample Postcard` for details
+
 module CardUtil
   module_function
 
@@ -18,7 +24,7 @@ module CardUtil
   # Todo: We should  probably refactor this into `send_card` and share it with `send_card` in postcard.rb
   # we could have another method for sending a promo card (or, better yet, a way to do it from ActiveAdmin)
 
-  def send_promo_card(card_order, lob_to_address, discount_code = 'DIS-CNT-COD', expiry = 52.weeks.from_now.midnight)
+  def send_promo_card(card_order, lob_to_address, discount_code = 'SAM-PLE-XXX', expiry = 4.weeks.from_now.midnight)
     front_html, back_html = [
         card_order.card_side_front,
         card_order.card_side_back
