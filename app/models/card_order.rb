@@ -9,6 +9,8 @@ class CardOrder < ActiveRecord::Base
 
   after_initialize :ensure_defaults
 
+  delegate :current_subscription, to: :shop
+
   def send_postcard?(order)
     return true unless filters.count > 0
     spend = order.total_line_items_price / 100.0
@@ -19,8 +21,13 @@ class CardOrder < ActiveRecord::Base
     spend < max.to_f && spend > min.to_f
   end
 
+  # number of postcards sent for current subscription
   def cards_sent
-    postcards.where(sent: true).count
+    postcards
+      .where("sent = true AND created_at BETWEEN :start AND :end",
+              start: current_subscription.current_period_start,
+              end: Time.now)
+      .count
   end
 
   def revenue
