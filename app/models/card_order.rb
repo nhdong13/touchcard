@@ -17,7 +17,7 @@ class CardOrder < ActiveRecord::Base
     filter = filters.first
     # if the filters are nil assume they're unbounded
     min = filter.filter_data["minimum"].to_f || -1.0
-    #FIX: we we create campaigns we should fix this include maximim value
+    # TODO: when we create campaigns we may want to reintroduce a maximum value here.
     spend > min
   end
 
