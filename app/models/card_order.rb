@@ -1,7 +1,9 @@
 class CardOrder < ActiveRecord::Base
   belongs_to :shop
-  belongs_to :card_side_front, class_name: "CardSide", foreign_key: "card_side_front_id"
-  belongs_to :card_side_back, class_name: "CardSide", foreign_key: "card_side_back_id"
+  belongs_to :card_side_front, class_name: "CardSide",
+              foreign_key: "card_side_front_id"
+  belongs_to :card_side_back, class_name: "CardSide",
+              foreign_key: "card_side_back_id"
   has_many :filters
   has_many :postcards
 
@@ -14,9 +16,9 @@ class CardOrder < ActiveRecord::Base
     spend = order.total_line_items_price / 100.0
     filter = filters.first
     # if the filters are nil assume they're unbounded
-    min = filter.filter_data["minimum"] || -1
-    max = filter.filter_data["maximum"] || 1_000_000_000
-    spend < max.to_f && spend > min.to_f
+    min = filter.filter_data["minimum"].to_f || -1.0
+    # TODO: when we create campaigns we may want to reintroduce a maximum value here.
+    spend > min
   end
 
   def cards_sent
