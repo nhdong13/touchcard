@@ -61,6 +61,7 @@ class Postcard < ActiveRecord::Base
       begin
         card.send_card
       rescue Exception => e
+        logger.error e
         NewRelic::Agent::notice_error(e.message)
         next
       end

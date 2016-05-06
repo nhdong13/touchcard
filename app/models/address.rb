@@ -32,7 +32,7 @@ class Address < ActiveRecord::Base
 
   def to_lob_address
     {
-      name: name[0...50],
+      name: name[0...49],
       address_line1: address1,
       address_line2: address2,
       address_city: city,
