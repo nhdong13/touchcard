@@ -1,5 +1,6 @@
 require "aws_utils"
 require "card_html"
+require "newrelic_rpm"
 
 class Postcard < ActiveRecord::Base
   belongs_to :card_order
@@ -56,7 +57,14 @@ class Postcard < ActiveRecord::Base
     todays_cards = Postcard.joins(:shop)
       .where("paid = TRUE AND sent = FALSE AND send_date <= ?
               AND shops.approval_state != ?", Time.now, "denied")
-    todays_cards.each(&:send_card)
+    todays_cards.each do |card|
+      begin
+        card.send_card
+      rescue Exception => e
+        NewRelic::Agent::notice_error(e.message)
+        next
+      end
+    end
     todays_cards.size
   end
 
