@@ -30,6 +30,11 @@ class CardOrder < ActiveRecord::Base
       .count
   end
 
+  # total number of postcards sent
+  def cards_sent_total
+     postcards.where(sent: true).size
+  end
+
   def revenue
     Order.joins(:postcard).where(postcards: { card_order_id: id })
       .sum(:total_price)
