@@ -28,6 +28,17 @@ task :daily_cards_arrived_notify => :environment do
   end
 end
 
+namespace :shopify do
+  desc "Sync abandoned checkouts"
+  task :abandoned_checkouts => :environment do
+    shops = Shop.all
+    shops.each do |shop|
+      SyncCheckouts.new(shop).call
+    end
+  end
+end
+
+
 def send_card_arrival_mail(postcard)
   CustomerMailer.card_arrived_notification(postcard).deliver
   postcard.update_attributes(arrival_notification_sent: true)

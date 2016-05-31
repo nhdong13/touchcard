@@ -4,6 +4,7 @@ class Shop < ActiveRecord::Base
   has_many :charges
   has_many :subscriptions
   has_many :orders
+  has_many :checkouts
 
   VALID_APPROVAL_STATES = ["new", "approved", "denied"]
 
