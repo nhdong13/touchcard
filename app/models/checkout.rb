@@ -6,6 +6,10 @@ class Checkout < ActiveRecord::Base
             :customer_id, :shop_id, presence: true
   validates :shopify_id, uniqueness: true
 
+  def international
+    customer.default_address.country_code != "US"
+  end
+
   class << self
     def from_shopify(checkout, shop)
       attrs = checkout.attributes.with_indifferent_access
@@ -21,7 +25,8 @@ class Checkout < ActiveRecord::Base
         shopify_id: checkout.id,
         customer: customer,
         shop: shop)
-      Checkout.new(row).save
+      Checkout.create(row)
     end
   end
+
 end

@@ -1,0 +1,2 @@
+class AbandonedCard < CardOrder
+end

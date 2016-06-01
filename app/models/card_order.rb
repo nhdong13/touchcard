@@ -49,4 +49,14 @@ class CardOrder < ActiveRecord::Base
     # TODO handle international + 5 to 7 business days
     send_date = arrive_by - 1.week
   end
+
+  def prepare_for_sending(checkout)
+    return if checkout.international && !international?
+    return unless send_postcard?(checkout)
+    self.postcard.create.new(
+      customer: checkout.customer,
+      send_date: post_sale_order.send_date,
+      paid: false)
+    postcard.pay.save! if postcard.can_afford?
+  end
 end
