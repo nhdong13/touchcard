@@ -1,4 +1,4 @@
-# Mixing to keep track for shopifies api rate limit
+# Mixin to keep track for shopifies api rate limit
 # You can avarage 2 calls per second to shopify api
 module Shopify
   module Limit
