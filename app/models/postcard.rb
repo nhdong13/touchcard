@@ -24,7 +24,7 @@ class Postcard < ActiveRecord::Base
   end
 
   def revenue
-    orders.sum(:total_price)
+    postcard_triggerable.sum(:total_price)
   end
 
   def address

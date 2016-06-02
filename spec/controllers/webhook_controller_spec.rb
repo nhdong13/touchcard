@@ -114,7 +114,7 @@ RSpec.describe WebhookController, type: :controller do
 
           it "connects order to postcard" do
             post_new_order(id: s_order[:id])
-            expect(Order.last.postcard.id).to eq(postcard.id)
+            expect(Order.last.postcards.first.id).to eq(postcard.id)
             expect(postcard.card_order.revenue).to eq 40994
             expect(postcard.shop.revenue).to eq 40994
           end
@@ -141,7 +141,7 @@ RSpec.describe WebhookController, type: :controller do
           it "connects order to postcard" do
             post_new_order(id: s_order[:id])
             new_order = Order.find_by(shopify_id: s_order[:id])
-            expect(new_order.postcard_id).to eq(postcard.id)
+            expect(new_order.postcards.first.id).to eq(postcard.id)
             expect(postcard.card_order.revenue).to eq 40994
             expect(postcard.shop.revenue).to eq 40994
           end

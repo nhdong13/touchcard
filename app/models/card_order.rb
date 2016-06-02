@@ -26,7 +26,7 @@ class CardOrder < ActiveRecord::Base
   end
 
   def revenue
-    Order.joins(:postcard).where(postcards: { card_order_id: id })
+    Order.joins(:postcards).where(postcards: { card_order_id: id })
       .sum(:total_price)
   end
 
@@ -44,18 +44,21 @@ class CardOrder < ActiveRecord::Base
   end
 
   def send_date
-    return Date.today + send_delay.weeks if type == "PostSaleOrder"
+    return Date.today + send_delay.weeks
     # 4-6 business days delivery according to lob
     # TODO handle international + 5 to 7 business days
-    send_date = arrive_by - 1.week
+    #send_date = arrive_by - 1.week
   end
 
   def prepare_for_sending(postcard_trigger)
-    return if postcard_trigger.international && !international?
-    return unless send_postcard?(postcard_trigger)
+    return "international customer not enabeled" if postcard_trigger.international && !international?
+    return "international customer not enabeled" if postcard_trigger.international && !international?
+    return "order filtered out" unless send_postcard?(postcard_trigger)
+
     postcard = postcard_trigger.postcards.new(
       card_order: self,
       customer: postcard_trigger.customer,
+      send_date: self.send_date,
       paid: false)
     postcard.pay.save! if postcard.can_afford?
   end

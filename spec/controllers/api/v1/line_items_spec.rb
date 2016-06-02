@@ -58,17 +58,6 @@ RSpec.describe Api::V1::LineItemsController, type: :controller do
         response_ids = json["line_items"].map { |i| i["id"] }.sort
         expect(response_ids).to eq(expected_ids)
       end
-
-      context "one line item has postcard" do
-        before(:each) do
-          o = line_items.first.order
-          o.update_attributes!(postcard: create(:postcard, order: o))
-        end
-        it "retrievs only ones with postcards" do
-          get :index, belongs: true
-          expect(json["line_items"].map { |i| i["id"] }).to eq([line_items.first.id])
-        end
-      end
     end
 
     describe "#show" do

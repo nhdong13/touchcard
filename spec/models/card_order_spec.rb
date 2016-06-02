@@ -6,7 +6,7 @@ RSpec.describe CardOrder, type: :model do
       customer = create(:customer)
       customer.addresses.create(address1: "Test", country_code: "US")
       checkout = create(:checkout, customer: customer)
-      card = create(:card_order, type: "AbandonedCard")
+      card = create(:card_order, type: "AbandonedCard", send_delay: 0)
 
       card.prepare_for_sending(checkout)
 

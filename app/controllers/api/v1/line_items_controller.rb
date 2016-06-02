@@ -7,6 +7,7 @@ class Api::V1::LineItemsController < Api::BaseController
 
   def index
     if params[:belongs]
+      byebug
       @line_items = LineItem.joins(:order)
         .where("orders.shop_id = ? AND orders.postcard_id IS NOT NULL", @current_shop.id)
         .order(created_at: :desc)

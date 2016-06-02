@@ -1,7 +1,8 @@
 class Order < ActiveRecord::Base
   belongs_to :shop
   belongs_to :customer
-  belongs_to :postcard
+  #belongs_to :postcard
+  has_many :postcards, as: :postcard_triggerable
   validates :total_price, :total_tax, :shopify_id, :shop, presence: true
   validates :shopify_id, uniqueness: true
 
@@ -38,12 +39,13 @@ class Order < ActiveRecord::Base
 
   def connect_to_postcard
     postcard = find_postcard_by_discount
-    return update_attributes!(postcard: postcard) if postcard
+    return postcard.update_attributes!(postcard_triggerable: self) if postcard
+    #return update_attributes!(postcards: postcard) if postcard
     postcard = Postcard.where("
       customer_id = ? AND
       order_id != ? AND
       sent = TRUE", customer_id, id).first
-    update_attributes!(postcard: postcard) if postcard
+    postcard.update_attributes!(postcard_triggerable: self) if postcard
     postcard
   end
 
@@ -51,5 +53,9 @@ class Order < ActiveRecord::Base
     return if discount_codes.blank?
     codes = discount_codes.map { |dc| dc["code"] }
     Postcard.find_by(discount_code: codes, sent: true)
+  end
+
+  def international
+    customer.default_address.country_code != "US"
   end
 end
