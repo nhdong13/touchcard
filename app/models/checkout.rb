@@ -1,6 +1,7 @@
 class Checkout < ActiveRecord::Base
   belongs_to :shop
   belongs_to :customer
+  has_many :postcards, as: :postcard_triggerable
 
   validates :shopify_id, :abandoned_checkout_url, :token, :total_price,
             :customer_id, :shop_id, presence: true

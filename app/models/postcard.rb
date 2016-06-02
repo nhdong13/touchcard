@@ -5,6 +5,7 @@ class Postcard < ActiveRecord::Base
   belongs_to :card_order
   belongs_to :order
   belongs_to :customer
+  belongs_to :postcard_triggerable, polymorphic: true
   has_one :shop, through: :card_order
   has_many :orders
 

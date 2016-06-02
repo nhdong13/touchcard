@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160531073941) do
+ActiveRecord::Schema.define(version: 20160601083753) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -267,6 +267,8 @@ ActiveRecord::Schema.define(version: 20160531073941) do
     t.boolean  "paid",                      default: false, null: false
     t.datetime "estimated_arrival"
     t.boolean  "arrival_notification_sent", default: false, null: false
+    t.integer  "postcard_triggerable_id"
+    t.string   "postcard_triggerable_type"
   end
 
   add_index "postcards", ["customer_id"], name: "index_postcards_on_customer_id", using: :btree

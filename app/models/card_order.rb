@@ -50,12 +50,12 @@ class CardOrder < ActiveRecord::Base
     send_date = arrive_by - 1.week
   end
 
-  def prepare_for_sending(checkout)
-    return if checkout.international && !international?
-    return unless send_postcard?(checkout)
-    self.postcard.create.new(
-      customer: checkout.customer,
-      send_date: post_sale_order.send_date,
+  def prepare_for_sending(postcard_trigger)
+    return if postcard_trigger.international && !international?
+    return unless send_postcard?(postcard_trigger)
+    postcard = postcard_trigger.postcards.new(
+      card_order: self,
+      customer: postcard_trigger.customer,
       paid: false)
     postcard.pay.save! if postcard.can_afford?
   end
