@@ -5,8 +5,8 @@ class CardOrderSerializer < ActiveModel::Serializer
     :discount_pct, :discount_exp,
     :send_delay, :arrive_by,
     :customers_before, :customers_after,
-    :status,
-    :cards_sent, :revenue
+    :status, :cards_sent, :revenue,
+    :cards_sent_total
 
   has_many :filters, serializer: FilterSerializer
   has_one :card_side_front, root: :card_sides, serializer: CardSideSerializer

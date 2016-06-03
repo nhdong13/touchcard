@@ -11,6 +11,11 @@ class Shop < ActiveRecord::Base
   validates :approval_state, inclusion: { in: VALID_APPROVAL_STATES }
   validates :approval_state, presence: true
 
+
+  def current_subscription
+    subscriptions.last
+  end
+
   def cards_sent
     postcards.where(sent: true).count
   end
