@@ -25,6 +25,7 @@ class CardOrder < ActiveRecord::Base
 
   # number of postcards sent for current subscription
   def cards_sent
+    return 0 unless current_subscription and current_subscription.current_period_start
     postcards
       .where("sent = true AND created_at BETWEEN :start AND :end",
               start: current_subscription.current_period_start,
