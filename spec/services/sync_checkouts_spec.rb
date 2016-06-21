@@ -1,13 +1,23 @@
 require "rails_helper"
 
 describe SyncCheckouts do
+  before(:each) do
+    #time = Time.now
+    #start_time = time - 24.hours
+    #end_time = time - 12.hours
+    #shop = create(:shop)
+    #stub_count(shop, start_time, end_time)
+    #stub_checkouts(shop, start_time, end_time)
+
+    #SyncCheckouts.new(shop, time).call
+  end
+
   it "inserts new abandoned checkout to database" do
     shop = create(:shop)
     stub_count(shop)
     stub_checkouts(shop)
 
     SyncCheckouts.new(shop).call
-
     expect(Checkout.count).to eq 1
     expect(Checkout.first.shopify_id).to eq 450789469
     expect(Checkout.first.abandoned_checkout_url).to eq(
@@ -27,16 +37,14 @@ describe SyncCheckouts do
 end
 
 def stub_count(shop)
-  stub_request(:get,
-               "https://#{shop.domain}/admin/checkouts/count.json").
+  stub_request(:get, /.*count.json*/).
     with(:headers => {'Accept'=>'application/json',
                       'X-Shopify-Access-Token'=>"#{shop.token}"}).
     to_return(:status => 200, :body => "1", :headers => {})
 end
 
 def stub_checkouts(shop)
-  stub_request(:get,
-               "https://#{shop.domain}/admin/checkouts.json?limit=250&page=1").
+  stub_request(:get, /.*checkouts.json*/).
     with(:headers => {'Accept'=>'application/json',
                       'X-Shopify-Access-Token'=>"#{shop.token}"}).
     to_return(:status => 200, :body => body_fixture, :headers => {})

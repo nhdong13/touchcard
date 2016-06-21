@@ -2,13 +2,11 @@ require "shopify/limit"
 
 # Sync shopify abandoned checkouts in taouchcard databse
 class SyncCheckouts
-  include Shopify::Limit
+  attr_reader :shop, :time
 
-  attr_reader :shop, :start_time
-
-  def initialize(shop, start_time = Time.now)
+  def initialize(shop, time = Time.now)
     @shop = shop
-    @start_time = start_time
+    @time = time
   end
 
   def call
@@ -16,9 +14,11 @@ class SyncCheckouts
     return unless checkouts_count > 0
     nb_pages = (checkouts_count / 250.0).ceil
     1.upto(nb_pages) do |page|
-      wait_for_next(start_time, nb_pages)
       checkouts = api::Checkout.find( :all, params: {
-                                            :limit => 250, :page => page } )
+                                            :created_at_min => start_time,
+                                            :created_at_max => end_time,
+                                            :limit => 250,
+                                            :page => page } )
       add_to_touchcard(checkouts)
     end
   end
@@ -35,7 +35,10 @@ class SyncCheckouts
   end
 
   def checkouts_count
-    @_count ||= api::Checkout.count
+    @_count ||= api::Checkout.count(
+      { :created_at_min => start_time,
+        :created_at_max => end_time
+      })
   end
 
   def activate_session
@@ -57,5 +60,13 @@ class SyncCheckouts
 
   def api
     ShopifyAPI
+  end
+
+  def start_time
+   @_start_time ||= time - 24.hours
+  end
+
+  def end_time
+    @_end_time ||= time - 12.hours
   end
 end

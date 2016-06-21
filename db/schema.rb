@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160601083753) do
+ActiveRecord::Schema.define(version: 20160621073341) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -83,7 +83,7 @@ ActiveRecord::Schema.define(version: 20160601083753) do
     t.integer  "discount_exp"
     t.boolean  "enabled",            default: false, null: false
     t.boolean  "international",      default: false, null: false
-    t.integer  "send_delay"
+    t.integer  "send_delay",         default: 0
     t.datetime "arrive_by"
     t.datetime "customers_before"
     t.datetime "customers_after"
@@ -131,6 +131,7 @@ ActiveRecord::Schema.define(version: 20160601083753) do
     t.decimal  "total_price",                      null: false
     t.datetime "created_at",                       null: false
     t.datetime "updated_at",                       null: false
+    t.integer  "total_line_items_price"
   end
 
   add_index "checkouts", ["customer_id"], name: "index_checkouts_on_customer_id", using: :btree

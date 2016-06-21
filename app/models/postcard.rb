@@ -9,9 +9,9 @@ class Postcard < ActiveRecord::Base
   has_one :shop, through: :card_order
   has_many :orders
 
-
-  # TODO add this validation back
   validates :card_order, presence: true
+
+  validate :one_active_postcard_per_customer
 
   # get all postcards whom estimated_arrival is more than 3 days ago
   # and for which arrival notification is not sent
@@ -21,10 +21,6 @@ class Postcard < ActiveRecord::Base
           three_days: three_days_ago)
     .includes(card_order: :shop)
     .includes(:customer)
-  end
-
-  def revenue
-    postcard_triggerable.sum(:total_price)
   end
 
   def address
@@ -112,5 +108,15 @@ class Postcard < ActiveRecord::Base
     )
     self.postcard_id = sent_card["id"]
     self.save! # TODO: Add error handling here
+  end
+
+  def one_active_postcard_per_customer
+    postcards = Postcard.where(
+      "customer_id = :customer_id AND estimated_arrival > :arrival",
+      customer_id: customer_id, arrival: Time.now)
+    if postcards.any?
+      errors.add(:customer_id, "There is alraedy one active card
+                  sent to this customer")
+    end
   end
 end

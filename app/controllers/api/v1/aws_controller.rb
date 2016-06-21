@@ -1,6 +1,6 @@
 class Api::V1::AwsController < Api::BaseController
   def sign
-    bucket_name = "touchcard-user"
+    bucket_name = "touchcard-test"
     bucket = Aws::S3::Resource.new(region: 'us-east-1').bucket(bucket_name)
     @s3_direct_post = bucket.presigned_post(
       key: "uploads/#{SecureRandom.uuid}/${filename}",

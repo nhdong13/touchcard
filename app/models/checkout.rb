@@ -7,6 +7,7 @@ class Checkout < ActiveRecord::Base
             :customer_id, :shop_id, presence: true
   validates :shopify_id, uniqueness: true
 
+
   def international
     customer.default_address.country_code != "US"
   end
@@ -23,6 +24,7 @@ class Checkout < ActiveRecord::Base
         :token,
         :total_price
       ).merge(
+        total_line_items_price: checkout.total_line_items_price.to_f * 100,
         shopify_id: checkout.id,
         customer: customer,
         shop: shop)
