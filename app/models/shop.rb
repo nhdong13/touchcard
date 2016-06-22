@@ -1,3 +1,5 @@
+require "ac_integrator"
+
 class Shop < ActiveRecord::Base
   has_many :card_orders, dependent: :destroy
   has_many :postcards, through: :card_orders
@@ -22,23 +24,32 @@ class Shop < ActiveRecord::Base
   end
 
   class << self
+
+    def add_to_email_list(email)
+      ac = AcIntegrator::NewInstall.new
+      ac.add_email_to_list(email)
+    end
+
     def store(session)
       shop = Shop.find_by(domain: session.url)
       if shop.nil?
+        byebug
         shop = new(domain: session.url, token: session.token)
         shop.save!
         shop.get_shopify_id
         shop.uninstall_hook
         shop.new_order_hook
+        shop.sync_shopify_metadata
+        add_to_email_list(shop.email)
       else
         shop.token = session.token
         shop.save!
         shop.get_shopify_id
         shop.uninstall_hook
         shop.new_order_hook
+        shop.sync_shopify_metadata
         ShopifyAPI::Session.new(shop.domain, shop.token)
       end
-      shop.sync_shopify_metadata
       shop.id
     end
 
