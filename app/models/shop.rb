@@ -33,7 +33,6 @@ class Shop < ActiveRecord::Base
     def store(session)
       shop = Shop.find_by(domain: session.url)
       if shop.nil?
-        byebug
         shop = new(domain: session.url, token: session.token)
         shop.save!
         shop.get_shopify_id
