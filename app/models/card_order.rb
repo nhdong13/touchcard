@@ -8,6 +8,7 @@ class CardOrder < ActiveRecord::Base
   has_many :postcards
 
   validates :shop, :card_side_front, :card_side_back, presence: true
+  validates :discount_exp, numericality: { greater_than: 0 }
 
   after_initialize :ensure_defaults
 
