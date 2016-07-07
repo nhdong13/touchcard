@@ -8,7 +8,6 @@ class Api::BaseController < ActionController::Base
   before_action :require_auth
 
   def require_auth
-    return render_authorization_error if session[:shopify].nil?
     if session[:shopify].nil?
       render_authorization_error
     else
