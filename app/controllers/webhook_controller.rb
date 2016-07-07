@@ -41,7 +41,7 @@ class WebhookController < ApplicationController
   def uninstall
     head :ok
     @shop.subscriptions.each { |s| s.destroy }
-    @shop.update_attributes(credit: 0)
+    @shop.update_attributes(credit: 0, uninstalled_at: Time.now)
     SlackNotify.uninstall(@shop.domain)
   end
 

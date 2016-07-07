@@ -8,8 +8,12 @@ class Api::BaseController < ActionController::Base
   before_action :require_auth
 
   def require_auth
-    return render_authorization_error if session[:shopify].nil?
-    @current_shop ||= Shop.find(session[:shopify])
+    if session[:shopify].nil?
+      render_authorization_error
+    else
+      @current_shop ||= Shop.find(session[:shopify])
+      @current_shop.update_attributes(last_login_at: Time.now)
+    end
   end
 
   def render_authorization_error
