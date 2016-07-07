@@ -12,4 +12,5 @@ RSpec.describe Customer, type: :model do
       expect(result.first.first_name).to eq marketing_customer.first_name
     end
   end
+
 end
