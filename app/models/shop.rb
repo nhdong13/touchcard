@@ -173,6 +173,12 @@ class Shop < ActiveRecord::Base
 
   def top_up
     update_attribute(:credit, subscriptions.first.quantity)
+    unless subscriptions.blank?
+      subscriptions.last.update_attributes(
+        current_period_start: Time.now.beginning_of_month,
+        current_period_end:   Time.now + 1.month
+      )
+    end
   end
 
   def credits_used

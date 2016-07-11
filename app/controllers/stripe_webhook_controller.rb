@@ -2,7 +2,8 @@ class StripeWebhookController < ActionController::Base
   skip_before_action :verify_authenticity_token
   before_action :set_stripe_event, only: :create
 
-  def create
+  # webhook called anytime new charge is made on stripe
+  def hook
     head :ok # this is done up front to prevent timouts
     @db_event.status = "processed"
     return unless @stripe_event.type == "invoice.payment_succeeded"
