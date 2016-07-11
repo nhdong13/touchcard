@@ -40,6 +40,14 @@ class Subscription < ActiveRecord::Base
     shop.update_attributes(credit: shop.credit + delta_quantity)
   end
 
+  def change_subscription_dates(stripe_subscription)
+    return if stripe_subscription.blank?
+    update_attributes(
+        current_period_start: stripe_subscription.current_period_start,
+        current_period_end:   stripe_subscription.current_period_end
+    )
+  end
+
   class << self
     def create(params)
       # TODO: error handling
