@@ -33,6 +33,12 @@ desc "Notify customers about coupon expiry"
 task :hourly_send_coupon_expiration_emails => :environment do
   postcards = Postcard.where(sent: true, expiration_notification_sent: false)
   postcards.each do |postcard|
+
+    raise "Improve logic, see below"
+    # TODO: Should store discount_exp with postcard:
+    # @coupon_value = "#{postcard.discount_value}% OFF"
+    # discount_exp = postcard.discount_exp
+
     discount_exp = postcard.card_order.discount_exp
     next if (discount_exp.nil? && postcard.discount_code.nil?)
 
