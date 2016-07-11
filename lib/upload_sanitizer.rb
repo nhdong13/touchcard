@@ -12,11 +12,12 @@ class UploadSanitizer
   def new_name
     temp = name.delete(SPECIAL_CHARACTERS.join)
     extension = temp.split(".").last
-    temp.delete! ".#{extension}"
-    if temp.blank?
+    last_period_index = temp.rindex('.')
+
+    if last_period_index != nil and temp.slice(0, last_period_index).length == 0
       "#{random_name}.#{extension}"
     else
-      "#{temp}.#{extension}"
+      temp
     end
   end
 
