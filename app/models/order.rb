@@ -38,11 +38,6 @@ class Order < ActiveRecord::Base
 
   def connect_to_postcard
     postcard = find_postcard_by_discount
-    return update_attributes!(postcard: postcard) if postcard
-    postcard = Postcard.where("
-      customer_id = ? AND
-      order_id != ? AND
-      sent = TRUE", customer_id, id).first
     update_attributes!(postcard: postcard) if postcard
     postcard
   end
