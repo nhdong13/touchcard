@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe CustomerMailer do
-  describe ".send_coupon_expires" do
+  describe ".send_coupon_expiration_notification" do
     before(:each) do
       ActionMailer::Base.delivery_method = :test
       ActionMailer::Base.perform_deliveries = true
@@ -9,7 +9,7 @@ RSpec.describe CustomerMailer do
       @postcard = create(:postcard, discount_code: "A01-CODE")
       @postcard.card_order.update_attributes(discount_pct: 10)
       stub_shop(@postcard.shop.domain)
-      CustomerMailer.send_coupon_expires(@postcard).deliver_now
+      CustomerMailer.send_coupon_expiration_notification(@postcard).deliver_now
     end
 
     after(:each) do

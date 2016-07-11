@@ -16,7 +16,7 @@ task :daily_credit_update => :environment do
 end
 
 desc "Notify customers about postcard arival"
-task :daily_cards_arrived_notify => :environment do
+task :daily_send_card_arrival_emails => :environment do
   postcards = Postcard.ready_for_arrival_notification
   postcards.each do |postcard|
     # TODO: fix checking each customer for accepts_marketing.
@@ -28,9 +28,10 @@ task :daily_cards_arrived_notify => :environment do
   end
 end
 
+
 desc "Notify customers about coupon expiry"
-task :coupon_about_to_expire_notify => :environment do
-  postcards = Postcard.where(sent: true, coupon_expires_notified: false)
+task :hourly_send_coupon_expiration_emails => :environment do
+  postcards = Postcard.where(sent: true, expiration_notification_sent: false)
   postcards.each do |postcard|
     discount_exp = postcard.card_order.discount_exp
     next if (discount_exp.nil? && postcard.discount_code.nil?)
@@ -40,7 +41,7 @@ task :coupon_about_to_expire_notify => :environment do
     # Safe buffer find ones that expires in 30 hours or less
     next unless (Time.now + 30.hours) > expires
 
-    send_coupon_expires_mail(postcard)
+    send_coupon_expiration_email(postcard)
   end
 end
 
@@ -49,7 +50,7 @@ def send_card_arrival_mail(postcard)
   postcard.update_attributes(arrival_notification_sent: true)
 end
 
-def send_coupon_expires_mail(postcard)
-  CustomerMailer.send_coupon_expires(postcard).deliver
-  postcard.update_attributes(coupon_expires_notified: true)
+def send_coupon_expiration_email(postcard)
+  CustomerMailer.send_coupon_expiration_notification(postcard).deliver
+  postcard.update_attributes(expiration_notification_sent: true)
 end

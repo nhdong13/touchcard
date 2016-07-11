@@ -7,7 +7,7 @@ class CustomerMailer < ApplicationMailer
     mail to: customer.email, subject: "You've got a Postcard from #{@shop_name}!"
   end
 
-  def send_coupon_expires(postcard)
+  def send_coupon_expiration_notification(postcard)
     card_order = postcard.card_order
     customer = postcard.customer
     @shop_name = card_order.shop.name

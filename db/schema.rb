@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160420071135) do
+ActiveRecord::Schema.define(version: 20160707160127) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -238,16 +238,17 @@ ActiveRecord::Schema.define(version: 20160420071135) do
     t.integer  "card_order_id"
     t.string   "discount_code"
     t.datetime "send_date"
-    t.boolean  "sent",                      default: false, null: false
+    t.boolean  "sent",                         default: false, null: false
     t.datetime "date_sent"
     t.string   "postcard_id"
-    t.datetime "created_at",                                null: false
-    t.datetime "updated_at",                                null: false
+    t.datetime "created_at",                                   null: false
+    t.datetime "updated_at",                                   null: false
     t.integer  "customer_id"
     t.integer  "order_id"
-    t.boolean  "paid",                      default: false, null: false
+    t.boolean  "paid",                         default: false, null: false
     t.datetime "estimated_arrival"
-    t.boolean  "arrival_notification_sent", default: false, null: false
+    t.boolean  "arrival_notification_sent",    default: false, null: false
+    t.boolean  "expiration_notification_sent", default: false
   end
 
   add_index "postcards", ["customer_id"], name: "index_postcards_on_customer_id", using: :btree
@@ -277,6 +278,8 @@ ActiveRecord::Schema.define(version: 20160420071135) do
     t.datetime "shopify_created_at"
     t.datetime "shopify_updated_at"
     t.string   "approval_state",               default: "new", null: false
+    t.datetime "uninstalled_at"
+    t.datetime "last_login_at"
   end
 
   add_index "shops", ["domain"], name: "index_shops_on_domain", unique: true, using: :btree
