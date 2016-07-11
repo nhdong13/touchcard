@@ -9,11 +9,6 @@ task :daily_send_cards => :environment do
   SlackNotify.cards_sent(cards_sent)
 end
 
-desc "Top up credit on all shops with a billing date of today"
-task :daily_credit_update => :environment do
-  puts "Topping up shop credits"
-  Shop.top_up_all
-end
 
 desc "Notify customers about postcard arival"
 task :daily_cards_arrived_notify => :environment do
