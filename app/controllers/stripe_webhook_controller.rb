@@ -12,9 +12,8 @@ class StripeWebhookController < ActionController::Base
     shop = Shop.find_by(stripe_customer_id: @stripe_event.data.object.customer)
     shop.top_up
 
-    stripe_subscription = Stripe::Subscription.find(@stripe_event.data.object.subscription)
     unless shop.subscriptions.blank?
-      shop.subscriptions.first.change_subscription_dates(stripe_subscription)
+      shop.subscriptions.first.change_subscription_dates
     end
 
     @db_event.save!
