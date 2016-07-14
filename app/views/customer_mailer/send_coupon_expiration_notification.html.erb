@@ -1,0 +1,13 @@
+<p>Hi <%= @customer_name %></p>
+<p>
+We recently sent you a real, actual postcard to say thank you for shopping with us. It had a unique <strong><%= @coupon_value %></strong> coupon just for you.
+</p>
+</br>
+<p>The coupon expires in 24 hours, so if you want to use it please do so now before you forget!</p>
+</br>
+<p>
+Here it is again: <strong><%= @coupon_code %></strong>
+</p>
+<p>Just type it in when you check out in <a href="<%= @shop.domain %>">our shop</a>.</p>
+</br>
+<p>Thanks, <br/> <%= @shop.name %></p>
