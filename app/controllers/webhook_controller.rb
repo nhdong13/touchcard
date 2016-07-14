@@ -33,8 +33,6 @@ class WebhookController < ApplicationController
       customer: order.customer,
       order: order,
       card_order: post_sale_order,
-      discount_exp: post_sale_order.discount_exp,
-      discount_pct: post_sale_order.discount_pct,
       send_date: post_sale_order.send_date,
       paid: false)
     postcard.pay.save! if postcard.can_afford?

@@ -8,8 +8,8 @@ class CustomerMailer < ApplicationMailer
   end
 
   def send_coupon_expiration_notification(postcard)
-    return "Cupon is not set" if postcard.discount_code.blank? || postcard.discount_exp.blank?
-    return "Cupon expired!" if (postcard.discount_exp > Time.now and postcard.discount_pct > 0)
+    return "Cupon is not set" if postcard.discount_code.blank? || postcard.discount_exp_at.blank?
+    return "Cupon expired!" if (postcard.discount_exp_at > Time.now and postcard.discount_pct > 0)
 
     card_order = postcard.card_order
     customer = postcard.customer

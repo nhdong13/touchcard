@@ -33,13 +33,14 @@ desc "Notify customers about coupon expiry"
 task :hourly_send_coupon_expiration_emails => :environment do
   postcards = Postcard.where(sent: true, expiration_notification_sent: false)
   postcards.each do |postcard|
-    discount_exp = postcard.discount_exp
-    next if (discount_exp.nil? && postcard.discount_code.nil?)
+    discount_exp_at = postcard.discount_exp_at
+    next if (discount_exp_at.nil? || postcard.discount_code.nil?)
 
-    expires = (postcard.estimated_arrival + discount_exp.weeks)
+    expires = (postcard.estimated_arrival + discount_exp_at.weeks)
 
     # Safe buffer find ones that expires in 30 hours or less
     next unless (Time.now + 30.hours) > expires
+    next unless (Time.now + 24.hours) < expires
 
     send_coupon_expiration_email(postcard)
   end
