@@ -2,7 +2,8 @@ class StripeWebhookController < ActionController::Base
   skip_before_action :verify_authenticity_token
   before_action :set_stripe_event, only: :create
 
-  def create
+  # webhook called anytime new charge is made on stripe
+  def hook
     head :ok # this is done up front to prevent timouts
     @db_event.status = "processed"
     return unless @stripe_event.type == "invoice.payment_succeeded"
@@ -10,6 +11,11 @@ class StripeWebhookController < ActionController::Base
     #       subscription is the one that is desired
     shop = Shop.find_by(stripe_customer_id: @stripe_event.data.object.customer)
     shop.top_up
+
+    unless shop.subscriptions.blank?
+      shop.subscriptions.first.change_subscription_dates
+    end
+
     @db_event.save!
   end
 

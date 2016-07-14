@@ -136,7 +136,8 @@ RSpec.describe WebhookController, type: :controller do
           let!(:customer) do
             create(:customer, shopify_id: s_order[:customer][:id])
           end
-          let!(:postcard) { create(:postcard, order: order, customer: customer) }
+          let!(:postcard) { create(:postcard, discount_code: 'TENOFF',
+                                    order: order, customer: customer) }
           before(:each) { order.update_attributes!(customer: customer) }
           it "connects order to postcard" do
             post_new_order(id: s_order[:id])

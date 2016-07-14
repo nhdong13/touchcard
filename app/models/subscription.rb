@@ -40,6 +40,16 @@ class Subscription < ActiveRecord::Base
     shop.update_attributes(credit: shop.credit + delta_quantity)
   end
 
+  # Update subscription date to match the stripe dates
+  def change_subscription_dates
+    subscription = shop.stripe_customer.subscriptions.retrieve(stripe_id)
+    return if subscription.blank?
+    update_attributes(
+      current_period_start: Time.at(subscription.current_period_start),
+      current_period_end:   Time.at(subscription.current_period_end)
+    )
+  end
+
   class << self
     def create(params)
       # TODO: error handling
