@@ -37,7 +37,9 @@ task :hourly_send_coupon_expiration_emails => :environment do
     next unless (Time.now + 30.hours) > expires
     next unless (Time.now + 24.hours) < expires
 
-    send_coupon_expiration_email(postcard)
+    if postcard.customer.accepts_marketing
+      send_coupon_expiration_email(postcard)
+    end
   end
 end
 
