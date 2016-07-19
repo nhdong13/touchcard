@@ -97,13 +97,11 @@ class Postcard < ActiveRecord::Base
 
   def send_card
     return logger.info "sending postcard:#{id} that is not paid for" unless paid?
-    if not set_postcard_discount_details
-      raise "Error setting discount details"
-    end
     # TODO: all kinds of error handling
     # Test lob
     @lob = Lob.load
     self.estimated_arrival = estimated_transit_days.business_days.from_now
+    set_postcard_discount_details or raise "Error setting discount details"
     self.discount_code = generate_discount_code if card_order.discount?
 
     front_html, back_html = [
