@@ -51,6 +51,7 @@ class Postcard < ActiveRecord::Base
   end
 
   def generate_discount_code
+    return "Error setting discount detils!" if set_postcard_discount_details
     code = ("A".."Z").to_a.sample(9).join
     code = "#{code[0...3]}-#{code[3...6]}-#{code[6...9]}"
     card_order.shop.new_discount(
@@ -96,9 +97,6 @@ class Postcard < ActiveRecord::Base
 
   def send_card
     return logger.info "sending postcard:#{id} that is not paid for" unless paid?
-    if not set_postcard_discount_details
-      raise "Error setting discount details"
-    end
     # TODO: all kinds of error handling
     # Test lob
     @lob = Lob.load
