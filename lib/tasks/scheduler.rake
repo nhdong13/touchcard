@@ -31,11 +31,9 @@ task :hourly_send_coupon_expiration_emails => :environment do
     discount_exp_at = postcard.discount_exp_at
     next if (discount_exp_at.nil? || postcard.discount_code.nil?)
 
-    expires = (postcard.estimated_arrival + discount_exp_at.weeks)
-
-    # Safe buffer find ones that expires in 30 hours or less
-    next unless (Time.now + 30.hours) > expires
-    next unless (Time.now + 24.hours) < expires
+    # Only attempt sending if coupon expires between 24 and 30 hours from now
+    next if discount_exp_at > (Time.now + 30.hours)
+    next if discount_exp_at < (Time.now + 24.hours)
 
     if postcard.customer.accepts_marketing
       send_coupon_expiration_email(postcard)
