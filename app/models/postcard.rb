@@ -43,13 +43,6 @@ class Postcard < ActiveRecord::Base
     address.to_lob_address
   end
 
-  def set_postcard_discount_details
-    update_attributes(
-      discount_pct: card_order.discount_pct,
-      discount_exp_at: estimated_arrival + card_order.discount_exp.weeks
-    )
-  end
-
   def generate_discount_code
     raise "Error generating discount code" unless discount_pct and discount_exp_at
     code = ("A".."Z").to_a.sample(9).join
@@ -101,8 +94,11 @@ class Postcard < ActiveRecord::Base
     # Test lob
     @lob = Lob.load
     self.estimated_arrival = estimated_transit_days.business_days.from_now
-    set_postcard_discount_details or raise "Error setting discount details"
-    self.discount_code = generate_discount_code if card_order.discount?
+    if card_order.discount?
+      self.discount_pct = card_order.discount_pct
+      self.discount_exp_at = estimated_arrival + card_order.discount_exp.weeks
+      self.discount_code = generate_discount_code
+    end
 
     front_html, back_html = [
       card_order.card_side_front,
