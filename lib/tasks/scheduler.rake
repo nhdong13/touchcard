@@ -10,7 +10,7 @@ task :daily_send_cards => :environment do
 end
 
 desc "Slack Subscriptions Update"
-  puts "Notifying subscription status on #slack"
+  puts "Notifying subscription status on #slack..."
   quantity = Subscription.sum(:quantity)
   SlackNotify.subscriptions_status(quantity)
 end
