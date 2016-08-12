@@ -24,7 +24,7 @@ class SlackNotify
 
   def self.subscriptions_status(quantity)
     payload = {
-        text:  ENV['SUBSCRIPTIONS_GOAL_STRING']
+        text: "Monthly card subscriptions: *#{quantity}* #{ENV["SUBSCRIPTIONS_GOAL_STRING"]}"
     }
     send_to_slack(payload)
   end
