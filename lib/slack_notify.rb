@@ -22,6 +22,13 @@ class SlackNotify
     send_to_slack(payload)
   end
 
+  def self.subscriptions_status(quantity)
+    payload = {
+        text: "#{ENV['SUBSCRIPTIONS_GOAL_STRING']}"
+    }
+    send_to_slack(payload)
+  end
+
   def self.error(domain, error)
     payload = {
       text: "There was a problem with shop: #{domain} at #{Time.now}
