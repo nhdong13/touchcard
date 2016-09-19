@@ -28,3 +28,6 @@
 
 # ignore test coverage generated files
 coverage
+
+# misc
+.byebug_history
