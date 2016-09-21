@@ -1,9 +1,11 @@
 require 'rest_client'
 
 class SlackNotify
-  def self.install(domain)
+  def self.install(domain, email = nil, owner = nil, shop_size = -1)
+
+    # Email, owner, last_month, lob_address
     payload = {
-      text: "A new shop has installed Touchcard: #{domain}"
+      text: "A new shop has installed Touchcard: #{domain}\nemail: #{email}\nowner: #{owner}\n# new customers: #{shop_size}"
     }
     send_to_slack(payload)
   end

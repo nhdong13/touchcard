@@ -9,6 +9,15 @@ task :daily_send_cards => :environment do
   SlackNotify.cards_sent(cards_sent)
 end
 
+desc "Update Shop metadata and last_month New Customers"
+task :update_shop_metadata => :environment do
+  puts "Updating shop metadata for installed shops"
+  Shop.all.each do |shop|
+    shop.sync_shopify_metadata
+    shop.get_last_month
+  end
+end
+
 desc "Slack Subscriptions Update"
 task :slack_subscriptions_status => :environment do
   puts "Notifying subscription status on #slack..."

@@ -44,6 +44,7 @@ class Shop < ActiveRecord::Base
         shop.uninstall_hook
         shop.new_order_hook
         shop.sync_shopify_metadata
+        shop.get_last_month
         add_to_email_list(shop.email)
       else
         shop.token = session.token
@@ -51,7 +52,6 @@ class Shop < ActiveRecord::Base
         shop.get_shopify_id
         shop.uninstall_hook
         shop.new_order_hook
-        shop.sync_shopify_metadata
         ShopifyAPI::Session.new(shop.domain, shop.token)
       end
       shop.id
@@ -134,7 +134,7 @@ class Shop < ActiveRecord::Base
         )
         self.uninstall_id = new_hook.id
         self.save!
-        SlackNotify.install(domain)
+        SlackNotify.install(domain, email, owner, last_month)
         return
       else
         # Skip if not production environment
@@ -202,6 +202,18 @@ class Shop < ActiveRecord::Base
   end
 
 
+  def lob_address
+    {
+      name: self.metadata["shop_owner"],
+      address_line1: self.metadata["address1"],
+      address_line2: self.metadata["address2"],
+      address_city: self.metadata["city"],
+      address_state: self.metadata["province"] || self.metadata["province_code"],
+      address_country: self.metadata["country"] || self.metadata["country_code"],
+      address_zip: self.metadata["zip"]
+    }
+  end
+
   def get_last_month
     new_sess
     last_month = ShopifyAPI::Customer.count(created_at_min: (Time.now - 1.month))
@@ -221,6 +233,7 @@ class Shop < ActiveRecord::Base
     self.owner              = metadata.shop_owner
     self.shopify_created_at = metadata.created_at
     self.shopify_updated_at = metadata.updated_at
+    self.metadata           = metadata.attributes
     self.save!
   end
 end
