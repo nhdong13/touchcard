@@ -19,7 +19,7 @@ task :update_shop_metadata => :environment do
     rescue ActiveResource::UnauthorizedAccess, ActiveResource::ClientError => e
       logger.error "#{e.message}"
       logger.error "Adding Uninstalled Date"
-      shop.update_attributes(uninstalled_at: Time.now.midnight)
+      shop.update_attributes(uninstalled_at: Time.new(2016))
       next
     end
   end
