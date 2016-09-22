@@ -12,9 +12,15 @@ end
 desc "Update Shop metadata and last_month New Customers"
 task :update_shop_metadata => :environment do
   puts "Updating shop metadata for installed shops"
-  Shop.all.each do |shop|
-    shop.sync_shopify_metadata
-    shop.get_last_month
+  Shop.where("uninstalled_at IS NULL").each do |shop|
+    begin
+      shop.sync_shopify_metadata
+      shop.get_last_month
+    rescue ActiveResource::UnauthorizedAccess
+      logger.error "Unauthorized Access, Marking Shop as Uninstalled"
+      shop.update_attributes(uninstalled_at: Time.now.midnight)
+      next
+    end
   end
 end
 
