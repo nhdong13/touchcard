@@ -7,7 +7,7 @@ RSpec.describe CustomerMailer do
       ActionMailer::Base.perform_deliveries = true
       ActionMailer::Base.deliveries = []
       @postcard = create(:postcard, discount_code: "A01-CODE")
-      @postcard.card_order.update_attributes(discount_pct: 10)
+      @postcard.update_attributes(discount_pct: 10)
       stub_shop(@postcard.shop.domain)
       CustomerMailer.send_coupon_expiration_notification(@postcard).deliver_now
     end
@@ -16,7 +16,7 @@ RSpec.describe CustomerMailer do
       ActionMailer::Base.deliveries.clear
     end
 
-    it "sould send an email" do
+    it "should send an email" do
       expect(ActionMailer::Base.deliveries.count).to eq 1
     end
 
