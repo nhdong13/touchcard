@@ -6,10 +6,11 @@ RSpec.describe CardOrder, type: :model do
       card_order = setup_card_order
       ned = create(:customer, shopify_id: "1", first_name: 'Ned',
                    last_name: "Stark")
-      create(:postcard, customer: ned, card_order: card_order, sent: false)
-      create(:postcard, customer: ned, card_order: card_order, sent: true)
-
-      expect(card_order.cards_sent).to eq 1
+      create(:postcard, customer: ned, card_order: card_order)
+      create(:postcard, customer: ned, card_order: card_order)
+      # Old card, not in current sub period
+      create(:postcard, customer: ned, card_order: card_order, created_at: 60.days.ago)
+      expect(card_order.cards_sent).to eq 2
     end
 
     it "only count cards from current subscription" do

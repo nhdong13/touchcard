@@ -6,8 +6,9 @@ RSpec.describe CustomerMailer do
       ActionMailer::Base.delivery_method = :test
       ActionMailer::Base.perform_deliveries = true
       ActionMailer::Base.deliveries = []
-      @postcard = create(:postcard, discount_code: "A01-CODE")
-      @postcard.update_attributes(discount_pct: 10)
+      @postcard = create(:postcard)
+      @postcard.update_attributes(discount_code: "A01-CODE", discount_pct: 10, discount_exp_at:  Time.now + 1.days)
+
       stub_shop(@postcard.shop.domain)
       CustomerMailer.send_coupon_expiration_notification(@postcard).deliver_now
     end
