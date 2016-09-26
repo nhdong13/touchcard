@@ -46,6 +46,7 @@ class Shop < ActiveRecord::Base
         shop.sync_shopify_metadata
         shop.get_last_month
         add_to_email_list(shop.email)
+        SlackNotify.install(shop.domain, shop.email, shop.owner, shop.last_month)
       else
         shop.token = session.token
         shop.save!
@@ -134,15 +135,7 @@ class Shop < ActiveRecord::Base
         )
         self.uninstall_id = new_hook.id
         self.save!
-        SlackNotify.install(domain, email, owner, last_month)
-        return
-      else
-        # Skip if not production environment
-        return
       end
-    else
-      # Skip if there is a hook already
-      return
     end
   end
 
