@@ -1,4 +1,5 @@
 require "ac_integrator"
+require "slack_notify"
 
 class Shop < ActiveRecord::Base
   has_many :card_orders, dependent: :destroy
@@ -121,7 +122,6 @@ class Shop < ActiveRecord::Base
 
 
   def uninstall_hook
-    require "slack_notify"
     # Add the uninstall webhook if there is none
     if uninstall_id.nil?
       new_sess
