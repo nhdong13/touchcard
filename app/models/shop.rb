@@ -201,8 +201,8 @@ class Shop < ActiveRecord::Base
       address_line1: self.metadata["address1"],
       address_line2: self.metadata["address2"],
       address_city: self.metadata["city"],
-      address_state: self.metadata["province"] || self.metadata["province_code"],
-      address_country: self.metadata["country"] || self.metadata["country_code"],
+      address_state: self.metadata["province_code"] || self.metadata["province"],
+      address_country: self.metadata["country_code"] || self.metadata["country"],
       address_zip: self.metadata["zip"]
     }
   end
