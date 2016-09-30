@@ -17,8 +17,8 @@ task :update_shop_metadata => :environment do
       shop.sync_shopify_metadata
       shop.get_last_month
     rescue ActiveResource::UnauthorizedAccess, ActiveResource::ClientError => e
-      logger.error "#{e.message}"
-      logger.error "Adding Uninstalled Date"
+      puts "#{e.message}"
+      puts "Adding Uninstalled Date"
       shop.update_attributes(uninstalled_at: Time.new(2016))
       next
     end
