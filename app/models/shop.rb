@@ -107,7 +107,7 @@ class Shop < ActiveRecord::Base
         }
       })
     logger.info response.body
-    raise "Error registering discount code" unless reponse.code == 200
+    raise "Error registering discount code" unless response.code == 200
     return code
   end
 
