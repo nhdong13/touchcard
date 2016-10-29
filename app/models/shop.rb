@@ -107,8 +107,8 @@ class Shop < ActiveRecord::Base
         }
       })
     logger.info response.body
-    raise "Error registering discount code" unless response.code == 200
-    return code
+    raise "Error registering discount code" unless response.success?
+    code
   end
 
   def get_shopify_id
