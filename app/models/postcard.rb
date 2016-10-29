@@ -55,6 +55,7 @@ class Postcard < ActiveRecord::Base
   end
 
   def self.send_all
+    num_failed = 0
     todays_cards = Postcard.joins(:shop)
       .where("paid = TRUE AND sent = FALSE AND send_date <= ?
               AND shops.approval_state != ?", Time.now, "denied")
@@ -62,12 +63,13 @@ class Postcard < ActiveRecord::Base
       begin
         card.send_card
       rescue Exception => e
+        num_failed += 1
         logger.error e
         NewRelic::Agent::notice_error(e.message)
         next
       end
     end
-    todays_cards.size
+    todays_cards.size - num_failed
   end
 
   def pay
