@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160919093526) do
+ActiveRecord::Schema.define(version: 20161030191753) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -272,6 +272,7 @@ ActiveRecord::Schema.define(version: 20160919093526) do
     t.boolean  "send_next",                    default: true,  null: false
     t.datetime "last_login"
     t.string   "stripe_customer_id"
+    t.string   "approval_state",               default: "new", null: false
     t.string   "name"
     t.string   "email"
     t.string   "customer_email"
@@ -279,7 +280,6 @@ ActiveRecord::Schema.define(version: 20160919093526) do
     t.string   "owner"
     t.datetime "shopify_created_at"
     t.datetime "shopify_updated_at"
-    t.string   "approval_state",               default: "new", null: false
     t.datetime "uninstalled_at"
     t.datetime "last_login_at"
     t.json     "metadata",                     default: {}
