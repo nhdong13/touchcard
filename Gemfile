@@ -3,11 +3,9 @@ source "https://rubygems.org"
 #ruby=2.2.0
 #ruby-gemset=touchcard
 
-ruby "2.3.3"
+ruby "2.2.0"
 
 gem "rails", "4.2.6"
-gem "rake", "11.1.2"
-gem "rb-readline", "~> 0.5.3"
 
 gem "bootstrap-sass"
 
@@ -29,7 +27,7 @@ gem "activeadmin", github: "activeadmin"
 gem "active_model_serializers", "~> 0.8.0"
 
 # Shopify app
-gem "shopify_app", ">= 7.2.3"
+gem "shopify_app", "6.2.0"
 
 # Stripe
 gem 'stripe', git: 'https://github.com/stripe/stripe-ruby'
