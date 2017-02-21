@@ -6,7 +6,7 @@ class Api::V1::AwsController < Api::BaseController
     bucket = Aws::S3::Resource.new(region: 'us-east-1').bucket(bucket_name)
     sanitizer = UploadSanitizer.new(params[:name])
     @s3_direct_post = bucket.presigned_post(
-      key: "uploads/#{SecureRandom.uuid}/#{sanitizer.new_name}",
+      key: "uploads/#{SecureRandom.uuid}/#{sanitizer.sanatize}",
       success_action_status: "201",
       acl: "public-read"
     )
