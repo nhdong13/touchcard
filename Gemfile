@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 
-#ruby=2.2.0
+#ruby=2.3.3
 #ruby-gemset=touchcard
 
 ruby "2.3.3"
@@ -23,7 +23,7 @@ gem "sdoc", "~> 0.4.0", group: :doc
 
 # Admin interface
 gem "devise", "~> 3.5"
-gem "activeadmin", github: "activeadmin"
+gem "activeadmin", git: "https://github.com/activeadmin/activeadmin"
 
 # API serializer
 gem "active_model_serializers", "~> 0.8.0"
