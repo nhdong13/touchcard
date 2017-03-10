@@ -10,6 +10,12 @@ RSpec.describe UploadSanitizer do
       expect(sanitizer.new_name).to eq "jpgtest.jpg"
     end
 
+    it "catches parentheses in filename" do
+      name = "on)etree_touchcard_reverse0))0(1))).png"
+      sanitizer = UploadSanitizer.new(name)
+      expect(sanitizer.new_name).to eq "onetree_touchcard_reverse001.png"
+    end
+
     it "generates random name, name is blank after replace" do
       name = "%$&=@:+,?{}\[]<>#^`.png"
       sanitizer = UploadSanitizer.new(name)
