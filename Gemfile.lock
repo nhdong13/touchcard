@@ -1,6 +1,7 @@
 GIT
   remote: https://github.com/activeadmin/activeadmin
   revision: d75bbca61925d59a0d4269e74890e157df670b72
+  ref: d75bbca
   specs:
     activeadmin (1.0.0.pre4)
       arbre (~> 1.0, >= 1.0.2)
@@ -86,7 +87,7 @@ GEM
     bootstrap-sass (3.3.6)
       autoprefixer-rails (>= 5.2.1)
       sass (>= 3.3.4)
-    bourbon (4.3.2)
+    bourbon (4.3.3)
       sass (~> 3.4)
       thor (~> 0.19)
     builder (3.2.3)
@@ -133,7 +134,7 @@ GEM
       railties (>= 3.0.0)
     faraday (0.9.2)
       multipart-post (>= 1.2, < 3)
-    formtastic (3.1.4)
+    formtastic (3.1.5)
       actionpack (>= 3.2.13)
     formtastic_i18n (0.6.0)
     globalid (0.3.7)
@@ -415,4 +416,4 @@ RUBY VERSION
    ruby 2.3.3p222
 
 BUNDLED WITH
-   1.14.5
+   1.13.7
