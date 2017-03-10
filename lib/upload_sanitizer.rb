@@ -1,9 +1,14 @@
 class UploadSanitizer
   attr_reader :name
 
+  # Note: Files with spaces in them  currently get uploaded to AWS. We then save the URL with a `+` instead of a ` `
+  # I'm not 100% sure where this
+  # S3 interprets a `+` in a filename as a ` `, so this works. It feels a little ambiguous though.
+  # https://forums.aws.amazon.com/thread.jspa?messageID=722673
+
   SPECIAL_CHARACTERS = ['%', '$', '&', '=', '@', ':', '+',
                         ',', '?', '{', '}', "\\", "\[", "\]",
-                        '<', '>', '#', '^', '`']
+                        '<', '>', '#', '^', '`', '(', ')']
 
   def initialize(name)
     @name = name
