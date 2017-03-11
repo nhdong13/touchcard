@@ -1,10 +1,10 @@
-<!-- # 620 only - whole file -->
-
-<script type="text/javascript">
-  ShopifyApp.ready(function(){
-    ShopifyApp.Bar.initialize({
-      title: "Dashboard",
-      icon: "<%= asset_path('faveicon.png') %>"
+<% content_for :javascript do %>
+  <script type="text/javascript">
+    ShopifyApp.ready(function(){
+      ShopifyApp.Bar.initialize({
+        title: "Home",
+        icon: "<%= asset_path('favicon.ico') %>"
+      });
     });
-  });
-</script>
+  </script>
+<% end %>
