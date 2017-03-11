@@ -40,7 +40,7 @@ Rails.application.routes.draw do
   get '/support',   to: 'home#support'
 
   # Shopify Engine
-  root :to => 'home#index'
+  root :to => 'home#index' # 620 only
   mount ShopifyApp::Engine, at: '/'
   get '/app' => 'root#app'
   get '/app/*path' => 'root#app'
