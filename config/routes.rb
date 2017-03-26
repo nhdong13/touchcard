@@ -25,10 +25,6 @@ Rails.application.routes.draw do
   # Stripe wobhook routes
   post '/stripe/events', to: 'stripe_webhook#hook'
 
-  # Shopify webhook routes
-  post '/new_order',  to:   'webhook#new_order'
-  post '/uninstall',  to:   'webhook#uninstall'
-
   # HTML Routes for Card Templates
   resources :card_orders, only: [:update]
 
