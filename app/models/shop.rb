@@ -183,4 +183,8 @@ class Shop < ActiveRecord::Base
     self.metadata           = metadata.attributes
     self.save!
   end
+
+  def with_shopify_session(&block)
+    ShopifyAPI::Session.temp(domain, token, &block)
+  end
 end
