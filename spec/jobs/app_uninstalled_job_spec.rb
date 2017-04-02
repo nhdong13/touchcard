@@ -3,9 +3,7 @@ require 'rails_helper'
 RSpec.describe AppUninstalledJob, type: :job do
   include ActiveJob::TestHelper
 
-  let(:shop) { create(:shop, domain: 'testshop1.myshopify.com') }
-  let(:plan) { create(:plan) }
-  let!(:subscription) { Subscription.create(shop: shop, quantity: 1, plan: plan) }
+  let(:shop) { create(:shop, credit: 2, domain: 'testshop1.myshopify.com') }
   subject(:job) do
     webhook_text = File.read("#{Rails.root}/spec/fixtures/shopify/webhooks/app_uninstalled.json")
     webhook_obj = JSON.parse(webhook_text).with_indifferent_access
@@ -28,11 +26,12 @@ RSpec.describe AppUninstalledJob, type: :job do
     expect(AppUninstalledJob.new.queue_name).to eq('default')
   end
 
-  it 'uninstalls shop' do
-    puts shop.subscriptions.length
+  it 'sets shop credit to 0' do
     stub_slack_notify
     perform_enqueued_jobs { job }
-    expect(Shop.where(domain: shop.domain).count).to eq 0
+    expect(Shop.find_by(domain: shop.domain).credit).to eq 0
   end
+
+  # Add tests for unsubscribing shop subscriptions and that shop is uninstalled
 
 end
