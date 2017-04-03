@@ -26,12 +26,20 @@ RSpec.describe AppUninstalledJob, type: :job do
     expect(AppUninstalledJob.new.queue_name).to eq('default')
   end
 
-  it 'sets shop credit to 0' do
-    stub_slack_notify
-    perform_enqueued_jobs { job }
-    expect(Shop.find_by(domain: shop.domain).credit).to eq 0
+  describe '#perform' do
+    before :each do
+      stub_slack_notify
+      perform_enqueued_jobs { job }
+    end
+
+    it 'sets shop credit to 0' do
+      credit = Shop.where(domain: shop.domain).first.credit
+      expect(credit).to eq 0
+    end
+
+    it 'uninstalls Shop' do
+      uninstalled_at = Shop.where(domain: shop.domain).first.uninstalled_at
+      expect(uninstalled_at).not_to eq nil
+    end
   end
-
-  # Add tests for unsubscribing shop subscriptions and that shop is uninstalled
-
 end
