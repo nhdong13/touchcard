@@ -1,5 +1,4 @@
 require "ac_integrator"
-require "slack_notify"
 
 class Shop < ActiveRecord::Base
   has_many :card_orders, dependent: :destroy
@@ -45,7 +44,7 @@ class Shop < ActiveRecord::Base
         shop.sync_shopify_metadata
         shop.get_last_month
         add_to_email_list(shop.email)
-        SlackNotify.install(shop.domain, shop.email, shop.owner, shop.last_month)
+        SlackNotifyJob.perform_later(shop)
       else
         shop.token = session.token
         shop.save!
