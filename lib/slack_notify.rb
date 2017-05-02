@@ -7,7 +7,7 @@ class SlackNotify
     payload = {
       text: "A new shop has installed Touchcard: #{domain}\nemail: #{email}\nowner: #{owner}\n# new customers: #{shop_size}"
     }
-    send_to_slack(payload, is_background_job=true)
+    send_to_slack(payload, true)
   end
 
   def self.uninstall(domain)
