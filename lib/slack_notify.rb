@@ -7,7 +7,7 @@ class SlackNotify
     payload = {
       text: "A new shop has installed Touchcard: #{domain}\nemail: #{email}\nowner: #{owner}\n# new customers: #{shop_size}"
     }
-    send_to_slack(payload)
+    send_to_slack(payload, is_background_job=true)
   end
 
   def self.uninstall(domain)
@@ -41,13 +41,17 @@ class SlackNotify
 
   private
 
-  def self.send_to_slack(payload)
-    # WeeklyWins
-    secondary_url = "https://hooks.slack.com/services/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"
-    RestClient.post(secondary_url, payload.to_json)
+  def self.send_to_slack(payload, is_background_job=false)
+    if is_background_job
+      SendToSlackJob.perform_later(payload)
+    else
+      # WeeklyWins
+      secondary_url = "https://hooks.slack.com/services/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"
+      RestClient.post(secondary_url, payload.to_json)
 
-    # TeamTouchcard
-    resp = RestClient.post(ENV["SLACK_URL"], payload.to_json)
-    resp.code
+      # TeamTouchcard
+      resp = RestClient.post(ENV["SLACK_URL"], payload.to_json)
+      resp.code
+    end
   end
 end
