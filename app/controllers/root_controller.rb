@@ -1,4 +1,4 @@
-class RootController < AuthenticatedController
+class RootController < ShopifyApp::AuthenticatedController
   # get the redis cloud connection
   def redis
     uri = URI.parse(ENV['REDISCLOUD_URL'])
