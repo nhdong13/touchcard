@@ -1,7 +1,12 @@
 ActiveAdmin.register Shop do
   includes :subscriptions
+  includes :card_orders
 
   index do
+    div class: 'top_pagination' do
+      paginated_collection(collection, download_links: false)
+    end
+
     column :id
     column :domain
     column :created_at
