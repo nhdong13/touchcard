@@ -36,15 +36,16 @@ We use S3 in two unrelated ways:
 
 1) We use it to host the postcards that are uploaded by users. This is on the following servers. These are accessed via the rails application.
 
-touchcard-data (production)
-touchcard-data-staging
-touchcard-data-dev
+`touchcard-data (production)`
+`touchcard-data-staging`
+`touchcard-data-dev`
 
 
 2) We use it to host our client Ember application, which is deployed via the ember cli lightning deploy method. The rails application is not directly aware of these. It only knows of the location via the attached redis instance. The ember client deploys directly to these buckets.
 
-touchcard-client (production)
-touchcard-client-staging
-touchcard-client-dev
+`touchcard-client (production)`
+`touchcard-client-staging`
+`touchcard-client-dev`
+
 
 
