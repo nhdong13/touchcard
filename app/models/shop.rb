@@ -33,7 +33,7 @@ class Shop < ActiveRecord::Base
 
     def add_to_email_list(email)
       ac = AcIntegrator::NewInstall.new
-      ac.add_email_to_list(email)
+      # ac.add_email_to_list(email)
     end
 
     def store(session)
