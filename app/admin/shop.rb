@@ -2,6 +2,16 @@ ActiveAdmin.register Shop do
   includes :subscriptions
   includes :card_orders
 
+  remove_filter :postcards
+  remove_filter :orders
+  remove_filter :token
+  remove_filter :charges
+  remove_filter :charge_amount
+  remove_filter :charge_date
+  remove_filter :plan_name
+  remove_filter :shopify_created_at
+  remove_filter :shopify_updated_at
+
   index do
     div class: 'top_pagination' do
       paginated_collection(collection, download_links: false)
