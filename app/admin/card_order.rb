@@ -1,4 +1,5 @@
 ActiveAdmin.register CardOrder do
+  actions :index, :show
 
   index do
     column :type

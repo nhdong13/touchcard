@@ -1,4 +1,5 @@
 ActiveAdmin.register Filter do
+  actions :index, :show
 
   index do
     column :id
@@ -9,5 +10,5 @@ ActiveAdmin.register Filter do
   show do
     attributes_table :id, :created_at, :updated_at
   end
-  
+
 end

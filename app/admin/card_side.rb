@@ -1,4 +1,5 @@
 ActiveAdmin.register CardSide do
+  actions :index, :show
 
   index do
     column :id
