@@ -10,6 +10,7 @@ class CardOrder < ActiveRecord::Base
   validates :shop, :card_side_front, :card_side_back, presence: true
 
   after_initialize :ensure_defaults
+  before_update :convert_discount_pct if: Proc.new { |co| co.discount_pct.present? }
 
   delegate :current_subscription, to: :shop
 
@@ -59,5 +60,9 @@ class CardOrder < ActiveRecord::Base
     # 4-6 business days delivery according to lob
     # TODO handle international + 5 to 7 business days
     send_date = arrive_by - 1.week
+  end
+
+  def convert_discount_pct
+    self.discount_pct = -discount_pct
   end
 end
