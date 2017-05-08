@@ -93,28 +93,9 @@ class Shop < ActiveRecord::Base
     ShopifyAPI::Base.activate_session(Shop.retrieve(id))
   end
 
-  def new_discount(percent, expiration, code)
-    url = shopify_api_path + "/price_rules.json"
-
-    price_rule = HTTParty.post(url,
-      body: {
-        price_rule: {
-          target_type: "line_item",
-          target_selection: "all",
-          allocation_method: "each",
-          value_type: "percentage",
-          value: -percent,
-          once_per_customer: true,
-          customer_selection: "all",
-          starts_at: Time.now,
-          ends_at: expiration
-        }
-      })
-
-    logger.info price_rule.body
-    raise "Error registering price rule" unless price_rule.success?
-
-    discount_code_url = shopify_api_path + "/price_rules/#{price_rule.id}/discount_codes.json"
+  def new_discount(percent, expiration, price_rule_id, code)
+    discount_code_url = shopify_api_path + "/price_rules/#{price_rule_id}/discount_codes.json"
+    
     discount_code = HTTParty.post(discount_code_url,
       body: {
         discount_code: {

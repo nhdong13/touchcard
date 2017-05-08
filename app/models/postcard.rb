@@ -53,6 +53,7 @@ class Postcard < ActiveRecord::Base
     card_order.shop.new_discount(
       discount_pct,
       discount_exp_at,
+      price_rule_id,
       code)
     code
   end
@@ -102,6 +103,7 @@ class Postcard < ActiveRecord::Base
     if card_order.discount?
       self.discount_pct = card_order.discount_pct
       self.discount_exp_at = estimated_arrival + card_order.discount_exp.weeks
+      self.price_rule_id = create_price_rule
       self.discount_code = generate_discount_code
     end
 
@@ -130,5 +132,31 @@ class Postcard < ActiveRecord::Base
     self.date_sent = Date.today
     self.postcard_id = sent_card["id"]
     self.save! # TODO: Add error handling here
+  end
+
+  def create_price_rule
+    shopify_api_path = "https://#{ShopifyApp.configuration.api_key}:#{token}@#{domain}/admin"
+    url = shopify_api_path + "/price_rules.json"
+
+    price_rule = HTTParty.post(url,
+      body: {
+        price_rule: {
+          target_type: "line_item",
+          target_selection: "all",
+          allocation_method: "each",
+          value_type: "percentage",
+          value: discount_pct,
+          once_per_customer: true,
+          customer_selection: "all",
+          starts_at: Time.now,
+          ends_at: discount_exp_at
+        }
+      })
+
+    logger.info price_rule.body
+    raise "Error registering price rule" unless price_rule.success?
+    # Check how to rescue this exception
+
+    price_rule.id
   end
 end
