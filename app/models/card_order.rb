@@ -10,7 +10,7 @@ class CardOrder < ActiveRecord::Base
   validates :shop, :card_side_front, :card_side_back, presence: true
 
   after_initialize :ensure_defaults
-  before_update :convert_discount_pct if: Proc.new { |co| co.discount_pct.present? }
+  before_update :convert_discount_pct, if: :discount_pct_changed?
 
   delegate :current_subscription, to: :shop
 
