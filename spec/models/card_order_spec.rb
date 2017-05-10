@@ -1,6 +1,43 @@
 require "rails_helper"
 
 RSpec.describe CardOrder, type: :model do
+
+
+
+  describe "#send_postcard?" do
+    it "returns false if total amount is insufficient" do
+      filter = create(:filter)
+      filter.filter_data["minimum"] = 50
+
+      card_order = setup_card_order
+      card_order.filters = [filter]
+
+      order = create(:order)
+      order.total_line_items_price = 6000 # $60.00
+      order.total_price = 1050 # $10.50
+
+      expect(card_order.send_postcard?(order)).to eq false
+    end
+
+    it "returns true if total_price is high enough" do
+      filter = create(:filter)
+      filter.filter_data["minimum"] = 50
+
+      card_order = setup_card_order
+      card_order.filters = [filter]
+      order = create(:order)
+
+      order.total_line_items_price = 6000 # $60.00
+      order.total_price = 5001 # $50.01
+
+      puts filter.inspect
+      puts order.inspect
+
+      expect(card_order.send_postcard?(order)).to eq true
+    end
+
+  end
+
   describe "#cards_sent" do
     it "count number of postcards sent for current shop subscription" do
       card_order = setup_card_order
