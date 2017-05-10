@@ -25,7 +25,7 @@ rspec:
 
 rails:
   variables:
-    DATABASE_URL: "postgresql://postgres:postgres@postgres:5432/$POSTGRES_DB"]
+    DATABASE_URL: "postgresql://postgres:postgres@postgres:5432/$POSTGRES_DB"
     RAILS_ENV: "test"
   script:
   - bundle exec rake db:migrate
