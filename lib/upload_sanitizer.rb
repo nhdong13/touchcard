@@ -7,6 +7,8 @@ class UploadSanitizer
 
   def sanitize
     # Remove any character that aren't 0-9, A-Z, or a-z
-    name.gsub(/[^0-9A-Z.]/i, '_')
+    result = name.gsub(/[^0-9A-Z.]/i, '_')
+    result = "_" + result if result[0] == '.'
+    result
   end
 end

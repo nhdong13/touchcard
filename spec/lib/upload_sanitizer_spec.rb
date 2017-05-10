@@ -21,5 +21,17 @@ RSpec.describe UploadSanitizer do
       sanitizer = UploadSanitizer.new(name)
       expect(sanitizer.sanitize).to eq "A_B_c_d_e_F_g_H_i_j_k__l_m__n_o_P_r_s5.jpg"
     end
+
+    it "does not allow hidden file" do
+      name = ".abracadabra..PNG"
+      sanitizer = UploadSanitizer.new(name)
+      expect(sanitizer.sanitize).to eq "_.abracadabra..PNG"
+    end
+
+    it "handles an empty filename" do
+      name = ".jpg"
+      sanitizer = UploadSanitizer.new(name)
+      expect(sanitizer.sanitize).to eq "_.jpg"
+    end
   end
 end
