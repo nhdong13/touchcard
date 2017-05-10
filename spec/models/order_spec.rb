@@ -9,18 +9,23 @@ RSpec.describe Order, type: :model do
       is_order_connected_to_postcard?
     end
 
-    it "connects order to postcard based on lowercased discount code" do
+    it "connects order to postcard based on lowercase discount code" do
       order.discount_codes.first["code"] = "abc-def-ghi"
       is_order_connected_to_postcard?
     end
 
-    it "connects order to postcard based on mixcased discount code" do
+    it "connects order to postcard based on mixed cased discount code" do
       order.discount_codes.first["code"] = "abc-DEF-ghi"
       is_order_connected_to_postcard?
     end
 
     it "connects order to postcard based on capitalized discount code" do
       order.discount_codes.first["code"] = "Abc-def-ghi"
+      is_order_connected_to_postcard?
+    end
+
+    it "connects order to postcard based on ALL CAPS discount code" do
+      order.discount_codes.first["code"] = "ABC-DEF-GHI"
       is_order_connected_to_postcard?
     end
   end
