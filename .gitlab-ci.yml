@@ -21,5 +21,7 @@ before_script:
   - RAILS_ENV=test bundle exec rake db:create db:schema:load
   
 rspec:
+  variables:
+    DATABASE_URL: "postgresql://postgres:postgres@postgres:5432/$POSTGRES_DB"
   script:
   - RAILS_ENV=test bundle exec rspec
