@@ -23,5 +23,9 @@ before_script:
 rspec:
   variables:
     DATABASE_URL: "postgresql://postgres:postgres@postgres:5432/$POSTGRES_DB"
+    AWS_ACCESS_KEY_ID: 'DUMMY'
+    AWS_SECRET_ACCESS_KEY: 'DUMMY'
+    AWS_BUCKET_NAME: 'DUMMY'
+    AWS_REGION: 'DUMMY'
   script:
   - RAILS_ENV=test bundle exec rspec
