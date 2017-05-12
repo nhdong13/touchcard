@@ -2,10 +2,8 @@ require "rails_helper"
 
 RSpec.describe CardOrder, type: :model do
 
-
-
   describe "#send_postcard?" do
-    it "returns false if total amount is insufficient" do
+    it "returns false if total amount is insufficient regardless of line items price" do
       filter = create(:filter)
       filter.filter_data["minimum"] = 50
 
@@ -30,8 +28,24 @@ RSpec.describe CardOrder, type: :model do
       order.total_line_items_price = 6000 # $60.00
       order.total_price = 5001 # $50.01
 
-      puts filter.inspect
-      puts order.inspect
+      expect(card_order.send_postcard?(order)).to eq true
+    end
+
+    it "returns false when the order cost does not exceed the filter cost" do
+      filter = create(:filter)
+      filter.filter_data["minimum"] = 10.00
+      card_order = setup_card_order
+      card_order.filters = [filter]
+      order = create(:order)
+      order.total_price = 1000 # $10.00
+
+      expect(card_order.send_postcard?(order)).to eq false
+    end
+
+    it "returns true for no cost order when there is no filter" do
+      card_order = setup_card_order
+      order = create(:order)
+      order.total_price = 0
 
       expect(card_order.send_postcard?(order)).to eq true
     end
