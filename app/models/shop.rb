@@ -45,7 +45,7 @@ class Shop < ActiveRecord::Base
         shop.sync_shopify_metadata
         shop.get_last_month
         add_to_email_list(shop.email)
-        SlackNotify.install(shop.domain, shop.email, shop.owner, shop.last_month)
+        SlackNotify.install(shop.domain, shop.email, shop.owner, shop.last_month, true)
       else
         shop.token = session.token
         shop.save!
