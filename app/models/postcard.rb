@@ -36,7 +36,10 @@ class Postcard < ActiveRecord::Base
   end
 
   def estimated_transit_days
-    international? ? 10 : 5
+    international? ? 15 : 6
+    # Lob.com estimates 4-6 domestic and 5-7 extra for international. In reality we've seen
+    # international cards take longer. Since coupon expiry is based on this figure, I've added
+    # a few days to reduce the chance of expired coupons arriving
   end
 
   def to_address
