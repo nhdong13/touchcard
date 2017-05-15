@@ -5,7 +5,7 @@ ShopifyApp.configure do |config|
   config.scope = "read_orders, read_products, read_customers, write_price_rules, write_marketing_events"
   config.embedded_app = true
   config.webhooks = [
-    { topic: "orders/create", format: "json", fields: %w(id customer), address: "#{ENV['APP_URL']}/webhooks/orders_create" },
-    { topic: "app/uninstalled", format: "json", fields: %w(id domain), address: "#{ENV['APP_URL']}/webhooks/app_uninstalled" }
+    { topic: "orders/create", format: "json", fields: %w(id customer), address: "#{ENV['APP_URL']}/new_order" },
+    { topic: "app/uninstalled", format: "json", fields: %w(id domain), address: "#{ENV['APP_URL']}/uninstall" }
   ]
 end
