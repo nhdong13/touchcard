@@ -27,7 +27,7 @@ Rails.application.routes.draw do
 
   # Shopify webhook routes
   post '/new_order',  to:   'shopify_app/webhooks#receive', defaults: { type: 'orders_create' }
-  post '/uninstall',  to:   'shopify_app/webhooks#recieve', defaults: { type: 'app_uninstalled' }
+  post '/uninstall',  to:   'shopify_app/webhooks#receive', defaults: { type: 'app_uninstalled' }
 
   # HTML Routes for Card Templates
   resources :card_orders, only: [:update]
