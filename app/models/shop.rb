@@ -174,6 +174,10 @@ class Shop < ActiveRecord::Base
     credit - subscriptions.first.quantity
   end
 
+  def return_credit
+    credit += 1
+    self.save!
+  end
 
   # Console admin method for listing all stores that have activated with Stripe
   def self.find_active
