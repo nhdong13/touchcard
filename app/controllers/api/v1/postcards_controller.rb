@@ -11,7 +11,7 @@ class Api::V1::PostcardsController < Api::BaseController
   end
 
   def cancel
-    sucess = @postcard.cancel
+    success = @postcard.cancel
 
     return render_validation_errors(@postcard) unless success
     render json: @postcard, serializer: PostcardSerializer
