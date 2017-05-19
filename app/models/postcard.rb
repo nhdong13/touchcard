@@ -131,4 +131,10 @@ class Postcard < ActiveRecord::Base
     self.postcard_id = sent_card["id"]
     self.save! # TODO: Add error handling here
   end
+
+  def cancel
+    self.canceled = true
+    self.save!
+    self.shop.increment_credit
+  end
 end

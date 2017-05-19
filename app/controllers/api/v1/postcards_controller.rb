@@ -1,5 +1,5 @@
 class Api::V1::PostcardsController < Api::BaseController
-  before_action :set_postcard, only: [:show, :update, :destoy]
+  before_action :set_postcard, only: [:show, :destoy, :cancel]
 
   def index
     @postcards = @current_shop.postcards.where(paid: true).order(updated_at: :desc).limit(20)
@@ -10,10 +10,8 @@ class Api::V1::PostcardsController < Api::BaseController
     render json: @postcard, serializer: PostcardSerializer
   end
 
-  def update
-    shop = @postcard.shop
-    success = @postcard.update_attributes(postcard_params)
-    shop.return_credit if @postcard.canceled_changed? && @postcard.canceled
+  def cancel
+    sucess = @postcard.cancel
 
     return render_validation_errors(@postcard) unless success
     render json: @postcard, serializer: PostcardSerializer
@@ -24,7 +22,7 @@ class Api::V1::PostcardsController < Api::BaseController
   def set_postcard
     @postcard= Postcard.find_by(id: params[:id])
     return render_not_found unless @postcard
-    render_authorization_error if @postcard.shop_id != @current_shop.id
+    render_authorization_error if @postcard.shop.id != @current_shop.id
   end
 
   def postcard_params

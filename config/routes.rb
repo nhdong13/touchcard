@@ -9,7 +9,9 @@ Rails.application.routes.draw do
         collection { get :current }
       end
       resources :card_orders, only: [:index, :show, :create, :update]
-      resources :postcards, only: [:index, :show, :create, :update]
+      resources :postcards, only: [:index, :show, :create, :update] do
+        patch 'cancel', on: :member
+      end
       resources :line_items, only: [:index, :show]
       resources :subscriptions, only: [:show, :create, :update]
       resources :plans, only: [:show, :index]
