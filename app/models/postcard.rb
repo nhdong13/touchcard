@@ -95,6 +95,7 @@ class Postcard < ActiveRecord::Base
 
   def send_card
     return logger.info "sending postcard:#{id} that is not paid for" unless paid?
+    return cancel unless address_is_valid?
     # TODO: all kinds of error handling
     # Test lob
     @lob = Lob.load
@@ -136,5 +137,9 @@ class Postcard < ActiveRecord::Base
     self.canceled = true
     self.save!
     self.shop.increment_credit
+  end
+
+  def address_is_valid?
+    to_address.values.any? { |a| a.nil? || a.empty? }
   end
 end
