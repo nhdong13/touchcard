@@ -41,4 +41,8 @@ class Address < ActiveRecord::Base
       address_zip: zip
     }
   end
+
+  def is_valid?
+    address1.present?
+  end
 end

@@ -21,6 +21,7 @@ class WebhookController < ApplicationController
 
     # Only new customers recieve postcards at the moment
     return logger.info "Not a new customer" unless order.customer.new_customer?
+    return logger.info "Address is not valid" unless default_address.is_valid?
     # Create a new card and schedule to send
     post_sale_order = @shop.card_orders.find_by(
       enabled: true,
