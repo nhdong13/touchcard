@@ -60,7 +60,7 @@ class Postcard < ActiveRecord::Base
   def self.send_all
     num_failed = 0
     todays_cards = Postcard.joins(:shop)
-      .where("paid = TRUE AND sent = FALSE AND send_date <= ?
+      .where("paid = TRUE AND sent = FALSE AND canceled = FALSE AND send_date <= ?
               AND shops.approval_state != ?", Time.now, "denied")
     todays_cards.each do |card|
       begin
