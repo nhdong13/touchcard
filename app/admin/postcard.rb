@@ -1,6 +1,12 @@
 ActiveAdmin.register Postcard do
   actions :index, :show
 
+  member_action :cancel, method: :patch do
+    card = Postcard.find(params[:id])
+    card.cancel
+    redirect_to admin_postcards_path
+  end
+
   index do
     div class: 'top_pagination' do
       paginated_collection(collection, download_links: false)
@@ -20,7 +26,9 @@ ActiveAdmin.register Postcard do
     column :discount_exp_at
     column :canceled
 
-    actions
+    actions do |card|
+      link_to "Cancel", { action: 'cancel', id: card }, method: :patch unless card.canceled
+    end
   end
 
   show do
