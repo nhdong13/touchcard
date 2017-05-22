@@ -1,4 +1,4 @@
-image: "ruby:2.2.0"
+image: "ruby:2.3.3"
 
 services:
   - postgres:latest
@@ -19,7 +19,7 @@ before_script:
   - gem install bundler  --no-ri --no-rdoc
   - RAILS_ENV=test bundle install -j $(nproc) --path vendor
   - RAILS_ENV=test bundle exec rake db:create db:schema:load
-  
+
 rspec:
   variables:
     DATABASE_URL: "postgresql://postgres:postgres@postgres:5432/$POSTGRES_DB"
@@ -33,7 +33,6 @@ rspec:
     APP_URL: 'DUMMY'
     SHOPIFY_REDIRECT_URI: 'DUMMY'
     REDISCLOUD_URL: 'DUMMY'
-    SLACK_URL: 'https://hooks.slack.com/services/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'
     MAIL_FROM: 'DUMMY'
     MAILGUN_API_KEY: 'DUMMY'
     MAILGUN_DOMAIN: 'DUMMY'
@@ -41,6 +40,5 @@ rspec:
     AC_API_KEY: 'DUMMY'
     AC_INSTALLED_SHOP_LIST_ID: 'DUMMY'
     SUBSCRIPTIONS_GOAL_STRING: 'DUMMY'
-    STRIPE_SECRET: 'sk_test_XmSQarP4dtq5bqeA8S7U3r7t'
   script:
   - RAILS_ENV=test bundle exec rspec
