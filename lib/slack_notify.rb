@@ -42,6 +42,7 @@ class SlackNotify
   private
 
   def self.send_to_slack(payload)
+    return if Rails.env.development?
     # WeeklyWins
     secondary_url = "https://hooks.slack.com/services/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"
     RestClient.post(secondary_url, payload.to_json)

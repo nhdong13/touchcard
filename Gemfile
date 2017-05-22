@@ -23,13 +23,13 @@ gem "sdoc", "~> 0.4.0", group: :doc
 
 # Admin interface
 gem "devise", "~> 3.5"
-gem "activeadmin", git: "https://github.com/activeadmin/activeadmin", :ref => "d75bbca"
+gem "activeadmin", "~> 1.0.0"
 
 # API serializer
 gem "active_model_serializers", "~> 0.8.0"
 
 # Shopify app
-gem "shopify_app", ">= 7.2.3"
+gem "shopify_app", "~> 7.2.3"
 
 # Stripe
 gem 'stripe', git: 'https://github.com/stripe/stripe-ruby'
