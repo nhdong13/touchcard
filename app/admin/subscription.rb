@@ -10,7 +10,7 @@ ActiveAdmin.register Subscription do
     subscription = Subscription.find(params[:id])
 
     subscription.change_quantity(new_quantity)
-    redirect_to admin_subscriptions_path
+    redirect_to admin_subscription_path(subscription)
   end
 
   index do
