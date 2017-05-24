@@ -1,8 +1,16 @@
 ActiveAdmin.register Subscription do
   actions :index, :show
 
-  member_action :change_quantity, method: :get do
+  member_action :quantity_change, method: :get do
+    @subscription = Subscription.find(params[:id])
+  end
 
+  member_action :change_quantity, method: :put do
+    new_quantity = params[:subscription][:quantity].to_i
+    subscription = Subscription.find(params[:id])
+
+    subscription.change_quantity(new_quantity)
+    redirect_to admin_subscriptions_path
   end
 
   index do
@@ -11,7 +19,7 @@ ActiveAdmin.register Subscription do
     column :current_period_start
     column :current_period_end
     actions do |subscription|
-      link_to "Change Quantity", change_quantity_admin_subscription_path(subscription)
+      link_to "Change Quantity", quantity_change_admin_subscription_path(subscription)
     end
   end
 
