@@ -4,4 +4,8 @@ ShopifyApp.configure do |config|
   config.secret = ENV['SHOPIFY_CLIENT_API_SECRET']
   config.scope = "read_orders, read_products, read_customers, write_price_rules, write_marketing_events"
   config.embedded_app = true
+  config.webhooks = [
+    { topic: "orders/create", format: "json", fields: %w(id customer), address: "#{ENV['APP_URL']}/new_order" },
+    { topic: "app/uninstalled", format: "json", fields: %w(id domain), address: "#{ENV['APP_URL']}/uninstall" }
+  ]
 end
