@@ -39,8 +39,12 @@ Rails.application.routes.draw do
   # Support page
   get '/support',   to: 'home#support'
 
+  # Routes for updating scope
+  get '/edit_scope', to: 'root#edit_scope'
+  post '/update_scope', to: 'root#update_scope'
+
   # Shopify Engine
-  root :to => 'home#index'
+  root :to => 'root#app'
   mount ShopifyApp::Engine, at: '/'
   get '/app' => 'root#app'
   get '/app/*path' => 'root#app'

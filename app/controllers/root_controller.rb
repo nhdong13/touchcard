@@ -1,4 +1,5 @@
 class RootController < ShopifyApp::AuthenticatedController
+  before_action :set_shop, only: ['app', 'update_scope']
   # get the redis cloud connection
   def redis
     uri = URI.parse(ENV['REDISCLOUD_URL'])
@@ -21,25 +22,32 @@ class RootController < ShopifyApp::AuthenticatedController
 
   # dynamically setup shopify variables
   def app
-
-    # # NOTE: May want to move this code to a separate method to keep things tidy
-    # shop = Shop.find(session[:shopify])
-    # if shop.granted_scopes_match(ShopifyApp.configuration.scope)
-    #   # NOTE: You can start with this code, but once it's working we should insert a notification step
-    #   # for the customer. "We need to upgrade your app", with an OK button which triggers the re-login
-    #   redirect_to "/login?shop=#{@shop_session.url}"  # Note: Only triggers update screen if scopes mismatch
-    #   return
-    # end
-
-
-    text = bootstrap_index(params[:index_key], 'touchcard-app')
-    shopify_js = "//cdn.shopify.com/s/assets/external/app.js?"
-    if text.present?
-      shopify_key = ENV['SHOPIFY_CLIENT_API_KEY']
-      text.gsub!("inject:shopify_client_api_key", shopify_key ? shopify_key : "")
-      text.gsub!("inject:shop_origin_url", @shop_session ? "https://#{@shop_session.url}" : "")
-      text.gsub!(shopify_js, "#{shopify_js}#{Time.now.strftime('%Y%m%d%H')}")
+    if @shop.granted_scopes_match?(ShopifyApp.configuration.scope)
+      text = bootstrap_index(params[:index_key], 'touchcard-app')
+      shopify_js = "//cdn.shopify.com/s/assets/external/app.js?"
+      if text.present?
+        shopify_key = ENV['SHOPIFY_CLIENT_API_KEY']
+        text.gsub!("inject:shopify_client_api_key", shopify_key ? shopify_key : "")
+        text.gsub!("inject:shop_origin_url", @shop_session ? "https://#{@shop_session.url}" : "")
+        text.gsub!(shopify_js, "#{shopify_js}#{Time.now.strftime('%Y%m%d%H')}")
+      end
+      render text: text
+    else
+      redirect_to action: 'edit_scope'
     end
-    render text: text
+  end
+
+  def edit_scope
+  end
+
+  def update_scope
+    @shop.set_new_scopes(ShopifyApp.configuration.scope)
+    redirect_to "/login?shop=#{@shop_session.url}"
+  end
+
+  private
+
+  def set_shop
+    @shop = Shop.find(session[:shopify])
   end
 end
