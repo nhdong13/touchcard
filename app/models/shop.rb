@@ -197,7 +197,7 @@ class Shop < ActiveRecord::Base
     ShopifyAPI::Session.temp(domain, token, &block)
   end
 
-  def set_new_scopes(scopes)
+  def update_scopes(scopes)
     self.oauth_scopes = scopes.split(", ")
     self.save!
   end
