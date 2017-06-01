@@ -198,12 +198,12 @@ class Shop < ActiveRecord::Base
   end
 
   def set_new_scopes(scopes)
-    self.oauth_scopes = scopes.split(",")
+    self.oauth_scopes = scopes.split(", ")
     self.save!
   end
 
   def granted_scopes_match?(shopify_scopes)
-    scopes = shopify_scopes.split(",")
+    scopes = shopify_scopes.split(", ")
     oauth_scopes.present? ? oauth_scopes.uniq.sort == scopes.uniq.sort : false
   end
 end
