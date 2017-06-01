@@ -2,8 +2,6 @@ require "ac_integrator"
 require "slack_notify"
 
 class Shop < ActiveRecord::Base
-  serialize :oauth_scopes, Array
-
   has_many :card_orders, dependent: :destroy
   has_many :postcards, through: :card_orders
   has_many :charges
@@ -196,12 +194,18 @@ class Shop < ActiveRecord::Base
   end
 
   def update_scopes(scopes)
-    self.oauth_scopes = scopes.split(", ")
+    self.oauth_scopes = scopes
     self.save!
   end
 
   def granted_scopes_match?(shopify_scopes)
-    scopes = shopify_scopes.split(", ")
-    oauth_scopes.present? ? oauth_scopes.uniq.sort == scopes.uniq.sort : false
+    if oauth_scopes.present?
+      scopes = shopify_scopes.split(", ")
+      shop_scopes = oauth_scopes.split(", ")
+
+      shop_scopes.uniq.sort == scopes.uniq.sort
+    else
+     false
+    end
   end
 end
