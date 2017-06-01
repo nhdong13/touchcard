@@ -31,14 +31,20 @@ class Shop < ActiveRecord::Base
 
   class << self
 
+    # TODO: Should this should live with the session store methods?
+    # TODO: Does this need to be background-tasked?
     def add_to_email_list(email)
       ac = AcIntegrator::NewInstall.new
       ac.add_email_to_list(email)
     end
 
+    # Session store
     def store(session)
       shop = Shop.find_by(domain: session.url)
       if shop.nil?
+        # granted_scopes = ShopifyApp.configuration.scope
+        # shop = new(domain: session.url, token: session.token, oauth_scopes: granted_scopes)
+        # TODO: Replace the line below with the line above
         shop = new(domain: session.url, token: session.token)
         shop.save!
         shop.get_shopify_id
@@ -55,6 +61,7 @@ class Shop < ActiveRecord::Base
       shop.id
     end
 
+    # Session store
     def retrieve(id)
       if shop = find_by(id: id)
         ShopifyAPI::Session.new(shop.domain, shop.token)

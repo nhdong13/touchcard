@@ -21,6 +21,17 @@ class RootController < ShopifyApp::AuthenticatedController
 
   # dynamically setup shopify variables
   def app
+
+    # # NOTE: May want to move this code to a separate method to keep things tidy
+    # shop = Shop.find(session[:shopify])
+    # if shop.granted_scopes_match(ShopifyApp.configuration.scope)
+    #   # NOTE: You can start with this code, but once it's working we should insert a notification step
+    #   # for the customer. "We need to upgrade your app", with an OK button which triggers the re-login
+    #   redirect_to "/login?shop=#{@shop_session.url}"  # Note: Only triggers update screen if scopes mismatch
+    #   return
+    # end
+
+
     text = bootstrap_index(params[:index_key], 'touchcard-app')
     shopify_js = "//cdn.shopify.com/s/assets/external/app.js?"
     if text.present?
