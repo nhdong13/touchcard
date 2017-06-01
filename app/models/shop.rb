@@ -44,10 +44,8 @@ class Shop < ActiveRecord::Base
     def store(session)
       shop = Shop.find_by(domain: session.url)
       if shop.nil?
-        # granted_scopes = ShopifyApp.configuration.scope
-        # shop = new(domain: session.url, token: session.token, oauth_scopes: granted_scopes)
-        # TODO: Replace the line below with the line above
-        shop = new(domain: session.url, token: session.token)
+        granted_scopes = ShopifyApp.configuration.scope
+        shop = new(domain: session.url, token: session.token, oauth_scopes: granted_scopes)
         shop.save!
         shop.get_shopify_id
         shop.sync_shopify_metadata
