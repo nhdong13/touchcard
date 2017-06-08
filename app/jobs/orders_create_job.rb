@@ -14,6 +14,7 @@ class OrdersCreateJob < ActiveJob::Base
 
       # Only new customers recieve postcards at the moment
       return puts  "Not a new customer" unless order.customer.new_customer?
+      return puts "Address is not valid" unless default_address.is_valid?
       # Create a new card and schedule to send
       post_sale_order = shop.card_orders.find_by(
         enabled: true,
