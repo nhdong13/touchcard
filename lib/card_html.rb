@@ -26,7 +26,7 @@ module CardHtml
             height: 4.25in;
             margin: 0;
             padding: 0;
-            background-image: url(#{options[:background_image]});
+            background-image: url('#{options[:background_image]}');
             background-size: 6.25in 4.25in;
             background-repeat: no-repeat;
           }

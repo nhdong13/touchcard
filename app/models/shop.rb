@@ -42,18 +42,14 @@ class Shop < ActiveRecord::Base
         shop = new(domain: session.url, token: session.token)
         shop.save!
         shop.get_shopify_id
-        shop.uninstall_hook
-        shop.new_order_hook
         shop.sync_shopify_metadata
         shop.get_last_month
         add_to_email_list(shop.email)
-        SlackNotify.install(shop.domain, shop.email, shop.owner, shop.last_month)
+        SlackNotify.install(shop.domain, shop.email, shop.owner, shop.last_month, true)
       else
         shop.token = session.token
         shop.save!
         shop.get_shopify_id
-        shop.uninstall_hook
-        shop.new_order_hook
         ShopifyAPI::Session.new(shop.domain, shop.token)
       end
       shop.id
@@ -115,50 +111,6 @@ class Shop < ActiveRecord::Base
       self.shopify_id = ShopifyAPI::Shop.current.id
       self.save!
     else
-      return
-    end
-  end
-
-
-  def uninstall_hook
-    # Add the uninstall webhook if there is none
-    if uninstall_id.nil?
-      new_sess
-      # Create new hook
-      if ENV["RAILS_ENV"] == "production"
-        new_hook = ShopifyAPI::Webhook.create(
-          topic: "app/uninstalled",
-          format: "json",
-          fields: %w(id domain),
-          address: "#{ENV['APP_URL']}/uninstall"
-        )
-        self.uninstall_id = new_hook.id
-        self.save!
-      end
-    end
-  end
-
-  def new_order_hook
-    # Add the uninstall webhook if there is none
-    if webhook_id.nil?
-      new_sess
-      # Create new hook
-      if ENV["RAILS_ENV"] == "production"
-        new_hook = ShopifyAPI::Webhook.create(
-          topic: "orders/create",
-          format: "json",
-          fields: %w(id customer),
-          address: "#{ENV['APP_URL']}/new_order"
-        )
-        self.webhook_id = new_hook.id
-        self.save!
-        return
-      else
-        # Skip if not production environment
-        return
-      end
-    else
-      # Skip if there is a hook already
       return
     end
   end
@@ -252,5 +204,9 @@ class Shop < ActiveRecord::Base
     raise "Error registering price rule" unless price_rule.success?
 
     price_rule
+  end
+
+  def with_shopify_session(&block)
+    ShopifyAPI::Session.temp(domain, token, &block)
   end
 end
