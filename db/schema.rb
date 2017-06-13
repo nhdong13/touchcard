@@ -251,7 +251,7 @@ ActiveRecord::Schema.define(version: 20170508123128) do
     t.boolean  "expiration_notification_sent", default: false
     t.integer  "discount_pct"
     t.datetime "discount_exp_at"
-    t.integer  "price_rule_id"
+    t.integer  "price_rule_id",                limit: 8
   end
 
   add_index "postcards", ["customer_id"], name: "index_postcards_on_customer_id", using: :btree
