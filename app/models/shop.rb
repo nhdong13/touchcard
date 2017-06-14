@@ -184,7 +184,7 @@ class Shop < ActiveRecord::Base
   def new_price_rule(percent, expiration)
     url = shopify_api_path + "/price_rules.json"
 
-    price_rule = HTTParty.post(url,
+    response = HTTParty.post(url,
       body: {
         price_rule: {
           title: "#{name} Discount",
@@ -200,10 +200,10 @@ class Shop < ActiveRecord::Base
         }
       })
 
-    logger.info price_rule.body
-    raise "Error registering price rule" unless price_rule.success?
+    logger.info response.body
+    raise "Error registering price rule" unless response.success?
 
-    price_rule
+    response.parsed_response["price_rule"]
   end
 
   def with_shopify_session(&block)

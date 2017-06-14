@@ -132,6 +132,6 @@ class Postcard < ActiveRecord::Base
 
   def generate_price_rule
     price_rule = card_order.shop.new_price_rule(discount_pct, discount_exp_at)
-    price_rule.parsed_response["price_rule"]["id"]
+    price_rule["id"]
   end
 end
