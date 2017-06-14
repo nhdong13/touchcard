@@ -25,7 +25,7 @@ class RootController < ShopifyApp::AuthenticatedController
     scope = ShopifyApp.configuration.scope
 
     shop.update_scopes(scope) if session[:update_scope]
-    if shop.granted_scopes_match?(scope)
+    if shop.granted_scopes_suffice?(scope)
       session[:update_scope] = nil if session[:update_scope]
       boot_app
     else
