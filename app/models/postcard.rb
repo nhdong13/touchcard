@@ -50,11 +50,7 @@ class Postcard < ActiveRecord::Base
     raise "Error generating discount code" unless discount_pct and discount_exp_at
     code = ("A".."Z").to_a.sample(9).join
     code = "#{code[0...3]}-#{code[3...6]}-#{code[6...9]}"
-    card_order.shop.new_discount(
-      discount_pct,
-      discount_exp_at,
-      price_rule_id,
-      code)
+    card_order.shop.new_discount(price_rule_id, code)
     code
   end
 

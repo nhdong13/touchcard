@@ -89,7 +89,7 @@ class Shop < ActiveRecord::Base
     ShopifyAPI::Base.activate_session(Shop.retrieve(id))
   end
 
-  def new_discount(percent, expiration, price_rule_id, code)
+  def new_discount(price_rule_id, code)
     url = shopify_api_path + "/price_rules/#{price_rule_id}/discount_codes.json"
 
     discount_code = HTTParty.post(url,
