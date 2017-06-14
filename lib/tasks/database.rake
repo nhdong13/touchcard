@@ -14,8 +14,7 @@ namespace :convert_discount_values do
   desc "Convert positive discount values to negative for all Postcards scheduled for sending after migration to price rules"
   task :for_postcards => :environment do
     postcards_for_conversion = Postcards.joins(:shops)
-      .where("paid = TRUE AND sent = FALSE AND send_date >= ?
-            AND shops.approval_state != ?", Time.now, "denied")
+      .where("paid = TRUE AND sent = FALSE AND send_date >= ?", Time.now)
 
     postcards_for_conversion.each do |postcard|
       if postcard.discount_pct > 0
