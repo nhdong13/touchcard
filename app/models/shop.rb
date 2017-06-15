@@ -62,6 +62,7 @@ class Shop < ActiveRecord::Base
     # Session store
     def retrieve(id)
       if shop = find_by(id: id)
+        # ShopifyAPI::Session.new(shop.domain, nil)
         ShopifyAPI::Session.new(shop.domain, shop.token)
       end
     end
@@ -198,14 +199,21 @@ class Shop < ActiveRecord::Base
     self.save!
   end
 
-  def granted_scopes_match?(shopify_scopes)
-    if oauth_scopes.present?
-      scopes = shopify_scopes.split(", ")
-      shop_scopes = oauth_scopes.split(", ")
 
-      shop_scopes.uniq.sort == scopes.uniq.sort
+  # Filter out read_XYZ scope if we already have write_XYZ scope
+  def normalized_scopes(scopes)
+    scope_list = scopes.to_s.split(",").map(&:strip).reject(&:empty?).uniq
+    ignore_scopes = scope_list.map { |scope| scope =~ /\Awrite_(.*)\z/ && "read_#{$1}" }.compact
+    scope_list - ignore_scopes
+  end
+
+  def granted_scopes_suffice?(required_scopes)
+    if oauth_scopes.present?
+      required_scopes = normalized_scopes(required_scopes)
+      existing_scopes = normalized_scopes(oauth_scopes)
+      (required_scopes - existing_scopes).empty?
     else
-     false
+      false
     end
   end
 end

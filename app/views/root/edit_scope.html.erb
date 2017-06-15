@@ -1,15 +1,20 @@
 <div class="row text-center scopes-msg">
   <p>
-    Hi there! Shopify has changed the way that discount generation works.
-    For Touchcard to continue work with your shop we need to update permissions.
-    (No worries, this is actually less than we had before.)
+    Hi there!
   </p>
-  <p> When you are redirected please click accept and we’ll bring you right back to our App. </p>
-  <p> If you have any questions or issues please get in touch: <%= mail_to 'support@touchcard.co' %> </p>
   <p>
-    Thanks,
+    For Touchcard to continue working we need to update permissions.
+  </p>
+  <br>
+  <p> Please click Ok below and accept the new permissions when you're redirected. We’ll bring you right back to our App. </p>
+  <br>
+  <p>
+    Thanks,<br>
     The Touchcard Team
   </p>
-
+  <br>
   <%= button_to "Ok", { action: "update_scope" }, { class: 'btn btn-primary' } %>
+  <br>
+  <br>
+  <p id="mail_support_line"> Questions or issues? Please let us know! <%= mail_to 'support@touchcard.co' %> </p>
 </div>
