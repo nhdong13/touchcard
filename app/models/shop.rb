@@ -196,6 +196,8 @@ class Shop < ActiveRecord::Base
 
   def update_scopes(scopes)
     self.oauth_scopes = scopes
+    puts scopes
+    puts 'ENTERING UPDATE SCOPES'
     self.save!
   end
 
@@ -211,6 +213,10 @@ class Shop < ActiveRecord::Base
     if oauth_scopes.present?
       required_scopes = normalized_scopes(required_scopes)
       existing_scopes = normalized_scopes(oauth_scopes)
+      puts required_scopes
+      puts "REQUIRED SCOPES"
+      puts existing_scopes
+      puts "EXISTING SCOPES"
       (required_scopes - existing_scopes).empty?
     else
       false
