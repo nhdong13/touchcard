@@ -23,10 +23,8 @@ class RootController < ShopifyApp::AuthenticatedController
   def app
     shop = Shop.find(session[:shopify])
     scope = ShopifyApp.configuration.scope
-
-    shop.update_scopes(scope) if session[:update_scope]
+    
     if shop.granted_scopes_match?(scope)
-      session[:update_scope] = nil if session[:update_scope]
       boot_app
     else
       redirect_to action: 'edit_scope'

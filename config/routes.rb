@@ -44,7 +44,7 @@ Rails.application.routes.draw do
   post '/update_scope', to: 'root#update_scope'
 
   # Shopify Engine
-  root :to => 'root#app'
+  root :to => 'home#index'
   mount ShopifyApp::Engine, at: '/'
   get '/app' => 'root#app'
   get '/app/*path' => 'root#app'
