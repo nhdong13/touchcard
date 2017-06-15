@@ -21,8 +21,6 @@ class RootController < ShopifyApp::AuthenticatedController
   end
 
   def scopecheck
-    puts session[:update_scope]
-    puts 'SESSION UPDATE SCOPE'
     if session[:update_scope]
       update_scopes_and_redirect_to_app_url(@shop, @scope)
     else
@@ -32,8 +30,6 @@ class RootController < ShopifyApp::AuthenticatedController
 
   # dynamically setup shopify variables
   def app
-    puts @shop.granted_scopes_suffice?(@scope)
-    puts "GRANTED SCOPES SUFFICE"
     if @shop.granted_scopes_suffice?(@scope)
       boot_app
     else
@@ -52,8 +48,6 @@ class RootController < ShopifyApp::AuthenticatedController
   private
 
   def update_scopes_and_redirect_to_app_url(shop, scope)
-    puts scope
-    puts "ENTERING UPDATE SCOPES AND REDIRECT TO APP URL"
     shop.update_scopes(scope)
     session[:update_scope] = nil
     redirect_to action: 'app'
