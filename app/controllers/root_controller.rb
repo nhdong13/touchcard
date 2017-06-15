@@ -1,4 +1,5 @@
 class RootController < ShopifyApp::AuthenticatedController
+  before_action :set_shop_and_scopes, only: [:scopecheck, :app]
   # get the redis cloud connection
   def redis
     uri = URI.parse(ENV['REDISCLOUD_URL'])
@@ -19,12 +20,17 @@ class RootController < ShopifyApp::AuthenticatedController
     render layout: "embedded_app"
   end
 
+  def scopecheck
+    if session[:update_scope]
+      update_scopes_and_redirect_to_app_url(@shop, @scope)
+    else
+      redirect_to action: 'app'
+    end
+  end
+
   # dynamically setup shopify variables
   def app
-    shop = Shop.find(session[:shopify])
-    scope = ShopifyApp.configuration.scope
-
-    if shop.granted_scopes_suffice?(scope)
+    if @shop.granted_scopes_suffice?(@scope)
       boot_app
     else
       redirect_to action: 'edit_scope'
@@ -41,6 +47,12 @@ class RootController < ShopifyApp::AuthenticatedController
 
   private
 
+  def update_scopes_and_redirect_to_app_url(shop, scope)
+    shop.update_scopes(scope)
+    session[:update_scope] = nil
+    redirect_to action: 'app'
+  end
+
   def boot_app
     text = bootstrap_index(params[:index_key], 'touchcard-app')
     shopify_js = "//cdn.shopify.com/s/assets/external/app.js?"
@@ -52,4 +64,10 @@ class RootController < ShopifyApp::AuthenticatedController
     end
     render text: text
   end
+
+  def set_shop_and_scopes
+    @shop = Shop.find(session[:shopify])
+    @scope = ShopifyApp.configuration.scope
+  end
+
 end
