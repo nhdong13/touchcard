@@ -89,21 +89,6 @@ class Shop < ActiveRecord::Base
     ShopifyAPI::Base.activate_session(Shop.retrieve(id))
   end
 
-  def new_discount(price_rule_id, code)
-    url = shopify_api_path + "/price_rules/#{price_rule_id}/discount_codes.json"
-
-    discount_code = HTTParty.post(url,
-      body: {
-        discount_code: {
-          code: code
-        }
-      })
-
-    logger.info discount_code.body
-    raise "Error registering discount code" unless discount_code.success?
-    code
-  end
-
   def get_shopify_id
     # Add the shopify_id if it's empty
     if shopify_id.nil?
@@ -179,31 +164,6 @@ class Shop < ActiveRecord::Base
     self.shopify_updated_at = metadata.updated_at
     self.metadata           = metadata.attributes
     self.save!
-  end
-
-  def new_price_rule(percent, expiration, code)
-    url = shopify_api_path + "/price_rules.json"
-
-    response = HTTParty.post(url,
-      body: {
-        price_rule: {
-          title: "#{code}",
-          target_type: "line_item",
-          target_selection: "all",
-          allocation_method: "each",
-          value_type: "percentage",
-          value: percent,
-          once_per_customer: true,
-          customer_selection: "all",
-          starts_at: Time.now,
-          ends_at: expiration
-        }
-      })
-
-    logger.info response.body
-    raise "Error registering price rule" unless response.success?
-
-    response.parsed_response["price_rule"]
   end
 
   def with_shopify_session(&block)
