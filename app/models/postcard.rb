@@ -48,10 +48,8 @@ class Postcard < ActiveRecord::Base
 
   def generate_discount_code
     raise "Error generating discount code" unless discount_pct and discount_exp_at
-    code = ("A".."Z").to_a.sample(9).join
-    code = "#{code[0...3]}-#{code[3...6]}-#{code[6...9]}"
-    card_order.shop.new_discount(price_rule_id, code)
-    code
+    card_order.shop.new_discount(price_rule_id, @code)
+    @code
   end
 
   def self.send_all
@@ -96,6 +94,7 @@ class Postcard < ActiveRecord::Base
     # Test lob
     @lob = Lob.load
     self.estimated_arrival = estimated_transit_days.business_days.from_now
+    generate_code
     if card_order.discount?
       self.discount_pct = card_order.discount_pct
       self.discount_exp_at = estimated_arrival + card_order.discount_exp.weeks
@@ -130,8 +129,13 @@ class Postcard < ActiveRecord::Base
     self.save! # TODO: Add error handling here
   end
 
+  def generate_code
+    code = ("A".."Z").to_a.sample(9).join
+    @code = "#{code[0...3]}-#{code[3...6]}-#{code[6...9]}"
+  end
+
   def generate_price_rule
-    price_rule = card_order.shop.new_price_rule(discount_pct, discount_exp_at)
+    price_rule = card_order.shop.new_price_rule(discount_pct, discount_exp_at, @code)
     price_rule["id"]
   end
 end

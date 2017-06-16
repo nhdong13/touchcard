@@ -181,13 +181,13 @@ class Shop < ActiveRecord::Base
     self.save!
   end
 
-  def new_price_rule(percent, expiration)
+  def new_price_rule(percent, expiration, code)
     url = shopify_api_path + "/price_rules.json"
 
     response = HTTParty.post(url,
       body: {
         price_rule: {
-          title: "#{name} Discount",
+          title: "#{code}",
           target_type: "line_item",
           target_selection: "all",
           allocation_method: "each",
