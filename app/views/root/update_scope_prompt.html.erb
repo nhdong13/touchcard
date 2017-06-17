@@ -1,4 +1,4 @@
-<div class="row text-center scopes-msg">
+<div class="row scopes-msg">
   <p>
     Hi there!
   </p>
@@ -13,7 +13,9 @@
     The Touchcard Team
   </p>
   <br>
-  <%= button_to "Ok", { action: "update_scope" }, { class: 'btn btn-primary' } %>
+  <div class="text-center">
+  <%= button_to "Ok", { action: "update_scope_redirect" }, { class: 'btn btn-primary btn-lg' } %>
+  </div>
   <br>
   <br>
   <p id="mail_support_line"> Questions or issues? Please let us know! <%= mail_to 'support@touchcard.co' %> </p>
