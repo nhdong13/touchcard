@@ -31,15 +31,19 @@ class Shop < ActiveRecord::Base
 
   class << self
 
+    # TODO: Should this should live with the session store methods?
+    # TODO: Does this need to be background-tasked?
     def add_to_email_list(email)
       ac = AcIntegrator::NewInstall.new
       ac.add_email_to_list(email)
     end
 
+    # Session store
     def store(session)
       shop = Shop.find_by(domain: session.url)
       if shop.nil?
-        shop = new(domain: session.url, token: session.token)
+        granted_scopes = ShopifyApp.configuration.scope
+        shop = new(domain: session.url, token: session.token, oauth_scopes: granted_scopes)
         shop.save!
         shop.get_shopify_id
         shop.sync_shopify_metadata
@@ -55,8 +59,10 @@ class Shop < ActiveRecord::Base
       shop.id
     end
 
+    # Session store
     def retrieve(id)
       if shop = find_by(id: id)
+        # ShopifyAPI::Session.new(shop.domain, nil)
         ShopifyAPI::Session.new(shop.domain, shop.token)
       end
     end
@@ -186,5 +192,28 @@ class Shop < ActiveRecord::Base
 
   def with_shopify_session(&block)
     ShopifyAPI::Session.temp(domain, token, &block)
+  end
+
+  def update_scopes(scopes)
+    self.oauth_scopes = scopes
+    self.save!
+  end
+
+
+  # Filter out read_XYZ scope if we already have write_XYZ scope
+  def normalized_scopes(scopes)
+    scope_list = scopes.to_s.split(",").map(&:strip).reject(&:empty?).uniq
+    ignore_scopes = scope_list.map { |scope| scope =~ /\Awrite_(.*)\z/ && "read_#{$1}" }.compact
+    scope_list - ignore_scopes
+  end
+
+  def granted_scopes_suffice?(required_scopes)
+    if oauth_scopes.present?
+      required_scopes = normalized_scopes(required_scopes)
+      existing_scopes = normalized_scopes(oauth_scopes)
+      (required_scopes - existing_scopes).empty?
+    else
+      false
+    end
   end
 end
