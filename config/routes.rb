@@ -42,7 +42,7 @@ Rails.application.routes.draw do
 
 
   # Shopify Engine
-  root :to => 'root#index'
+  root :to => 'root#oauth_entry_point' # See comments in controller
   mount ShopifyApp::Engine, at: '/'
   get '/app' => 'root#app'
   get '/app/*path' => 'root#app'

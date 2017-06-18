@@ -1,5 +1,5 @@
 class RootController < ShopifyApp::AuthenticatedController
-  before_action :set_shop_and_scopes, only: [:index, :app]
+  before_action :set_shop_and_scopes, only: [:oauth_entry_point, :app]
   # get the redis cloud connection
   def redis
     uri = URI.parse(ENV['REDISCLOUD_URL'])
@@ -15,16 +15,6 @@ class RootController < ShopifyApp::AuthenticatedController
     index_key = params[:index_key] || redis.get("#{app}:index:current")
     redis.get("#{app}:index:#{index_key}")
   end
-
-  def index
-    # We're sent here when a new auth or auth update happens.
-    if session[:update_scope]
-      @shop.update_scopes(@scope)
-      session[:update_scope] = nil
-    end
-    redirect_to action: 'app'
-  end
-
 
   def app
     if @shop.granted_scopes_suffice?(@scope)
@@ -42,19 +32,24 @@ class RootController < ShopifyApp::AuthenticatedController
     end
   end
 
-  def update_scope_prompt
-    # Show a page that requests the user to update their oauth scope
+  # We're (only) sent here when a new oauth or oauth update happens
+  # via shopify_app gem / sessions_concern.rb / root_url
+  # We rely on that to give us a common place for updating oauth scopes
+  def oauth_entry_point
+    @shop.update_scopes(@scope)
+    redirect_to action: 'app'
   end
 
+  # Show a page that requests the user to update their oauth scope
+  def update_scope_prompt
+  end
 
+  # Redirect the user to login, which will update their oauth scope
   def update_scope_redirect
-    # Redirect the user to login, which will update their oauth scope
-    session[:update_scope] = true
     redirect_to "/login?shop=#{@shop_session.url}"
   end
 
   private
-
 
   def set_shop_and_scopes
     @shop ||= Shop.find(session[:shopify])
