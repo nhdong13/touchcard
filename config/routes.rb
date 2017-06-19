@@ -26,8 +26,8 @@ Rails.application.routes.draw do
   post '/stripe/events', to: 'stripe_webhook#hook'
 
   # Shopify webhook routes
-  post '/new_order',  to:   'webhook#new_order'
-  post '/uninstall',  to:   'webhook#uninstall'
+  post '/new_order',  to:   'shopify_app/webhooks#receive', defaults: { type: 'orders_create' }
+  post '/uninstall',  to:   'shopify_app/webhooks#receive', defaults: { type: 'app_uninstalled' }
 
   # HTML Routes for Card Templates
   resources :card_orders, only: [:update]
@@ -36,11 +36,13 @@ Rails.application.routes.draw do
   devise_for :admin_users, ActiveAdmin::Devise.config
   ActiveAdmin.routes(self)
 
-  # Support page
-  get '/support',   to: 'home#support'
+  # # Routes for updating scope
+  get '/update_scope_prompt', to: 'root#update_scope_prompt'
+  post '/update_scope_redirect', to: 'root#update_scope_redirect'
+
 
   # Shopify Engine
-  root :to => 'home#index'
+  root :to => 'root#oauth_entry_point' # See comments in controller
   mount ShopifyApp::Engine, at: '/'
   get '/app' => 'root#app'
   get '/app/*path' => 'root#app'

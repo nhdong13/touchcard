@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161030191753) do
+ActiveRecord::Schema.define(version: 20170601131258) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -283,6 +283,7 @@ ActiveRecord::Schema.define(version: 20161030191753) do
     t.datetime "uninstalled_at"
     t.datetime "last_login_at"
     t.json     "metadata",                     default: {}
+    t.text     "oauth_scopes"
   end
 
   add_index "shops", ["domain"], name: "index_shops_on_domain", unique: true, using: :btree

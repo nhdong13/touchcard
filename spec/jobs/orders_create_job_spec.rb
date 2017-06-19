@@ -1,10 +1,7 @@
-require "rails_helper"
+require 'rails_helper'
 
-RSpec.describe WebhookController, type: :controller do
-  let(:json) { JSON.parse(response.body) }
-  let!(:shop) { create(:shop, credit: 2) }
-  let!(:card_order) { create(:card_order, shop: shop) }
-  let(:order) { create(:order) }
+RSpec.describe OrdersCreateJob, type: :job do
+  include ActiveJob::TestHelper
 
   def stub_order(key, overrides={})
     order_text = File.read(
@@ -16,51 +13,40 @@ RSpec.describe WebhookController, type: :controller do
     order_obj[:order]
   end
 
-  def set_auth_header(params)
-    digest = OpenSSL::Digest.new("sha256")
-    api_secret = ENV["SHOPIFY_CLIENT_API_SECRET"]
-    digested = OpenSSL::HMAC.digest(digest, api_secret, params.to_query)
-    @request.headers["HTTP_X_SHOPIFY_HMAC_SHA256"] = Base64.encode64(digested).strip
+  let!(:shop) { create(:shop, credit: 2) }
+  let!(:card_order) { create(:card_order, shop: shop) }
+  let(:order) { create(:order) }
+  subject(:job) do
+    webhook_text = File.read("#{Rails.root}/spec/fixtures/shopify/webhooks/orders_create.json")
+    webhook_obj = JSON.parse(webhook_text).with_indifferent_access
+    described_class.perform_later(shop_domain: shop.domain, webhook: webhook_obj)
   end
 
-  def set_domain_header(shop)
-    @request.headers["X-Shopify-Shop-Domain"] = shop.domain
+  it 'queues the job' do
+    expect { job }
+      .to change(ActiveJob::Base.queue_adapter.enqueued_jobs, :size).by(1)
   end
 
-  def post_new_order(params)
-    set_auth_header(params)
-    set_domain_header(shop)
-    post :new_order, params
+  it 'is in default queue' do
+    expect(OrdersCreateJob.new.queue_name).to eq('default')
   end
 
-  describe "#new_order" do
-    context "already exists" do
+  describe "#preform" do
+    context "order already exists" do
       it "ignores" do
-        post_new_order(id: order.shopify_id)
-        expect(response.status).to eq 200
+        stub_order("no_customer")
+        perform_enqueued_jobs { job }
         expect(Customer.count).to eq 0
         expect(Postcard.count).to eq 0
         expect(Order.count).to eq 1
       end
     end
 
-    context "no customer" do
-      it "saves order but not postcard" do
-        s_order = stub_order("no_customer")
-        post_new_order(id: s_order[:id])
-        expect(response.status).to eq 200
-        expect(Customer.count).to eq 0
-        expect(Postcard.count).to eq 0
-        expect(Order.count).to eq 1
-      end
-    end
-
-    context "has customer" do
-      context "no default address" do
+    context "order has customer" do
+      context "without default address" do
         it "saves order but not postcard" do
-          s_order = stub_order("no_default_address")
-          post_new_order(id: s_order[:id])
-          expect(response.status).to eq 200
+          stub_order("no_default_address")
+          perform_enqueued_jobs { job }
           expect(Customer.count).to eq 1
           expect(Address.count).to eq 0
           expect(Postcard.count).to eq 0
@@ -69,35 +55,52 @@ RSpec.describe WebhookController, type: :controller do
       end
 
       context "who is new" do
-        let(:s_order) { stub_order("everything") }
-        before(:each) { post_new_order(id: s_order[:id]) }
 
         context "valid card order" do
           it "creates postcard" do
+            stub_order("everything")
+            perform_enqueued_jobs { job }
+
             expect(Postcard.count).to eq 1
           end
 
           it "deducts shop credits" do
+            stub_order("everything")
+            perform_enqueued_jobs { job }
+
             expect(Shop.find(shop.id).credit).to eq shop.credit - 1
           end
         end
 
         context "shop not enough credits" do
           before(:each) { shop.update_attributes(credit: 0) }
+
           it "doesn't create postcard" do
-            expect(Postcard.count).to eq 1
+            stub_order("everything")
+            perform_enqueued_jobs { job }
+
+            expect(Postcard.count).to eq 0
           end
 
           it "doesn't deducts shop credits" do
+            stub_order("everything")
+            perform_enqueued_jobs { job }
+
             expect(Shop.find(shop.id).credit).to eq shop.credit
           end
         end
 
         it "creates customer" do
+          stub_order("everything")
+          perform_enqueued_jobs { job }
+
           expect(Customer.count).to eq 1
         end
 
         it "creates customer address" do
+          stub_order("everything")
+          perform_enqueued_jobs { job }
+
           expect(Address.count).to eq 1
         end
       end
@@ -113,7 +116,7 @@ RSpec.describe WebhookController, type: :controller do
           end
 
           it "connects order to postcard" do
-            post_new_order(id: s_order[:id])
+            perform_enqueued_jobs { job }
             expect(Order.last.postcard.id).to eq(postcard.id)
             expect(postcard.card_order.revenue).to eq 40994
             expect(postcard.shop.revenue).to eq 40994
@@ -126,7 +129,7 @@ RSpec.describe WebhookController, type: :controller do
           end
 
           it "updates the customer data" do
-            post_new_order(id: s_order[:id])
+            perform_enqueued_jobs { job }
             expected = s_order[:customer].slice(:email, :first_name, :last_name)
             expect(Customer.first.attributes).to include(expected)
           end
@@ -140,7 +143,7 @@ RSpec.describe WebhookController, type: :controller do
                                     order: order, customer: customer) }
           before(:each) { order.update_attributes!(customer: customer) }
           it "connects order to postcard" do
-            post_new_order(id: s_order[:id])
+            perform_enqueued_jobs { job }
             new_order = Order.find_by(shopify_id: s_order[:id])
             expect(new_order.postcard_id).to eq(postcard.id)
             expect(postcard.card_order.revenue).to eq 40994
