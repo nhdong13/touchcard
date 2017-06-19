@@ -52,6 +52,7 @@ class Shop < ActiveRecord::Base
         SlackNotify.install(shop.domain, shop.email, shop.owner, shop.last_month, true)
       else
         shop.token = session.token
+        shop.uninstalled_at = nil
         shop.save!
         shop.get_shopify_id
         ShopifyAPI::Session.new(shop.domain, shop.token)
