@@ -1,7 +1,7 @@
 # Changelog
 
 
-## v1.1.20
+## v1.1.10
 
 - Track coupons even if they weren't entered as upper case 
 - Update oauth scopes. Remove unneeded writes, write_price_rules and write_marketing_events.  
