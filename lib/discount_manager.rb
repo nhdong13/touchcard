@@ -1,30 +1,32 @@
 class DiscountManager
-  attr_reader :code, :shopify_api_path
-
-  def initialize(shopify_api_path)
+  attr_writer :code, :price_rule_id
+  attr_reader :shopify_api_path
+  
+  def initialize(path, value, expire_at)
+    raise "Missing required values for creating price rule" unless value and expire_at
     @code = generate_code
-    @shopify_api_path = shopify_api_path
+    @path = path
+    @value = value
+    @expire_at = expire_at
   end
 
-  def create_discount(price_rule_id)
-    url = shopify_api_path + "/price_rules/#{price_rule_id}/discount_codes.json"
+  def create
+    create_price_rule
+    create_discount
+  end
 
-    discount_code = HTTParty.post(url,
+  def create_discount
+    response = HTTParty.post(discount_url,
       body: {
         discount_code: {
           code: code
         }
       })
-
-    Rails.logger.info discount_code.body
-    raise "Error registering discount code" unless discount_code.success?
-    code
+    handle_response(response, false)
   end
 
-  def create_price_rule(percent, expiration)
-    url = shopify_api_path + "/price_rules.json"
-
-    response = HTTParty.post(url,
+  def create_price_rule
+    response = HTTParty.post(price_rule_url,
       body: {
         price_rule: {
           title: "#{code}",
@@ -32,18 +34,32 @@ class DiscountManager
           target_selection: "all",
           allocation_method: "each",
           value_type: "percentage",
-          value: percent,
+          value: value,
           once_per_customer: true,
           customer_selection: "all",
           starts_at: Time.now,
-          ends_at: expiration
+          ends_at: expire_at
         }
       })
+    handle_response(response)
+  end
 
+  def discount_url
+    url = path + "/price_rules/#{price_rule_id}/discount_codes.json"
+  end
+
+  def price_rule_url
+    url = path + "/price_rules.json"
+  end
+
+  def handle_response(response, for_price_rule=true)
     Rails.logger.info response.body
-    raise "Error registering price rule" unless response.success?
-
-    response.parsed_response["price_rule"]
+    raise "Error registering #{for_price_rule ? "price rule" : "discount code"}" unless response.success?
+    if for_price_rule?
+      @price_rule_id = response.parsed_response["price_rule"]["id"]
+    else
+      @code = response.parsed_response["discount_code"]["code"]
+    end
   end
 
   private

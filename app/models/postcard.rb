@@ -47,12 +47,6 @@ class Postcard < ActiveRecord::Base
     address.to_lob_address
   end
 
-  def generate_discount_code
-    raise "Error generating discount code" unless discount_pct and discount_exp_at
-    @discount_manager.create_discount(price_rule_id)
-    @discount_manager.code
-  end
-
   def self.send_all
     num_failed = 0
     todays_cards = Postcard.joins(:shop)
@@ -95,12 +89,14 @@ class Postcard < ActiveRecord::Base
     # Test lob
     @lob = Lob.load
     self.estimated_arrival = estimated_transit_days.business_days.from_now
-    @discount_manager = DiscountManager.new(card_order.shop.shopify_api_path)
+
     if card_order.discount?
       self.discount_pct = card_order.discount_pct
       self.discount_exp_at = estimated_arrival + card_order.discount_exp.weeks
-      self.price_rule_id = generate_price_rule
-      self.discount_code = generate_discount_code
+      @discount_manager = DiscountManager.new(card_order.shop.shopify_api_path, discount_pct, discount_exp_at)
+      @discount_manager.create
+      self.price_rule_id = @discount_manager.price_rule_id
+      self.discount_code = @discount_manager.code
     end
 
     front_html, back_html = [
@@ -128,10 +124,5 @@ class Postcard < ActiveRecord::Base
     self.date_sent = Date.today
     self.postcard_id = sent_card["id"]
     self.save! # TODO: Add error handling here
-  end
-
-  def generate_price_rule
-    price_rule = @discount_manager.create_price_rule(discount_pct, discount_exp_at)
-    price_rule["id"]
   end
 end
