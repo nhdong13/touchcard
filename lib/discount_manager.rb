@@ -1,10 +1,10 @@
 class DiscountManager
-  attr_writer :code, :price_rule_id
-  attr_reader :shopify_api_path
-  
+  attr_accessor :discount_code, :price_rule_id
+  attr_reader :path, :value, :expire_at
+
   def initialize(path, value, expire_at)
     raise "Missing required values for creating price rule" unless value and expire_at
-    @code = generate_code
+    @discount_code = generate_code
     @path = path
     @value = value
     @expire_at = expire_at
@@ -19,7 +19,7 @@ class DiscountManager
     response = HTTParty.post(discount_url,
       body: {
         discount_code: {
-          code: code
+          code: discount_code
         }
       })
     handle_response(response, false)
@@ -29,7 +29,7 @@ class DiscountManager
     response = HTTParty.post(price_rule_url,
       body: {
         price_rule: {
-          title: "#{code}",
+          title: "#{discount_code}",
           target_type: "line_item",
           target_selection: "all",
           allocation_method: "each",
@@ -55,10 +55,10 @@ class DiscountManager
   def handle_response(response, for_price_rule=true)
     Rails.logger.info response.body
     raise "Error registering #{for_price_rule ? "price rule" : "discount code"}" unless response.success?
-    if for_price_rule?
+    if for_price_rule
       @price_rule_id = response.parsed_response["price_rule"]["id"]
     else
-      @code = response.parsed_response["discount_code"]["code"]
+      @discount_code = response.parsed_response["discount_code"]["code"]
     end
   end
 

@@ -96,7 +96,7 @@ class Postcard < ActiveRecord::Base
       @discount_manager = DiscountManager.new(card_order.shop.shopify_api_path, discount_pct, discount_exp_at)
       @discount_manager.create
       self.price_rule_id = @discount_manager.price_rule_id
-      self.discount_code = @discount_manager.code
+      self.discount_code = @discount_manager.discount_code
     end
 
     front_html, back_html = [
