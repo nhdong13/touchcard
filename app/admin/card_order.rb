@@ -1,7 +1,14 @@
 ActiveAdmin.register CardOrder do
+  includes :card_side_front
+  includes :card_side_back
+
   actions :index, :show
 
   remove_filter :postcards
+  remove_filter :card_side_front
+  remove_filter :card_side_back
+  remove_filter :shop
+  remove_filter :filters
 
   index do
     column :type
