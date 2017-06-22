@@ -13,22 +13,20 @@ RSpec.describe DiscountManager do
     expect(discount_manager.discount_code).to match(/[A-Z]{3}-[A-Z]{3}-[A-Z]{3}/)
   end
 
-  describe "handles creation of price rules and discount" do
-    # let!(:discount) { stub_shopify(:discounts, :create) }
-    # let!(:price_rule) { stub_shopify(:price_rules, :create) }
+  it "generates discount when values are correct" do
+    price_rule_id = stub_shopify(:price_rules, :create)[:price_rule][:id]
+    stub_shopify(:discounts, :create, for_discount: true, price_rule_id: price_rule_id, entity_uri: "discount_codes")
+    discount_manager.generate_discount
 
-    before(:each) do
-      stub_shopify(:price_rules, :create)
-      stub_shopify(:discounts, :create, discount: true, price_rule_id: discount_manager.price_rule_id)
-      discount_manager.create
-    end
+    expect(discount_manager.price_rule_id).to eq(price_rule_id)
+    expect(discount_manager.discount_code).to match(/[A-Z]{3}-[A-Z]{3}-[A-Z]{3}/)
+  end
 
-    it "with successful request for new price rule" do
-      expect(discount_manager.price_rule_id).to be_a(Bignum)
-    end
+  it "raises error when discount value is missing" do
+    expect{ DiscountManager.new(path, nil, card_order.discount_exp) }.to raise_error
+  end
 
-    it "creates discount" do
-      expect(discount_manager.discount_code).to match(/[A-Z]{3}-[A-Z]{3}-[A-Z]{3}/)
-    end
+  it "raises error when expire date is missing" do
+    expect{ DiscountManager.new(path, card_order.discount_pct, nil) }.to raise_error(RuntimeError)
   end
 end

@@ -24,13 +24,18 @@ module ShopifyHelper
     }.merge(options_in)
     response_text = File.read(
       "#{Rails.root}/spec/fixtures/shopify/#{entity}/#{action}/#{options[:example]}.json")
+
     response_obj = JSON.parse(response_text).with_indifferent_access
     base_uri = shop.shopify_api_path + "/"
-    uri = "#{base_uri}#{options[:entity_uri] || entity}"
+    if options[:for_discount]
+      uri = "#{base_uri}price_rules/#{options[:price_rule_id]}/#{options[:entity_uri] || entity}"
+    else
+      uri = "#{base_uri}#{options[:entity_uri] || entity}"
+    end
     uri = "#{uri}/#{response_obj[:id]}" if [:show, :update, :destroy].include?(action)
     method = action_to_method(action)
     response_obj.merge!(options[:overrides])
-    stub_request(method, "#{uri}.json").to_return(body: response_obj.to_json)
+    stub_request(method, "#{uri}.json").to_return(body: response_obj.to_json, headers: {'Content-Type' => 'application/json'})
     response_obj
   end
 end
