@@ -1,6 +1,8 @@
 ActiveAdmin.register CardOrder do
   actions :index, :show
 
+  remove_filter :postcards
+
   index do
     column :type
     column :discount_pct
