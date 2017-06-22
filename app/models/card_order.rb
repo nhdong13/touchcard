@@ -63,6 +63,6 @@ class CardOrder < ActiveRecord::Base
   end
 
   def convert_discount_pct
-    self.discount_pct = -discount_pct if discount_pct > 0
+    self.discount_pct = -discount_pct if discount_pct && discount_pct > 0
   end
 end

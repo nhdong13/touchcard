@@ -85,19 +85,17 @@ class Postcard < ActiveRecord::Base
 
   def send_card
     return logger.info "sending postcard:#{id} that is not paid for" unless paid?
+    return logger.info "postcard #{id} wasn't sent due to the missing discount value" unless card_order.discount?
     # TODO: all kinds of error handling
     # Test lob
     @lob = Lob.load
     self.estimated_arrival = estimated_transit_days.business_days.from_now
-
-    if card_order.discount?
-      self.discount_pct = card_order.discount_pct
-      self.discount_exp_at = estimated_arrival + card_order.discount_exp.weeks
-      @discount_manager = DiscountManager.new(card_order.shop.shopify_api_path, discount_pct, discount_exp_at)
-      @discount_manager.create
-      self.price_rule_id = @discount_manager.price_rule_id
-      self.discount_code = @discount_manager.discount_code
-    end
+    self.discount_pct = card_order.discount_pct
+    self.discount_exp_at = estimated_arrival + card_order.discount_exp.weeks
+    @discount_manager = DiscountManager.new(card_order.shop.shopify_api_path, discount_pct, discount_exp_at)
+    @discount_manager.generate_discount
+    self.price_rule_id = @discount_manager.price_rule_id
+    self.discount_code = @discount_manager.discount_code
 
     front_html, back_html = [
       card_order.card_side_front,

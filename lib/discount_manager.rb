@@ -10,19 +10,19 @@ class DiscountManager
     @expire_at = expire_at
   end
 
-  def create
+  def generate_discount
     create_price_rule
-    create_discount
+    create_discount_code
   end
 
-  def create_discount
+  def create_discount_code
     response = HTTParty.post(discount_url,
       body: {
         discount_code: {
           code: discount_code
         }
       })
-    handle_response(response, false)
+    handle_discount_response(response)
   end
 
   def create_price_rule
@@ -41,7 +41,7 @@ class DiscountManager
           ends_at: expire_at
         }
       })
-    handle_response(response)
+    handle_price_rule_response(response)
   end
 
   def discount_url
@@ -52,14 +52,16 @@ class DiscountManager
     url = path + "/price_rules.json"
   end
 
-  def handle_response(response, for_price_rule=true)
+  def handle_discount_response(response)
     Rails.logger.info response.body
-    raise "Error registering #{for_price_rule ? "price rule" : "discount code"}" unless response.success?
-    if for_price_rule
-      @price_rule_id = response.parsed_response["price_rule"]["id"]
-    else
-      @discount_code = response.parsed_response["discount_code"]["code"]
-    end
+    raise "Error registering discount code" unless response.success?
+    @discount_code = response.parsed_response["discount_code"]["code"]
+  end
+
+  def handle_price_rule_response(response)
+    Rails.logger.info response.body
+    raise "Error registering for_price_rule" unless response.success?
+    @price_rule_id = response.parsed_response["price_rule"]["id"]
   end
 
   private
