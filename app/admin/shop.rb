@@ -1,12 +1,11 @@
 ActiveAdmin.register Shop do
-  includes :subscriptions
-
   actions :index, :show
 
   remove_filter :card_orders
   remove_filter :postcards
   remove_filter :orders
   remove_filter :token
+  remove_filter :subscriptions
   remove_filter :charges
   remove_filter :charge_amount
   remove_filter :charge_date

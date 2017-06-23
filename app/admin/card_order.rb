@@ -4,7 +4,6 @@ ActiveAdmin.register CardOrder do
   remove_filter :postcards
   remove_filter :card_side_front
   remove_filter :card_side_back
-  remove_filter :shop
   remove_filter :filters
 
   index do

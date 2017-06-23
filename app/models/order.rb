@@ -48,8 +48,4 @@ class Order < ActiveRecord::Base
     Postcard.find_by(discount_code: codes, sent: true)
   end
 
-  # necessary for active admin
-  def display_name
-    self.id
-  end
 end
