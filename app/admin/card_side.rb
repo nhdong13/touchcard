@@ -10,6 +10,7 @@ ActiveAdmin.register CardSide do
     column :updated_at
     column :discount_y
     column :discount_x
+    actions
   end
 
   show do

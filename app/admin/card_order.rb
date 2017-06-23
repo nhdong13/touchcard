@@ -1,7 +1,4 @@
 ActiveAdmin.register CardOrder do
-  includes :card_side_front
-  includes :card_side_back
-
   actions :index, :show
 
   remove_filter :postcards
@@ -23,6 +20,7 @@ ActiveAdmin.register CardOrder do
     column :status
     column :created_at
     column :updated_at
+    actions
   end
 
   show do

@@ -1,6 +1,7 @@
 ActiveAdmin.register Postcard do
   actions :index, :show
-  remove_filter :card_orders
+  
+  remove_filter :card_order
 
   index do
     div class: 'top_pagination' do
