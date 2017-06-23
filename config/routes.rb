@@ -36,11 +36,13 @@ Rails.application.routes.draw do
   devise_for :admin_users, ActiveAdmin::Devise.config
   ActiveAdmin.routes(self)
 
-  # Support page
-  get '/support',   to: 'home#support'
+  # # Routes for updating scope
+  get '/update_scope_prompt', to: 'root#update_scope_prompt'
+  post '/update_scope_redirect', to: 'root#update_scope_redirect'
+
 
   # Shopify Engine
-  root :to => 'home#index'
+  root :to => 'root#oauth_entry_point' # See comments in controller
   mount ShopifyApp::Engine, at: '/'
   get '/app' => 'root#app'
   get '/app/*path' => 'root#app'

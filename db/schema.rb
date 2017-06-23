@@ -284,6 +284,7 @@ ActiveRecord::Schema.define(version: 20170623221814) do
     t.datetime "uninstalled_at"
     t.datetime "last_login_at"
     t.json     "metadata",                     default: {}
+    t.text     "oauth_scopes"
   end
 
   add_index "shops", ["domain"], name: "index_shops_on_domain", unique: true, using: :btree
