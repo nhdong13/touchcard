@@ -1,4 +1,6 @@
 ActiveAdmin.register Shop do
+  includes :subscriptions
+  
   actions :index, :show
 
   remove_filter :card_orders
