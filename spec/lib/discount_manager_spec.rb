@@ -23,10 +23,10 @@ RSpec.describe DiscountManager do
   end
 
   it "raises error when discount value is missing" do
-    expect{ DiscountManager.new(path, nil, card_order.discount_exp) }.to raise_error
+    expect{ DiscountManager.new(path, nil, card_order.discount_exp) }.to raise_error(RuntimeError)
   end
 
   it "raises error when expire date is missing" do
-    expect{ DiscountManager.new(path, card_order.discount_pct, nil) }.to raise_error
+    expect{ DiscountManager.new(path, card_order.discount_pct, nil) }.to raise_error(RuntimeError)
   end
 end
