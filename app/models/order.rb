@@ -47,5 +47,4 @@ class Order < ActiveRecord::Base
     codes = discount_codes.map { |dc| dc["code"].upcase }
     Postcard.find_by(discount_code: codes, sent: true)
   end
-
 end
