@@ -47,4 +47,9 @@ class Order < ActiveRecord::Base
     codes = discount_codes.map { |dc| dc["code"].upcase }
     Postcard.find_by(discount_code: codes, sent: true)
   end
+
+  # necessary for active admin
+  def display_name
+    self.id
+  end
 end

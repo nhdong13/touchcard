@@ -231,4 +231,9 @@ class Shop < ActiveRecord::Base
     self.metadata           = metadata.attributes
     self.save!
   end
+
+  # necessary for the active admin
+  def display_name
+    self.domain
+  end
 end
