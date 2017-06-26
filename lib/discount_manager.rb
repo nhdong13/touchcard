@@ -64,6 +64,10 @@ class DiscountManager
     @price_rule_id = response.parsed_response["price_rule"]["id"]
   end
 
+  def has_valid_code?
+    (/[A-Z]{3}-[A-Z]{3}-[A-Z]{3}/).match(discount_code)
+  end
+
   private
 
   def generate_code

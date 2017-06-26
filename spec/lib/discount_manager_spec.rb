@@ -19,7 +19,7 @@ RSpec.describe DiscountManager do
     discount_manager.generate_discount
 
     expect(discount_manager.price_rule_id).to eq(price_rule_id)
-    expect(discount_manager.discount_code).to match(/[A-Z]{3}-[A-Z]{3}-[A-Z]{3}/)
+    expect(discount_manager.has_valid_code?).to be_truthy
   end
 
   it "raises error when discount value is missing" do
