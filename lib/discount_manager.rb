@@ -2,6 +2,8 @@ class DiscountManager
   attr_accessor :discount_code, :price_rule_id
   attr_reader :path, :value, :expire_at
 
+  VALID_CODE_FORMAT = /[A-Z]{3}-[A-Z]{3}-[A-Z]{3}/
+
   def initialize(path, value, expire_at)
     raise "Missing required values for creating price rule" unless value and expire_at
     @discount_code = generate_code
@@ -65,7 +67,7 @@ class DiscountManager
   end
 
   def has_valid_code?
-    (/[A-Z]{3}-[A-Z]{3}-[A-Z]{3}/).match(discount_code)
+    !!(VALID_CODE_FORMAT =~ discount_code)
   end
 
   private
