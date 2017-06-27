@@ -1,5 +1,9 @@
 # Changelog
 
+## (Unreleased)
+
+- Change from Discounts API to Price Rules API (db:migrate + rake price_rules:make_discounts_negative)
+
 
 ## v1.1.10
 
