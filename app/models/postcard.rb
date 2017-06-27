@@ -88,7 +88,7 @@ class Postcard < ActiveRecord::Base
     # TODO: all kinds of error handling
     # Test lob
     @lob = Lob.load
-    self.estimated_arrival = estimated_transit_days.business_days.from_now
+    self.estimated_arrival = estimated_transit_days.business_days.from_now.end_of_day
 
     if card_order.discount?
       self.discount_pct = card_order.discount_pct
@@ -109,7 +109,7 @@ class Postcard < ActiveRecord::Base
         discount_x: card_side.discount_x,
         discount_y: card_side.discount_y,
         discount_pct: discount_pct.abs,
-        discount_exp: discount_exp_at ? discount_exp_at.strftime("%m/%d/%Y") : nil,
+        discount_exp: discount_exp_at ? (discount_exp_at - 1.day).strftime("%m/%d/%Y") : nil,
         discount_code: card_side.show_discount? ? discount_code : nil
       )
     end

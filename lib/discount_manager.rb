@@ -34,10 +34,11 @@ class DiscountManager
           title: "#{discount_code}",
           target_type: "line_item",
           target_selection: "all",
-          allocation_method: "each",
+          allocation_method: "across",
           value_type: "percentage",
           value: value,
-          once_per_customer: true,
+          once_per_customer: false,
+          usage_limit: 1,
           customer_selection: "all",
           starts_at: Time.now,
           ends_at: expire_at
