@@ -1,0 +1,14 @@
+{
+  "price_rule": {
+    "id": 3561328458,
+    "title": "XXX-YYY-ZZZ",
+    "target_type": "line_item",
+    "target_selection": "all",
+    "allocation_method": "each",
+    "value_type": "percentage",
+    "value": -15.0,
+    "once_per_customer": true,
+    "customer_selection": "all",
+    "starts_at": "2017-06-21T08:55:13-04:00"
+  }
+}

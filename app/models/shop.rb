@@ -96,24 +96,6 @@ class Shop < ActiveRecord::Base
     ShopifyAPI::Base.activate_session(Shop.retrieve(id))
   end
 
-  def new_discount(percent, expiration, code)
-    url = shopify_api_path + "/discounts.json"
-    response = HTTParty.post(url,
-      body: {
-        discount: {
-          discount_type: "percentage",
-          value: percent.to_s,
-          code: code,
-          ends_at: expiration,
-          starts_at: Time.now,
-          usage_limit: 1
-        }
-      })
-    logger.info response.body
-    raise "Error registering discount code" unless response.success?
-    code
-  end
-
   def get_shopify_id
     # Add the shopify_id if it's empty
     if shopify_id.nil?
