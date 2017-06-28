@@ -20,8 +20,8 @@ class CardOrder < ActiveRecord::Base
     filter = filters.first
     # if the filters are nil assume they're unbounded
     min = filter.filter_data["minimum"].to_f || -1.0
-    # TODO: when we create campaigns we may want to reintroduce a maximum value here.
-    spend > min
+    max = filter.filter_data["maximum"].to_f.positive? ? filter.filter_data["maximum"].to_f : 1_000_000_000.0
+    spend > min && spend < max
   end
 
   # number of postcards sent for current subscription
