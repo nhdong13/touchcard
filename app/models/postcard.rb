@@ -55,7 +55,7 @@ class Postcard < ActiveRecord::Base
     todays_cards.each do |card|
       begin
         card.send_card
-      rescue Exception => e
+      rescue => e
         num_failed += 1
         logger.error e
         NewRelic::Agent::notice_error(e.message)
@@ -108,7 +108,8 @@ class Postcard < ActiveRecord::Base
         background_image: card_side.image,
         discount_x: card_side.discount_x,
         discount_y: card_side.discount_y,
-        discount_pct: discount_pct.abs,
+        discount_pct: discount_pct ? discount_pct.abs : nil,
+        # Make customer think coupon expires a day early to avoid last minute disappoint for e.g. timezone issues
         discount_exp: discount_exp_at ? (discount_exp_at - 1.day).strftime("%m/%d/%Y") : nil,
         discount_code: card_side.show_discount? ? discount_code : nil
       )
