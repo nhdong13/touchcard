@@ -60,9 +60,10 @@ ActiveAdmin.register Shop do
     panel "Relevant Card Orders" do
       table_for shop.card_orders do
         column  :id
+        column  :enabled
+        column  :send_delay
         column  :discount_pct
         column  :discount_exp
-        column  :enabled
         column :card_side_front_id
         column :card_side_back_id
       end
