@@ -1,9 +1,9 @@
 # Changelog
 
-## v1.2.1
+## v1.2.2
 - Get ActiveAdmin working (internal admin panel). 
 
-## v1.2.0
+## v1.2.1
 
 - Change from Discounts API to Price Rules API (db:migrate + rake price_rules:make_discounts_negative)
 
