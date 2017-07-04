@@ -199,4 +199,9 @@ class Shop < ActiveRecord::Base
       false
     end
   end
+  
+  # necessary for the active admin
+  def display_name
+    self.domain
+  end
 end

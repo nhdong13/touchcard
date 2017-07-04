@@ -1,0 +1,5 @@
+<%= form_for @subscription, url: change_quantity_admin_subscription_path(@subscription), method: :put do |f| %>
+  Quantity: <%= f.number_field :quantity %><br />
+  <br />
+  <%= f.submit %>
+<% end %>
