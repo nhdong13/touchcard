@@ -1,5 +1,8 @@
 # Changelog
 
+## v1.2.3
+- Add Ember Metrics for Google Tag Manager & Intercom ('booted' in GTM)
+
 ## v1.2.2
 - Get ActiveAdmin working (internal admin panel). 
 
