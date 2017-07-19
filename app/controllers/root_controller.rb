@@ -22,9 +22,16 @@ class RootController < ShopifyApp::AuthenticatedController
       shopify_js = "//cdn.shopify.com/s/assets/external/app.js?"
       if text.present?
         shopify_key = ENV['SHOPIFY_CLIENT_API_KEY']
-        text.gsub!("inject:shopify_client_api_key", shopify_key ? shopify_key : "")
+        text.gsub!("inject:shopify_client_api_key", shopify_key || "")
         text.gsub!("inject:shop_origin_url", @shop_session ? "https://#{@shop_session.url}" : "")
         text.gsub!(shopify_js, "#{shopify_js}#{Time.now.strftime('%Y%m%d%H')}")
+
+        # Intercom User Identification
+        text.gsub!("inject:user_email", @shop.email || "")
+        text.gsub!("inject:user_name", @shop.name || "")
+        text.gsub!("inject:user_created_at", @shop.created_at.to_i.to_s || "")
+        text.gsub!("inject:user_shop_domain", @shop.domain || "")
+        text.gsub!("inject:user_intercom_hmac", intercom_hmac(@shop.domain) || "")
       end
       render text: text
     else
@@ -54,6 +61,15 @@ class RootController < ShopifyApp::AuthenticatedController
   def set_shop_and_scopes
     @shop ||= Shop.find(session[:shopify])
     @scope ||= ShopifyApp.configuration.scope
+  end
+
+
+  def intercom_hmac(user_id)
+    OpenSSL::HMAC.hexdigest(
+        'sha256', # hash function
+        ENV['INTERCOM_SECRET'], # secret key (keep safe!)
+        user_id # user's id
+    )
   end
 
 end
