@@ -26,7 +26,7 @@ class RootController < ShopifyApp::AuthenticatedController
         text.gsub!("inject:shop_origin_url", @shop_session ? "https://#{@shop_session.url}" : "")
         text.gsub!(shopify_js, "#{shopify_js}#{Time.now.strftime('%Y%m%d%H')}")
 
-        // Intercom User Identification
+        # Intercom User Identification
         text.gsub!("inject:user_email", @shop.email || "")
         text.gsub!("inject:user_name", @shop.name || "")
         text.gsub!("inject:user_created_at", @shop.created_at.to_i.to_s || "")
