@@ -14,6 +14,12 @@ class CardOrder < ActiveRecord::Base
 
   delegate :current_subscription, to: :shop
 
+  TYPES = ['PostSaleOrder', 'CustomerWinback', 'LifetimePurchaseThreshold']
+
+  def self.create_card(shop)
+    TYPES.each { |type| create!(type: type) }
+  end
+
   def send_postcard?(order)
     return true unless filters.count > 0
     spend = order.total_price / 100.0
