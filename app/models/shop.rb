@@ -1,6 +1,5 @@
 require "ac_integrator"
 require "slack_notify"
-require "shopify_scraper"
 
 class Shop < ActiveRecord::Base
   has_many :card_orders, dependent: :destroy
@@ -200,9 +199,6 @@ class Shop < ActiveRecord::Base
       false
     end
   end
-<<<<<<< HEAD
-  
-=======
 
   def card_last4
     return unless stripe_customer_id
@@ -219,10 +215,6 @@ class Shop < ActiveRecord::Base
     current_subscription.is_active? && !current_subscription.status == "canceled"
   end
 
-  def import_shopify_data
-    ShopifyDataImporter.new(self).call
-  end
->>>>>>> f3c3057... WIP - Implement Additional automation triggers
   # necessary for the active admin
   def display_name
     self.domain

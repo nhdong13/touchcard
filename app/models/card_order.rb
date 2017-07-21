@@ -17,7 +17,10 @@ class CardOrder < ActiveRecord::Base
   TYPES = ['PostSaleOrder', 'CustomerWinback', 'LifetimePurchaseThreshold']
 
   def self.create_card(shop)
-    TYPES.each { |type| create!(type: type) }
+    TYPES.each do |type|
+      next if shop.card_orders.find_by(type_name: type)
+      create!(type_name: type, shop: shop)
+    end
   end
 
   def send_postcard?(order)
