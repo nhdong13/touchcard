@@ -7,7 +7,7 @@ ActiveAdmin.register CardOrder do
   remove_filter :filters
 
   index do
-    column :type
+    column :type_name
     column :discount_pct
     column :discount_exp
     column :enabled
@@ -23,7 +23,7 @@ ActiveAdmin.register CardOrder do
   end
 
   show do
-    attributes_table :type,
+    attributes_table :type_name,
                      :discount_pct,
                      :discount_exp,
                      :enabled,

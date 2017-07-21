@@ -39,7 +39,7 @@ class Api::V1::CardOrdersController < Api::BaseController
 
   def create_params
     params.require(:card_order).permit(
-      :type,
+      :type_name,
       :discount_pct,
       :discount_exp,
       :enabled,
