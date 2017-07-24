@@ -32,6 +32,6 @@ class CustomerWinbackHandler
   end
 
   def get_sent_winback_postcards_number(customer)
-    Postcard.joins(:card_order).where(card_orders: { type: "Customer Winback" }, customer_id: customer.id).count
+    Postcard.joins(:card_order).where(card_orders: { type_name: "Customer Winback" }, customer_id: customer.id).count
   end
 end
