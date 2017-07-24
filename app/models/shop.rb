@@ -215,6 +215,10 @@ class Shop < ActiveRecord::Base
     current_subscription.is_active? && !current_subscription.status == "canceled"
   end
 
+  def has_all_card_order_types?
+    card_orders.pluck(:type_name).sort == CardOrder::TYPES.sort
+  end
+
   # necessary for the active admin
   def display_name
     self.domain

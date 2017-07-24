@@ -2,11 +2,11 @@ class Api::V1::CardOrdersController < Api::BaseController
   before_action :set_card_order, only: [:show, :update, :destroy]
 
   def index
-    # Make this properly
-    CardOrder.create_card(@current_shop)
-    @card_orders = @current_shop.card_orders
-    # @current_shop.card_orders || create_card_orders
-    # @card_orders = @current_shop.card_orders
+    @card_orders = if @current_shop.has_all_card_order_types?
+      @current_shop.card_orders
+    else
+      CardOrder.create_cards(@current_shop)
+    end
     render json: @card_orders, each_serializer: CardOrderSerializer
   end
 
