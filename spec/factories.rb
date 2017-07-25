@@ -98,7 +98,7 @@ FactoryGirl.define do
 
   factory :card_order do
     enabled true
-    type "PostSaleOrder"
+    type_name "PostSaleOrder"
     association :card_side_front, factory: :card_side
     shop
     association :card_side_back, factory: :card_side
