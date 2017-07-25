@@ -220,7 +220,8 @@ class Shop < ActiveRecord::Base
   end
 
   def has_customer_winback_enabled?
-    card_orders.find_by(type_name: "Customer Winback", enabled: true)
+    card = card_orders.find_by(type_name: "Customer Winback")
+    card ? card.enabled : false
   end
 
   # necessary for the active admin

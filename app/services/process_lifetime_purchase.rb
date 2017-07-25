@@ -1,14 +1,15 @@
 class ProcessLifetimePurchase
-  attr_reader :customer
+  attr_reader :customer, :shop
 
-  def initialize(customer)
+  def initialize(customer, shop)
     @customer = customer
+    @shop = shop
   end
 
   def call
     return unless activate_session
-    card = customer.shop.card_orders.find_by(type_name: "LifetimePurchase", enabled: true)
-    return if customer_have_lifetime_purchase_postcard?(card) || card.nil?
+    card = shop.card_orders.find_by(type_name: "LifetimePurchase", enabled: true)
+    return if card.nil? || customer_have_lifetime_purchase_postcard?(card) 
     total_spent = ShopifyAPI::Customer.where(email: customer.email).first.total_spent
     process_lifetime_postcard(customer, card) if customer_eligible_for_lifetime_revard(total_spent)
   end
@@ -37,7 +38,7 @@ class ProcessLifetimePurchase
     amount.to_i >= 400 #change this to constant
   end
 
-  def has_lifetime_postcard(card)
+  def customer_have_lifetime_purchase_postcard?(card)
     Postcard.joins(:card_order)
       .where(card_orders: { type_name: "Lifetime Purchase" }, customer_id: customer.id, card_order_id: card.id).any?
   end

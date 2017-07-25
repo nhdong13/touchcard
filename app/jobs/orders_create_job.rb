@@ -12,7 +12,7 @@ class OrdersCreateJob < ActiveJob::Base
       default_address = shopify_order.customer.default_address
       international = default_address.country_code != "US"
 
-      ProcessLifetimePurchase.new(customer).call
+      ProcessLifetimePurchase.new(order.customer, shop).call
       # Only new customers recieve postcards at the moment
       return puts  "Not a new customer" unless order.customer.new_customer?
       # Create a new card and schedule to send
