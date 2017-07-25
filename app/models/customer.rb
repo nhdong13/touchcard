@@ -70,4 +70,19 @@ class Customer < ActiveRecord::Base
         :state).merge(shopify_id: shopify_customer.id)
     end
   end
+
+  def eligible_for_winback_postcard(winback_delay)
+    # Implement this right way
+    # (Time.zone.now + winback_delay..Time.zone.now + winback_delay + 7).cover?(last_order.created_at)
+  end
+
+  def have_winback_postcard_sent?(card)
+    Postcard.joins(:card_order)
+            .where(card_order: { type_name: "WinbackPostcard" }, card_order_id: card.id)
+            .any?
+  end
+
+  def last_order
+    orders.order("created_at DESC").first
+  end
 end

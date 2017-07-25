@@ -219,6 +219,10 @@ class Shop < ActiveRecord::Base
     card_orders.pluck(:type_name).sort == CardOrder::TYPES.sort
   end
 
+  def has_customer_winback_enabled?
+    card_orders.find_by(type_name: "Customer Winback", enabled: true)
+  end
+
   # necessary for the active admin
   def display_name
     self.domain

@@ -17,6 +17,7 @@ class CardOrder < ActiveRecord::Base
   TYPES = ['PostSaleOrder', 'CustomerWinback', 'LifetimePurchaseThreshold']
 
   def self.create_card(shop)
+    # this problably won't be neccessary
     TYPES.each do |type|
       next if shop.card_orders.find_by(type_name: type)
       create!(type_name: type, shop: shop)
