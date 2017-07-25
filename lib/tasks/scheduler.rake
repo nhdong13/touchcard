@@ -1,6 +1,4 @@
 require "slack_notify"
-# require "customer_winback_handler"
-# require "lifetime_purchase_handler"
 
 desc "Heroku scheduler task for sending cards"
 task :daily_send_cards => :environment do
@@ -11,15 +9,15 @@ task :daily_send_cards => :environment do
   SlackNotify.cards_sent(cards_sent)
 end
 
-# desc "Handle Winback and Lifetime Purchase Postcards"
-# task :daily_create_cards => :environment do
-#   Shop.each do |shop|
-#     next unless shop.has_customer_winback_enabled?
-#     shop.customers.each do |customer|
-#       CustomerWinbackHandler.new(customer).call
-#     end
-#   end
-# end
+desc "Handle Winback Postcards"
+task :daily_create_cards => :environment do
+  Shop.all.each do |shop|
+    next unless shop.has_customer_winback_enabled?
+    shop.customers.each do |customer|
+      CustomerWinbackHandler.new(customer, shop).call
+    end
+  end
+end
 
 desc "Update Shop metadata and last_month New Customers"
 task :update_shop_metadata => :environment do
