@@ -81,6 +81,12 @@ class Customer < ActiveRecord::Base
             .where(card_order: { type_name: "WinbackPostcard" }, card_order_id: card.id)
             .any?
   end
+  # Combine this two methods in one
+  def have_liftime_purchase_sent?(card)
+    Postcard.joins(:card_order)
+            .where(card_order: { type_name: "LifetimePurchase" }, card_order_id: card.id, customer_id: self.id)
+            .any?
+  end
 
   def last_order
     orders.order("created_at DESC").first
