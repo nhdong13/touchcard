@@ -2,6 +2,7 @@ class Customer < ActiveRecord::Base
   has_many :orders
   has_many :postcards
   has_many :addresses
+  has_many :shops, through: :orders
 
   validates :shopify_id, presence: true
   validates :shopify_id, uniqueness: true
