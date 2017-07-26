@@ -18,7 +18,7 @@ class OrdersCreateJob < ActiveJob::Base
       # Create a new card and schedule to send
       post_sale_order = shop.card_orders.find_by(
         enabled: true,
-        type_name: "PostSaleOrder")
+        type: "PostSaleOrder")
       return puts "Card not setup" if post_sale_order.nil?
       return puts "Card not enabled" unless post_sale_order.enabled?
       return puts "international customer not enabled" if international && !post_sale_order.international?

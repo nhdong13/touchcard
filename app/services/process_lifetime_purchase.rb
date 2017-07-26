@@ -36,6 +36,6 @@ class ProcessLifetimePurchase
   end
 
   def card
-    shop.card_orders.find_by(type_name: "LifetimePurchase", enabled: true)
+    shop.card_orders.find_by(type: "LifetimePurchase", enabled: true)
   end
 end

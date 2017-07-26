@@ -217,11 +217,11 @@ class Shop < ActiveRecord::Base
   end
 
   def has_all_card_order_types?
-    card_orders.pluck(:type_name).sort == CardOrder::TYPES.sort
+    card_orders.pluck(:type).sort == CardOrder::TYPES.sort
   end
 
   def has_customer_winback_enabled?
-    card = card_orders.find_by(type_name: "Customer Winback")
+    card = card_orders.find_by(type: "Customer Winback")
     card ? card.enabled : false
   end
 

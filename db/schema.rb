@@ -78,7 +78,7 @@ ActiveRecord::Schema.define(version: 20170725130747) do
 
   create_table "card_orders", force: :cascade do |t|
     t.integer  "shop_id"
-    t.string   "type_name"
+    t.string   "type"
     t.integer  "discount_pct"
     t.integer  "discount_exp"
     t.boolean  "enabled",            default: false, null: false

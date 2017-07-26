@@ -78,7 +78,7 @@ class Customer < ActiveRecord::Base
 
   def have_postcard_for_card(card)
     Postcard.joins(:card_order)
-            .where(card_orders: { type_name: card.type_name }, card_order_id: card.id, customer_id: self.id)
+            .where(card_orders: { type: card.type }, card_order_id: card.id, customer_id: self.id)
             .any?
   end
 

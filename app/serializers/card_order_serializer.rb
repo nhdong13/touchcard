@@ -1,6 +1,6 @@
 class CardOrderSerializer < ActiveModel::Serializer
   embed :ids, include: true
-  attributes :id, :shop_id, :type_name,
+  attributes :id, :shop_id, :type,
     :enabled, :international,
     :discount_pct, :discount_exp,
     :send_delay, :arrive_by,

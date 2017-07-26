@@ -48,7 +48,7 @@ class Api::V1::ChargesController < Api::BaseController
       :card_order_id,
       :amount,
       :last_page).merge(
-        recurring: @card_order.type_name == 'PostSaleOrder',
+        recurring: @card_order.type == 'PostSaleOrder',
         status: 'new')
   end
 
