@@ -10,7 +10,7 @@ task :daily_send_cards => :environment do
 end
 
 desc "Handle Winback Postcards"
-task :daily_create_cards => :environment do
+task :daily_send_winback_cards => :environment do
   Shop.all.each do |shop|
     next unless shop.has_customer_winback_enabled?
     shop.customers.each do |customer|

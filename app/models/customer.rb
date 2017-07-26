@@ -72,24 +72,21 @@ class Customer < ActiveRecord::Base
     end
   end
 
-  def eligible_for_winback_postcard(winback_delay)
-    # Implement this right way
-    # (Time.zone.now + winback_delay..Time.zone.now + winback_delay + 7).cover?(last_order.created_at)
+  def eligible_for_winback_postcard(start_date, end_date)
+    last_order_date.between?(start_date, end_date)
   end
 
-  def have_winback_postcard_sent?(card)
+  def have_postcard_for_card(card)
     Postcard.joins(:card_order)
-            .where(card_order: { type_name: "WinbackPostcard" }, card_order_id: card.id)
-            .any?
-  end
-  # Combine this two methods in one
-  def have_liftime_purchase_sent?(card)
-    Postcard.joins(:card_order)
-            .where(card_order: { type_name: "LifetimePurchase" }, card_order_id: card.id, customer_id: self.id)
+            .where(card_orders: { type_name: card.type_name }, card_order_id: card.id, customer_id: self.id)
             .any?
   end
 
-  def last_order
-    orders.order("created_at DESC").first
+  def last_order_date
+    orders.order("created_at DESC").first.created_at.to_date
+  end
+
+  def eligible_for_lifetime_revard(total_spent)
+    total_spent.to_i >= 400 #change this to constant
   end
 end
