@@ -85,8 +85,4 @@ class Customer < ActiveRecord::Base
   def last_order_date
     orders.order("created_at DESC").first.created_at.to_date
   end
-
-  def eligible_for_lifetime_revard(total_spent)
-    total_spent.to_i >= 400 #change this to constant
-  end
 end

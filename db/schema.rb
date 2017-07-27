@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170725130747) do
+ActiveRecord::Schema.define(version: 20170727122455) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -93,6 +93,7 @@ ActiveRecord::Schema.define(version: 20170725130747) do
     t.integer  "card_side_front_id",                 null: false
     t.integer  "card_side_back_id",                  null: false
     t.integer  "winback_delay"
+    t.integer  "lifetime_purchase_threshold"
   end
 
   create_table "card_sides", force: :cascade do |t|
