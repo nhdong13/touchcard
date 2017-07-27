@@ -21,7 +21,7 @@ class CustomerWinbackHandler
   end
 
   def card
-    shop.card_orders.find_by(enabled: true, type: "CustomerWinback")
+    shop.card_orders.find_by(enabled: true, type: "CustomerWinbackOrder")
   end
 
   def winback_delay

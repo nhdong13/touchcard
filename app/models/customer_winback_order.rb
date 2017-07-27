@@ -1,0 +1,2 @@
+class CustomerWinbackOrder < CardOrder
+end
