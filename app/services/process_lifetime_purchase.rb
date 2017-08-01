@@ -8,7 +8,7 @@ class ProcessLifetimePurchase
 
   def call
     return unless activate_session
-    return if card.nil? || customer.have_postcard_for_card(card)
+    return if card.nil? || card.lifetime_purchase_threshold.nil? || customer.have_postcard_for_card(card)
     process_lifetime_postcard if eligible_for_lifetime_revard
   end
 
@@ -32,7 +32,7 @@ class ProcessLifetimePurchase
   end
 
   def total_spent
-    ShopifyAPI::Customer.where(email: customer.email).first.total_spent
+    ShopifyAPI::Customer.where(email: customer.email).first.total_spent.to_i
   end
 
   def card

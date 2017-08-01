@@ -29,7 +29,7 @@ class CustomerWinbackHandler
   end
 
   def winback_end_date
-    (Time.zone.now - winback_delay).to_date
+    (Time.zone.now - winback_delay.days).to_date
   end
 
   def winback_start_date
