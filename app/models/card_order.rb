@@ -1,4 +1,6 @@
 class CardOrder < ActiveRecord::Base
+  TYPES = ['PostSaleOrder', 'CustomerWinbackOrder', 'LifetimePurchaseOrder', 'AbandonedCheckoutOrder']
+
   belongs_to :shop
   belongs_to :card_side_front, class_name: "CardSide",
               foreign_key: "card_side_front_id"
@@ -9,7 +11,7 @@ class CardOrder < ActiveRecord::Base
 
   validates :shop, :card_side_front, :card_side_back, presence: true
 
-  after_initialize :ensure_defaults
+  # after_initialize :ensure_defaults
   before_update :convert_discount_pct, if: :discount_pct_changed?
 
   delegate :current_subscription, to: :shop
@@ -45,7 +47,6 @@ class CardOrder < ActiveRecord::Base
   def ensure_defaults
     self.card_side_front ||= CardSide.create!(is_back: false)
     self.card_side_back ||= CardSide.create!(is_back: true)
-    self.send_delay = 0 if send_delay.nil? && type == "PostSaleOrder"
     self.international = false if international.nil?
     self.enabled = false if enabled.nil?
     # TODO: add defaults to schema that can be added
