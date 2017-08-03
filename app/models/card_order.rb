@@ -6,12 +6,11 @@ class CardOrder < ActiveRecord::Base
               foreign_key: "card_side_front_id"
   belongs_to :card_side_back, class_name: "CardSide",
               foreign_key: "card_side_back_id"
-  has_many :filters
+  has_many :filters, dependent: :destroy
   has_many :postcards
 
   validates :shop, :card_side_front, :card_side_back, presence: true
 
-  # after_initialize :ensure_defaults
   before_update :convert_discount_pct, if: :discount_pct_changed?
 
   delegate :current_subscription, to: :shop

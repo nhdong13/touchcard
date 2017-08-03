@@ -5,6 +5,12 @@ class Api::V1::CardSidesController < Api::BaseController
     render json: @card_side
   end
 
+  def create
+    @card_side = CardSide.create!(permited_params)
+    return render_validation_errors(@card_side) unless @card_side.valid?
+    render json: @card_side, serializer: CardSideSerializer
+  end
+
   def update
     success = @card_side.update_attributes(update_params)
     return render json: @card_side if success
@@ -15,6 +21,14 @@ class Api::V1::CardSidesController < Api::BaseController
 
   def update_params
     params.require(:card_side).permit(:image, :discount_x, :discount_y)
+  end
+
+  def permited_params
+    params.require(:card_side).permit(
+      :image,
+      :discount_x,
+      :discount_y,
+      :is_back)
   end
 
   def set_card_side

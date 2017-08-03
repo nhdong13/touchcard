@@ -23,6 +23,8 @@ class Api::V1::CardOrdersController < Api::BaseController
   end
 
   def destroy
+    @card_order.destroy
+    render json: {}
   end
 
   private
