@@ -58,6 +58,16 @@ FactoryGirl.define do
     shop
   end
 
+  factory :checkout do
+    sequence(:shopify_id)
+    abandoned_checkout_url "https://test/123"
+    token 12345
+    cart_token 54321
+    total_price 1
+    shop
+  end
+
+
   factory :customer do
     sequence(:shopify_id) { |n| "CustomerId#{n}" }
     first_name "MyString"
@@ -94,6 +104,7 @@ FactoryGirl.define do
   factory :shop do
     sequence(:domain) { |n| "testshop#{n}.myshopify.com" }
     sequence(:token) { |n| "shopif_token_#{n}" }
+    credit 5
   end
 
   factory :card_order do

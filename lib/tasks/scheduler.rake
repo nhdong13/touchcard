@@ -55,7 +55,6 @@ task :daily_send_card_arrival_emails => :environment do
   end
 end
 
-
 desc "Notify customers about coupon expiry"
 task :hourly_send_coupon_expiration_emails => :environment do
   postcards = Postcard.where(sent: true, expiration_notification_sent: false)
@@ -69,6 +68,16 @@ task :hourly_send_coupon_expiration_emails => :environment do
 
     if postcard.customer.accepts_marketing
       send_coupon_expiration_email(postcard)
+    end
+  end
+end
+
+namespace :shopify do
+  desc "Sync abandoned checkouts"
+  task :abandoned_checkouts => :environment do
+    shops = Shop.all
+    shops.each do |shop|
+      SyncCheckouts.new(shop).call
     end
   end
 end

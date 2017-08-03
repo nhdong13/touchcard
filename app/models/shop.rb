@@ -8,6 +8,7 @@ class Shop < ActiveRecord::Base
   has_many :subscriptions
   has_many :orders
   has_many :customers, through: :orders
+  has_many :checkouts
 
   VALID_APPROVAL_STATES = ["new", "approved", "denied"]
 
@@ -25,7 +26,7 @@ class Shop < ActiveRecord::Base
   end
 
   def revenue
-    Order.joins(postcard: :card_order)
+    Order.joins(postcards: :card_order)
       .where(card_orders: { shop_id: id })
       .sum(:total_price)
   end

@@ -145,7 +145,7 @@ RSpec.describe OrdersCreateJob, type: :job do
           it "connects order to postcard" do
             perform_enqueued_jobs { job }
             new_order = Order.find_by(shopify_id: s_order[:id])
-            expect(new_order.postcard_id).to eq(postcard.id)
+            expect(new_order.postcards.first.id).to eq(postcard.id)
             expect(postcard.card_order.revenue).to eq 40994
             expect(postcard.shop.revenue).to eq 40994
           end
