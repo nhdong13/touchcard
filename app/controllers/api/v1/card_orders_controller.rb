@@ -30,7 +30,7 @@ class Api::V1::CardOrdersController < Api::BaseController
   private
 
   def set_card_order
-    @card_order = type_name.find_by(id: params[:id], shop_id: @current_shop.id)
+    @card_order = CardOrder.find_by(id: params[:id], shop_id: @current_shop.id)
     render_not_found if @card_order.nil?
   end
 

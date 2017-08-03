@@ -1,5 +1,5 @@
 class CardOrder < ActiveRecord::Base
-  TYPES = ['PostSaleOrder', 'CustomerWinbackOrder', 'LifetimePurchaseOrder', 'AbandonedCheckoutOrder']
+  TYPES = ['PostSaleOrder', 'CustomerWinbackOrder', 'LifetimePurchaseOrder', 'AbandonedCard']
 
   belongs_to :shop
   belongs_to :card_side_front, class_name: "CardSide",
@@ -64,9 +64,9 @@ class CardOrder < ActiveRecord::Base
   end
 
   def prepare_for_sending(postcard_trigger)
-    return "international customer not enabeled" if postcard_trigger.international && !international?
-    return "international customer not enabeled" if postcard_trigger.international && !international?
-    return "order filtered out" unless send_postcard?(postcard_trigger)
+    return logger.info "international customer not enabeled" if postcard_trigger.international && !international?
+    return logger.info "international customer not enabeled" if postcard_trigger.international && !international?
+    return logger.info "order filtered out" unless send_postcard?(postcard_trigger)
 
     postcard = postcard_trigger.postcards.new(
       card_order: self,
