@@ -84,6 +84,6 @@ class Customer < ActiveRecord::Base
   end
 
   def last_order_date
-    orders.order("created_at DESC").first.created_at.to_date
+    orders.order("created_at ASC").first.created_at.to_date
   end
 end
