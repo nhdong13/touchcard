@@ -17,6 +17,9 @@ class ProcessOrder
     return logger.info "no default address" unless shopify_order.customer.respond_to?(:default_address)
     return logger.info "no default address" unless shopify_order.customer.default_address
 
+    # Schedule to send lifetime purchase postcard if customer is eligible for lifetime revard
+    ProcessLifetimePurchase.new(order.customer, shop).call
+
     # Only new customers recieve postcards at the moment
     return logger.info "Not a new customer" unless order.customer.new_customer?
 
