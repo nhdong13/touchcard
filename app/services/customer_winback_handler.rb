@@ -12,12 +12,15 @@ class CustomerWinbackHandler
   end
 
   def process_winback_postcard
-    Postcard.new(
+    postcard = Postcard.new(
       customer: customer,
       card_order: card,
       send_date: Time.zone.now + 1.day, #set this to card.send_delay
       paid: false)
-    postcard.pay.save! if postcard.can_afford?
+    if shop.pay(postcard)
+      postcard.paid = true
+      postcard.save
+    end
   end
 
   def card

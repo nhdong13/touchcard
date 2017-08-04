@@ -226,6 +226,21 @@ class Shop < ActiveRecord::Base
     card ? card.enabled : false
   end
 
+  def can_afford?(postcard)
+    @can_afford ||= credit >= postcard.cost
+  end
+
+  def pay(postcard)
+    if can_afford?(postcard) && !postcard.paid?
+      self.credit -= postcard.cost
+      self.save!
+    else
+      logger.info "not enough credits postcard:#{id}" if can_afford?(postcard)
+      logger.info "already paid for postcard:#{id}" if postcard.paid?
+      return false
+    end
+  end
+
   # necessary for the active admin
   def display_name
     self.domain

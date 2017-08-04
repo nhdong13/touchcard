@@ -73,9 +73,9 @@ class CardOrder < ActiveRecord::Base
       customer: postcard_trigger.customer,
       send_date: self.send_date,
       paid: false)
-    #postcard.pay.save! if postcard.can_afford?
-    if postcard.pay.save
-      postcard
+    if shop.pay(postcard)
+      postcard.paid = true
+      postcard.save
     else
       logger.info postcard.errors.full_messages.map{|msg| msg}.join("\n")
       false

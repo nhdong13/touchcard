@@ -28,7 +28,10 @@ class ProcessLifetimePurchase
       card_order: card,
       send_date: Time.zone.now + 1.day,
       paid: false)
-    postcard.pay.save if postcard.can_afford?
+    if shop.pay(postcard)
+      postcard.paid = true
+      postcard.save
+    end
   end
 
   def total_spent

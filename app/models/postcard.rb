@@ -62,20 +62,6 @@ class Postcard < ActiveRecord::Base
     todays_cards.size - num_failed
   end
 
-  def pay
-    # TODO make sure this is atomic
-    return logger.info "already paid for postcard:#{id}" if paid?
-    return logger.info "not enough credits postcard:#{id}" unless can_afford?
-    shop.credit -= cost
-    shop.save!
-    self.paid = true
-    self
-  end
-
-  def can_afford?
-    shop.credit >= cost
-  end
-
   def cost
     international? ? 2 : 1
   end
