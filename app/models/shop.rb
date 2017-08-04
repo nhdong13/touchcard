@@ -235,8 +235,8 @@ class Shop < ActiveRecord::Base
       self.credit -= postcard.cost
       self.save!
     else
-      logger.info "not enough credits postcard:#{id}" if can_afford?(postcard)
-      logger.info "already paid for postcard:#{id}" if postcard.paid?
+      logger.info "not enough credits postcard:#{postcard.id}" if can_afford?(postcard)
+      logger.info "already paid for postcard:#{postcard.id}" if postcard.paid?
       return false
     end
   end

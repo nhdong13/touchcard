@@ -46,10 +46,6 @@ class CardOrder < ActiveRecord::Base
   def ensure_defaults
     self.card_side_front ||= CardSide.create!(is_back: false)
     self.card_side_back ||= CardSide.create!(is_back: true)
-    # TODO: Check is this added as defaults
-    self.international = false if international.nil?
-    self.enabled = false if enabled.nil?
-    # TODO: add defaults to schema that can be added
   end
 
   def discount?
