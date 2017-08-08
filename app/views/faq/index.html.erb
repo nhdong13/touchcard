@@ -1,0 +1,18 @@
+<div class="faq container">
+  <section>
+    <h2>FAQ</h2>
+    <ol>
+      <% @questions.each do |question| %>
+        <li>
+          <div class="question"><%= question[:question] %></div>
+          <div class="answer"><%= question[:answer] %></div>
+        </li>
+      <% end %>
+    </ol>
+  </section>
+
+  <section>
+    <h2>Support</h2>
+    For further questions email us <a href="mailto:info@touchcard.co">info@touchcard.co</a>
+  </section>
+</div>

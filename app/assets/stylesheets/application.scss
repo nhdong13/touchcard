@@ -11,3 +11,35 @@
   font-style: italic;
   font-size: small;
 }
+
+.navbar-touchcard{
+  background: white;
+  a {
+    color: black;
+  }
+  li:hover a, li:active a, li a:focus{
+    text-decoration: underline;
+    background: none;
+  }
+  .active {
+    a:focus {
+      text-decoration: none;
+    }
+    background: none;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  li.active:after{
+    content: ' ';
+    display: block;
+    background: $brand-primary;
+    height: 3px;
+  }
+
+  .mail-strip{
+    background: url('images/mail-strip-bg.png') repeat-x -3px 0;
+    height: 10px;
+    margin-bottom: 1em;
+  }
+
+}

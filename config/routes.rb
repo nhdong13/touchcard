@@ -40,10 +40,10 @@ Rails.application.routes.draw do
   get '/update_scope_prompt', to: 'root#update_scope_prompt'
   post '/update_scope_redirect', to: 'root#update_scope_redirect'
 
-
+  get 'faq', to: 'faq#index'
   # Shopify Engine
   root :to => 'root#oauth_entry_point' # See comments in controller
   mount ShopifyApp::Engine, at: '/'
-  get '/app' => 'root#app'
+  get '/app' => 'automations#index'
   get '/app/*path' => 'root#app'
 end
