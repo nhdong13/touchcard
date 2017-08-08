@@ -5,7 +5,7 @@ source "https://rubygems.org"
 
 ruby "2.3.3"
 
-gem "rails", "4.2.6"
+gem "rails", "5.0.0"
 gem "rake", "11.1.2"
 gem "rb-readline", "~> 0.5.3"
 
@@ -22,14 +22,14 @@ gem "jbuilder", "~> 2.0"
 gem "sdoc", "~> 0.4.0", group: :doc
 
 # Admin interface
-gem "devise", "~> 3.5"
+gem "devise", "~> 4.3.0"
 gem "activeadmin", "~> 1.0.0"
 
 # API serializer
 gem "active_model_serializers", "~> 0.8.0"
 
 # Shopify app
-gem "shopify_app", "~> 7.2.3"
+gem "shopify_app", "~> 7.3.0"
 
 # Stripe
 gem 'stripe', git: 'https://github.com/stripe/stripe-ruby'
@@ -59,7 +59,7 @@ gem "rest-client", "1.8"
 gem "unicorn", "~> 4.9"
 
 # Background tasks
-gem "delayed_job_active_record", "~> 4.1"
+gem "delayed_job_active_record", "~> 4.1.2"
 gem "daemons", "~> 1.2"
 
 # Better rails console
@@ -79,7 +79,7 @@ end
 group :development do
   # Access an IRB console on exception pages or by using <%= console %> in views
   gem "web-console", "~> 2.0"
-  gem "thin"
+  gem "thin", "~> 1.7.2"
   gem "spring"
 end
 
@@ -92,7 +92,7 @@ group :development, :test do
 end
 
 group :test do
-  gem "rspec-rails", "~> 3.0"
+  gem "rspec-rails", "~> 3.6.0"
   gem "factory_girl_rails", "~> 4.5"
   gem "webmock", "~> 1.22"
 end
