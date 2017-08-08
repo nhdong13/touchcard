@@ -1,4 +1,4 @@
-class CardOrder < ActiveRecord::Base
+class CardOrder < ApplicationRecord
   belongs_to :shop
   belongs_to :card_side_front, class_name: "CardSide",
               foreign_key: "card_side_front_id"

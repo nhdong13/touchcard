@@ -1,4 +1,4 @@
-class Customer < ActiveRecord::Base
+class Customer < ApplicationRecord
   has_many :orders
   has_many :postcards
   has_many :addresses

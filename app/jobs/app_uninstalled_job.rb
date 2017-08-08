@@ -1,6 +1,6 @@
 require "slack_notify"
 
-class AppUninstalledJob < ActiveJob::Base
+class AppUninstalledJob < ApplicationJob
 
   def perform(shop_domain:, webhook:)
     shop = Shop.find_by(domain: shop_domain)

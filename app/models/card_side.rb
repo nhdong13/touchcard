@@ -1,4 +1,4 @@
-class CardSide < ActiveRecord::Base
+class CardSide < ApplicationRecord
   validates :is_back, inclusion: { in: [true, false] }
 
   def show_discount?
