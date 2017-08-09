@@ -1,0 +1,16 @@
+<div class="row">
+  <%= form_for @card, url: {action: 'next_step'} do |f| %>
+  <%= f.select :type, options_for_select(@types.collect{|m| m}) %>
+  <%= f.submit "Next" %>
+  <% end %>
+  <!-- <% @types.each do |type| %>
+    <div class="col-sm-6">
+      <div class="content-box">
+        <h3><%= type %></h3>
+      </div>
+    </div>
+  <% end %> -->
+</div>
+<div class="row pull-right">
+  <!-- <%= button_to 'Next', { action: "next_step", id: @card.id }, class: 'btn btn-lg' %> -->
+</div>

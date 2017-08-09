@@ -72,6 +72,9 @@ gem "business_time", "~> 0.7"
 # send mails using mailgun
 gem "mailgunner", '~> 2.4'
 
+# add bootstrap-switch
+gem "bootstrap-switch-rails"
+
 group :assets do
   gem "therubyracer", platforms: :ruby
 end

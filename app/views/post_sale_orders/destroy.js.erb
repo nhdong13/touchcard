@@ -1,0 +1,6 @@
+$(function() {
+  return $("a[data-remote]").on("ajax:success", function(e, data, status, xhr) {
+    var cardDiv = $("#card-" + <%= @card.id %>);
+    return cardDiv.remove();
+  });
+});

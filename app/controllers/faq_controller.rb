@@ -1,4 +1,4 @@
-class FaqController < ApplicationController
+class FaqController < BaseController
   def index
     @questions = [
       {

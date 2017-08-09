@@ -31,7 +31,7 @@ Rails.application.routes.draw do
 
   # HTML Routes for Card Templates
   resources :card_orders, only: [:update]
-
+  resources :post_sale_orders
   # Routes for Admins
   devise_for :admin_users, ActiveAdmin::Devise.config
   ActiveAdmin.routes(self)
@@ -41,6 +41,13 @@ Rails.application.routes.draw do
   post '/update_scope_redirect', to: 'root#update_scope_redirect'
 
   get 'faq', to: 'faq#index'
+  get 'dashboard', to: 'dashboard#index'
+  resource :automations do
+    get :step1
+
+    post :next_step
+  end
+
   # Shopify Engine
   root :to => 'root#oauth_entry_point' # See comments in controller
   mount ShopifyApp::Engine, at: '/'
