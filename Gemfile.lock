@@ -81,6 +81,7 @@ GEM
     bootstrap-sass (3.3.6)
       autoprefixer-rails (>= 5.2.1)
       sass (>= 3.3.4)
+    bootstrap-select-rails (1.12.1)
     bootstrap-switch-rails (3.3.3)
     bourbon (4.3.4)
       sass (~> 3.4)
@@ -90,6 +91,10 @@ GEM
       activesupport (>= 3.1.0)
       tzinfo
     byebug (8.2.4)
+    carrierwave (1.1.0)
+      activemodel (>= 4.0.0)
+      activesupport (>= 4.0.0)
+      mime-types (>= 1.16)
     clipboard (1.1.0)
     coffee-rails (4.1.1)
       coffee-script (>= 2.2.0)
@@ -187,6 +192,7 @@ GEM
       mime-types (>= 1.16, < 4)
     mailgunner (2.4.0)
     mime-types (2.99.3)
+    mini_magick (4.8.0)
     mini_portile2 (2.1.0)
     minitest (5.10.1)
     momentjs-rails (2.11.1)
@@ -365,9 +371,11 @@ DEPENDENCIES
   activeadmin (~> 1.0.0)
   aws-sdk (~> 2.1)
   bootstrap-sass
+  bootstrap-select-rails
   bootstrap-switch-rails
   business_time (~> 0.7)
   byebug
+  carrierwave
   clipboard (~> 1.0)
   coffee-rails (~> 4.1.0)
   daemons (~> 1.2)
@@ -381,6 +389,7 @@ DEPENDENCIES
   jquery-ui-rails (~> 5.0)
   lob (~> 2.1)
   mailgunner (~> 2.4)
+  mini_magick
   momentjs-rails (>= 2.8.1)
   newrelic_rpm (~> 3.15)
   pg

@@ -75,6 +75,12 @@ gem "mailgunner", '~> 2.4'
 # add bootstrap-switch
 gem "bootstrap-switch-rails"
 
+gem 'bootstrap-select-rails'
+
+# Image upload
+gem 'carrierwave'
+gem 'mini_magick'
+
 group :assets do
   gem "therubyracer", platforms: :ruby
 end

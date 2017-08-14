@@ -1,6 +1,107 @@
 @import "bootstrap-sprockets";
 @import "bootstrap";
 @import "bootstrap3-switch";
+@import "bootstrap-select";
+
+// new style, make this modular
+
+.discount-box {
+  display: none;
+}
+
+.card-side {
+  width: 100%;
+  border: 1px solid #eee;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .1);
+  position: relative;
+  &:before {
+    display: block;
+    content: "";
+    width: 100%;
+    padding-top: (17 / 25) * 100%;
+  }
+  > .content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+}
+
+.postage{
+  left: 42.87756074%;
+  top: 38.19201121%;
+  width: 52.73939971%;
+  height: 55.99159075%;
+  // border: 1px dotted red;
+  z-index: 6;
+  background: white;
+  pointer-events: none;
+    img {
+      width: 100%;
+    }
+  }
+
+.discount{
+  width: 94%;
+  height: 91.17647059%;
+  left: 3%;
+  top: 4.41176471%;
+  z-index: 5;
+  .percent {
+    // font-size: 2vw;
+    font-weight: 700;
+    margin: 0.4006vw 0 0;
+  }
+
+  .code {
+    font-size: 1.1333vw;
+  }
+
+  .expiration {
+    margin-top: 0.7333vw;
+    font-size: 0.6vw;
+  }
+
+  .box {
+    width: 28%;
+    height: 25%;
+    text-align: center;
+    font-family: 'Montserrat';
+    color: black;
+  }
+}
+
+.layer {
+  position: absolute;
+}
+
+.bleed {
+  left: 2%;
+  top: 2.94117647%;
+  width: 96%;
+  height: 94.11764706%;
+  border: 1px dotted red;
+  z-index: 2;
+}
+
+.card-side.is-editable {
+  .discount {
+    .box {
+      cursor: move;
+    }
+    .box:hover{
+      background: rgba(255,255,255, 0.3);
+    }
+  }
+}
+
+.bleed {
+  display: none;
+}
+// new style end
 
 .scopes-msg {
   padding: 10% 15%;
