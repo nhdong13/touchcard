@@ -1,15 +1,16 @@
 class CardOrder < ActiveRecord::Base
+  TYPES = ['PostSaleOrder', 'CustomerWinbackOrder', 'LifetimePurchaseOrder', 'AbandonedCard']
+
   belongs_to :shop
   belongs_to :card_side_front, class_name: "CardSide",
               foreign_key: "card_side_front_id"
   belongs_to :card_side_back, class_name: "CardSide",
               foreign_key: "card_side_back_id"
   has_many :filters, dependent: :destroy
-  has_many :postcards, dependent: :destroy
+  has_many :postcards
 
   validates :shop, :card_side_front, :card_side_back, presence: true
 
-  after_initialize :ensure_defaults
   before_update :convert_discount_pct, if: :discount_pct_changed?
 
   delegate :current_subscription, to: :shop
@@ -40,17 +41,13 @@ class CardOrder < ActiveRecord::Base
   end
 
   def revenue
-    Order.joins(:postcard).where(postcards: { card_order_id: id })
+    Order.joins(:postcards).where(postcards: { card_order_id: id })
       .sum(:total_price)
   end
 
   def ensure_defaults
     self.card_side_front ||= CardSide.create!(is_back: false)
     self.card_side_back ||= CardSide.create!(is_back: true)
-    self.send_delay = 0 if send_delay.nil? && type == "PostSaleOrder"
-    self.international = false if international.nil?
-    self.enabled = false if enabled.nil?
-    # TODO: add defaults to schema that can be added
   end
 
   def discount?
@@ -58,10 +55,29 @@ class CardOrder < ActiveRecord::Base
   end
 
   def send_date
-    return Date.today + send_delay.weeks if type == "PostSaleOrder"
+    return Date.today + send_delay.weeks
     # 4-6 business days delivery according to lob
-    # TODO handle international + 5 to 7 business days
-    send_date = arrive_by - 1.week
+    # TODO: handle international + 5 to 7 business days
+    #send_date = arrive_by - 1.week
+  end
+
+  def prepare_for_sending(postcard_trigger)
+    return logger.info "international customer not enabeled" if postcard_trigger.international && !international?
+    return logger.info "international customer not enabeled" if postcard_trigger.international && !international?
+    return logger.info "order filtered out" unless send_postcard?(postcard_trigger)
+
+    postcard = postcard_trigger.postcards.new(
+      card_order: self,
+      customer: postcard_trigger.customer,
+      send_date: self.send_date,
+      paid: false)
+    if shop.pay(postcard)
+      postcard.paid = true
+      postcard.save
+    else
+      logger.info postcard.errors.full_messages.map{|msg| msg}.join("\n")
+      false
+    end
   end
 
   def convert_discount_pct

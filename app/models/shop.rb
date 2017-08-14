@@ -7,6 +7,8 @@ class Shop < ActiveRecord::Base
   has_many :charges
   has_many :subscriptions
   has_many :orders
+  has_many :customers, through: :orders
+  has_many :checkouts
 
   VALID_APPROVAL_STATES = ["new", "approved", "denied"]
 
@@ -24,7 +26,7 @@ class Shop < ActiveRecord::Base
   end
 
   def revenue
-    Order.joins(postcard: :card_order)
+    Order.joins(postcards: :card_order)
       .where(card_orders: { shop_id: id })
       .sum(:total_price)
   end
@@ -199,7 +201,46 @@ class Shop < ActiveRecord::Base
       false
     end
   end
-  
+
+  def card_last4
+    return unless stripe_customer_id
+    customer = Stripe::Customer.retrieve(stripe_customer_id)
+    default_card_id = customer.default_source
+    customer.sources["data"].find{ |x| x[:id] == default_card_id }.last4
+  end
+
+  def can_afford_postcard?
+    max_send_postcards_amount ? sent_postcards_number < max_send_postcards_amount : true
+  end
+
+  def sending_active?
+    current_subscription.is_active? && !current_subscription.status == "canceled"
+  end
+
+  def has_all_card_order_types?
+    card_orders.pluck(:type).sort == CardOrder::TYPES.sort
+  end
+
+  def has_customer_winback_enabled?
+    card = card_orders.find_by(type: "CustomerWinbackOrder")
+    card ? card.enabled : false
+  end
+
+  def can_afford?(postcard)
+    @can_afford ||= credit >= postcard.cost
+  end
+
+  def pay(postcard)
+    if can_afford?(postcard) && !postcard.paid?
+      self.credit -= postcard.cost
+      self.save!
+    else
+      logger.info "not enough credits postcard:#{postcard.id}" if can_afford?(postcard)
+      logger.info "already paid for postcard:#{postcard.id}" if postcard.paid?
+      return false
+    end
+  end
+
   # necessary for the active admin
   def display_name
     self.domain

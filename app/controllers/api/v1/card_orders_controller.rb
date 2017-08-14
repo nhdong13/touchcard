@@ -11,7 +11,7 @@ class Api::V1::CardOrdersController < Api::BaseController
   end
 
   def create
-    @card_order = CardOrder.create(create_params)
+    @card_order = type_name.create(create_params)
     return render_validation_errors(@card_order) unless @card_order.valid?
     render json: @card_order, serializer: CardOrderSerializer
   end
@@ -23,6 +23,8 @@ class Api::V1::CardOrdersController < Api::BaseController
   end
 
   def destroy
+    @card_order.destroy
+    render json: {}
   end
 
   private
@@ -34,6 +36,11 @@ class Api::V1::CardOrdersController < Api::BaseController
 
   def update_params
     create_params
+  end
+
+  def type_name
+    type = params[:card_order][:type]
+    CardOrder::TYPES.include?(type) ? type.constantize : CardOrder
   end
 
   def create_params

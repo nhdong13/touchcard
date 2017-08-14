@@ -3,12 +3,12 @@ Rails.application.routes.draw do
   namespace :api, defaults: {format: 'json'} do
     namespace :v1 do
       get 'sign', to: 'aws#sign'
-      resources :card_sides, only: [:show, :update]
+      resources :card_sides, only: [:show, :update, :create]
       resources :filters, only: [:show, :update, :destroy, :create]
       resources :shops, only: [:show, :update] do
         collection { get :current }
       end
-      resources :card_orders, only: [:index, :show, :create, :update]
+      resources :card_orders, only: [:index, :show, :create, :update, :destroy]
       resources :postcards, only: [:index, :show, :create, :update]
       resources :line_items, only: [:index, :show]
       resources :subscriptions, only: [:show, :create, :update]

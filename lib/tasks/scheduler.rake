@@ -9,6 +9,16 @@ task :daily_send_cards => :environment do
   SlackNotify.cards_sent(cards_sent)
 end
 
+desc "Handle Winback Postcards"
+task :daily_send_winback_cards => :environment do
+  Shop.all.each do |shop|
+    next unless shop.has_customer_winback_enabled?
+    shop.customers.each do |customer|
+      CustomerWinbackHandler.new(customer, shop).call
+    end
+  end
+end
+
 desc "Update Shop metadata and last_month New Customers"
 task :update_shop_metadata => :environment do
   puts "Updating shop metadata for installed shops"
@@ -45,7 +55,6 @@ task :daily_send_card_arrival_emails => :environment do
   end
 end
 
-
 desc "Notify customers about coupon expiry"
 task :hourly_send_coupon_expiration_emails => :environment do
   postcards = Postcard.where(sent: true, expiration_notification_sent: false)
@@ -59,6 +68,16 @@ task :hourly_send_coupon_expiration_emails => :environment do
 
     if postcard.customer.accepts_marketing
       send_coupon_expiration_email(postcard)
+    end
+  end
+end
+
+namespace :shopify do
+  desc "Sync abandoned checkouts"
+  task :abandoned_checkouts => :environment do
+    shops = Shop.all
+    shops.each do |shop|
+      SyncCheckouts.new(shop).call
     end
   end
 end

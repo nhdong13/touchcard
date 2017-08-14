@@ -2,6 +2,8 @@ class Customer < ActiveRecord::Base
   has_many :orders
   has_many :postcards
   has_many :addresses
+  has_many :shops, through: :orders
+  has_many :checkouts
 
   validates :shopify_id, presence: true
   validates :shopify_id, uniqueness: true
@@ -69,5 +71,19 @@ class Customer < ActiveRecord::Base
         :accepts_marketing,
         :state).merge(shopify_id: shopify_customer.id)
     end
+  end
+
+  def eligible_for_winback_postcard(start_date, end_date)
+    last_order_date.between?(start_date, end_date)
+  end
+
+  def have_postcard_for_card(card)
+    Postcard.joins(:card_order)
+            .where(card_orders: { type: card.type }, card_order_id: card.id, customer_id: id)
+            .any?
+  end
+
+  def last_order_date
+    orders.order("created_at ASC").first.created_at.to_date
   end
 end
