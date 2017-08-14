@@ -202,25 +202,6 @@ class Shop < ActiveRecord::Base
     end
   end
 
-  def card_last4
-    return unless stripe_customer_id
-    customer = Stripe::Customer.retrieve(stripe_customer_id)
-    default_card_id = customer.default_source
-    customer.sources["data"].find{ |x| x[:id] == default_card_id }.last4
-  end
-
-  def can_afford_postcard?
-    max_send_postcards_amount ? sent_postcards_number < max_send_postcards_amount : true
-  end
-
-  def sending_active?
-    current_subscription.is_active? && !current_subscription.status == "canceled"
-  end
-
-  def has_all_card_order_types?
-    card_orders.pluck(:type).sort == CardOrder::TYPES.sort
-  end
-
   def has_customer_winback_enabled?
     card = card_orders.find_by(type: "CustomerWinbackOrder")
     card ? card.enabled : false
