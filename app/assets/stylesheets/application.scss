@@ -9,6 +9,10 @@
   display: none;
 }
 
+.layers {
+  position: relative;
+}
+
 .card-side {
   width: 100%;
   border: 1px solid #eee;
@@ -78,13 +82,36 @@
   position: absolute;
 }
 
+.discount-checkbox {
+  display: none;
+}
+
 .bleed {
+  display: none;
   left: 2%;
   top: 2.94117647%;
   width: 96%;
   height: 94.11764706%;
   border: 1px dotted red;
   z-index: 2;
+}
+
+.safe-area{
+  display: none;
+  width: 94%;
+  height: 91.17647059%;
+  left: 3%;
+  top: 4.41176471%;
+  border: 1px dotted green;
+  z-index: 3;
+}
+
+.box {
+  width: 28%;
+  height: 25%;
+  text-align: center;
+  font-family: 'Montserrat';
+  color: black;
 }
 
 .card-side.is-editable {
@@ -99,7 +126,7 @@
 }
 
 .bleed {
-  display: none;
+  // display: none;
 }
 // new style end
 

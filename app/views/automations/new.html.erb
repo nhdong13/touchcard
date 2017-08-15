@@ -5,11 +5,11 @@
   </h2>
 </div>
 
-<%= form_for @card, url: {action: 'next_step'}, html: { class: 'form' } do |f| %>
+<%= form_for @card, url: {controller: 'automations', action: 'create'}, html: { class: 'form' } do |f| %>
   <div class="row">
     <div class="col-sm-12">
       <%= f.label :type, "Select Type" %>
-      <%= f.select :type, options_for_select(@types.collect{|m| m}), {}, { class: 'selectpicker' } %>
+      <%= f.select :type, options_for_select(type_options), {}, { class: 'selectpicker' } %>
     </div>
   </div>
   <div class="row">
@@ -19,7 +19,7 @@
       <div class="discount-box">
         <div class="form-group">
           <label>Coupon Percent</label>
-          <%= f.text_field :discount_pct, size: 2 %>
+          <%= f.text_field :discount_pct, size: 2, class: 'discount-field' %>
         </div>
         <div class="form-group">
           <label>Weeks till Expiration</label>
@@ -32,26 +32,28 @@
       <label>Send to international addresses</label>
       <label>Number of weeks for sending the card after purchase</label>
       <%= f.text_field :send_delay, size: 2 %>
-      <label>Set a filter</label>
+      <!-- <%= f.fields_for :filters, Filter.new do |ff| %>
+        <label>Set filter</label>
+        <%= ff.text_field :filter_data, size: 2 %>
+      <% end %> -->
     </div>
   </div>
   <div class="row">
     <div class="col-sm-6">
       <div class="editable-card-side">
         <h3>IMAGE SIDE</h3>
-        <div class="form">
-          <div class="form-group{{if hasErrors ' has-error'}}">
-            <%= f.label :image %><br>
-            <%= f.file_field :image %>
-            <small class="help-block">Image must be 1875px by 1275px including a 75px bleed - <a href="/images/{{if cardSide.isBack "address" "image"}}-side-guide.jpg" target="_blank">template</a>, <a href="/images/{{if cardSide.isBack "address" "image"}}-side-example.jpg" target="_blank">example</a></small>
-          </div>
-        </div>
+          <%= f.fields_for :card_side_front, CardSide.new do |ff| %>
+            <div class="form-group">
+              <%= ff.label :image %><br>
+              <%= ff.file_field :image %>
+              <small class="help-block">Image must be 1875px by 1275px including a 75px bleed - <a href="/images/{{if cardSide.isBack "address" "image"}}-side-guide.jpg" target="_blank">template</a>, <a href="/images/{{if cardSide.isBack "address" "image"}}-side-example.jpg" target="_blank">example</a></small>
+            </div>
+          <% end %>
 
-        <!-- {{#if cardSide.cardOrder.hasDiscountCode}} -->
-          <div class="form-group">
-            <%= check_box_tag 'show_discount' %>
-            Show discount code on this side
-          </div>
+        <div class="form-group discount-checkbox">
+          <%= check_box_tag 'show_discount' %>
+          Show discount code on this side
+        </div>
         <div class="form-group">
           <%= check_box_tag 'show_safe_area' %>
           Show safe-area - <span>This is the area where text can be</span>
@@ -75,6 +77,7 @@
                 <!-- {{/if}} -->
                 <!-- {{#if cardSide.isDiscountShowing}} -->
                   <div class="discount layer">
+                    <div class="box">
                     <!-- {{#interact-js class="box"
                       draggable=draggable
                       dragEnd=(action "dragEnd")
@@ -85,6 +88,7 @@
                         <div class="code">DIS-CNT-COD</div>
                         <!-- <div class="expiration">EXPIRES {{moment-format exDiscountExp 'l'}}</div> -->
                       </div>
+                    </div>
                     <!-- {{/interact-js}} -->
                   </div>
                 <!-- {{/if}} -->
@@ -102,13 +106,13 @@
     <div class="col-sm-6">
       <div class="editable-card-side">
         <h3>IMAGE SIDE</h3>
-        <div class="form">
-          <div class="form-group{{if hasErrors ' has-error'}}">
-            <%= f.label :image %><br>
-            <%= f.file_field :image %>
+        <%= f.fields_for :card_side_back, CardSide.new do |back_side| %>
+          <div class="form-group">
+            <%= back_side.label :image %><br>
+            <%= back_side.file_field :image %>
             <small class="help-block">Image must be 1875px by 1275px including a 75px bleed - <a href="/images/{{if cardSide.isBack "address" "image"}}-side-guide.jpg" target="_blank">template</a>, <a href="/images/{{if cardSide.isBack "address" "image"}}-side-example.jpg" target="_blank">example</a></small>
           </div>
-        </div>
+        <% end %>
 
         <!-- {{#if cardSide.cardOrder.hasDiscountCode}} -->
           <div class="form-group">
@@ -165,4 +169,5 @@
       </div>
     </div>
   </div>
+  <%= f.submit 'Create' %>
 <% end %>

@@ -9,6 +9,12 @@ class CardOrder < ActiveRecord::Base
   has_many :filters, dependent: :destroy
   has_many :postcards
 
+  accepts_nested_attributes_for :card_side_front, reject_if: :invalid_image_size
+  accepts_nested_attributes_for :card_side_back, reject_if: :invalid_image_size
+  accepts_nested_attributes_for :filters,
+    allow_destroy: true,
+    reject_if: :all_blank
+
   validates :shop, :card_side_front, :card_side_back, presence: true
 
   before_update :convert_discount_pct, if: :discount_pct_changed?
@@ -82,5 +88,11 @@ class CardOrder < ActiveRecord::Base
 
   def convert_discount_pct
     self.discount_pct = -discount_pct if discount_pct && discount_pct > 0
+  end
+
+  private
+
+  def invalid_image_size(attributes)
+    debugger
   end
 end

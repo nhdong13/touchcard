@@ -1,8 +1,16 @@
 $('document').ready(function() {
   $('.enabled-handler').click(function() {
     $('.discount-box').toggle();
+    $('.discount-checkbox').toggle();
   });
   $('#show_bleed').click(function() {
-    // $('.bleed').toggle();
+    $('.bleed').toggle();
   });
+  $('#show_safe_area').click(function() {
+    $('.safe-area').toggle();
+  });
+  $('.discount-field').change(function() {
+    var discount = $(this).val();
+    $('.box .wrap').text(discount);
+  })
 })

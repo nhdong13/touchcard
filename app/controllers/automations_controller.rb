@@ -4,12 +4,16 @@ class AutomationsController < BaseController
   end
 
   def new
-    # session[:current_step] = 0
     @types = CardOrder::TYPES
-    @card = CardOrder.new
+    @card = @current_shop.card_orders.create
+    # this is maybe not necessary --- we are using nested attributes
+    # @card_side_back = @card.build_card_side_back(is_back: true)
+    # @card_side_front = @card.build_card_side_front(is_back: false)
+    # @filter = Filter.create(card_order: @card)
   end
 
   def create
+    debugger
   end
 
   def destroy
@@ -17,14 +21,14 @@ class AutomationsController < BaseController
     @card.destroy
   end
 
-  # def next_step
-  #   next_step = session[:current_step] + 1
-  #   session[:current_step] = next_step
-  #   session[:card_order_attrs] == permited_params
-  #   render "step#{next_step}"
-  # end
-
   def permited_params
-    params.require(:card_order).permit(:type)
+    params.require(:card_order).permit(
+      :type,
+      :discount_exp,
+      :discount_pct,
+      filter_attributes: [:filter_data],
+      card_side_front_attributes: [:image],
+      card_side_back_attributes: [:image]
+    )
   end
 end
