@@ -1,0 +1,86 @@
+<script src="https://checkout.stripe.com/checkout.js"></script>
+
+<div class="billing">
+  <section>
+    <button class="btn btn-default cancel" disabled={{isSaving}}>
+      <i class="fa fa-arrow-left"></i> Back
+    </button>
+    <div class="card text-center">
+      <div class="jumbotron text-center">
+          <div class="container">
+          <h1><i class="fa fa-print"></i> + <i class="fa fa-envelope"></i> = 99&cent;</h1>
+          <p>
+            <strong>PRINT</strong> and <strong>MAIL</strong> cards for just <strong>99&cent;</strong> in the USA
+          </p>
+        </div>
+      </div>
+      <!-- {{#if subscription}} -->
+        <div class="alert alert-info current-plan">
+          Your current plan is for <strong>plan name</strong> cards/month.
+        </div>
+      <!-- {{/if}} -->
+      <h3>How many customers do you want to reach this month?</h3>
+      <div class="customers">
+        <i class="fa fa-users"></i>
+        <label>Input za sub quantity</label>
+        <input class="number" />
+        <!-- {{input
+          class="number"
+          type="text"
+          pattern="^([0-9]+)$"
+          maxlength="4"
+          value=model.cards}} -->
+      </div>
+      <div class="text-center">
+        <button class="btn btn-success recommend">
+          We recommend at least <strong>no of customers</strong> customers*
+        </button>
+        <div class="small">*based on new customers last month</div>
+      </div>
+      <br>
+      <h4>
+        <strong class="price">
+          price here
+        </strong>
+         to raise your customer lifetime value
+         <button id="customButton" class="btn btn-primary btn-lg buy">
+           Buy Now
+         </button>
+      </h4>
+    </div>
+  </section>
+</div>
+
+<script>
+  var handler = StripeCheckout.configure({
+    key: 'pk_test_6pRNASCoBOKtIshFeQd4XMUh',
+    image: 'https://stripe.com/img/documentation/checkout/marketplace.png',
+    locale: 'auto',
+    token: function(token) {
+      var quantity = $('.number').val();
+      $.post({
+        type: 'POST',
+        url: '/subscription',
+        data: { token: token.id, quantity: quantity }
+      })
+      // You can access the token ID with `token.id`.
+      // Get the token ID to your server-side code for use.
+    }
+  });
+
+  document.getElementById('customButton').addEventListener('click', function(e) {
+    // Open Checkout with further options:
+    handler.open({
+      name: 'Stripe.com',
+      description: '2 widgets',
+      zipCode: true,
+      amount: 2000
+    });
+    e.preventDefault();
+  });
+
+  // Close Checkout on page navigation:
+  window.addEventListener('popstate', function() {
+    handler.close();
+  });
+</script>

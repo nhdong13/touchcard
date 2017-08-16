@@ -42,7 +42,9 @@ Rails.application.routes.draw do
 
   get 'faq', to: 'faq#index'
   get 'dashboard', to: 'dashboard#index'
+
   resource :automation
+  resource :subscription
 
   # Shopify Engine
   root :to => 'root#oauth_entry_point' # See comments in controller
