@@ -65,41 +65,31 @@
         <div class="layers">
           <div class="bleed layer">
           </div>
-          <!-- {{#if isSafeAreaShowing}} -->
             <div class="safe-area layer">
             </div>
-            <div class="card-side {{if isEditable "is-editable"}}">
+            <div class="card-side">
               <div class="layers">
-                <!-- {{#if cardSide.isPostageShowing}} -->
-                  <div class="postage layer">
-                    <img src="/images/postage.png" />
-                  </div>
-                <!-- {{/if}} -->
-                <!-- {{#if cardSide.isDiscountShowing}} -->
-                  <div class="discount layer">
-                    <div class="box">
-                    <!-- {{#interact-js class="box"
-                      draggable=draggable
-                      dragEnd=(action "dragEnd")
-                      startX=cardSide.discountX
-                      startY=cardSide.discountY}} -->
-                      <div class="wrap">
-                        <!-- <div class="percent">{{cardSide.discountPct}}% OFF</div> -->
-                        <div class="code">DIS-CNT-COD</div>
-                        <!-- <div class="expiration">EXPIRES {{moment-format exDiscountExp 'l'}}</div> -->
-                      </div>
+                <div class="postage layer">
+                  <img src="/images/postage.png" />
+                </div>
+                <div class="discount layer">
+                  <!-- {{#interact-js class="box"
+                    draggable=draggable
+                    dragEnd=(action "dragEnd")
+                    startX=cardSide.discountX
+                    startY=cardSide.discountY}} -->
+                    <div class="wrap">
+                      <div class="percent"></div>
+                      <div class="code">DIS-CNT-COD</div>
+                      <div class="expiration">here goes expire date</div>
                     </div>
-                    <!-- {{/interact-js}} -->
-                  </div>
-                <!-- {{/if}} -->
-                <!-- {{#if cardSide.image}} -->
-                  <div class="layer">
-                    <img class="image"src="" />
-                  </div>
-                <!-- {{/if}} -->
+                  <!-- {{/interact-js}} -->
+                </div>
+                <!-- <div class="layer">
+                  <img class="image"src="" />
+                </div> -->
               </div>
             </div>
-
         </div>
       </div>
     </div>

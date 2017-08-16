@@ -12,6 +12,9 @@ class AutomationsController < BaseController
     # @filter = Filter.create(card_order: @card)
   end
 
+  def show
+  end
+  
   def create
     debugger
   end

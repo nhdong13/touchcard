@@ -9,7 +9,7 @@ $('document').ready(function() {
   $('#show_safe_area').click(function() {
     $('.safe-area').toggle();
   });
-  $('.discount-field').change(function() {
+  $('.discount-field').keyup(function() {
     var discount = $(this).val();
     $('.box .wrap').text(discount);
   })

@@ -9,8 +9,11 @@
   display: none;
 }
 
-.layers {
-  position: relative;
+.recommend {
+  margin-top: 2em;
+  strong {
+    font-size: 110%;
+  }
 }
 
 .card-side {
@@ -18,7 +21,10 @@
   border: 1px solid #eee;
   background: #fff;
   box-shadow: 0 1px 2px rgba(0, 0, 0, .1);
-  position: relative;
+  // position: relative;
+  .layers {
+    position: relative;
+  }
   &:before {
     display: block;
     content: "";
@@ -32,6 +38,18 @@
     right: 0;
     bottom: 0;
   }
+  .discount{
+    width: 94%;
+    height: 91.17647059%;
+    left: 3%;
+    top: 4.41176471%;
+    z-index: 5;
+    .percent {
+      // font-size: 2vw;
+      font-weight: 700;
+      margin: 0.4006vw 0 0;
+    }
+  }
 }
 
 .postage{
@@ -43,47 +61,51 @@
   z-index: 6;
   background: white;
   pointer-events: none;
-    img {
-      width: 100%;
-    }
-  }
-
-.discount{
-  width: 94%;
-  height: 91.17647059%;
-  left: 3%;
-  top: 4.41176471%;
-  z-index: 5;
-  .percent {
-    // font-size: 2vw;
-    font-weight: 700;
-    margin: 0.4006vw 0 0;
-  }
-
-  .code {
-    font-size: 1.1333vw;
-  }
-
-  .expiration {
-    margin-top: 0.7333vw;
-    font-size: 0.6vw;
-  }
-
-  .box {
-    width: 28%;
-    height: 25%;
-    text-align: center;
-    font-family: 'Montserrat';
-    color: black;
+  img {
+    width: 100%;
   }
 }
 
-.layer {
-  position: absolute;
+.code {
+  font-size: 1.1333vw;
+}
+
+.expiration {
+  margin-top: 0.7333vw;
+  font-size: 0.6vw;
+}
+
+.box {
+  width: 28%;
+  height: 25%;
+  text-align: center;
+  font-family: 'Montserrat';
+  color: black;
+}
+
+.layers {
+  .layer {
+    position: absolute;
+  }
 }
 
 .discount-checkbox {
   display: none;
+}
+
+.percent {
+  // font-size: 2vw;
+  font-weight: 700;
+  margin: 0.4006vw 0 0;
+}
+
+.code {
+  font-size: 1.1333vw;
+}
+
+.expiration {
+  margin-top: 0.7333vw;
+  font-size: 0.6vw;
 }
 
 .bleed {
