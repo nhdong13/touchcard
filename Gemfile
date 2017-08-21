@@ -84,6 +84,9 @@ gem 'mini_magick'
 # Use webpacker for React
 gem 'webpacker', '~> 2.0'
 
+# Use foreman to manager Procfile-based applications
+gem 'foreman'
+
 group :assets do
   gem "therubyracer", platforms: :ruby
 end
