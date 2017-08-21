@@ -81,6 +81,9 @@ gem 'bootstrap-select-rails'
 gem 'carrierwave'
 gem 'mini_magick'
 
+# Use webpacker for React
+gem 'webpacker', '~> 2.0'
+
 group :assets do
   gem "therubyracer", platforms: :ruby
 end

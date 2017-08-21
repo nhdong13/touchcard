@@ -338,8 +338,9 @@ GEM
     thor (0.20.0)
     thread_safe (0.3.6)
     tilt (2.0.6)
-    turbolinks (2.5.3)
-      coffee-rails
+    turbolinks (5.0.1)
+      turbolinks-source (~> 5)
+    turbolinks-source (5.0.3)
     tzinfo (1.2.3)
       thread_safe (~> 0.1)
     uglifier (3.0.0)
@@ -362,6 +363,10 @@ GEM
       addressable (>= 2.3.6)
       crack (>= 0.3.2)
       hashdiff
+    webpacker (2.0)
+      activesupport (>= 4.2)
+      multi_json (~> 1.2)
+      railties (>= 4.2)
     websocket-driver (0.6.5)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.2)
@@ -418,10 +423,11 @@ DEPENDENCIES
   unicorn (~> 4.9)
   web-console (~> 2.0)
   webmock (~> 1.22)
+  webpacker (~> 2.0)
   wirble (~> 0.1)
 
 RUBY VERSION
    ruby 2.3.3p222
 
 BUNDLED WITH
-   1.13.7
+   1.14.6
