@@ -5,7 +5,7 @@ source "https://rubygems.org"
 
 ruby "2.3.3"
 
-gem "rails", "5.0.0"
+gem "rails", "5.1.0"
 gem "rake", "11.1.2"
 gem "rb-readline", "~> 0.5.3"
 
@@ -13,12 +13,12 @@ gem "bootstrap-sass"
 
 gem "sass-rails", "~> 5.0", ">= 5.0.6"
 gem "uglifier", ">= 1.3.0"
-gem "coffee-rails", "~> 4.1.0"
+gem "coffee-rails", "~> 4.2.0"
 
 gem "jquery-rails"
 gem "momentjs-rails", ">= 2.8.1"
 gem "turbolinks"
-gem "jbuilder", "~> 2.0"
+# gem "jbuilder", "~> 2.0"
 gem "sdoc", "~> 0.4.0", group: :doc
 
 # Admin interface

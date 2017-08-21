@@ -33,7 +33,7 @@ class RootController < ShopifyApp::AuthenticatedController
         text.gsub!("inject:user_shop_domain", @shop.domain || "")
         text.gsub!("inject:user_intercom_hmac", intercom_hmac(@shop.domain) || "")
       end
-      render text: text
+      render html: text.html_safe
     else
       redirect_to action: 'update_scope_prompt'
     end
