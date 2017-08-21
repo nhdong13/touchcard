@@ -3,7 +3,7 @@ require "card_html"
 require "newrelic_rpm"
 require "discount_manager"
 
-class Postcard < ActiveRecord::Base
+class Postcard < ApplicationRecord
   belongs_to :card_order
   belongs_to :order
   belongs_to :customer

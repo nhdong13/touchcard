@@ -1,4 +1,4 @@
-class LineItem < ActiveRecord::Base
+class LineItem < ApplicationRecord
   belongs_to :order
 
   validates :order, :shopify_id, :name, presence: true

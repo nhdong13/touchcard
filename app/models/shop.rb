@@ -1,7 +1,7 @@
 require "ac_integrator"
 require "slack_notify"
 
-class Shop < ActiveRecord::Base
+class Shop < ApplicationRecord
   has_many :card_orders, dependent: :destroy
   has_many :postcards, through: :card_orders
   has_many :charges

@@ -1,4 +1,4 @@
-class CardOrder < ActiveRecord::Base
+class CardOrder < ApplicationRecord
   TYPES = ['PostSaleOrder', 'CustomerWinbackOrder', 'LifetimePurchaseOrder', 'AbandonedCard']
 
   belongs_to :shop
