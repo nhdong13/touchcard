@@ -3,14 +3,41 @@ import ReactDOM from 'react-dom'
 import CardSide from './card-side'
 import ConfigurationBox from './configuration-box'
 
-const AutomationHandler = props => {
-  return (
-    <div className="row">
-      <ConfigurationBox />
-      <CardSide title={"Image Side"}/>
-      <CardSide title={"Address Side"}/>
-    </div>
-  )
+class AutomationHandler extends Component {
+  constructor() {
+    super()
+
+    this.state = {
+      includeDiscount: false
+    }
+
+    this.includeDiscount = this.includeDiscount.bind(this)
+  }
+
+  includeDiscount() {
+    debugger
+    this.setState(prevState => ({
+      includeDiscount: !prevState.includeDiscount
+    }))
+  }
+
+  render() {
+    return (
+      <div className="card-page container-fluid">
+        <ConfigurationBox
+          onCheck={this.includeDiscount}
+          includeDiscount={this.state.includeDiscount} />
+        <CardSide
+          title={"Image Side"}
+          isBack={false}
+          inclueDiscount={this.state.includeDiscount} />
+        <CardSide
+          title={"Address Side"}
+          isBack={true}
+          inclueDiscount={this.state.includeDiscount} />
+      </div>
+    )
+  }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
