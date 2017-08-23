@@ -35,7 +35,6 @@ export default class CardSide extends Component {
 
   setImage(src) {
     this.setState({ imageSrc: src })
-    debugger
   }
 
   renderImage() {
@@ -56,6 +55,7 @@ export default class CardSide extends Component {
         <h2>{this.props.title}</h2>
         <ImageUpload label={"Upload Image"} handleFileUpload={this.setImage} />
         <CardSideCheckboxes
+          includeDiscount={this.props.includeDiscount}
           toggleShowBleed={this.toggleShowBleed}
           toggleShowSafeArea={this.toggleShowSafeArea} />
         <div className="layers">
@@ -69,11 +69,11 @@ export default class CardSide extends Component {
                 <img src="/images/postage.png" />
               </div>
               <Draggable>
-                <div clagssName="discount layer">
+                <div className="discount layer">
                   <DiscountCodeBox percentage={10} expireAt={10-10-10}/>
                 </div>
               </Draggable>
-              <div clagssName="layer">
+              <div className="layer">
                 <img className="image" src={this.state.imageSrc} />
               </div>
             </div>

@@ -15,7 +15,6 @@ class AutomationHandler extends Component {
   }
 
   includeDiscount() {
-    debugger
     this.setState(prevState => ({
       includeDiscount: !prevState.includeDiscount
     }))
@@ -30,11 +29,11 @@ class AutomationHandler extends Component {
         <CardSide
           title={"Image Side"}
           isBack={false}
-          inclueDiscount={this.state.includeDiscount} />
+          includeDiscount={this.state.includeDiscount} />
         <CardSide
           title={"Address Side"}
           isBack={true}
-          inclueDiscount={this.state.includeDiscount} />
+          includeDiscount={this.state.includeDiscount} />
       </div>
     )
   }
