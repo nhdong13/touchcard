@@ -1,5 +1,10 @@
 # Changelog
 
+## (UNRELEASED)
+- Background task install jobs (ActiveCampaign Subscribe + Slack Notify)
+- Bump default send_delay to 1 week
+
+
 ## v1.2.3
 - Add Ember Metrics for Google Tag Manager & Intercom ('booted' in GTM)
 
