@@ -27,11 +27,12 @@ class Shop < ActiveRecord::Base
   end
 
   class << self
-
+    # Session store
     def store(session)
       shop = Shop.find_by(domain: session.url)
       if shop.nil?
-        shop = new(domain: session.url, token: session.token)
+        granted_scopes = ShopifyApp.configuration.scope
+        shop = new(domain: session.url, token: session.token, oauth_scopes: granted_scopes)
         shop.save!
         shop.get_shopify_id
         shop.sync_shopify_metadata
@@ -39,6 +40,7 @@ class Shop < ActiveRecord::Base
         InstallNotifierJob.perform_later(shop)
       else
         shop.token = session.token
+        shop.uninstalled_at = nil
         shop.save!
         shop.get_shopify_id
         ShopifyAPI::Session.new(shop.domain, shop.token)
@@ -46,8 +48,10 @@ class Shop < ActiveRecord::Base
       shop.id
     end
 
+    # Session store
     def retrieve(id)
       if shop = find_by(id: id)
+        # ShopifyAPI::Session.new(shop.domain, nil)
         ShopifyAPI::Session.new(shop.domain, shop.token)
       end
     end
@@ -78,24 +82,6 @@ class Shop < ActiveRecord::Base
 
   def new_sess
     ShopifyAPI::Base.activate_session(Shop.retrieve(id))
-  end
-
-  def new_discount(percent, expiration, code)
-    url = shopify_api_path + "/discounts.json"
-    response = HTTParty.post(url,
-      body: {
-        discount: {
-          discount_type: "percentage",
-          value: percent.to_s,
-          code: code,
-          ends_at: expiration,
-          starts_at: Time.now,
-          usage_limit: 1
-        }
-      })
-    logger.info response.body
-    raise "Error registering discount code" unless response.success?
-    code
   end
 
   def get_shopify_id
@@ -177,5 +163,33 @@ class Shop < ActiveRecord::Base
 
   def with_shopify_session(&block)
     ShopifyAPI::Session.temp(domain, token, &block)
+  end
+
+  def update_scopes(scopes)
+    self.oauth_scopes = scopes
+    self.save!
+  end
+
+
+  # Filter out read_XYZ scope if we already have write_XYZ scope
+  def normalized_scopes(scopes)
+    scope_list = scopes.to_s.split(",").map(&:strip).reject(&:empty?).uniq
+    ignore_scopes = scope_list.map { |scope| scope =~ /\Awrite_(.*)\z/ && "read_#{$1}" }.compact
+    scope_list - ignore_scopes
+  end
+
+  def granted_scopes_suffice?(required_scopes)
+    if oauth_scopes.present?
+      required_scopes = normalized_scopes(required_scopes)
+      existing_scopes = normalized_scopes(oauth_scopes)
+      (required_scopes - existing_scopes).empty?
+    else
+      false
+    end
+  end
+  
+  # necessary for the active admin
+  def display_name
+    self.domain
   end
 end

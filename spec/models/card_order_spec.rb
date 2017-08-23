@@ -50,6 +50,41 @@ RSpec.describe CardOrder, type: :model do
       expect(card_order.send_postcard?(order)).to eq true
     end
 
+    it "returns false if we're over maximum" do
+      filter = create(:filter)
+      filter.filter_data["minimum"] = 10.00
+      filter.filter_data["maximum"] = 100.00
+      card_order = setup_card_order
+      card_order.filters = [filter]
+      order = create(:order)
+      order.total_price = 500_00 # $500.00
+
+      expect(card_order.send_postcard?(order)).to eq false
+    end
+
+    it "returns true if we're between minimum and maximum" do
+      filter = create(:filter)
+      filter.filter_data["minimum"] = 10.00
+      filter.filter_data["maximum"] = 100.00
+      card_order = setup_card_order
+      card_order.filters = [filter]
+      order = create(:order)
+      order.total_price = 50_00 # $500.00
+
+      expect(card_order.send_postcard?(order)).to eq true
+    end
+
+    it "returns true for any value if maximum is empty" do
+      filter = create(:filter)
+      filter.filter_data["maximum"] = ''
+      card_order = setup_card_order
+      card_order.filters = [filter]
+      order = create(:order)
+      order.total_price = 1_00 # $1.00
+
+      expect(card_order.send_postcard?(order)).to eq true
+    end
+
   end
 
   describe "#cards_sent" do

@@ -10,6 +10,7 @@ class CardOrder < ActiveRecord::Base
   validates :shop, :card_side_front, :card_side_back, presence: true
 
   after_initialize :ensure_defaults
+  before_update :convert_discount_pct, if: :discount_pct_changed?
 
   delegate :current_subscription, to: :shop
 
@@ -19,8 +20,8 @@ class CardOrder < ActiveRecord::Base
     filter = filters.first
     # if the filters are nil assume they're unbounded
     min = filter.filter_data["minimum"].to_f || -1.0
-    # TODO: when we create campaigns we may want to reintroduce a maximum value here.
-    spend > min
+    max = filter.filter_data["maximum"].to_f.positive? ? filter.filter_data["maximum"].to_f : 1_000_000_000.0
+    spend > min && spend < max
   end
 
   # number of postcards sent for current subscription
@@ -44,7 +45,7 @@ class CardOrder < ActiveRecord::Base
   def ensure_defaults
     self.card_side_front ||= CardSide.create!(is_back: false)
     self.card_side_back ||= CardSide.create!(is_back: true)
-    self.send_delay = 0 if send_delay.nil? && type == "PostSaleOrder"
+    self.send_delay = 1 if send_delay.nil? && type == "PostSaleOrder"
     self.international = false if international.nil?
     self.enabled = false if enabled.nil?
     # TODO: add defaults to schema that can be added
@@ -59,5 +60,9 @@ class CardOrder < ActiveRecord::Base
     # 4-6 business days delivery according to lob
     # TODO handle international + 5 to 7 business days
     send_date = arrive_by - 1.week
+  end
+
+  def convert_discount_pct
+    self.discount_pct = -discount_pct if discount_pct && discount_pct > 0
   end
 end

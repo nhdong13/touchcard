@@ -1,0 +1,44 @@
+image: "ruby:2.3.3"
+
+services:
+  - postgres:latest
+
+variables:
+  POSTGRES_DB: touchcard_test
+
+# Cache gems in between builds
+cache:
+  paths:
+    - vendor/ruby
+
+before_script:
+  - apt-get update -qq && apt-get install -y -qq postgresql postgresql-contrib libpq-dev cmake
+  - ruby -v
+  # Uncomment next line if your rails app needs a JS runtime:
+  # - apt-get update -q && apt-get install nodejs -yqq
+  - gem install bundler  --no-ri --no-rdoc
+  - RAILS_ENV=test bundle install -j $(nproc) --path vendor
+  - RAILS_ENV=test bundle exec rake db:create db:schema:load
+
+rspec:
+  variables:
+    DATABASE_URL: "postgresql://postgres:postgres@postgres:5432/$POSTGRES_DB"
+    AWS_ACCESS_KEY_ID: 'DUMMY'
+    AWS_SECRET_ACCESS_KEY: 'DUMMY'
+    AWS_BUCKET_NAME: 'DUMMY'
+    AWS_REGION: 'DUMMY'
+    LOB_API_KEY: 'DUMMY'
+    SHOPIFY_CLIENT_API_KEY: '11111'
+    SHOPIFY_CLIENT_API_SECRET: '11111'
+    APP_URL: 'DUMMY'
+    SHOPIFY_REDIRECT_URI: 'DUMMY'
+    REDISCLOUD_URL: 'DUMMY'
+    MAIL_FROM: 'DUMMY'
+    MAILGUN_API_KEY: 'DUMMY'
+    MAILGUN_DOMAIN: 'DUMMY'
+    AC_ENDPOINT: 'DUMMY'
+    AC_API_KEY: 'DUMMY'
+    AC_INSTALLED_SHOP_LIST_ID: 'DUMMY'
+    SUBSCRIPTIONS_GOAL_STRING: 'DUMMY'
+  script:
+  - RAILS_ENV=test bundle exec rspec
