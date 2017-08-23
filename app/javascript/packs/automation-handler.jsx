@@ -38,10 +38,3 @@ class AutomationHandler extends Component {
     )
   }
 }
-
-document.addEventListener('DOMContentLoaded', () => {
-  ReactDOM.render(
-    <AutomationHandler name="React" />,
-    document.getElementById("react-app"),
-  )
-})
