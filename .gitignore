@@ -31,3 +31,4 @@ coverage
 
 # misc
 .byebug_history
+/node_modules
