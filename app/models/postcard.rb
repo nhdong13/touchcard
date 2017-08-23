@@ -1,6 +1,7 @@
 require "aws_utils"
 require "card_html"
 require "newrelic_rpm"
+require "discount_manager"
 
 class Postcard < ActiveRecord::Base
   belongs_to :card_order
@@ -46,17 +47,6 @@ class Postcard < ActiveRecord::Base
     address.to_lob_address
   end
 
-  def generate_discount_code
-    raise "Error generating discount code" unless discount_pct and discount_exp_at
-    code = ("A".."Z").to_a.sample(9).join
-    code = "#{code[0...3]}-#{code[3...6]}-#{code[6...9]}"
-    card_order.shop.new_discount(
-      discount_pct,
-      discount_exp_at,
-      code)
-    code
-  end
-
   def self.send_all
     num_failed = 0
     todays_cards = Postcard.joins(:shop)
@@ -65,7 +55,7 @@ class Postcard < ActiveRecord::Base
     todays_cards.each do |card|
       begin
         card.send_card
-      rescue Exception => e
+      rescue => e
         num_failed += 1
         logger.error e
         NewRelic::Agent::notice_error(e.message)
@@ -98,11 +88,16 @@ class Postcard < ActiveRecord::Base
     # TODO: all kinds of error handling
     # Test lob
     @lob = Lob.load
-    self.estimated_arrival = estimated_transit_days.business_days.from_now
+    self.estimated_arrival = estimated_transit_days.business_days.from_now.end_of_day
+
     if card_order.discount?
       self.discount_pct = card_order.discount_pct
       self.discount_exp_at = estimated_arrival + card_order.discount_exp.weeks
-      self.discount_code = generate_discount_code
+      @discount_manager = DiscountManager.new(card_order.shop.shopify_api_path, discount_pct, discount_exp_at)
+      @discount_manager.generate_discount
+      self.price_rule_id = @discount_manager.price_rule_id
+      self.discount_code = @discount_manager.discount_code
+      return unless @discount_manager.has_valid_code?
     end
 
     front_html, back_html = [
@@ -113,8 +108,9 @@ class Postcard < ActiveRecord::Base
         background_image: card_side.image,
         discount_x: card_side.discount_x,
         discount_y: card_side.discount_y,
-        discount_pct: discount_pct,
-        discount_exp: discount_exp_at ? discount_exp_at.strftime("%m/%d/%Y") : nil,
+        discount_pct: discount_pct ? discount_pct.abs : nil,
+        # Make customer think coupon expires a day early to avoid last minute disappoint for e.g. timezone issues
+        discount_exp: discount_exp_at ? (discount_exp_at - 1.day).strftime("%m/%d/%Y") : nil,
         discount_code: card_side.show_discount? ? discount_code : nil
       )
     end

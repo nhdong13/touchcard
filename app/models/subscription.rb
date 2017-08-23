@@ -74,4 +74,9 @@ class Subscription < ActiveRecord::Base
     subscription.delete
     super
   end
+
+  # necessary for the active admin
+  def display_name
+    self.id
+  end
 end
