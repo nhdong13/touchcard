@@ -1,6 +1,3 @@
-require "ac_integrator"
-require "slack_notify"
-
 class Shop < ActiveRecord::Base
   has_many :card_orders, dependent: :destroy
   has_many :postcards, through: :card_orders
@@ -30,14 +27,6 @@ class Shop < ActiveRecord::Base
   end
 
   class << self
-
-    # TODO: Should this should live with the session store methods?
-    # TODO: Does this need to be background-tasked?
-    def add_to_email_list(email)
-      ac = AcIntegrator::NewInstall.new
-      ac.add_email_to_list(email)
-    end
-
     # Session store
     def store(session)
       shop = Shop.find_by(domain: session.url)
@@ -48,8 +37,7 @@ class Shop < ActiveRecord::Base
         shop.get_shopify_id
         shop.sync_shopify_metadata
         shop.get_last_month
-        add_to_email_list(shop.email)
-        SlackNotify.install(shop.domain, shop.email, shop.owner, shop.last_month, true)
+        InstallNotifierJob.perform_later(shop)
       else
         shop.token = session.token
         shop.uninstalled_at = nil
