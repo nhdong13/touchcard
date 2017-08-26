@@ -1,7 +1,7 @@
 require "ac_integrator"
 require "slack_notify"
 
-class InstallNotifierJob < ActiveJob::Base
+class ShopInstalledJob < ActiveJob::Base
   queue_as :default
 
   def perform(shop)

@@ -37,7 +37,7 @@ class Shop < ActiveRecord::Base
         shop.get_shopify_id
         shop.sync_shopify_metadata
         shop.get_last_month
-        InstallNotifierJob.perform_later(shop)
+        ShopInstalledJob.perform_later(shop)
       else
         shop.token = session.token
         shop.uninstalled_at = nil
