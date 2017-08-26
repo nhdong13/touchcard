@@ -9,19 +9,27 @@ module AcIntegrator
       @uri = URI.parse("#{ENV['AC_ENDPOINT']}")
     end
 
-    def add_email_to_list(email)
+    def add_contact(email, domain=nil, first_name=nil, last_name=nil, tags=nil)
       params = {
         :"api_key" => ENV["AC_API_KEY"],
         :"api_action"=> "contact_add",
         :"api_output" => "json"
       }
+
       uri.query = URI.encode_www_form(params)
       request = Net::HTTP::Post.new(uri.request_uri)
-      request.set_form_data({
-        "email" => email,
-        "p[#{LIST_ID}]" => LIST_ID
-      })
 
+      form_data = {
+          "email" => email,
+          "p[#{LIST_ID}]" => LIST_ID
+      }
+      form_data["field[%STORE_URL%,0]"] = domain if domain
+      form_data["first_name"] = first_name if first_name
+      form_data["last_name"] = last_name if last_name
+      form_data["tags"] = tags.join(",") if tags
+
+
+      request.set_form_data(form_data)
       http.request(request)
     end
 
