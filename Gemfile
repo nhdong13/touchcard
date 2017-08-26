@@ -72,6 +72,10 @@ gem "business_time", "~> 0.7"
 # send mails using mailgun
 gem "mailgunner", '~> 2.4'
 
+# ActiveCampaign ('bdad6c2' is last building version as of 2017-08-26)
+gem "active_campaign", git: "https://github.com/laverick/active_campaign", ref: "bdad6c2"
+
+
 group :assets do
   gem "therubyracer", platforms: :ruby
 end
