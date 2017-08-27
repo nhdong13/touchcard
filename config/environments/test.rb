@@ -41,7 +41,7 @@ Rails.application.configure do
   # config.action_view.raise_on_missing_translations = true
 
   # Suppress spam from HTTPI (used by ActiveCampaign gem)
-  HTTPI.log = false if Rails.env === "test"
+  HTTPI.log = false if Rails.env == "test"
   HTTPI.log_level = :info
 
 end
