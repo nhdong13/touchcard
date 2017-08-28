@@ -65,6 +65,7 @@ class Subscription < ActiveRecord::Base
         current_period_start: Time.at(subscription.current_period_start),
         current_period_end: Time.at(subscription.current_period_end)))
       subscription.delete unless instance.valid?
+      ShopSubscribedJob.perform_later(shop) if instance.valid? # Update external APIs (ie: email list)
       instance
     end
   end
