@@ -11,6 +11,7 @@ class ShopSubscribedJob < ActiveJob::Base
     }
     sync_params.reject!{ |k,v| v.nil?}  # remove keys with no value
 
-    ActiveCampaign::client.contact_sync(sync_params)
+    result = ActiveCampaign::client.contact_sync(sync_params)
+    puts "ActiveCampaign Contact Sync\n#{sync_params}\n#{result}\n"
   end
 end
