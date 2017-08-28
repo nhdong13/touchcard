@@ -77,4 +77,19 @@ RSpec.configure do |config|
   # as the one that triggered the failure.
   Kernel.srand config.seed
 =end
+
+  # Disable all Output in Rspec. We need to use some 'puts'
+  # for Delayed jobs, so this keeps test output clean.
+  original_stderr = $stderr
+  original_stdout = $stdout
+  config.before(:all) do
+    # Redirect stderr and stdout
+    $stderr = File.new(File.join(File.dirname(__FILE__), 'tmp', 'rspec_log.txt'), 'w')
+    $stdout = File.new(File.join(File.dirname(__FILE__), 'tmp', 'rspec_log.txt'), 'w')
+  end
+  config.after(:all) do
+    $stderr = original_stderr
+    $stdout = original_stdout
+  end
+
 end
