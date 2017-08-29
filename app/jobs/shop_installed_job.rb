@@ -1,4 +1,5 @@
 require "slack_notify"
+require "active_campaign_logger"
 
 class ShopInstalledJob < ActiveJob::Base
   queue_as :default
@@ -21,7 +22,8 @@ class ShopInstalledJob < ActiveJob::Base
     }
     sync_params.reject!{ |k,v| v.nil?}  # remove keys with no value
 
-    ActiveCampaign::client.contact_sync(sync_params)
+    result = ActiveCampaign::client.contact_sync(sync_params)
+    ActiveCampaignLogger.log(sync_params, result)
 
     SlackNotify.install(shop.domain, shop.email, shop.owner, shop.last_month)
   end

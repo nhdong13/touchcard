@@ -1,4 +1,5 @@
 require "slack_notify"
+require "active_campaign_logger"
 
 class ShopSubscribedJob < ActiveJob::Base
   queue_as :default
@@ -11,6 +12,8 @@ class ShopSubscribedJob < ActiveJob::Base
     }
     sync_params.reject!{ |k,v| v.nil?}  # remove keys with no value
 
-    ActiveCampaign::client.contact_sync(sync_params)
+    result = ActiveCampaign::client.contact_sync(sync_params)
+    ActiveCampaignLogger.log(sync_params, result)
+
   end
 end
