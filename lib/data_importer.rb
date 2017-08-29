@@ -35,7 +35,7 @@ module DataImporter
 
     def get_orders(index, lookback_days=30)
 
-      created_at_min = Time.now.midnight - lookback_days.days
+      created_at_min = Time.now - lookback_days.days
 
       # https://help.shopify.com/api/reference/order#index
       # shop_id, since_id, page, status ="any", processed_at_min, processed_at_max
