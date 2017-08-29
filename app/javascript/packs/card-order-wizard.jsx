@@ -11,6 +11,8 @@ export default class CardOrderWizard extends Component {
     this.state = {
       step: 1
     }
+
+    this.switchStep = this.switchStep.bind(this)
   }
 
   buttonText() {
@@ -24,29 +26,43 @@ export default class CardOrderWizard extends Component {
     }
   }
 
+  switchStep() {
+    this.setState(prevState => ({
+      step: prevState.step + 1
+    }))
+  }
+
   render() {
     switch (this.state.step) {
       case 1:
         return (
           <div>
             <SelectTypeForm />
-            <button className="btn btn-primary">{this.buttonText()}</button>
+            <button onClick={this.switchStep} className="btn btn-primary">
+              {this.buttonText()}
+            </button>
           </div>
         )
       case 2:
         return (
           <div>
             <SetupCard />
-            <button className="btn btn-primary">{this.buttonText()}</button>
+            <button onClick={this.switchStep} className="btn btn-primary">
+              {this.buttonText()}
+            </button>
           </div>
         )
       case 3:
         return (
           <div>
             <ConfigureCard />
-            <button className="btn btn-primary">{this.buttonText()}</button>
+            <button onClick={this.switchStep} className="btn btn-primary">
+              {this.buttonText()}
+            </button>
           </div>
         )
+      default:
+        return null
     }
   }
 }
