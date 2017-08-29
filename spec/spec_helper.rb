@@ -80,12 +80,14 @@ RSpec.configure do |config|
 
   # Disable all Output in Rspec. We need to use some 'puts'
   # for Delayed jobs, so this keeps test output clean.
+
+  puts "Test STDERR & STDOUR can be found in tmp/rspec_log.txt"
   original_stderr = $stderr
   original_stdout = $stdout
   config.before(:all) do
     # Redirect stderr and stdout
-    $stderr = File.new(File.join(File.dirname(__FILE__), 'tmp', 'rspec_log.txt'), 'w')
-    $stdout = File.new(File.join(File.dirname(__FILE__), 'tmp', 'rspec_log.txt'), 'w')
+    $stderr = File.new(File.join(File.dirname(__FILE__), '..', 'tmp', 'rspec_log.txt'), 'w')
+    $stdout = File.new(File.join(File.dirname(__FILE__), '..','tmp', 'rspec_log.txt'), 'w')
   end
   config.after(:all) do
     $stderr = original_stderr
