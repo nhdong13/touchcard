@@ -9,11 +9,11 @@ module DataImporter
       @shop = ::Shop.find(shop_id)
     end
 
-    def import_orders()
+    def import_orders(lookback_days = 1)
       @shop.with_shopify_session do
         page_index = 1
         loop do
-          chunk = get_orders(page_index,3)
+          chunk = get_orders(page_index,lookback_days)
           for order in chunk do
             begin
               Order.from_shopify!(order, @shop)
@@ -33,7 +33,7 @@ module DataImporter
     end
 
 
-    def get_orders(index, lookback_days=30)
+    def get_orders(index, lookback_days)
 
       created_at_min = Time.now - lookback_days.days
 
