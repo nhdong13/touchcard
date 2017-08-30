@@ -1,7 +1,7 @@
 
 module DataImporter
 
-  PAGE_SIZE = 100   # 250 maximum
+  PAGE_SIZE = 250   # 250 maximum
 
   class Shop
 
@@ -9,11 +9,12 @@ module DataImporter
       @shop = ::Shop.find(shop_id)
     end
 
-    def import_orders(lookback_days = 1)
+    def import_orders(before_date = Time.now, lookback_days = 1)
       @shop.with_shopify_session do
         page_index = 1
+        after_date = before_date - lookback_days.days
         loop do
-          chunk = get_orders(page_index,lookback_days)
+          chunk = get_orders(page_index, after_date, before_date)
           for order in chunk do
             begin
               Order.from_shopify!(order, @shop)
@@ -33,14 +34,17 @@ module DataImporter
     end
 
 
-    def get_orders(index, lookback_days)
+    def get_orders(index, processed_at_min, processed_at_max)
 
-      created_at_min = Time.now - lookback_days.days
 
       # https://help.shopify.com/api/reference/order#index
       # shop_id, since_id, page, status ="any", processed_at_min, processed_at_max
       # shop = Shop.find_by(domain: shop_domain)
-      params = {status: "any", limit: PAGE_SIZE, created_at_min: created_at_min, page: index}
+      params = {status: "any",
+                limit: PAGE_SIZE,
+                processed_at_min: processed_at_min,
+                processed_at_max: processed_at_max ,
+                page: index}
       orders = ShopifyAPI::Order.all(params: params)
     end
   end
