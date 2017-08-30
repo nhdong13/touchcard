@@ -14,6 +14,7 @@ module DataImporter
         page_index = 1
         after_date = before_date - lookback_days.days
         loop do
+          Rails.logger.info "Fetching Orders from Shopify - page #{page_index}..."
           chunk = get_orders(page_index, after_date, before_date)
           for order in chunk do
             begin
