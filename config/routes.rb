@@ -47,7 +47,7 @@ Rails.application.routes.draw do
   resource :subscription
 
   # Shopify Engine
-  root :to => 'root#oauth_entry_point' # See comments in controller
+  root :to => 'automations#index' # See comments in controller
   mount ShopifyApp::Engine, at: '/'
   get '/app' => 'automations#index'
   get '/app/*path' => 'root#app'
