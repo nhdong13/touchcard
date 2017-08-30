@@ -1,5 +1,5 @@
 class CardOrder < ApplicationRecord
-  TYPES = ['PostSaleOrder', 'CustomerWinbackOrder', 'LifetimePurchaseOrder', 'AbandonedCard']
+  TYPES ||= ['PostSaleOrder', 'CustomerWinbackOrder', 'LifetimePurchaseOrder', 'AbandonedCard']
 
   belongs_to :shop
   belongs_to :card_side_front, class_name: "CardSide",
@@ -9,8 +9,10 @@ class CardOrder < ApplicationRecord
   has_many :filters, dependent: :destroy
   has_many :postcards
 
-  accepts_nested_attributes_for :card_side_front, reject_if: :invalid_image_size
-  accepts_nested_attributes_for :card_side_back, reject_if: :invalid_image_size
+  accepts_nested_attributes_for :card_side_front
+  # , reject_if: :invalid_image_size
+  accepts_nested_attributes_for :card_side_back
+  # , reject_if: :invalid_image_size
   accepts_nested_attributes_for :filters,
     allow_destroy: true,
     reject_if: :all_blank
@@ -93,6 +95,6 @@ class CardOrder < ApplicationRecord
   private
 
   def invalid_image_size(attributes)
-    debugger
+    # debugger
   end
 end

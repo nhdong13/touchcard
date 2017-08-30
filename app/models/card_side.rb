@@ -3,7 +3,7 @@ class CardSide < ApplicationRecord
 
   mount_uploader :image, ImageUploader
 
-  validate :image_size
+  # validate :image_size
 
   def image_size
     debugger
