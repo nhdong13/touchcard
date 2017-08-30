@@ -4,45 +4,47 @@
   });
 </script>
 
-<div class="row text-center">
-  <%= button_to 'Create New Automation', new_automation_path, method: :get, class: 'btn btn-primary btn-lg' %>
-</div>
+<section>
+  <div class="row text-center">
+    <%= button_to 'Create New Automation', new_automation_path, method: :get, class: 'btn btn-primary btn-lg' %>
+  </div>
 
-<% @card_orders.each do |card| %>
-  <div class="row" id="card-<%= card.id %>">
-    <div class="container-fluid card flat card-order">
-      <div class="row">
-        <div class="col-sm-2">
-          <h4 class="text-center" style="border-bottom: 1px solid grey"><%= card.type %></h4>
-          <div class="row text-center" style="padding: 10%">
-            <div class="make-switch switch-large">
-              <input type="checkbox" checked>
+  <% @card_orders.each do |card| %>
+    <div class="row" id="card-<%= card.id %>">
+      <div class="container-fluid card flat card-order">
+        <div class="row">
+          <div class="col-sm-2">
+            <h4 class="text-center" style="border-bottom: 1px solid grey"><%= card.type %></h4>
+            <div class="row text-center" style="padding: 10%">
+              <div class="make-switch switch-large">
+                <input type="checkbox" checked>
+              </div>
+            </div>
+            <div class="row text-center" style="padding: 10%">
+              <%= link_to "Delete", card, remote: true, method: :delete, class: 'btn btn-lg btn-danger' %>
             </div>
           </div>
-          <div class="row text-center" style="padding: 10%">
-            <%= link_to "Delete", card, remote: true, method: :delete, class: 'btn btn-lg btn-danger' %>
+          <div class="col-sm-4">
+            <div class="content-box">
+              <!-- {{card-template isEditable=isEditable cardOrder=cardOrder edit=(action 'editCard')}} -->
+            </div>
           </div>
-        </div>
-        <div class="col-sm-4">
-          <div class="content-box">
-            <!-- {{card-template isEditable=isEditable cardOrder=cardOrder edit=(action 'editCard')}} -->
+          <div class="col-sm-3">
+            <div class="content-box">
+              <h4 class="text-uppercase text-center">Config</h4>
+              <p>Sending Delay: <%= card.send_delay %></p>
+              <p>Filter:</p>
+            </div>
           </div>
-        </div>
-        <div class="col-sm-3">
-          <div class="content-box">
-            <h4 class="text-uppercase text-center">Config</h4>
-            <p>Sending Delay: <%= card.send_delay %></p>
-            <p>Filter:</p>
-          </div>
-        </div>
-        <div class="col-sm-3">
-          <div class="content-box">
-            <h4 class="text-uppercase text-center">Stats</h4>
-            <p>Cards Send:</p>
-            <p>Revenue:</p>
+          <div class="col-sm-3">
+            <div class="content-box">
+              <h4 class="text-uppercase text-center">Stats</h4>
+              <p>Cards Send:</p>
+              <p>Revenue:</p>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-<% end %>
+  <% end %>
+</section>

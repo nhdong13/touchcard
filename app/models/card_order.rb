@@ -1,5 +1,5 @@
 class CardOrder < ApplicationRecord
-  TYPES ||= ['PostSaleOrder', 'CustomerWinbackOrder', 'LifetimePurchaseOrder', 'AbandonedCard']
+  TYPES = ['PostSaleOrder', 'CustomerWinbackOrder', 'LifetimePurchaseOrder', 'AbandonedCard']
 
   belongs_to :shop
   belongs_to :card_side_front, class_name: "CardSide",
@@ -22,8 +22,6 @@ class CardOrder < ApplicationRecord
   before_update :convert_discount_pct, if: :discount_pct_changed?
 
   delegate :current_subscription, to: :shop
-
-  TYPES = ["Post Sale Order", "Customer Winback", "Abandoned Checkout", "Lifetime Purchase"]
 
   def send_postcard?(order)
     return true unless filters.count > 0
