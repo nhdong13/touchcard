@@ -7,8 +7,8 @@ class OrdersCreateJob < ActiveJob::Base
       order = Order.from_shopify!(shopify_order, shop)
       order.connect_to_postcard
       return puts "no customer" unless order.customer
-      return puts "no default address" unless shopify_order.customer.respond_to?(:default_address)
-      return puts "no default address" unless shopify_order.customer.default_address
+      return puts "no default address" unless shopify_order&.customer&.default_address
+      return puts "no street in address" unless shopify_order.customer.default_address&.address1&.present?
       default_address = shopify_order.customer.default_address
       international = default_address.country_code != "US"
 
