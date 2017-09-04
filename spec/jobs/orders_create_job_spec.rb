@@ -31,7 +31,7 @@ RSpec.describe OrdersCreateJob, type: :job do
     expect(OrdersCreateJob.new.queue_name).to eq('default')
   end
 
-  describe "#preform" do
+  describe "#perform" do
     context "order already exists" do
       it "ignores" do
         stub_order("no_customer")
@@ -69,6 +69,17 @@ RSpec.describe OrdersCreateJob, type: :job do
             perform_enqueued_jobs { job }
 
             expect(Shop.find(shop.id).credit).to eq shop.credit - 1
+          end
+        end
+
+        context "no street in address" do
+          it "saves order but doesn't create postcard" do
+            stub_order("no_street_in_address")
+            perform_enqueued_jobs { job }
+            expect(Customer.count).to eq 1
+            expect(Address.count).to eq 1
+            expect(Postcard.count).to eq 0
+            expect(Order.count).to eq 1
           end
         end
 
