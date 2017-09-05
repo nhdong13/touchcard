@@ -1,5 +1,5 @@
 class Api::V1::PostcardsController < Api::BaseController
-  before_action :set_postcard, only: [:show, :destoy, :cancel]
+  before_action :set_postcard, only: [:show, :destroy, :cancel]
 
   def index
     @postcards = @current_shop.postcards.where(paid: true).order(updated_at: :desc).limit(20)
