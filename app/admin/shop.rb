@@ -1,12 +1,13 @@
 ActiveAdmin.register Shop do
   includes :subscriptions
-  includes :card_orders
-
+  
   actions :index, :show
 
+  remove_filter :card_orders
   remove_filter :postcards
   remove_filter :orders
   remove_filter :token
+  remove_filter :subscriptions
   remove_filter :charges
   remove_filter :charge_amount
   remove_filter :charge_date
@@ -59,9 +60,10 @@ ActiveAdmin.register Shop do
     panel "Relevant Card Orders" do
       table_for shop.card_orders do
         column  :id
+        column  :enabled
+        column  :send_delay
         column  :discount_pct
         column  :discount_exp
-        column  :enabled
         column :card_side_front_id
         column :card_side_back_id
       end

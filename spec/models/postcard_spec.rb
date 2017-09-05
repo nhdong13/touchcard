@@ -7,13 +7,15 @@ RSpec.describe Postcard, type: :model do
     let(:postcard) { create(:postcard, sent: false, paid: true, card_order: card_order) }
     let(:card_order) { create(:card_order, discount_pct: 10, discount_exp: 2) }
     let(:shop) { card_order.shop }
-    let!(:discount) { stub_shopify(:discounts, :create) }
 
     # TODO: split out spec into seperate cases
     # TODO: handle negative cases
     it "works" do
+      price_rule_id = stub_shopify(:price_rules, :create)[:price_rule][:id]
+      stub_shopify(:discounts, :create, for_discount: true, price_rule_id: price_rule_id, entity_uri: "discount_codes")
       stub_request(:post, "https://#{ENV['LOB_API_KEY']}:@api.lob.com/v1/postcards")
         .to_return(body: File.read("#{Rails.root}/spec/fixtures/lob/postcards/create/default.json"))
+
       postcard.send_card
       expect(postcard.sent).to eq true
       expect(postcard.date_sent).to eq Date.today

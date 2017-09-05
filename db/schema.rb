@@ -252,6 +252,7 @@ ActiveRecord::Schema.define(version: 20170905180325) do
     t.integer  "discount_pct"
     t.datetime "discount_exp_at"
     t.boolean  "canceled",                     default: false
+    t.integer  "price_rule_id",                limit: 8
   end
 
   add_index "postcards", ["customer_id"], name: "index_postcards_on_customer_id", using: :btree
@@ -284,6 +285,7 @@ ActiveRecord::Schema.define(version: 20170905180325) do
     t.datetime "uninstalled_at"
     t.datetime "last_login_at"
     t.json     "metadata",                     default: {}
+    t.text     "oauth_scopes"
   end
 
   add_index "shops", ["domain"], name: "index_shops_on_domain", unique: true, using: :btree

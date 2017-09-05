@@ -1,0 +1,22 @@
+<div class="row scopes-msg">
+  <p>
+    Hi there!
+  </p>
+  <p>
+    For Touchcard to continue working we need to update permissions.
+  </p>
+  <br>
+  <p> Please click Ok below and accept the new permissions when you're redirected. We’ll bring you right back to our App. </p>
+  <br>
+  <p>
+    Thanks,<br>
+    The Touchcard Team
+  </p>
+  <br>
+  <div class="text-center">
+  <%= button_to "Ok", { action: "update_scope_redirect" }, { class: 'btn btn-primary btn-lg' } %>
+  </div>
+  <br>
+  <br>
+  <p id="mail_support_line"> Questions or issues? Please let us know! <%= mail_to 'support@touchcard.co' %> </p>
+</div>

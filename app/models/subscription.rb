@@ -65,6 +65,7 @@ class Subscription < ActiveRecord::Base
         current_period_start: Time.at(subscription.current_period_start),
         current_period_end: Time.at(subscription.current_period_end)))
       subscription.delete unless instance.valid?
+      ShopSubscribedJob.perform_later(shop) if instance.valid? # Update external APIs (ie: email list)
       instance
     end
   end
@@ -73,5 +74,10 @@ class Subscription < ActiveRecord::Base
     subscription = shop.stripe_customer.subscriptions.retrieve(stripe_id)
     subscription.delete
     super
+  end
+
+  # necessary for the active admin
+  def display_name
+    self.id
   end
 end

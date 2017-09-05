@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe AppUninstalledJob, type: :job do
+RSpec.describe ShopUninstalledJob, type: :job do
   include ActiveJob::TestHelper
 
   let(:shop) { create(:shop, credit: 2, domain: 'testshop1.myshopify.com') }
@@ -28,7 +28,7 @@ RSpec.describe AppUninstalledJob, type: :job do
   end
 
   it 'is in default queue' do
-    expect(AppUninstalledJob.new.queue_name).to eq('default')
+    expect(ShopUninstalledJob.new.queue_name).to eq('default')
   end
 
   describe '#perform' do

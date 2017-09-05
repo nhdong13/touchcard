@@ -7,6 +7,11 @@ ActiveAdmin.register Postcard do
     redirect_to admin_postcards_path
   end
 
+  remove_filter :card_order
+  remove_filter :orders
+  remove_filter :customer
+  remove_filter :order
+
   index do
     div class: 'top_pagination' do
       paginated_collection(collection, download_links: false)

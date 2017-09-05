@@ -1,6 +1,11 @@
 ActiveAdmin.register CardOrder do
   actions :index, :show
 
+  remove_filter :postcards
+  remove_filter :card_side_front
+  remove_filter :card_side_back
+  remove_filter :filters
+
   index do
     column :type
     column :discount_pct
@@ -14,6 +19,7 @@ ActiveAdmin.register CardOrder do
     column :status
     column :created_at
     column :updated_at
+    actions
   end
 
   show do
