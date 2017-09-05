@@ -130,7 +130,10 @@ class Postcard < ActiveRecord::Base
 
   def cancel
     self.canceled = true
+    self.transaction do
+      self.shop.increment_credit if self.paid
+      self.paid = false
+    end
     self.save!
-    self.shop.increment_credit
   end
 end

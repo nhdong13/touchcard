@@ -32,7 +32,8 @@ ActiveAdmin.register Postcard do
     column :canceled
 
     actions do |card|
-      link_to "Cancel", { action: 'cancel', id: card }, method: :patch unless card.canceled
+      confirmation_message = "Are you sure you want to cancel this scheduled postcard and credit the shop? This can't be undone."
+      link_to "Cancel", { action: 'cancel', id: card }, method: :patch, data: { confirm: confirmation_message } unless card.canceled
     end
   end
 
