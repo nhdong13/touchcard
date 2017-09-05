@@ -42,7 +42,4 @@ class Address < ActiveRecord::Base
     }
   end
 
-  def is_valid?
-    address1.present?
-  end
 end
