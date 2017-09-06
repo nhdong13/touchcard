@@ -119,11 +119,11 @@ ActiveAdmin.setup do |config|
   # This allows your users to comment on any resource registered with Active Admin.
   #
   # You can completely disable comments:
-  # config.comments = false
-  #
+  config.comments = false
+
   # You can disable the menu item for the comments index page:
-  # config.show_comments_in_menu = false
-  #
+  config.comments_menu = false
+
   # You can change the name under which comments are registered:
   # config.comments_registration_name = 'AdminComment'
   #
@@ -135,7 +135,7 @@ ActiveAdmin.setup do |config|
   #
   # Enable and disable Batch Actions
   #
-  config.batch_actions = true
+  config.batch_actions = false
 
   # == Controller Filters
   #
