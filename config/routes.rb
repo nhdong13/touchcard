@@ -34,6 +34,7 @@ Rails.application.routes.draw do
 
   # Routes for Admins
   devise_for :admin_users, ActiveAdmin::Devise.config
+  get '/admin' => 'admin/shops#index'
   ActiveAdmin.routes(self)
 
   # # Routes for updating scope

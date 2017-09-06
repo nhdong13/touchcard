@@ -14,17 +14,30 @@ ActiveAdmin.register Subscription do
   end
 
   index do
+
+    actions
+    column :quantity do |subscription|
+          link_to subscription.quantity, new_quantity_change_admin_subscription_path(subscription)
+    end
     column :id
-    column :quantity
     column :current_period_start
     column :current_period_end
-    actions do |subscription|
-      link_to "Change Quantity", new_quantity_change_admin_subscription_path(subscription)
-    end
   end
 
   show do
-    attributes_table :id, :quantity, :current_period_start, :current_period_end
+    attributes_table do
+      row :id
+      row :quantity do |subscription|
+        link_to subscription.quantity, new_quantity_change_admin_subscription_path(subscription)
+      end
+      row :current_period_start
+      row :current_period_end
+      row :created_at
+      row :updated_at
+      row :stripe_id do |subscription|
+        link_to subscription.stripe_id, "https://dashboard.stripe.com/subscriptions/#{subscription.stripe_id}"
+      end
+    end
   end
 
 end
