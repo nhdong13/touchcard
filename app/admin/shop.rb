@@ -63,6 +63,9 @@ ActiveAdmin.register Shop do
         status_tag("#{shop.credit}")
         link_to "edit", adjust_credits_admin_shop_path(shop)
       end
+      row :stripe_customer_id do |shop|
+        link_to shop.stripe_customer_id, "https://dashboard.stripe.com/customers/#{shop.stripe_customer_id}" if shop.stripe_customer_id
+      end
       row :approval_state
       row :plan_name
       row :last_login_at

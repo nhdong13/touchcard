@@ -1,6 +1,10 @@
 # Changelog
 
 ## (UNRELEASED)
+- Comprehensive Admin Tool Improvements: 
+    - Navigation 
+    - Edit: Subscription Quantity, Shop Credits, Card Order Sending Enable
+    - Cancel Postcards
 - Add name and size tag to ActiveCampaign subscribers
 - Add subscribers to Customer list in ActiveCampaign
 - Background task install jobs (ActiveCampaign Subscribe + Slack Notify)
