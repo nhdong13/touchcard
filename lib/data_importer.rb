@@ -34,13 +34,12 @@ module DataImporter
       end
     end
 
-
     def get_orders(index, processed_at_min, processed_at_max)
-
 
       # https://help.shopify.com/api/reference/order#index
       # shop_id, since_id, page, status ="any", processed_at_min, processed_at_max
       # shop = Shop.find_by(domain: shop_domain)
+
       params = {status: "any",
                 limit: PAGE_SIZE,
                 processed_at_min: processed_at_min,
