@@ -9,11 +9,12 @@ class OrdersCreateJob < ActiveJob::Base
       return puts "no customer" unless order.customer
       return puts "no default address" unless shopify_order&.customer&.default_address
       return puts "no street in address" unless shopify_order.customer.default_address&.address1&.present?
+      # Currently only new customers receive postcards
+      return puts "customer already exists" unless order.customer.new_customer?
+
       default_address = shopify_order.customer.default_address
       international = default_address.country_code != "US"
 
-      # Only new customers recieve postcards at the moment
-      return puts  "Not a new customer" unless order.customer.new_customer?
       # Create a new card and schedule to send
       post_sale_order = shop.card_orders.find_by(
         enabled: true,

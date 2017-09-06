@@ -41,4 +41,5 @@ class Address < ActiveRecord::Base
       address_zip: zip
     }
   end
+
 end

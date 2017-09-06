@@ -1,6 +1,12 @@
 ActiveAdmin.register Postcard do
   actions :index, :show
 
+  member_action :cancel, method: :patch do
+    card = Postcard.find(params[:id])
+    card.cancel
+    redirect_to admin_postcards_path
+  end
+
   filter :shop
   filter :discount_code
   filter :send_date
@@ -31,6 +37,11 @@ ActiveAdmin.register Postcard do
     column :discount_pct
     column :discount_exp_at
     column :canceled
+
+    actions do |card|
+      confirmation_message = "Are you sure you want to cancel this scheduled postcard and credit the shop? This can't be undone."
+      link_to "Cancel", { action: 'cancel', id: card }, method: :patch, data: { confirm: confirmation_message } unless card.canceled
+    end
   end
 
   show do

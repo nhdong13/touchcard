@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170623221814) do
+ActiveRecord::Schema.define(version: 20170905180325) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -251,6 +251,7 @@ ActiveRecord::Schema.define(version: 20170623221814) do
     t.boolean  "expiration_notification_sent", default: false
     t.integer  "discount_pct"
     t.datetime "discount_exp_at"
+    t.boolean  "canceled",                     default: false
     t.integer  "price_rule_id",                limit: 8
   end
 
