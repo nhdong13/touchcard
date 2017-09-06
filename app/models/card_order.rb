@@ -17,7 +17,7 @@ class CardOrder < ActiveRecord::Base
   def send_postcard?(order)
     return true unless filters.count > 0
     spend = order.total_price / 100.0
-    filter = filters.first
+    filter = filters.last # Somehow got a multiple-filter bug, so make sure we use latest value
     # if the filters are nil assume they're unbounded
     min = filter.filter_data["minimum"].to_f || -1.0
     max = filter.filter_data["maximum"].to_f.positive? ? filter.filter_data["maximum"].to_f : 1_000_000_000.0
