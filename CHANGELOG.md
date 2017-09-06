@@ -9,6 +9,7 @@
 - Add subscribers to Customer list in ActiveCampaign
 - Background task install jobs (ActiveCampaign Subscribe + Slack Notify)
 - Bump default send_delay to 1 week
+- Add Data Importer Library (not yet hooked up)
 
 
 ## v1.2.3
