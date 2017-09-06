@@ -2,7 +2,6 @@ ActiveAdmin.register CardSide do
   actions :index, :show
   menu false
 
-
   index do
     column :id
     column :image
@@ -29,5 +28,4 @@ ActiveAdmin.register CardSide do
       row :discount_x
     end
   end
-
 end

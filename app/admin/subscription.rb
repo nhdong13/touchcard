@@ -1,24 +1,21 @@
 ActiveAdmin.register Subscription do
   actions :index, :show
+  menu priority: 3 # so it's on the very left (default: 10)
 
-  member_action :new_quantity_change, method: :get do
+  member_action :change_subscription_quantity, method: :get do
     @subscription = Subscription.find(params[:id])
   end
 
   member_action :change_quantity, method: :put do
     new_quantity = params[:subscription][:quantity].to_i
     subscription = Subscription.find(params[:id])
-
     subscription.change_quantity(new_quantity)
     redirect_to admin_subscription_path(subscription)
   end
 
   index do
-
     actions
-    column :quantity do |subscription|
-          link_to subscription.quantity, new_quantity_change_admin_subscription_path(subscription)
-    end
+    column :quantity
     column :id
     column :current_period_start
     column :current_period_end
@@ -28,7 +25,8 @@ ActiveAdmin.register Subscription do
     attributes_table do
       row :id
       row :quantity do |subscription|
-        link_to subscription.quantity, new_quantity_change_admin_subscription_path(subscription)
+        status_tag("#{subscription.quantity}")
+        link_to "edit", change_subscription_quantity_admin_subscription_path(subscription)
       end
       row :current_period_start
       row :current_period_end
@@ -39,5 +37,4 @@ ActiveAdmin.register Subscription do
       end
     end
   end
-
 end

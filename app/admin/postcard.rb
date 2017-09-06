@@ -1,7 +1,6 @@
 ActiveAdmin.register Postcard do
   actions :index, :show
 
-
   filter :shop
   filter :discount_code
   filter :send_date
@@ -13,14 +12,12 @@ ActiveAdmin.register Postcard do
   filter :price_rule
   filter :discount_pct
 
-
   index do
     div class: 'top_pagination' do
       paginated_collection(collection, download_links: false)
     end
 
     actions
-
     column :id
     column :postcard_id do |postcard|
       link_to postcard.postcard_id, "https://dashboard.lob.com/#/postcards/#{postcard.postcard_id}"
@@ -48,7 +45,6 @@ ActiveAdmin.register Postcard do
         link_to postcard.postcard_id, "https://dashboard.lob.com/#/postcards/#{postcard.postcard_id}"
       end
 
-
       row :created_at
       row :updated_at
       row :customer_id
@@ -63,7 +59,4 @@ ActiveAdmin.register Postcard do
       row :price_rule_id
     end
   end
-
-
-
 end

@@ -16,5 +16,4 @@ ActiveAdmin.register Filter do
   show do
     attributes_table :id, :created_at, :updated_at
   end
-
 end

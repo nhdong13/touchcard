@@ -4,7 +4,7 @@ ActiveAdmin.register Shop do
 
   actions :index, :show
 
-  member_action :new_credit_change, method: :get do
+  member_action :adjust_credits, method: :get do
     @shop = Shop.find(params[:id])
   end
 
@@ -15,7 +15,6 @@ ActiveAdmin.register Shop do
     shop.save!
     redirect_to admin_shop_path(shop)
   end
-
 
   # More on filtering
   # https://hashrocket.com/blog/posts/customize-activeadmin-index-filters
@@ -33,7 +32,6 @@ ActiveAdmin.register Shop do
     end
 
     actions
-
     column :id
     column :domain do |shop|
       link_to shop.domain, "https://#{shop.domain}"
@@ -47,10 +45,6 @@ ActiveAdmin.register Shop do
       shop.current_subscription.quantity if shop.current_subscription
     end
     column :last_login_at
-
-
-
-
   end
 
   show do
@@ -66,7 +60,8 @@ ActiveAdmin.register Shop do
       row :customer_email
       row :last_month
       row :credit do |shop|
-        link_to shop.credit, new_credit_change_admin_shop_path(shop)
+        status_tag("#{shop.credit}")
+        link_to "edit", adjust_credits_admin_shop_path(shop)
       end
       row :approval_state
       row :plan_name
