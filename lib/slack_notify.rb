@@ -39,6 +39,13 @@ class SlackNotify
     send_to_slack(payload)
   end
 
+  def self.message(msg_string)
+    payload = {
+        text: "#{msg_string}"
+    }
+    send_to_slack(payload)
+  end
+
   private
 
   def self.send_to_slack(payload)
