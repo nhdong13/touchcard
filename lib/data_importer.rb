@@ -9,13 +9,13 @@ module DataImporter
       @shop = ::Shop.find(shop_id)
     end
 
-    def import_orders(before_date = Time.now, lookback_days = 1)
+    def import_orders(before_time = Time.now, lookback_days = 1)
       @shop.with_shopify_session do
         page_index = 1
-        after_date = before_date - lookback_days.days
+        after_time = before_time - lookback_days.days
         loop do
           Rails.logger.info "Fetching Orders from Shopify - page #{page_index}..."
-          chunk = get_orders(page_index, after_date, before_date)
+          chunk = get_orders(page_index, after_time, before_time)
           for order in chunk do
             begin
               Order.from_shopify!(order, @shop)
@@ -42,8 +42,8 @@ module DataImporter
 
       params = {status: "any",
                 limit: PAGE_SIZE,
-                processed_at_min: processed_at_min,
-                processed_at_max: processed_at_max ,
+                processed_at_min: processed_at_min.iso8601,
+                processed_at_max: processed_at_max.iso8601,
                 page: index}
       orders = ShopifyAPI::Order.all(params: params)
     end
