@@ -6,7 +6,8 @@ task :daily_send_cards => :environment do
   cards_sent = Postcard.send_all
 
   puts "Notifying on #slack..."
-  SlackNotify.cards_sent(cards_sent)
+  slack_msg = "#{cards_sent} postcards were sent today."
+  SlackNotify.message(slack_msg)
 end
 
 desc "Update Shop metadata and last_month New Customers"
@@ -29,7 +30,8 @@ desc "Slack Subscriptions Update"
 task :slack_subscriptions_status => :environment do
   puts "Notifying subscription status on #slack..."
   quantity = Subscription.sum(:quantity)
-  SlackNotify.subscriptions_status(quantity)
+  slack_msg = "Monthly card subscriptions: *#{quantity}* #{ENV["SUBSCRIPTIONS_GOAL_STRING"]}"
+  SlackNotify.message(slack_msg)
 end
 
 desc "Notify customers about postcard arival"

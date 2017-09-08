@@ -12,7 +12,7 @@ ActiveAdmin.register Subscription do
     new_quantity = params[:subscription][:quantity].to_i
     subscription = Subscription.find(params[:id])
     SlackNotify.message("#{current_admin_user.email} changed #{subscription.shop.domain} credits " +
-                            "from #{subscription.quantity} to #{new_quantity}")
+                            "from #{subscription.quantity} to #{new_quantity}", true)
     subscription.change_quantity(new_quantity)
     redirect_to admin_subscription_path(subscription)
   end
