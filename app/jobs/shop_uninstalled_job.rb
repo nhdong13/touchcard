@@ -7,7 +7,8 @@ class ShopUninstalledJob < ActiveJob::Base
     shop.with_shopify_session do
       shop.subscriptions.each { |s| s.destroy }
       shop.update_attributes(credit: 0, uninstalled_at: Time.now)
-      SlackNotify.uninstall(shop.domain)
+      slack_msg = "A shop has uninstalled Touchcard: #{shop.domain}."
+      SlackNotify.message(slack_msg)
     end
   end
 

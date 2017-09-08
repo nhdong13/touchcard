@@ -1,3 +1,5 @@
+require "slack_notify"
+
 ActiveAdmin.register Shop do
   includes :subscriptions
   menu priority: 1 # so it's on the very left (default: 10)
@@ -11,6 +13,8 @@ ActiveAdmin.register Shop do
   member_action :change_credit, method: :put do
     new_credit = params[:shop][:credit].to_i
     shop = Shop.find(params[:id])
+    SlackNotify.message("#{current_admin_user.email} changed #{shop.domain} credits " +
+                            "from #{shop.credit} to #{new_credit}", true)
     shop.credit = new_credit
     shop.save!
     redirect_to admin_shop_path(shop)
@@ -72,6 +76,20 @@ ActiveAdmin.register Shop do
       row :created_at
       row :updated_at
       row :uninstalled_at
+      row "Postcards" do
+        link_to "List of Postcards",
+                controller: "postcards",
+                action: "index",
+                'q[card_order_shop_id_eq]' => "#{shop.id}".html_safe
+      end
+      row "Orders" do
+        link_to "List of Orders",
+                controller: "orders",
+                action: "index",
+                'q[shop_id_eq]' => "#{shop.id}".html_safe
+      end
+
+
     end
 
     panel "Subscription Data" do
@@ -106,7 +124,6 @@ ActiveAdmin.register Shop do
         column :card_side_back_id
       end
     end
-
   end
 
   # form do |f|

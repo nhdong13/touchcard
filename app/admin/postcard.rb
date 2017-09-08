@@ -7,7 +7,9 @@ ActiveAdmin.register Postcard do
     redirect_to admin_postcards_path
   end
 
-  filter :shop
+  # Only allow filtering by shops that actually sent a postcard
+  filter :shop , as: :select, collection: ->{Shop.where(id: CardOrder.where(id: Postcard.distinct.pluck(:card_order_id)))
+                                                    .sort_by {|s| s.domain}}
   filter :discount_code
   filter :send_date
   filter :sent

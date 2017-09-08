@@ -25,6 +25,8 @@ class ShopInstalledJob < ActiveJob::Base
     result = ActiveCampaign::client.contact_sync(sync_params)
     ActiveCampaignLogger.log(sync_params, result)
 
-    SlackNotify.install(shop.domain, shop.email, shop.owner, shop.last_month)
+    slack_message = "A new shop has installed Touchcard: #{shop.domain}\n" +
+        "email: #{shop.email}\nowner: #{shop.owner}\n# new customers: #{shop.last_month}"
+    SlackNotify.message(slack_message)
   end
 end
