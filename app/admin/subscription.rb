@@ -17,7 +17,7 @@ ActiveAdmin.register Subscription do
     redirect_to admin_subscription_path(subscription)
   end
 
-  filter :shop , :as => :select, :collection => Shop.all.sort_by {|s| s.domain}
+  filter :shop , as: :select, collection: ->{Shop.all.sort_by {|s| s.domain}}
   filter :plan
   filter :quantity
   filter :current_period_start

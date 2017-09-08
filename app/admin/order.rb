@@ -1,7 +1,7 @@
 ActiveAdmin.register Order do
   actions :index, :show
 
-  filter :shop , :as => :select, :collection => Shop.all.sort_by {|s| s.domain}
+  filter :shop , as: :select, collection: ->{Shop.all.sort_by {|s| s.domain}}
   filter :total_discounts
   filter :total_line_items_price
   filter :total_price

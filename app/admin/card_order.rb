@@ -13,7 +13,7 @@ ActiveAdmin.register CardOrder do
     redirect_to admin_card_order_path(card_order)
   end
 
-  filter :shop , :as => :select, :collection => Shop.all.sort_by {|s| s.domain}
+  filter :shop , as: :select, collection: ->{Shop.all.sort_by {|s| s.domain}}
   filter :discount_pct
   filter :discount_exp
   filter :enabled
