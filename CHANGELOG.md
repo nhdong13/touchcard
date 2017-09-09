@@ -10,6 +10,7 @@
 - Background task install jobs (ActiveCampaign Subscribe + Slack Notify)
 - Bump default send_delay to 1 week
 - Add Data Importer Library (not yet hooked up)
+- Cap last_month value to # orders in case of import. (+remove synchronous call from install)
 
 
 ## v1.2.3
