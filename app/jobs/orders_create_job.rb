@@ -17,7 +17,6 @@ class OrdersCreateJob < ActiveJob::Base
       return puts "no street in address" unless shopify_order.customer.default_address&.address1&.present?
       # Currently only new customers receive postcards
       return puts "customer already exists" unless order.customer.new_customer?
-      return puts "order already has a postcard" if Postcard.find_by(order_id: order.id)
 
       default_address = shopify_order.customer.default_address
       international = default_address.country_code != "US"
