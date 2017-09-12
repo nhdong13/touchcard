@@ -1,27 +1,27 @@
-import React, { Component } from 'react'
-import ReactDOM from 'react-dom'
+import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
 
 export default class SelectType extends Component {
   constructor(props) {
-    super(props)
+    super(props);
 
     this.state = {
-      value: "FirstPurchaseOrder",
+      value: 'FirstPurchaseOrder',
       types: [
-        "FirstPurchaseOrder",
-        "CustomerWinbackOrder",
-        "LifetimePurchaseOrder",
-        "AbandonedCheckout"
+        'FirstPurchaseOrder',
+        'CustomerWinbackOrder',
+        'LifetimePurchaseOrder',
+        'AbandonedCheckout'
       ]
-    }
+    };
 
-    this.handleChange = this.handleChange.bind(this)
+    this.handleChange = this.handleChange.bind(this);
   }
 
   handleChange(event) {
-    const value = event.target.value
-    this.setState({ value })
-    console.log(this.state.value)
+    const value = event.target.value;
+    this.setState({ value });
+    console.log(this.state.value);
   }
 
   render() {
@@ -36,6 +36,6 @@ export default class SelectType extends Component {
           </select>
         </div>
       </div>
-    )
+    );
   }
 }

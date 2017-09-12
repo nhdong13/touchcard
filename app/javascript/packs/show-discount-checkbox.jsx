@@ -1,7 +1,7 @@
-import React from 'react'
-import ReactDOM from 'react-dom'
+import React from 'react';
+import ReactDOM from 'react-dom';
 
-const ShowDiscountCheckBox = props => {
+const ShowDiscountCheckBox = (props) => {
   if (props.includeDiscount) {
     return (
       <label className="form-check-label">
@@ -10,13 +10,13 @@ const ShowDiscountCheckBox = props => {
           className="form-check-input"
           type="checkbox"
           value=""
-          onClick={props.handleClick} />
+          onClick={props.handleClick}
+        />
         { props.text }
       </label>
-    )
-  } else {
-    return null
+    );
   }
-}
+  return null;
+};
 
-export default ShowDiscountCheckBox
+export default ShowDiscountCheckBox;

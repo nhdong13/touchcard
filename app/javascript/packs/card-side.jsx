@@ -1,40 +1,40 @@
-import React, { Component } from 'react'
-import ReactDOM from 'react-dom'
-import DiscountCodeBox from './discount-code-box'
-import CardSideCheckboxes from './card-side-checkboxes'
-import ImageUpload from './image-upload'
-import Draggable from 'react-draggable'
+import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
+import DiscountCodeBox from './discount-code-box';
+import CardSideCheckboxes from './card-side-checkboxes';
+import ImageUpload from './image-upload';
+import Draggable from 'react-draggable';
 
 export default class CardSide extends Component {
   constructor(props) {
-    super(props)
+    super(props);
 
     this.state = {
       showBleed: false,
       showSafeArea: false,
       showDiscount: false,
       imageSrc: null
-    }
+    };
 
-    this.toggleShowBleed = this.toggleShowBleed.bind(this)
-    this.toggleShowSafeArea = this.toggleShowSafeArea.bind(this)
-    this.setImage = this.setImage.bind(this)
+    this.toggleShowBleed = this.toggleShowBleed.bind(this);
+    this.toggleShowSafeArea = this.toggleShowSafeArea.bind(this);
+    this.setImage = this.setImage.bind(this);
   }
 
   toggleShowBleed() {
-    this.setState( prevState => ({
+    this.setState(prevState => ({
       showBleed: !prevState.showBleed
-    }))
+    }));
   }
 
   toggleShowSafeArea() {
-    this.setState( prevState => ({
+    this.setState(prevState => ({
       showSafeArea: !prevState.showSafeArea
-    }))
+    }));
   }
 
   setImage(src) {
-    this.setState({ imageSrc: src })
+    this.setState({ imageSrc: src });
   }
 
   renderImage() {
@@ -43,26 +43,24 @@ export default class CardSide extends Component {
         <div className="layer">
           <img className="image" src={imageSrc} />
         </div>
-      )
-    } else {
-      null
+      );
     }
+    null;
   }
 
   render() {
     return (
       <section className="col-sm-6">
         <h2>{this.props.title}</h2>
-        <ImageUpload label={"Upload Image"} handleFileUpload={this.setImage} />
+        <ImageUpload label={'Upload Image'} handleFileUpload={this.setImage} />
         <CardSideCheckboxes
           includeDiscount={this.props.includeDiscount}
           toggleShowBleed={this.toggleShowBleed}
-          toggleShowSafeArea={this.toggleShowSafeArea} />
+          toggleShowSafeArea={this.toggleShowSafeArea}
+        />
         <div className="layers">
-          <div className={ `layer ${ this.state.showBleed ? 'bleed' : '' }` }>
-          </div>
-          <div className={ `layer ${ this.state.showSafeArea ? 'safe-area' : '' }` }>
-          </div>
+          <div className={`layer ${this.state.showBleed ? 'bleed' : ''}`} />
+          <div className={`layer ${this.state.showSafeArea ? 'safe-area' : ''}`} />
           <div className="card-side">
             <div className="layers">
               <div className="postage layer">
@@ -70,7 +68,7 @@ export default class CardSide extends Component {
               </div>
               <Draggable>
                 <div className="discount layer">
-                  <DiscountCodeBox percentage={10} expireAt={10-10-10}/>
+                  <DiscountCodeBox percentage={10} expireAt={10 - 10 - 10} />
                 </div>
               </Draggable>
               <div className="layer">
@@ -80,6 +78,6 @@ export default class CardSide extends Component {
           </div>
         </div>
       </section>
-    )
+    );
   }
 }

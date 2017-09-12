@@ -1,35 +1,35 @@
-import React, { Component } from 'react'
-import ReactDOM from 'react-dom'
-import SelectTypeForm from './select-type-form'
-import ConfigureCard from './configure-card'
-import SetupCard from './setup-card'
+import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
+import SelectTypeForm from './select-type-form';
+import ConfigureCard from './configure-card';
+import SetupCard from './setup-card';
 
 export default class CardOrderWizard extends Component {
   constructor(props) {
-    super(props)
+    super(props);
 
     this.state = {
       step: 1
-    }
+    };
 
-    this.switchStep = this.switchStep.bind(this)
+    this.switchStep = this.switchStep.bind(this);
   }
 
   buttonText() {
     switch (this.state.step) {
       case 1:
-        return "Next"
+        return 'Next';
       case 2:
-        return "Save & Next"
+        return 'Save & Next';
       case 3:
-        return "Save"
+        return 'Save';
     }
   }
 
   switchStep() {
     this.setState(prevState => ({
       step: prevState.step + 1
-    }))
+    }));
   }
 
   render() {
@@ -42,7 +42,7 @@ export default class CardOrderWizard extends Component {
               {this.buttonText()}
             </button>
           </div>
-        )
+        );
       case 2:
         return (
           <div>
@@ -51,7 +51,7 @@ export default class CardOrderWizard extends Component {
               {this.buttonText()}
             </button>
           </div>
-        )
+        );
       case 3:
         return (
           <div>
@@ -60,9 +60,9 @@ export default class CardOrderWizard extends Component {
               {this.buttonText()}
             </button>
           </div>
-        )
+        );
       default:
-        return null
+        return null;
     }
   }
 }
@@ -70,6 +70,6 @@ export default class CardOrderWizard extends Component {
 document.addEventListener('DOMContentLoaded', () => {
   ReactDOM.render(
     <CardOrderWizard name="React" />,
-    document.getElementById("react-app"),
-  )
-})
+    document.getElementById('react-app'),
+  );
+});

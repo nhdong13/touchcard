@@ -1,12 +1,12 @@
-import React, { Component } from 'react'
-import ReactDOM from 'react-dom'
+import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
 
 export default class ConfigureCard extends Component {
   constructor(props) {
-    super(props)
+    super(props);
 
-    this.setNumOfDays = this.setNumOfDays.bind(this)
-    this.setFilter = this.setFilter.bind(this)
+    this.setNumOfDays = this.setNumOfDays.bind(this);
+    this.setFilter = this.setFilter.bind(this);
   }
 
   setNumOfDays() {
@@ -22,8 +22,9 @@ export default class ConfigureCard extends Component {
       <div className="row">
         <div className="col-sm-12">
           <CheckBox
-            text={"Send to international addresses"}
-            handleClick={props.setInternational} />
+            text={'Send to international addresses'}
+            handleClick={props.setInternational}
+          />
           <div className="form-control">
             <label>
               Send a card number of days
@@ -38,6 +39,6 @@ export default class ConfigureCard extends Component {
           </div>
         </div>
       </div>
-    )
+    );
   }
 }
