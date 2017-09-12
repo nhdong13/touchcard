@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import CardSide from './card-side';
-import ConfigurationBox from './configuration-box';
+import CardSide from '../components/card-side';
+import ConfigurationBox from '../components/configuration-box';
 
-class AutomationHandler extends Component {
+export default class SetupCard extends Component {
   constructor() {
     super();
 

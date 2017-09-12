@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import SelectTypeForm from './select-type-form';
-import ConfigureCard from './configure-card';
-import SetupCard from './setup-card';
+import SelectTypeForm from '../containers/select-type-form';
+import ConfigureCard from '../containers/configure-card';
+import SetupCard from '../containers/setup-card';
 
 export default class CardOrderWizard extends Component {
   constructor(props) {

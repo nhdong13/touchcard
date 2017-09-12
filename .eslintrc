@@ -1,6 +1,12 @@
 {
   "extends": "airbnb",
   "rules": {
-    "comma-dangle": ["error", "never"]
+    "comma-dangle": ["error", "never"],
+    "max-len": ["warn", 120, 2, {"ignoreUrls": true, "ignoreStrings": true,"ignoreTemplateLiterals": true }],
+//    "no-unused-vars": ["error", { "varsIgnorePattern": "[iI]gnored|ReactDOM" }]
+  },
+  "globals": {
+    "browser": true,
+    "document": true
   }
 }
