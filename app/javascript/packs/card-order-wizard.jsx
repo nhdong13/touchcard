@@ -16,14 +16,13 @@ export default class CardOrderWizard extends Component {
   }
 
   buttonText() {
-    switch (this.state.step) {
-      case 1:
-        return 'Next';
-      case 2:
-        return 'Save & Next';
-      case 3:
-        return 'Save';
+    if (this.state.step === 1) {
+      return 'Next';
     }
+    if (this.state.step === 2) {
+      return 'Save & Next';
+    }
+    return 'Save';
   }
 
   switchStep() {
