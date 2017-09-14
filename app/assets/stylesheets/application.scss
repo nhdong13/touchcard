@@ -201,5 +201,74 @@ section {
     background: $brand-primary;
     height: 3px;
   }
+}
 
+// DASHBOARD
+
+.dashboard{
+  .table-wrap{
+    background: white;
+    padding: 2em;
+  }
+
+  .table > tbody > tr > td {
+    vertical-align: middle;
+  }
+
+  .label {
+    font-size: 120%;
+    font-weight: normal;
+    padding: 0.4em 0.8em;
+    margin-top: 0.1em;
+    display: inline-block;
+  }
+
+  .sales {
+    cursor: pointer;
+  }
+}
+
+.card {
+  box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+  background: #fff;
+  border-radius: 2px;
+  padding: 1em;
+}
+
+.card.flat{
+  box-shadow: none;
+}
+
+.card-info{
+  min-height: 8em;
+  width: 100%;
+  margin-bottom: 1.25em;
+  padding: 0.25em;
+  font-size: 80%;
+  .card-icon{
+    float: left;
+    height: 2em;
+    width: 2em;
+    text-align: center;
+    font-size: 375%;
+    line-height: 220%;
+  }
+  .card-content{
+    padding: 5px 10px;
+    margin-left: 7.5em;
+  }
+  .card-heading{
+    font-size: 150%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .card-body{
+    display: block;
+    font-weight: bold;
+    font-size: 175%;
+  }
+  .card-text{
+    font-size: 150%;
+  }
 }
