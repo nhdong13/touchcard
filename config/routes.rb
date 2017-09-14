@@ -41,7 +41,9 @@ Rails.application.routes.draw do
   post '/update_scope_redirect', to: 'root#update_scope_redirect'
 
   get 'faq', to: 'faq#index'
-  get 'dashboard', to: 'dashboard#index'
+  resources :dashboard, only: [:index] do
+    delete 'cancel_postcard', on: :member
+  end
 
   resource :automation
   resource :subscription

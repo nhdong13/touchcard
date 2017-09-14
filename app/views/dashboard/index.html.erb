@@ -25,7 +25,7 @@
           <div class="card-content">
             <div class="card-heading">CARDS SENT</div>
             <div class="card-body">
-              <!-- {{if shop.cardsSent shop.cardsSent '-'}} -->
+              <%= @current_shop.cards_sent %>
             </div>
           </div>
         </div>
@@ -45,11 +45,15 @@
           </thead>
           <tbody>
             <% @postcards.each do |postcard| %>
-              <tr>
+              <tr class="postcard-<%= postcard.id %>">
                 <td>
                   <span class="label label-<%= postcard.sent ? 'success' : 'info' %>">
                     <%= postcard.status %>
                   </span>
+                  <% unless postcard.canceled || postcard.sent %>
+                    <%= link_to "Cancel", cancel_postcard_dashboard_path(postcard),
+                      method: :delete, class: 'btn btn-warning', remote: true %>
+                  <% end %>
                 </td>
                 <td><%= postcard.customer.full_name %></td>
                 <td><%= postcard.city %>, <%= postcard.state %>, <%= postcard.country %></td>
