@@ -43,8 +43,11 @@ Rails.application.routes.draw do
   get 'faq', to: 'faq#index'
   get 'dashboard', to: 'dashboard#index'
 
-  resource :automation
   resource :subscription
+
+  resource :automations do
+    get 'select_type', :on => :collection
+  end
 
   # Shopify Engine
   root :to => 'automations#index' # See comments in controller

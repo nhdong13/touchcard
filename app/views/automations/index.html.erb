@@ -6,7 +6,8 @@
 
 <section>
   <div class="row text-center">
-    <%= button_to 'Create New Automation', new_automation_path, method: :get, class: 'btn btn-primary btn-lg' %>
+    <%= link_to 'Create New Automation', select_type_automations_path, class: "btn btn-primary btn-lg"%>
+
   </div>
 
   <% @card_orders.each do |card| %>

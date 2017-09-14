@@ -1,0 +1,9 @@
+
+<h3>Select the type of automation you'd like to create:</h3>
+
+<%= link_to 'Back', :back, class: 'btn btn-default cancel' %>
+<br>
+<%= link_to 'winback [reload]', new_automations_path(:type => :winback), class: 'btn btn-primary', data: { turbolinks: false }%>
+<br>
+<%= link_to 'winback [turbolinks]', new_automations_path(:type => :winback), class: 'btn btn-primary'%>
+<br>
