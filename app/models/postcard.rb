@@ -120,4 +120,20 @@ class Postcard < ApplicationRecord
                   sent to this customer")
     end
   end
+
+  def status
+    "#{sent? ? "Sent on #{date_sent.to_date}" : "Sending #{send_date.to_date}"}"
+  end
+
+  def city
+    address.city
+  end
+
+  def state
+    address.province
+  end
+
+  def country
+    address.country
+  end
 end
