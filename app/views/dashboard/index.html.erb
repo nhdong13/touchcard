@@ -20,12 +20,12 @@
       <div class="col-sm-12">
         <div class="card card-info cards-sent">
           <div class="card-icon bg-primary">
-            <i class="fa fa-envelope"></i>
+            <span class="glyphicon glyphicon-envelope"></span>
           </div>
           <div class="card-content">
             <div class="card-heading">CARDS SENT</div>
             <div class="card-body">
-              <!-- {{if shop.cardsSent shop.cardsSent '-'}} -->
+              <%= @current_shop.cards_sent %>
             </div>
           </div>
         </div>
@@ -44,17 +44,21 @@
             </tr>
           </thead>
           <tbody>
-            <!-- {{#each postcards as |postcard|}}
-              <tr>
+            <% @postcards.each do |postcard| %>
+              <tr class="postcard-<%= postcard.id %>">
                 <td>
-                  <span class="label label-{{if postcard.sent "success" "info"}}">
-                    {{postcard.status}}
+                  <span class="label label-<%= postcard.sent ? 'success' : 'info' %>">
+                    <%= postcard.status %>
                   </span>
+                  <% unless postcard.canceled || postcard.sent %>
+                    <%= link_to "Cancel", cancel_postcard_dashboard_path(postcard),
+                      method: :delete, class: 'btn btn-warning', remote: true %>
+                  <% end %>
                 </td>
-                <td>{{postcard.customerName}}</td>
-                <td>{{postcard.city}}, {{postcard.state}}, {{postcard.country}}</td>
+                <td><%= postcard.customer.full_name %></td>
+                <td><%= postcard.city %>, <%= postcard.state %>, <%= postcard.country %></td>
               </tr>
-            {{/each}} -->
+            <% end %>
           </tbody>
         </table>
       </div>

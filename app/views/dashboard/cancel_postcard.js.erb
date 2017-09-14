@@ -1,0 +1,6 @@
+$(function() {
+  return $("a[data-remote]").on("ajax:success", function(e, data, status, xhr) {
+    let row = $(".postcard-" + <%= @postcard.id %>);
+    return row.remove();
+  });
+});
