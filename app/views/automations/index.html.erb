@@ -13,7 +13,7 @@
     <div class="row" id="card-<%= card.id %>">
       <div class="container-fluid card flat card-order">
         <div class="row">
-          <div class="col-sm-2">
+          <div class="col-xs-6 col-sm-2">
             <h4 class="text-center" style="border-bottom: 1px solid grey"><%= card.type %></h4>
             <div class="row text-center" style="padding: 10%">
               <div class="make-switch switch-large">
@@ -24,19 +24,19 @@
               <%= link_to "Delete", card, remote: true, method: :delete, class: 'btn btn-lg btn-danger' %>
             </div>
           </div>
-          <div class="col-sm-4">
+          <div class="col-xs-6 col-sm-4">
             <div class="content-box">
               <!-- {{card-template isEditable=isEditable cardOrder=cardOrder edit=(action 'editCard')}} -->
             </div>
           </div>
-          <div class="col-sm-3">
+          <div class="col-xs-6 col-sm-3">
             <div class="content-box">
               <h4 class="text-uppercase text-center">Config</h4>
               <p>Sending Delay: <%= card.send_delay %></p>
               <p>Filter:</p>
             </div>
           </div>
-          <div class="col-sm-3">
+          <div class="col-xs-6 col-sm-3">
             <div class="content-box">
               <h4 class="text-uppercase text-center">Stats</h4>
               <p>Cards Send:</p>
