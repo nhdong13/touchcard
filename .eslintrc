@@ -1,8 +1,8 @@
 {
-  "extends": "airbnb",
+  "extends": ["airbnb", "airbnb-flow"],
   "rules": {
     "comma-dangle": ["error", "never"],
-    "max-len": ["warn", 120, 2, {"ignoreUrls": true, "ignoreStrings": true,"ignoreTemplateLiterals": true }],
+    "max-len": ["warn", 120, 2, {"ignoreUrls": true, "ignoreStrings": true,"ignoreTemplateLiterals": true }]
 //    "no-unused-vars": ["error", { "varsIgnorePattern": "[iI]gnored|ReactDOM" }]
   },
   "globals": {
