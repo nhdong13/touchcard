@@ -131,7 +131,11 @@ class Postcard < ApplicationRecord
   end
 
   def status
-    "#{sent? ? "Sent on #{date_sent.to_date}" : "Sending #{send_date.to_date}"}"
+    if sent?
+      "Sent on #{date_sent.to_date}"
+    else
+      "Sending #{send_date.to_date}"
+    end
   end
 
   def city

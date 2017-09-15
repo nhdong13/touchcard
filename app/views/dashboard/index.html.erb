@@ -45,14 +45,15 @@
           </thead>
           <tbody>
             <% @postcards.each do |postcard| %>
-              <tr class="postcard-<%= postcard.id %>">
+              <tr id="postcard-<%= postcard.id %>">
                 <td>
                   <span class="label label-<%= postcard.sent ? 'success' : 'info' %>">
                     <%= postcard.status %>
                   </span>
                   <% unless postcard.canceled || postcard.sent %>
                     <%= link_to "Cancel", cancel_postcard_dashboard_path(postcard),
-                      method: :delete, class: 'btn btn-warning', remote: true %>
+                      method: :delete, data: { confirm: "Are you sure" },
+                      class: 'btn btn-warning', remote: true %>
                   <% end %>
                 </td>
                 <td><%= postcard.customer.full_name %></td>
