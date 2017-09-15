@@ -222,6 +222,10 @@ class Shop < ApplicationRecord
     end
   end
 
+  def increment_credit
+    increment!(:credit)
+  end
+
   # necessary for the active admin
   def display_name
     self.domain

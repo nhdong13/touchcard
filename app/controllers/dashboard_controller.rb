@@ -5,6 +5,6 @@ class DashboardController < BaseController
 
   def cancel_postcard
     @postcard = Postcard.find(params[:id])
-    postcard.destroy
+    @postcard.cancel
   end
 end

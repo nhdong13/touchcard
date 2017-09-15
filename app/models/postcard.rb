@@ -121,8 +121,21 @@ class Postcard < ApplicationRecord
     end
   end
 
+  def cancel
+    self.canceled = true
+    self.transaction do
+      self.shop.increment_credit if self.paid
+      self.paid = false
+    end
+    self.save!
+  end
+
   def status
-    "#{sent? ? "Sent on #{date_sent.to_date}" : "Sending #{send_date.to_date}"}"
+    if sent?
+      "Sent on #{date_sent.to_date}"
+    else
+      "Sending #{send_date.to_date}"
+    end
   end
 
   def city

@@ -1,5 +1,6 @@
 {
-  "extends": ["airbnb", "airbnb-flow"],
+  "extends": "airbnb",
+//  "extends": ["airbnb", "airbnb-flow"],  // Enable Flow Type Checking
   "rules": {
     "comma-dangle": ["error", "never"],
     "max-len": ["warn", 120, 2, {"ignoreUrls": true, "ignoreStrings": true,"ignoreTemplateLiterals": true }]

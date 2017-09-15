@@ -11,7 +11,7 @@ RSpec.describe Api::V1::FiltersController, type: :controller do
   context "when not signed in" do
     describe "#show" do
       it "401s" do
-        get :show, id: filter.id
+        get :show, params: { id: filter.id }
         expect(response.status).to eq(401)
         expect(json).to include("errors")
       end
@@ -19,7 +19,7 @@ RSpec.describe Api::V1::FiltersController, type: :controller do
 
     describe "#update" do
       it "401s" do
-        put :update, id: filter.id, filter: { filter_data: filter_data }
+        put :update, params: { id: filter.id, filter: { filter_data: filter_data } }
         expect(response.status).to eq(401)
         expect(json).to include("errors")
       end
@@ -27,7 +27,7 @@ RSpec.describe Api::V1::FiltersController, type: :controller do
 
     describe "#destroy" do
       it "401s" do
-        put :destroy, id: filter.id
+        put :destroy, params: { id: filter.id }
         expect(response.status).to eq(401)
         expect(json).to include("errors")
       end
@@ -35,7 +35,7 @@ RSpec.describe Api::V1::FiltersController, type: :controller do
 
     describe "#create" do
       it "401s" do
-        put :create, card_order_id: card_order.id, filter_data: filter_data
+        put :create, params: { card_order_id: card_order.id, filter_data: filter_data }
         expect(response.status).to eq(401)
         expect(json).to include("errors")
       end
@@ -48,7 +48,7 @@ RSpec.describe Api::V1::FiltersController, type: :controller do
     context "when filter does not exist" do
       describe "#update" do
         it "404s" do
-          put :update, id: -1, filter: { filter_data: filter_data }
+          put :update, params: { id: -1, filter: { filter_data: filter_data } }
           expect(response.status).to eq(404)
           expect(json).to include("errors")
         end
@@ -56,7 +56,7 @@ RSpec.describe Api::V1::FiltersController, type: :controller do
 
       describe "#show" do
         it "404s" do
-          put :show, id: -1
+          put :show, params: { id: -1 }
           expect(response.status).to eq(404)
           expect(json).to include("errors")
         end
@@ -64,7 +64,7 @@ RSpec.describe Api::V1::FiltersController, type: :controller do
 
       describe "#destroy" do
         it "404s" do
-          put :destroy, id: -1
+          put :destroy, params: { id: -1 }
           expect(response.status).to eq(404)
           expect(json).to include("errors")
         end
@@ -75,7 +75,7 @@ RSpec.describe Api::V1::FiltersController, type: :controller do
       before(:each) { card_order.update_attributes!(shop: other_shop) }
       describe "#update" do
         it "401s" do
-          put :update, id: filter.id, filter: { filter_data: filter_data }
+          put :update, params: { id: filter.id, filter: { filter_data: filter_data } }
           expect(response.status).to eq(401)
           expect(json).to include("errors")
         end
@@ -83,7 +83,7 @@ RSpec.describe Api::V1::FiltersController, type: :controller do
 
       describe "#show" do
         it "401s" do
-          put :show, id: filter.id
+          put :show, params: { id: filter.id }
           expect(response.status).to eq(401)
           expect(json).to include("errors")
         end
@@ -91,7 +91,7 @@ RSpec.describe Api::V1::FiltersController, type: :controller do
 
       describe "#destroy" do
         it "401s" do
-          put :destroy, id: filter.id
+          put :destroy, params: { id: filter.id }
           expect(response.status).to eq(401)
           expect(json).to include("errors")
         end
@@ -102,7 +102,7 @@ RSpec.describe Api::V1::FiltersController, type: :controller do
     describe "#create" do
       context "when card_order does not exist" do
         it "422s" do
-          post :create, filter: { card_order_id: -1, filter_data: filter_data }
+          post :create, params: { filter: { card_order_id: -1, filter_data: filter_data } }
           expect(response.status).to eq(422)
           expect(json).to include("errors")
         end
@@ -111,21 +111,21 @@ RSpec.describe Api::V1::FiltersController, type: :controller do
       context "when card_order not owned by user" do
         before(:each) { card_order.update_attributes!(shop: other_shop) }
         it "401s" do
-          post :create, filter: { card_order_id: card_order.id, filter_data: filter_data }
+          post :create, params: { filter: { card_order_id: card_order.id, filter_data: filter_data } }
           expect(response.status).to eq(401)
           expect(json).to include("errors")
         end
       end
 
       it "works" do
-        post :create, filter: { card_order_id: card_order.id, filter_data: filter_data }
+        post :create, params: { filter: { card_order_id: card_order.id, filter_data: filter_data } }
         expect(response.status).to eq(200)
       end
     end
 
     describe "#destroy" do
       it "works" do
-        delete :destroy, id: filter.id
+        delete :destroy, params: { id: filter.id }
         expect(response.status).to eq(200)
       end
     end
@@ -134,7 +134,7 @@ RSpec.describe Api::V1::FiltersController, type: :controller do
       let(:expected_params) { filter.attributes.slice("id", "filter_data") }
 
       context "when filter owned by user" do
-        before(:each ) { get :show, id: filter.id }
+        before(:each ) { get :show, params: { id: filter.id } }
 
         it "succeeds" do
           expect(response.status).to eq(200)
@@ -147,7 +147,7 @@ RSpec.describe Api::V1::FiltersController, type: :controller do
     end
 
     describe "#update" do
-      before(:each) { put :update, id: filter.id, filter: { filter_data: filter_data } }
+      before(:each) { put :update, params: { id: filter.id, filter: { filter_data: filter_data } } }
 
       it "succeeds" do
         expect(response.status).to eq(200)
