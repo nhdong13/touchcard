@@ -35,7 +35,7 @@ RSpec.describe Api::V1::SubscriptionsController, type: :controller do
   context "when not signed in" do
     describe "#show" do
       it "401s" do
-        get :show, id: subscription.id
+        get :show, params: { id: subscription.id }
         expect(response.status).to eq(401)
         expect(json).to include("errors")
       end
@@ -43,7 +43,7 @@ RSpec.describe Api::V1::SubscriptionsController, type: :controller do
 
     describe "#update" do
       it "401s" do
-        put :update, id: subscription.id, subscription: subscription_params
+        put :update, params: { id: subscription.id, subscription: subscription_params }
         expect(response.status).to eq(401)
         expect(json).to include("errors")
       end
@@ -51,7 +51,7 @@ RSpec.describe Api::V1::SubscriptionsController, type: :controller do
 
     describe "#create" do
       it "401s" do
-        put :create, subscription: subscription_params
+        put :create, params: { subscription: subscription_params }
         expect(response.status).to eq(401)
         expect(json).to include("errors")
       end
@@ -64,7 +64,7 @@ RSpec.describe Api::V1::SubscriptionsController, type: :controller do
     context "when subscription does not exist" do
       describe "#update" do
         it "404s" do
-          put :update, id: -1, subscription: subscription_params
+          put :update, params: { id: -1, subscription: subscription_params }
           expect(response.status).to eq(404)
           expect(json).to include("errors")
         end
@@ -72,7 +72,7 @@ RSpec.describe Api::V1::SubscriptionsController, type: :controller do
 
       describe "#show" do
         it "404s" do
-          put :show, id: -1
+          put :show, params: { id: -1 }
           expect(response.status).to eq(404)
           expect(json).to include("errors")
         end
@@ -83,7 +83,7 @@ RSpec.describe Api::V1::SubscriptionsController, type: :controller do
       before(:each) { subscription.update_attributes!(shop: other_shop) }
       describe "#update" do
         it "401s" do
-          put :update, id: subscription.id, subscription: subscription_params
+          put :update, params: { id: subscription.id, subscription: subscription_params }
           expect(response.status).to eq(401)
           expect(json).to include("errors")
         end
@@ -91,7 +91,7 @@ RSpec.describe Api::V1::SubscriptionsController, type: :controller do
 
       describe "#show" do
         it "401s" do
-          put :show, id: subscription.id
+          put :show, params: { id: subscription.id }
           expect(response.status).to eq(401)
           expect(json).to include("errors")
         end
@@ -101,19 +101,19 @@ RSpec.describe Api::V1::SubscriptionsController, type: :controller do
     describe "#create" do
       context "when plan does not exist" do
         it "422s" do
-          post :create, subscription: { plan_id: -1, quantity: 10 }
+          post :create, params: { subscription: { plan_id: -1, quantity: 10 } }
           expect(response.status).to eq(422)
           expect(json).to include("errors")
         end
       end
 
       it "works" do
-        post :create, subscription: subscription_params
+        post :create, params: { subscription: subscription_params }
         expect(response.status).to eq(200)
       end
 
       it "sets shop credits" do
-        post :create, subscription: subscription_params
+        post :create, params: { subscription: subscription_params }
         expect(Shop.find(shop.id).credit).to eq(subscription_params[:quantity])
       end
     end
@@ -122,7 +122,7 @@ RSpec.describe Api::V1::SubscriptionsController, type: :controller do
       let(:expected_params) { subscription.attributes.slice("id", "plan_id", "quantity") }
 
       context "when subscription owned by user" do
-        before(:each ) { get :show, id: subscription.id }
+        before(:each ) { get :show, params: { id: subscription.id } }
 
         it "succeeds" do
           expect(response.status).to eq(200)
@@ -135,7 +135,10 @@ RSpec.describe Api::V1::SubscriptionsController, type: :controller do
     end
 
     describe "#update" do
-      before(:each) { put :update, id: subscription.id, subscription: subscription_update_params }
+      before(:each) { put :update, params: {
+        id: subscription.id, subscription: subscription_update_params
+        }
+      }
 
       it "succeeds" do
         expect(response.status).to eq(200)

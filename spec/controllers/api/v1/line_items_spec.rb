@@ -11,7 +11,7 @@ RSpec.describe Api::V1::LineItemsController, type: :controller do
   context "when not signed in" do
     describe "#show" do
       it "401s" do
-        get :show, id: line_item.id
+        get :show, params: { id: line_item.id }
         expect(response.status).to eq(401)
         expect(json).to include("errors")
       end
@@ -32,7 +32,7 @@ RSpec.describe Api::V1::LineItemsController, type: :controller do
     context "when line_item does not exist" do
       describe "#show" do
         it "404s" do
-          put :show, id: -1
+          put :show, params: { id: -1 }
           expect(response.status).to eq(404)
           expect(json).to include("errors")
         end
@@ -43,7 +43,7 @@ RSpec.describe Api::V1::LineItemsController, type: :controller do
       before(:each) { order.update_attributes!(shop: other_shop) }
       describe "#show" do
         it "401s" do
-          put :show, id: line_item.id
+          put :show, params: { id: line_item.id }
           expect(response.status).to eq(401)
           expect(json).to include("errors")
         end
@@ -64,7 +64,7 @@ RSpec.describe Api::V1::LineItemsController, type: :controller do
       let(:expected_params) { line_item.attributes.slice("id", "line_item_data") }
 
       context "when line_item owned by user" do
-        before(:each ) { get :show, id: line_item.id }
+        before(:each ) { get :show, params: { id: line_item.id } }
 
         it "succeeds" do
           expect(response.status).to eq(200)
