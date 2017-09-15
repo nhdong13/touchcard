@@ -238,20 +238,20 @@ ActiveRecord::Schema.define(version: 20170905180325) do
     t.integer  "card_order_id"
     t.string   "discount_code"
     t.datetime "send_date"
-    t.boolean  "sent",                         default: false, null: false
+    t.boolean  "sent",                                   default: false, null: false
     t.datetime "date_sent"
     t.string   "postcard_id"
-    t.datetime "created_at",                                   null: false
-    t.datetime "updated_at",                                   null: false
+    t.datetime "created_at",                                             null: false
+    t.datetime "updated_at",                                             null: false
     t.integer  "customer_id"
     t.integer  "order_id"
-    t.boolean  "paid",                         default: false, null: false
+    t.boolean  "paid",                                   default: false, null: false
     t.datetime "estimated_arrival"
-    t.boolean  "arrival_notification_sent",    default: false, null: false
-    t.boolean  "expiration_notification_sent", default: false
+    t.boolean  "arrival_notification_sent",              default: false, null: false
+    t.boolean  "expiration_notification_sent",           default: false
     t.integer  "discount_pct"
     t.datetime "discount_exp_at"
-    t.boolean  "canceled",                     default: false
+    t.boolean  "canceled",                               default: false
     t.integer  "price_rule_id",                limit: 8
   end
 

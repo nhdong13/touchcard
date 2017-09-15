@@ -33,8 +33,8 @@ module CardUtil
           background_image: card_side.image,
           discount_x: card_side.discount_x,
           discount_y: card_side.discount_y,
-          discount_pct: card_order.discount_pct,
-          discount_exp: expiry.strftime("%m/%d/%Y"),
+          discount_pct: card_order.discount_pct ? card_order.discount_pct.abs : nil,
+          discount_exp: expiry ? expiry.strftime("%m/%d/%Y") : nil,
           discount_code: card_side.show_discount? ? discount_code : nil
       )
     end
