@@ -24,6 +24,8 @@ gem "sdoc", "~> 0.4.0", group: :doc
 # Admin interface
 gem "devise", "~> 3.5"
 gem "activeadmin", "~> 1.0.0"
+gem "active_material", git: "https://github.com/laverick/active_material"
+
 
 # API serializer
 gem "active_model_serializers", "~> 0.8.0"

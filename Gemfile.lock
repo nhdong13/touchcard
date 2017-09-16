@@ -8,6 +8,12 @@ GIT
       multi_json (>= 1.0, < 2)
 
 GIT
+  remote: https://github.com/laverick/active_material
+  revision: 853c60a22be2f6a57163a9d762da50c40e2061ec
+  specs:
+    active_material (1.4.1)
+
+GIT
   remote: https://github.com/stripe/stripe-ruby
   revision: ca7adcf8c80f646d883d9dec49f22f43bd469711
   specs:
@@ -383,6 +389,7 @@ PLATFORMS
 
 DEPENDENCIES
   active_campaign!
+  active_material!
   active_model_serializers (~> 0.8.0)
   activeadmin (~> 1.0.0)
   aws-sdk (~> 2.1)

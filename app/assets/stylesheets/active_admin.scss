@@ -1,4 +1,9 @@
 // Active Admin's got SASS!
 @import "active_admin/mixins";
-@import "active_admin/base";
+// @import "active_admin/base";
+@import "active_material";
+
+a.view_link.member_link {
+  word-break: normal;
+}
 
