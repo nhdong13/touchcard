@@ -45,7 +45,8 @@ module CardUtil
         to: lob_to_address,
         # from: "Sent by Touchcard\nhttp://Touchcard.co",  # Does not pass address verification
         front: front_html,
-        back: back_html
+        back: back_html,
+        send_date: 1.hour.from_now.iso8601
     )
   end
 end
