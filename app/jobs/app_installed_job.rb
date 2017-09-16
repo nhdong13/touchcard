@@ -6,6 +6,8 @@ class AppInstalledJob < ActiveJob::Base
 
   def perform(shop)
 
+    shop.update_last_month
+
     size_tag = case shop.last_month
                  when 0...100 then "S"
                  when 100...500 then "M"

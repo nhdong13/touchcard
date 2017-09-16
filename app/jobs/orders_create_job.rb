@@ -4,7 +4,13 @@ class OrdersCreateJob < ActiveJob::Base
     shop = Shop.find_by(domain: shop_domain)
     shop.with_shopify_session do
       shopify_order = ShopifyAPI::Order.find(webhook["id"])
-      order = Order.from_shopify!(shopify_order, shop)
+
+      begin
+        order = Order.from_shopify!(shopify_order, shop)
+      rescue ActiveRecord::RecordInvalid
+        return puts "unable to create order (duplicate webhook?)"
+      end
+
       order.connect_to_postcard
       return puts "no customer" unless order.customer
       return puts "no default address" unless shopify_order&.customer&.default_address

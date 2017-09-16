@@ -36,7 +36,6 @@ class Shop < ActiveRecord::Base
         shop.save!
         shop.get_shopify_id
         shop.sync_shopify_metadata
-        shop.get_last_month
         AppInstalledJob.perform_later(shop)
       else
         shop.token = session.token
@@ -141,9 +140,15 @@ class Shop < ActiveRecord::Base
     }
   end
 
-  def get_last_month
+  def update_last_month
+    # We want to know how many first time customers ordered from the shop. This value can be misleading
+    # if the shop imported data from another platform. We thus cap the number with order/processed_at,
+    # which is the number of orders actually created (not imported) in the last month.
     new_sess
-    last_month = ShopifyAPI::Customer.count(created_at_min: (Time.now - 1.month))
+    start_time = Time.now - 1.month
+    customers_created = ShopifyAPI::Customer.count(created_at_min: start_time)
+    orders_processed = ShopifyAPI::Order.count(processed_at_min: start_time)
+    last_month = [customers_created, orders_processed].min
     update_attribute(:last_month, last_month)
   end
 

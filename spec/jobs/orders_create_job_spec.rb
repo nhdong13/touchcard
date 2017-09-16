@@ -70,6 +70,20 @@ RSpec.describe OrdersCreateJob, type: :job do
 
             expect(Shop.find(shop.id).credit).to eq shop.credit - 1
           end
+
+          it "ignores duplicate order creation" do
+            stub_order("everything")
+            perform_enqueued_jobs { job }
+            expect(Postcard.count).to eq 1
+            expect(Order.count).to eq 1
+
+            webhook_text = File.read("#{Rails.root}/spec/fixtures/shopify/webhooks/orders_create.json")
+            webhook_obj = JSON.parse(webhook_text).with_indifferent_access
+            OrdersCreateJob.perform_now(shop_domain: shop.domain, webhook: webhook_obj)
+            expect(Postcard.count).to eq 1
+            expect(Order.count).to eq 1
+
+          end
         end
 
         context "no street in address" do
