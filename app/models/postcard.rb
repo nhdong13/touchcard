@@ -84,7 +84,7 @@ class Postcard < ActiveRecord::Base
   end
 
   def send_card
-    return logger.info "sending postcard:#{id} that is not paid for" unless paid?
+    return logger.info "attempted sending postcard:#{id} that is not paid for" unless paid?
     # TODO: all kinds of error handling
     # Test lob
     @lob = Lob.load
