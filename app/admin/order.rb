@@ -15,8 +15,10 @@ ActiveAdmin.register Order do
       paginated_collection(collection, download_links: false)
     end
 
-    actions
-    column :id
+    # actions
+    column :id do |order|
+      link_to order.id, admin_order_path(order)
+    end
     column :total_discounts
     column :total_line_items_price
     column :total_price
@@ -29,6 +31,9 @@ ActiveAdmin.register Order do
 
   show do
     attributes_table do
+      row :shop do |order|
+        order.shop
+      end
       row :id
       row :shopify_id
       row :browser_ip

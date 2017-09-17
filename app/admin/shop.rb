@@ -35,10 +35,12 @@ ActiveAdmin.register Shop do
       paginated_collection(collection, download_links: false)
     end
 
-    actions
-    column :id
+    # actions
+    column :id do |shop|
+      link_to shop.id, admin_shop_path(shop)
+    end
     column :domain do |shop|
-      link_to shop.domain.split('.myshopify.com').first, "https://#{shop.domain}"
+      shop.domain.split('.myshopify.com').first
     end
     column :name
     column :email
@@ -55,8 +57,8 @@ ActiveAdmin.register Shop do
 
     attributes_table do
       row :id
-      row :domain do |shop|
-        link_to shop.domain, "https://#{shop.domain}"
+      row "Website Link" do |shop|
+        link_to "https://#{shop.domain}"
       end
       row :name
       row :owner
@@ -95,7 +97,7 @@ ActiveAdmin.register Shop do
     panel "Subscription Data" do
       table_for shop.subscriptions do
         column :id do |subscription|
-          link_to(subscription.id, :admin_subscription)
+          link_to(subscription.id, admin_subscription_path(subscription))
         end
 
         column :quantity
@@ -113,7 +115,7 @@ ActiveAdmin.register Shop do
     panel "Card Orders" do
       table_for shop.card_orders do
         column :id do |card_order|
-          link_to(card_order.id, :admin_card_order)
+          link_to(card_order.id, admin_card_order_path(card_order))
         end
         column :type
         column :enabled

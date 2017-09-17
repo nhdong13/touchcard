@@ -52,9 +52,12 @@ ActiveAdmin.register CardOrder do
   filter :updated_at
 
   index do
-    actions
+    # actions
+    column :id do |card_order|
+      link_to card_order.id, admin_card_order_path(card_order)
+    end
 
-    column :id
+
     column :type
     column :discount_pct
     column :discount_exp
