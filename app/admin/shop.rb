@@ -38,17 +38,17 @@ ActiveAdmin.register Shop do
     actions
     column :id
     column :domain do |shop|
-      link_to shop.domain, "https://#{shop.domain}"
+      link_to shop.domain.split('.myshopify.com').first, "https://#{shop.domain}"
     end
     column :name
     column :email
     column :owner
-    column :last_month
+    column "Last Mo", :last_month
     column :credit
-    column "Subscription Quantity" do |shop|
+    column "Sub Qty" do |shop|
       shop.current_subscription.quantity if shop.current_subscription
     end
-    column :last_login_at
+    column "Last Login", :last_login_at
   end
 
   show do

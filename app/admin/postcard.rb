@@ -28,7 +28,7 @@ ActiveAdmin.register Postcard do
     actions
     column :id
     column :postcard_id do |postcard|
-      link_to postcard.postcard_id, "https://dashboard.lob.com/#/postcards/#{postcard.postcard_id}"
+      link_to postcard.postcard_id, "https://dashboard.lob.com/#/postcards/#{postcard.postcard_id}" if postcard.postcard_id
     end
     column :discount_code
     column :send_date
