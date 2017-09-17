@@ -1,7 +1,16 @@
 // Active Admin's got SASS!
 @import "active_material";
 
-a.view_link.member_link {
-  word-break: normal;
+
+td.col {
+  min-width: 8em;
 }
 
+td.col.col-id,
+td.col.col-actions,
+td.col.col-quantity,
+td.col.col-domain,
+td.col.col-type {
+  word-break: normal;
+  min-width: 1px;
+}
