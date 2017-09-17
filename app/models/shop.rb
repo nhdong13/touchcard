@@ -198,6 +198,6 @@ class Shop < ActiveRecord::Base
   
   # necessary for the active admin
   def display_name
-    self.domain
+    self.domain.split('.myshopify.com').first
   end
 end

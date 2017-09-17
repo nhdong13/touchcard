@@ -25,8 +25,10 @@ ActiveAdmin.register Postcard do
       paginated_collection(collection, download_links: false)
     end
 
-    actions
-    column :id
+    # actions
+    column :id do |postcard|
+      link_to postcard.id, admin_postcard_path(postcard)
+    end
     column :postcard_id do |postcard|
       link_to postcard.postcard_id, "https://dashboard.lob.com/#/postcards/#{postcard.postcard_id}" if postcard.postcard_id
     end
@@ -48,6 +50,9 @@ ActiveAdmin.register Postcard do
 
   show do
     attributes_table do
+      row :shop do |postcard|
+        postcard.shop
+      end
       row :id
       row :card_order_id
       row :discount_code

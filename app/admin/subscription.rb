@@ -27,15 +27,24 @@ ActiveAdmin.register Subscription do
   filter :stripe_id
 
   index do
-    actions
+    # actions
+    column :id do |subscription|
+      link_to subscription.id, admin_subscription_path(subscription)
+    end
+    column :shop do |subscription|
+      subscription.shop
+    end
     column :quantity
-    column :id
     column :current_period_start
     column :current_period_end
+    column :created_at
   end
 
   show do
     attributes_table do
+      row :shop do |subscription|
+        subscription.shop
+      end
       row :id
       row :quantity do |subscription|
         status_tag("#{subscription.quantity}")
