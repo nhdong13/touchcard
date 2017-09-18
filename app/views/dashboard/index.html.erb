@@ -20,7 +20,7 @@
       <div class="col-sm-12">
         <div class="card card-info cards-sent">
           <div class="card-icon bg-primary">
-            <i class="material-icons md-36">email</i>
+            <i class="material-icons mdl-36">email</i>
           </div>
           <div class="card-content">
             <div class="card-heading">CARDS SENT</div>
@@ -34,38 +34,36 @@
   </section>
 
   <section class="cards-sent">
-      <div class="table-wrap">
-        <table class="mdl-data-table mdl-shadow--2dp">
-          <thead>
-            <tr>
-              <th class="mdl-data-table__cell--non-numeric">Status</th>
-              <th>Name</th>
-              <th>Location</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% @postcards.each do |postcard| %>
-              <tr id="postcard-<%= postcard.id %>">
-                <td>
-                  <button type="button" class="mdl-chip">
-                    <span class="mdl-chip__text"><%= postcard.status %></span>
-                  </button>
-                  <!-- <span class="label label-<%= postcard.sent ? 'success' : 'info' %>">
-                    <%= postcard.status %>
-                  </span> -->
-                  <% unless postcard.canceled || postcard.sent %>
-                    <%= link_to "Cancel", cancel_postcard_dashboard_path(postcard),
-                      method: :delete, data: { confirm: "Are you sure" },
-                      class: 'mdl-button mdl-js-button mdl-button--raised mdl-button--accent',
-                      remote: true %>
-                  <% end %>
-                </td>
-                <td><%= postcard.customer.full_name %></td>
-                <td><%= postcard.city %>, <%= postcard.state %>, <%= postcard.country %></td>
-              </tr>
-            <% end %>
-          </tbody>
-        </table>
-      </div>
-    </section>
-  </div>
+    <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp full-width">
+      <thead>
+        <tr>
+          <th class="mdl-data-table__cell--non-numeric full-width">Status</th>
+          <th class="text-center">Name</th>
+          <th class="text-center">Location</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @postcards.each do |postcard| %>
+          <tr id="postcard-<%= postcard.id %>">
+            <td>
+              <button type="button" class="mdl-chip">
+                <span class="mdl-chip__text"><%= postcard.status %></span>
+              </button>
+              <!-- <span class="label label-<%= postcard.sent ? 'success' : 'info' %>">
+                <%= postcard.status %>
+              </span> -->
+              <% unless postcard.canceled || postcard.sent %>
+                <%= link_to "Cancel", cancel_postcard_dashboard_path(postcard),
+                  method: :delete, data: { confirm: "Are you sure" },
+                  class: 'mdl-button mdl-js-button mdl-button--raised mdl-button--accent',
+                  remote: true %>
+              <% end %>
+            </td>
+            <td><%= postcard.customer.full_name %></td>
+            <td><%= postcard.city %>, <%= postcard.state %>, <%= postcard.country %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </section>
+</div>

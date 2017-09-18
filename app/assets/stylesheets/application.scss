@@ -6,13 +6,34 @@
 // new style, make this modular
 
 body {
-  background: none;
+  background: #EBEEF0;
 }
 
-// OVERIDE
+// OVERIDE MDL
 
 a {
-  color: white;
+  color: black;
+  text-decoration: none;
+}
+
+.mdl-layout__header-row {
+  padding: 0;
+}
+
+.mdl-layout__header {
+  background-color: white;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.mdl-data-table td {
+  text-align: left;
+}
+
+.mdl-36 {
+  font-size: 36px;
 }
 
 //
@@ -278,6 +299,11 @@ section {
   .card-text{
     font-size: 150%;
   }
+}
+
+.bg-primary {
+  color: white;
+  background-color: #006BB1;
 }
 
 // CUSTOM
