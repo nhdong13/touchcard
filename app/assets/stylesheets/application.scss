@@ -306,8 +306,34 @@ section {
   background-color: #006BB1;
 }
 
+.jumbotron {
+  margin-bottom: 30px;
+  color: inherit;
+  background-color: #eee;
+
+  p {
+    margin-bottom: 15px;
+    font-size: 21px;
+    font-weight: 200;
+  }
+}
+
+.alert-info {
+  background-color: #d9edf7;
+  border-color: #bce8f1;
+  color: #31708f;
+}
+
 // CUSTOM
 
 .text-center {
   text-align: center;
+}
+
+.top-m-10 {
+  margin-top: 10px;
+}
+
+.uppercase {
+  text-transform: uppercase;
 }
