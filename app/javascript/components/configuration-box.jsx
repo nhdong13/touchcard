@@ -5,17 +5,19 @@ import DiscountHandler from './discount-handler';
 
 const ConfigurationBox = props => (
   <section>
-    <div className="row">
-      <div className="col-sm-6">
-        <h2>Configure</h2>
+    <div className="mdl-grid">
+      <div className="mdl-cell mdl-cell--6-col">
+        <h3>Configure</h3>
         <DiscountHandler
           onCheck={props.onCheck}
           showDiscount={props.includeDiscount}
         />
       </div>
-      <div className="col-sm-6 pull-right">
-        <button className="btn btn-primary btn-lg pull-right save">Save</button>
-        <button className="btn btn-default btn-lg pull-right cancel">Cancel</button>
+      <div className="mdl-cell mdl-cell--6-col pull-right">
+        <button className="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
+          Save
+        </button>
+        <button className="mdl-button mdl-js-button mdl-button--raised">Cancel</button>
       </div>
     </div>
   </section>

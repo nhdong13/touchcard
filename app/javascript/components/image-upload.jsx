@@ -51,15 +51,15 @@ export default class ImageUpload extends Component {
 
   render() {
     return (
-      <div className="form-group file-upload-stylized">
-        <label htmlFor="image-uploader">{this.props.label}</label>
+      <div>
+      <div className="file-upload-stylized mdl-textfield mdl-js-textfield">
         <input
-          className="form-control"
-          type="file"
-          name="image-uploader"
-          id="image-uploader"
+          className="mdl-textfield__input"
           onChange={this.handleChange}
-        />
+          type="file"
+          id="image-uploader" />
+      </div>
+      <div>
         <small className="help-block">
           Image must be 1875px by 1275px including a 75px bleed -
           <a href="/images/{this.props.isBack ? 'address' : 'image'}}-side-guide.jpg" target="_blank">
@@ -69,6 +69,7 @@ export default class ImageUpload extends Component {
             example
           </a>
         </small>
+      </div>
         { this.renderError() }
       </div>
     );

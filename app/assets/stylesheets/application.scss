@@ -1,20 +1,27 @@
-@import "bootstrap-sprockets";
-@import "bootstrap";
-@import "bootstrap3-switch";
-@import "bootstrap-select";
-
+// @import "bootstrap-sprockets";
+// @import "bootstrap";
+// @import "bootstrap3-switch";
+// @import "bootstrap-select";
+@import 'material';
 // new style, make this modular
 
 body {
   background: none;
 }
 
+// OVERIDE
+
+a {
+  color: white;
+}
+
+//
 section {
   margin: 0 0 1.2em;
   background: #FBFBFB;
   padding: 1em;
   h2 {
-    color: $gray-light;
+    color: lightgrey;
     text-transform: uppercase;
     font-weight: normal;
     margin: 0.25em 0 1em;
@@ -198,7 +205,7 @@ section {
   li.active:after{
     content: ' ';
     display: block;
-    background: $brand-primary;
+    background: blue;
     height: 3px;
   }
 }
@@ -271,4 +278,10 @@ section {
   .card-text{
     font-size: 150%;
   }
+}
+
+// CUSTOM
+
+.text-center {
+  text-align: center;
 }

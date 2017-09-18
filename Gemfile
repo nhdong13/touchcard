@@ -9,13 +9,14 @@ gem "rails", "5.1.0"
 gem "rake", "11.1.2"
 gem "rb-readline", "~> 0.5.3"
 
-gem "bootstrap-sass"
+# gem "bootstrap-sass"
+gem 'material_design_lite-sass'
 
 gem "sass-rails", "~> 5.0", ">= 5.0.6"
 gem "uglifier", ">= 1.3.0"
 gem "coffee-rails", "~> 4.2.0"
 
-gem "jquery-rails"
+# gem "jquery-rails"
 gem "momentjs-rails", ">= 2.8.1"
 gem "turbolinks"
 # gem "jbuilder", "~> 2.0"
@@ -38,7 +39,7 @@ gem 'stripe', git: 'https://github.com/stripe/stripe-ruby'
 gem "aws-sdk", "~> 2.1"
 
 # Card creator ui js
-gem "jquery-ui-rails", "~> 5.0"
+# gem "jquery-ui-rails", "~> 5.0"
 
 # Image Manipulation
 gem "rmagick", "~> 2.15"
@@ -73,9 +74,9 @@ gem "business_time", "~> 0.7"
 gem "mailgunner", '~> 2.4'
 
 # add bootstrap-switch
-gem "bootstrap-switch-rails"
+# gem "bootstrap-switch-rails"
 
-gem 'bootstrap-select-rails'
+# gem 'bootstrap-select-rails'
 
 # Image upload
 gem 'carrierwave'

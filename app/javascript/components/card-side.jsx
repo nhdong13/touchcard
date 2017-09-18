@@ -50,8 +50,8 @@ export default class CardSide extends Component {
 
   render() {
     return (
-      <section className="col-sm-6">
-        <h2>{this.props.title}</h2>
+      <div className="mdl-cell mdl-cell--6-col">
+        <h3>{this.props.title}</h3>
         <ImageUpload label={'Upload Image'} handleFileUpload={this.setImage} />
         <CardSideCheckboxes
           includeDiscount={this.props.includeDiscount}
@@ -77,7 +77,7 @@ export default class CardSide extends Component {
             </div>
           </div>
         </div>
-      </section>
+      </div>
     );
   }
 }

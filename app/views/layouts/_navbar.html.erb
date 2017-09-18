@@ -1,10 +1,27 @@
-<nav class="navbar navbar-touchcard">
-  <div class="container-fluid">
-    <ul class="nav navbar-nav">
-      <li><%= link_to('Dashboard', dashboard_index_path) %></li>
-      <li><%= link_to('Automations', app_path) %></li>
-      <li><%= link_to('FAQ/Support', faq_path) %></li>
-      <li><%= link_to('Subs', new_subscription_path) %></li>
-    </ul>
-  </div><!-- /.container-fluid -->
-</nav>
+<!-- <nav>
+  <ul>
+    <li><%= link_to('Dashboard', dashboard_index_path) %></li>
+    <li><%= link_to('Automations', app_path) %></li>
+    <li><%= link_to('FAQ/Support', faq_path) %></li>
+    <li><%= link_to('Subs', new_subscription_path) %></li>
+  </ul>
+</nav> -->
+
+<header class="mdl-layout__header">
+  <div class="mdl-layout__header-row">
+    <nav class="mdl-navigation">
+      <a class="mdl-navigation__link" href="">
+        <%= link_to('Dashboard', dashboard_index_path, class: 'mdl-navigation_link') %>
+      </a>
+      <a class="mdl-navigation__link" href="">
+        <%= link_to('Automations', app_path, class: 'mdl-navigation_link') %>
+      </a>
+      <a class="mdl-navigation__link" href="">
+        <%= link_to('FAQ/Support', faq_path, class: 'mdl-navigation_link') %>
+      </a>
+      <a class="mdl-navigation__link" href="">
+        <%= link_to('Subs', new_subscription_path, class: 'mdl-navigation_link') %>
+      </a>
+    </nav>
+  </div>
+</header>

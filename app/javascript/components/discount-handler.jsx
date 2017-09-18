@@ -6,21 +6,19 @@ const DiscountHandler = (props) => {
   if (props.showDiscount) {
     return (
       <div>
-        <div className="form-check">
-          <label className="form-check-label">
-            <input className="form-check-input" type="checkbox" value="" onClick={props.onCheck} />
-            Include Discount
-          </label>
-        </div>
+        <label className="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" htmlFor="checkbox-1">
+          <input type="checkbox" id="checkbox-1" className="mdl-checkbox__input" onClick={props.onCheck} />
+          <span className="mdl-checkbox__label">Include Discount</span>
+        </label>
         <DiscountInputFields />
       </div>
     );
   }
   return (
-    <div className="form-check">
-      <label className="form-check-label">
-        <input className="form-check-input" type="checkbox" value="" onClick={props.onCheck} />
-          Include Discount
+    <div>
+      <label className="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" htmlFor="checkbox-1">
+        <input type="checkbox" id="checkbox-1" className="mdl-checkbox__input" onClick={props.onCheck} />
+        <span className="mdl-checkbox__label">Include Discount</span>
       </label>
     </div>
   );

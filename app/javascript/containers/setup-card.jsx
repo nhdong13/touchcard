@@ -22,21 +22,23 @@ export default class SetupCard extends Component {
 
   render() {
     return (
-      <div className="card-page container-fluid">
+      <div className="card-page">
         <ConfigurationBox
           onCheck={this.includeDiscount}
           includeDiscount={this.state.includeDiscount}
         />
-        <CardSide
-          title={'Image Side'}
-          isBack={false}
-          includeDiscount={this.state.includeDiscount}
-        />
-        <CardSide
-          title={'Address Side'}
-          isBack
-          includeDiscount={this.state.includeDiscount}
-        />
+        <div className="mdl-grid">
+          <CardSide
+            title={'Image Side'}
+            isBack={false}
+            includeDiscount={this.state.includeDiscount}
+          />
+          <CardSide
+            title={'Address Side'}
+            isBack
+            includeDiscount={this.state.includeDiscount}
+          />
+        </div>
       </div>
     );
   }
