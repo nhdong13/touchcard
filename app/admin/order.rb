@@ -1,4 +1,6 @@
 ActiveAdmin.register Order do
+  menu priority: 11
+
   actions :index, :show
 
   filter :shop , as: :select, collection: ->{Shop.all.sort_by {|s| s.domain}}
@@ -19,12 +21,12 @@ ActiveAdmin.register Order do
     column :id do |order|
       link_to order.id, admin_order_path(order)
     end
-    column :total_discounts
-    column :total_line_items_price
-    column :total_price
+    column "Disc ¢", :total_discounts
+    column "Ln Itm ¢", :total_line_items_price
+    column "Total ¢", :total_price
     column :customer
     column :postcard_id
-    column :shopify_id, label: "Shopify Id"
+    column "Shopify Id", :shopify_id
     column :discount_codes
     column :processed_at
   end
@@ -36,7 +38,7 @@ ActiveAdmin.register Order do
       end
       row :id
       row :shopify_id
-      row :browser_ip
+      row "Shopify Id", :browser_ip
       row :discount_codes
       row :financial_status
       row :fulfillment_status
@@ -54,8 +56,12 @@ ActiveAdmin.register Order do
       row :shipping_address_id
       row :created_at
       row :updated_at
-      row :postcard_id
-      row :shop_id
+      row :postcard_id do |order|
+        link_to(order.postcard_id, admin_postcard_path(order.postcard_id)) if order.postcard_id
+      end
+      row :customer_id do |order|
+        link_to(order.customer.id, admin_customer_path(order.customer)) if order.customer.id
+      end
     end
   end
 end

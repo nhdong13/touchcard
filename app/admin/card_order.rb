@@ -1,6 +1,7 @@
 require "card_util"
 
 ActiveAdmin.register CardOrder do
+  menu priority: 5
   actions :index, :show
 
   member_action :change_sending_status, method: :get do
