@@ -1,4 +1,5 @@
 ActiveAdmin.register Postcard do
+  menu priority: 7
   actions :index, :show
 
   member_action :cancel, method: :patch do
@@ -8,8 +9,12 @@ ActiveAdmin.register Postcard do
   end
 
   # Only allow filtering by shops that actually sent a postcard
-  filter :shop , as: :select, collection: ->{Shop.where(id: CardOrder.where(id: Postcard.distinct.pluck(:card_order_id)))
-                                                    .sort_by {|s| s.domain}}
+  filter :shop,
+         as: :select,
+         collection: ->{Shop.where(id: CardOrder.where(id: Postcard.distinct
+                                                             .pluck(:card_order_id))
+                                       .pluck(:shop_id))
+                          .sort_by {|s| s.domain}}
   filter :discount_code
   filter :send_date
   filter :sent
@@ -29,17 +34,16 @@ ActiveAdmin.register Postcard do
     column :id do |postcard|
       link_to postcard.id, admin_postcard_path(postcard)
     end
-    column :postcard_id do |postcard|
-      link_to postcard.postcard_id, "https://dashboard.lob.com/#/postcards/#{postcard.postcard_id}" if postcard.postcard_id
-    end
-    column :discount_code
+    # column "Lob Id" do |postcard|
+    #   link_to postcard.postcard_id, "https://dashboard.lob.com/#/postcards/#{postcard.postcard_id}" if postcard.postcard_id
+    # end
+    column "Disc Code", :discount_code
     column :send_date
-    column :sent
     column :date_sent
     column :paid
-    column :estimated_arrival
-    column :discount_pct
-    column :discount_exp_at
+    column "Est'd Arrival", :estimated_arrival
+    column "Disc Pct", :discount_pct
+    column "Disc Exp At", :discount_exp_at
     column :canceled
 
     actions do |card|
@@ -54,26 +58,32 @@ ActiveAdmin.register Postcard do
         postcard.shop
       end
       row :id
-      row :card_order_id
-      row :discount_code
-      row :send_date
-      row :sent
-      row :date_sent
-      row :postcard_id do |postcard|
-        link_to postcard.postcard_id, "https://dashboard.lob.com/#/postcards/#{postcard.postcard_id}"
+      row :canceled
+      row :card_order_id do |postcard|
+        link_to postcard.card_order_id, admin_card_order_path(postcard.card_order_id) if postcard.card_order_id
       end
-
-      row :created_at
-      row :updated_at
-      row :customer_id
-      row :order_id
-      row :paid
-      row :estimated_arrival
-      row :arrival_notification_sent
-      row :expiration_notification_sent
+      row :discount_code
       row :discount_pct
       row :discount_exp_at
-      row :canceled
+      row "Lob Id" do |postcard|
+        link_to postcard.postcard_id, "https://dashboard.lob.com/#/postcards/#{postcard.postcard_id}"
+      end
+      row :sent
+      row :send_date
+      row :date_sent
+      row :estimated_arrival
+      row :created_at
+      row :updated_at
+      row :customer_id do |postcard|
+        link_to(postcard.customer_id, admin_customer_path(postcard.customer)) if postcard.customer_id
+      end
+      row :order_id do |postcard|
+        link_to(postcard.order_id, admin_order_path(postcard.order)) if postcard.order_id
+      end
+      row :paid
+
+      row :arrival_notification_sent
+      row :expiration_notification_sent
       row :price_rule_id
     end
   end

@@ -107,7 +107,7 @@ ActiveAdmin.register Shop do
         column :created_at
         column :updated_at
         column :stripe_id do |subscription|
-          link_to subscription.stripe_id, "https://dashboard.stripe.com/subscriptions/#{subscription.stripe_id}"
+          link_to subscription.stripe_id, "https://dashboard.stripe.com/subscriptions/#{subscription.stripe_id}" if subscription.stripe_id
         end
       end
     end
