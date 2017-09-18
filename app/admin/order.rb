@@ -37,31 +37,27 @@ ActiveAdmin.register Order do
         order.shop
       end
       row :id
-      row :shopify_id
-      row "Shopify Id", :browser_ip
+      row "Shopify Id", :shopify_id
+      row :customer_id do |order|
+        link_to(order.customer.id, admin_customer_path(order.customer)) if order.customer.id
+      end
       row :discount_codes
-      row :financial_status
-      row :fulfillment_status
-      row :tags
-      row :landing_site
-      row :referring_site
       row :total_discounts
       row :total_line_items_price
       row :total_price
       row :total_tax
       row :processing_method
       row :processed_at
-      row :customer_id
-      row :billing_address_id
-      row :shipping_address_id
       row :created_at
       row :updated_at
       row :postcard_id do |order|
         link_to(order.postcard_id, admin_postcard_path(order.postcard_id)) if order.postcard_id
       end
-      row :customer_id do |order|
-        link_to(order.customer.id, admin_customer_path(order.customer)) if order.customer.id
-      end
+      row :financial_status
+      row :fulfillment_status
+      row :tags
+      row :landing_site
+      row :referring_site
     end
   end
 end
