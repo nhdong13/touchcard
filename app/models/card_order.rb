@@ -1,5 +1,5 @@
 class CardOrder < ApplicationRecord
-  TYPES = ['PostSaleOrder', 'CustomerWinbackOrder', 'LifetimePurchaseOrder', 'AbandonedCard']
+  TYPES = ['PostSaleOrder', 'CustomerWinbackOrder', 'LifetimePurchaseOrder', 'AbandonedCheckout']
 
   belongs_to :shop
   belongs_to :card_side_front, class_name: "CardSide",

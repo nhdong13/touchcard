@@ -1,4 +1,4 @@
-class AbandonedCard < CardOrder
+class AbandonedCheckout < CardOrder
   after_initialize :ensure_defaults
 
   def ensure_defaults
