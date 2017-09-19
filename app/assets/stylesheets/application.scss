@@ -16,6 +16,10 @@ a {
   text-decoration: none;
 }
 
+.mdl-layout__container {
+  position: static;
+}
+
 .mdl-layout__header-row {
   padding: 0;
 }
@@ -36,6 +40,10 @@ a {
   font-size: 36px;
 }
 
+.mdl-58 {
+  font-size: 58px;
+}
+
 h1 .material-icons {
   font-size: inherit;
 }
@@ -44,7 +52,8 @@ h3 {
   margin-top: 0;
 }
 
-//
+// END OVERIDE MDL
+
 section {
   margin: 0 0 1.2em;
   background: #FBFBFB;
@@ -351,6 +360,10 @@ section {
   text-align: center;
 }
 
+.pull-right {
+  float: right;
+}
+
 .top-m-20 {
   margin-top: 20px;
 }
@@ -365,4 +378,24 @@ section {
   margin-left: auto;
   padding-left: 15px;
   padding-right: 15px;
+}
+
+.f-s-500 {
+  font-size: 500%;
+}
+
+input[type="text"], input[type="number"] {
+  padding: 10px;
+  border: solid 1px #dcdcdc;
+  transition: box-shadow 0.3s, border 0.3s;
+}
+input[type="text"]:focus,
+input[type="text"].focus {
+  border: solid 1px #707070;
+  box-shadow: 0 0 5px 1px #969696;
+}
+
+input[type="number"] {
+  width: 40px;
+  margin-left: 2%;
 }

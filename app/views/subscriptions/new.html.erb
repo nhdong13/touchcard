@@ -2,8 +2,8 @@
 
 <div class="billing top-m-20">
   <section>
-    <button class="btn btn-default cancel" disabled={{isSaving}}>
-      <i class="fa fa-arrow-left"></i> Back
+    <button class="mdl-button mdl-js-button mdl-button--raised">
+      <i class="material-icons">keyboard_backspace</i> Back
     </button>
     <div class="card text-center">
       <div class="jumbotron text-center">
@@ -21,9 +21,8 @@
       <!-- {{/if}} -->
       <h4>How many customers do you want to reach this month?</h4>
       <div class="customers">
-        <i class="material-icons mdl-36">group add</i>
-        <label>Input za sub quantity</label>
-        <input class="number" />
+        <i class="material-icons f-s-500">group_add</i>
+        <input type="text" class="number f-s-500" size="2" />
         <!-- {{input
           class="number"
           type="text"
@@ -40,7 +39,7 @@
         </div>
       </div>
       <br>
-      <h5>
+      <p>
         <strong class="price">
           10.00
         </strong>
@@ -48,27 +47,27 @@
         <button id="customButton" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
           Buy Now
         </button>
-      </h5>
+      </p>
     </div>
   </section>
 </div>
 
 <script>
-  var handler = StripeCheckout.configure({
-    key: 'pk_test_6pRNASCoBOKtIshFeQd4XMUh',
-    image: 'https://stripe.com/img/documentation/checkout/marketplace.png',
-    locale: 'auto',
-    token: function(token) {
-      var quantity = $('.number').val();
-      $.post({
-        type: 'POST',
-        url: '/subscription',
-        data: { token: token.id, quantity: quantity }
-      })
-      // You can access the token ID with `token.id`.
-      // Get the token ID to your server-side code for use.
-    }
-  });
+  // var handler = StripeCheckout.configure({
+  //   key: 'pk_test_6pRNASCoBOKtIshFeQd4XMUh',
+  //   image: 'https://stripe.com/img/documentation/checkout/marketplace.png',
+  //   locale: 'auto',
+  //   token: function(token) {
+  //     var quantity = $('.number').val();
+  //     $.post({
+  //       type: 'POST',
+  //       url: '/subscription',
+  //       data: { token: token.id, quantity: quantity }
+  //     })
+  //     // You can access the token ID with `token.id`.
+  //     // Get the token ID to your server-side code for use.
+  //   }
+  // });
 
   document.getElementById('customButton').addEventListener('click', function(e) {
     // Open Checkout with further options:
