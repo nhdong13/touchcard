@@ -24,6 +24,8 @@ gem "sdoc", "~> 0.4.0", group: :doc
 # Admin interface
 gem "devise", "~> 3.5"
 gem "activeadmin", "~> 1.0.0"
+gem "active_material", git: "https://github.com/laverick/active_material"
+
 
 # API serializer
 gem "active_model_serializers", "~> 0.8.0"
@@ -71,6 +73,10 @@ gem "business_time", "~> 0.7"
 
 # send mails using mailgun
 gem "mailgunner", '~> 2.4'
+
+# ActiveCampaign ('bdad6c2' is last building version as of 2017-08-26)
+gem "active_campaign", git: "https://github.com/laverick/active_campaign", ref: "bdad6c2"
+
 
 group :assets do
   gem "therubyracer", platforms: :ruby

@@ -1,40 +1,10 @@
 require 'rest_client'
 
 class SlackNotify
-  def self.install(domain, email = nil, owner = nil, shop_size = -1, run_in_background=false)
 
-    # Email, owner, last_month, lob_address
+  def self.message(msg_string, run_in_background=false)
     payload = {
-      text: "A new shop has installed Touchcard: #{domain}\nemail: #{email}\nowner: #{owner}\n# new customers: #{shop_size}"
-    }
-    send_to_slack(payload, run_in_background)
-  end
-
-  def self.uninstall(domain, run_in_background=false)
-    payload = {
-      text: "A shop has uninstalled Touchcard: #{domain}."
-      }
-    send_to_slack(payload, run_in_background)
-  end
-
-  def self.cards_sent(quantity, run_in_background=false)
-    payload = {
-        text: "#{quantity} postcards were sent today."
-    }
-    send_to_slack(payload, run_in_background)
-  end
-
-  def self.subscriptions_status(quantity, run_in_background=false)
-    payload = {
-        text: "Monthly card subscriptions: *#{quantity}* #{ENV["SUBSCRIPTIONS_GOAL_STRING"]}"
-    }
-    send_to_slack(payload, run_in_background)
-  end
-
-  def self.error(domain, error, run_in_background=false)
-    payload = {
-      text: "There was a problem with shop: #{domain} at #{Time.now}
-      The error was: #{error}"
+        text: "#{msg_string}"
     }
     send_to_slack(payload, run_in_background)
   end

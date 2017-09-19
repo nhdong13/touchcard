@@ -119,11 +119,11 @@ ActiveAdmin.setup do |config|
   # This allows your users to comment on any resource registered with Active Admin.
   #
   # You can completely disable comments:
-  # config.comments = false
-  #
+  config.comments = false
+
   # You can disable the menu item for the comments index page:
-  # config.show_comments_in_menu = false
-  #
+  config.comments_menu = false
+
   # You can change the name under which comments are registered:
   # config.comments_registration_name = 'AdminComment'
   #
@@ -135,7 +135,7 @@ ActiveAdmin.setup do |config|
   #
   # Enable and disable Batch Actions
   #
-  config.batch_actions = true
+  config.batch_actions = false
 
   # == Controller Filters
   #
@@ -150,7 +150,7 @@ ActiveAdmin.setup do |config|
   # To understand how to localize your app with I18n, read more at
   # https://github.com/svenfuchs/i18n/blob/master/lib%2Fi18n%2Fbackend%2Fbase.rb#L52
   #
-  config.localize_format = :long
+  config.localize_format = :admin_format
 
   # == Setting a Favicon
   #
@@ -246,8 +246,8 @@ ActiveAdmin.setup do |config|
   # Pagination is enabled by default for all resources.
   # You can control the default per page count for all resources here.
   #
-  # config.default_per_page = 30
-  #
+  config.default_per_page = 50
+
   # You can control the max per page count too.
   #
   # config.max_per_page = 10_000

@@ -50,7 +50,7 @@ class Postcard < ActiveRecord::Base
   def self.send_all
     num_failed = 0
     todays_cards = Postcard.joins(:shop)
-      .where("paid = TRUE AND sent = FALSE AND send_date <= ?
+      .where("paid = TRUE AND sent = FALSE AND canceled = FALSE AND send_date <= ?
               AND shops.approval_state != ?", Time.now, "denied")
     todays_cards.each do |card|
       begin
@@ -84,7 +84,7 @@ class Postcard < ActiveRecord::Base
   end
 
   def send_card
-    return logger.info "sending postcard:#{id} that is not paid for" unless paid?
+    return logger.info "attempted sending postcard:#{id} that is not paid for" unless paid?
     # TODO: all kinds of error handling
     # Test lob
     @lob = Lob.load
@@ -126,5 +126,14 @@ class Postcard < ActiveRecord::Base
     self.date_sent = Date.today
     self.postcard_id = sent_card["id"]
     self.save! # TODO: Add error handling here
+  end
+
+  def cancel
+    self.canceled = true
+    self.transaction do
+      self.shop.increment_credit if self.paid
+      self.paid = false
+    end
+    self.save!
   end
 end

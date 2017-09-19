@@ -17,7 +17,7 @@ class CardOrder < ActiveRecord::Base
   def send_postcard?(order)
     return true unless filters.count > 0
     spend = order.total_price / 100.0
-    filter = filters.first
+    filter = filters.last # Somehow got a multiple-filter bug, so make sure we use latest value
     # if the filters are nil assume they're unbounded
     min = filter.filter_data["minimum"].to_f || -1.0
     max = filter.filter_data["maximum"].to_f.positive? ? filter.filter_data["maximum"].to_f : 1_000_000_000.0
@@ -45,7 +45,7 @@ class CardOrder < ActiveRecord::Base
   def ensure_defaults
     self.card_side_front ||= CardSide.create!(is_back: false)
     self.card_side_back ||= CardSide.create!(is_back: true)
-    self.send_delay = 0 if send_delay.nil? && type == "PostSaleOrder"
+    self.send_delay = 1 if send_delay.nil? && type == "PostSaleOrder"
     self.international = false if international.nil?
     self.enabled = false if enabled.nil?
     # TODO: add defaults to schema that can be added

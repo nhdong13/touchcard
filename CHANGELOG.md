@@ -1,5 +1,20 @@
 # Changelog
 
+## v1.2.4
+- Comprehensive Admin Tool Improvements: 
+    - Navigation 
+    - Edit: Subscription Quantity, Shop Credits, Card Order Sending Enable
+    - Send Sample Postcard
+    - Cancel Postcards
+    - Material Design Skin    
+- Add name and size tag to ActiveCampaign subscribers
+- Add subscribers to Customer list in ActiveCampaign
+- Background task install jobs (ActiveCampaign Subscribe + Slack Notify)
+- Bump default send_delay to 1 week
+- Add Data Importer Library (not yet hooked up)
+- Cap last_month value to # orders in case of import. (+remove synchronous call from install)
+
+
 ## v1.2.3
 - Add Ember Metrics for Google Tag Manager & Intercom ('booted' in GTM)
 
