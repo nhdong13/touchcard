@@ -23,22 +23,24 @@ ActiveAdmin.register CardOrder do
     elsif request.post?
       card_order = CardOrder.find(params[:id])
       lob_sample_address = params[:lob_sample_address]
-      lob_response = CardUtil.send_promo_card(card_order, lob_sample_address)
-      puts lob_response
-      recipient = lob_response['to']['name']
-      lob_admin_path = "https://dashboard.lob.com/#/postcards/#{lob_response['id']}"
-      SlackNotify.message("#{current_admin_user.email} sent #{card_order.shop.domain} sample " \
+      begin
+        lob_response = CardUtil.send_promo_card(card_order, lob_sample_address)
+        puts lob_response
+        recipient = lob_response['to']['name']
+        lob_admin_path = "https://dashboard.lob.com/#/postcards/#{lob_response['id']}"
+        SlackNotify.message("#{current_admin_user.email} sent #{card_order.shop.domain} sample " \
                             "to #{recipient}. #{lob_admin_path} ", true)
-      redirect_to show_sample_admin_card_order_path({card_order_id: card_order.id, lob_response: lob_response})
+        redirect_to show_sample_admin_card_order_path({card_order_id: card_order.id, lob_response: lob_response})
+      rescue Lob::InvalidRequestError => error
+        render json: error.to_s, status: 200, root: false
+      end
     end
   end
 
   member_action :show_sample, method: :get do
     @card_order = CardOrder.find(params[:card_order_id])
+    @lob_id = params.dig(:lob_response, :id)
     @lob_url = params.dig(:lob_response, :url)
-    thumbnails = params.dig(:lob_response, :thumbnails)
-    @lob_front_thumbnail = thumbnails && thumbnails[0] && thumbnails[0][:large]
-    @lob_back_thumbnail = thumbnails && thumbnails[1] && thumbnails[1][:large]
     @lob_admin_path = "https://dashboard.lob.com/#/postcards/#{params[:lob_response][:id]}"
   end
 
