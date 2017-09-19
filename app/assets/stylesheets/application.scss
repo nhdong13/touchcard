@@ -36,6 +36,14 @@ a {
   font-size: 36px;
 }
 
+h1 .material-icons {
+  font-size: inherit;
+}
+
+h3 {
+  margin-top: 0;
+}
+
 //
 section {
   margin: 0 0 1.2em;
@@ -307,6 +315,8 @@ section {
 }
 
 .jumbotron {
+  padding-top: 30px;
+  padding-bottom: 30px;
   margin-bottom: 30px;
   color: inherit;
   background-color: #eee;
@@ -324,16 +334,35 @@ section {
   color: #31708f;
 }
 
+.alert {
+  padding: 15px;
+  margin-bottom: 20px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+}
+
+.help-block {
+  color: gray;
+}
+
 // CUSTOM
 
 .text-center {
   text-align: center;
 }
 
-.top-m-10 {
-  margin-top: 10px;
+.top-m-20 {
+  margin-top: 20px;
 }
 
 .uppercase {
   text-transform: uppercase;
+  color: #777;
+}
+
+.container {
+  margin-right: auto;
+  margin-left: auto;
+  padding-left: 15px;
+  padding-right: 15px;
 }

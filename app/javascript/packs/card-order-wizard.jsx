@@ -35,7 +35,7 @@ export default class CardOrderWizard extends Component {
     switch (this.state.step) {
       case 1:
         return (
-          <div>
+          <div className="top-m-20">
             <SelectTypeForm />
             <button onClick={this.switchStep} className="btn btn-primary">
               {this.buttonText()}
@@ -44,7 +44,7 @@ export default class CardOrderWizard extends Component {
         );
       case 2:
         return (
-          <div>
+          <div className="top-m-20">
             <SetupCard />
             <button onClick={this.switchStep} className="btn btn-primary">
               {this.buttonText()}
@@ -53,7 +53,7 @@ export default class CardOrderWizard extends Component {
         );
       case 3:
         return (
-          <div>
+          <div className="top-m-20">
             <ConfigureCard />
             <button onClick={this.switchStep} className="btn btn-primary">
               {this.buttonText()}

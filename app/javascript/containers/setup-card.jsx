@@ -27,7 +27,7 @@ export default class SetupCard extends Component {
           onCheck={this.includeDiscount}
           includeDiscount={this.state.includeDiscount}
         />
-        <div className="mdl-grid">
+        <section className="mdl-grid">
           <CardSide
             title={'Image Side'}
             isBack={false}
@@ -38,7 +38,7 @@ export default class SetupCard extends Component {
             isBack
             includeDiscount={this.state.includeDiscount}
           />
-        </div>
+        </section>
       </div>
     );
   }

@@ -50,7 +50,7 @@ export default class CardSide extends Component {
 
   render() {
     return (
-      <section className="mdl-cell mdl-cell--6-col">
+      <div className="mdl-cell mdl-cell--6-col">
         <h3 className="uppercase">{this.props.title}</h3>
         <ImageUpload label={'Upload Image'} handleFileUpload={this.setImage} />
         <CardSideCheckboxes
@@ -77,7 +77,7 @@ export default class CardSide extends Component {
             </div>
           </div>
         </div>
-      </section>
+      </div>
     );
   }
 }

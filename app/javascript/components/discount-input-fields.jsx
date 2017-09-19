@@ -3,13 +3,15 @@ import ReactDOM from 'react-dom';
 
 const DiscountInputFields = props => (
   <div>
-    <div className="form-group">
-      <label htmlFor="discount-pct">Coupon Percent</label>
-      <input id="discount-pct" size="2" />
+    <div className="mdl-textfield mdl-js-textfield">
+      <input className="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?" id="percent"/>
+      <label className="mdl-textfield__label" htmlFor="percent"><strong>Percent</strong></label>
+      <span className="mdl-textfield__error">You must enter a number!</span>
     </div>
-    <div className="form-group">
-      <label htmlFor="discount-exp">Weeks till Expiration</label>
-      <input id="discount-exp" size="2" />
+    <div className="mdl-textfield mdl-js-textfield">
+      <input className="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?" id="exp"/>
+      <label className="mdl-textfield__label" htmlFor="exp"><strong>Weeks till expiration</strong></label>
+      <span className="mdl-textfield__error">You must enter a number!</span>
     </div>
   </div>
 );

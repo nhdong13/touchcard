@@ -1,6 +1,6 @@
 <script src="https://checkout.stripe.com/checkout.js"></script>
 
-<div class="billing">
+<div class="billing top-m-20">
   <section>
     <button class="btn btn-default cancel" disabled={{isSaving}}>
       <i class="fa fa-arrow-left"></i> Back
@@ -8,7 +8,7 @@
     <div class="card text-center">
       <div class="jumbotron text-center">
           <div class="container">
-          <h1><i class="material-icons mdl-36">print</i> + <i class="material-icons mdl-36">email</i> = 99&cent;</h1>
+          <h1><i class="material-icons">print</i> + <i class="material-icons">email</i> = 99&cent;</h1>
           <p>
             <strong>PRINT</strong> and <strong>MAIL</strong> cards for just <strong>99&cent;</strong> in the USA
           </p>
@@ -31,22 +31,24 @@
           maxlength="4"
           value=model.cards}} -->
       </div>
-      <div class="text-center">
-        <button class="btn btn-success recommend">
+      <div class="text-center top-m-20">
+        <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent">
           We recommend at least <strong>no of customers</strong> customers*
         </button>
-        <div class="small">*based on new customers last month</div>
+        <div>
+          <small>*based on new customers last month</small>
+        </div>
       </div>
       <br>
-      <h4>
+      <h5>
         <strong class="price">
-          price here
+          10.00
         </strong>
          to raise your customer lifetime value
-         <button id="customButton" class="btn btn-primary btn-lg buy">
-           Buy Now
-         </button>
-      </h4>
+        <button id="customButton" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
+          Buy Now
+        </button>
+      </h5>
     </div>
   </section>
 </div>

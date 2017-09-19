@@ -26,9 +26,9 @@ export default class SelectType extends Component {
 
   render() {
     return (
-      <div>
+      <section>
         <p>Add selecting type on click here</p>
-      </div>
+      </section>
     );
   }
 }
