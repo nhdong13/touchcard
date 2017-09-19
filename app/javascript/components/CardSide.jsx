@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import DiscountCodeBox from './discount-code-box';
-import CardSideCheckboxes from './card-side-checkboxes';
-import ImageUpload from './image-upload';
+import DiscountCodeBox from './DiscountCodeBox';
+import CardSideCheckboxes from './CardSideCheckboxes';
+import ImageUpload from './ImageUpload';
 import Draggable from 'react-draggable';
 
 export default class CardSide extends Component {

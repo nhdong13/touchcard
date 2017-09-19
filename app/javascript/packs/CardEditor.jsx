@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import SelectTypeForm from '../containers/select-type-form';
-import ConfigureCard from '../containers/configure-card';
-import SetupCard from '../containers/setup-card';
+import SelectTypeForm from '../containers/SelectTypeForm';
+import ConfigureCard from '../containers/ConfigureCard';
+import SetupCard from '../containers/SetupCard';
 
-export default class CardOrderWizard extends Component {
+export default class CardEditor extends Component {
   constructor(props) {
     super(props);
 
@@ -68,7 +68,7 @@ export default class CardOrderWizard extends Component {
 
 document.addEventListener('DOMContentLoaded', () => {
   ReactDOM.render(
-    <CardOrderWizard name="React" />,
+    <CardEditor name="React" />,
     document.getElementById('react-app'),
   );
 });
@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // if (document.getElementById('react-app')) {
 //   document.addEventListener('turbolinks:load', () => {
 //     ReactDOM.render(
-//       <CardOrderWizard name="React" />
+//       <CardEditor name="React" />
 //     );
 //   });
 // }
@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // document.addEventListener('turbolinks:load', () => {
 //   ReactDOM.render(
-//     <CardOrderWizard name="React" />,
+//     <CardEditor name="React" />,
 //     document.getElementById('react-app'),
 //   );
 // });

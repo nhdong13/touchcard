@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import DiscountCodeBox from './discount-code-box';
-import DiscountHandler from './discount-handler';
+import DiscountCodeBox from './DiscountCodeBox';
+import DiscountHandler from './DiscountHandler';
 
 const ConfigurationBox = props => (
   <section>

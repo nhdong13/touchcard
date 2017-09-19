@@ -6,7 +6,8 @@
 
 <section>
   <div class="row text-center">
-    <%= link_to 'Create New Automation', select_type_automations_path, class: "btn btn-primary btn-lg"%>
+    <%= link_to 'Create New Automation', new_automations_path, class: 'btn btn-primary btn-lg', data: { turbolinks: false }%>
+    <%= link_to 'Create New Automation [turbolinks]', new_automations_path%>
 
   </div>
 
