@@ -1,6 +1,6 @@
 # Changelog
 
-## v1.2.5
+## v1.2.6
 - Comprehensive Admin Tool Improvements: 
     - Navigation 
     - Edit: Subscription Quantity, Shop Credits, Card Order Sending Enable
