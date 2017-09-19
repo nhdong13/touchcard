@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.2.7
+- Hotfix - New way of checking ShopifyAPI::Customer.default_address in orders/create webhook was broken. 
+
+
 ## v1.2.6
 - Comprehensive Admin Tool Improvements: 
     - Navigation 
