@@ -58,7 +58,7 @@ ActiveAdmin.register Shop do
     attributes_table do
       row :id
       row "Website Link" do |shop|
-        link_to "https://#{shop.domain}"
+        link_to "https://#{shop.domain}", "https://#{shop.domain}"
       end
       row :name
       row :owner
