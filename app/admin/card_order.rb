@@ -32,7 +32,7 @@ ActiveAdmin.register CardOrder do
                             "to #{recipient}. #{lob_admin_path} ", true)
         redirect_to show_sample_admin_card_order_path({card_order_id: card_order.id, lob_response: lob_response})
       rescue Lob::InvalidRequestError => error
-        render json: error.to_s, status: 200, root: false
+        render json: error.to_s, status: 422, root: false
       end
     end
   end
