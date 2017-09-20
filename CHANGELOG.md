@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.2.8
+- Hotfix 
+    - new last_month calculation was wrong because we were only counting open orders
+    - postcards/index api was sorting by updated_at. changed to created_at to be less confusing
+    - added missing include in uninstalled job
+
 ## v1.2.7
 - Hotfix - New way of checking ShopifyAPI::Customer.default_address in orders/create webhook was broken. 
 
