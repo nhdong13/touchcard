@@ -1,8 +1,12 @@
-// @import "bootstrap-sprockets";
-// @import "bootstrap";
-// @import "bootstrap3-switch";
-// @import "bootstrap-select";
+// Overide mdl primary colors
+$color-primary: "156, 39, 176";
+$color-primary-dark: "123,31,162";
+$color-accent: "255, 152, 0";
+
+// TODO Import only the components that we're using
 @import 'material';
+
+
 // new style, make this modular
 
 body {
