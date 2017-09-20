@@ -1,4 +1,5 @@
 require "slack_notify"
+require "active_campaign_logger"
 
 class AppUninstalledJob < ActiveJob::Base
 

@@ -147,7 +147,7 @@ class Shop < ActiveRecord::Base
     new_sess
     start_time = Time.now - 1.month
     customers_created = ShopifyAPI::Customer.count(created_at_min: start_time)
-    orders_processed = ShopifyAPI::Order.count(processed_at_min: start_time)
+    orders_processed = ShopifyAPI::Order.count(processed_at_min: start_time, status: "any")
     last_month = [customers_created, orders_processed].min
     update_attribute(:last_month, last_month)
   end
