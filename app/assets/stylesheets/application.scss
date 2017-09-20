@@ -32,8 +32,8 @@ a {
   background-color: white;
 }
 
-.full-width {
-  width: 100%;
+.mdl-tabs__tab-bar {
+  justify-content: flex-start;
 }
 
 .mdl-data-table td {
@@ -386,6 +386,14 @@ section {
 
 .f-s-500 {
   font-size: 500%;
+}
+
+.white-bg {
+  background: white;
+}
+
+.full-width {
+  width: 100%;
 }
 
 input[type="text"], input[type="number"] {
