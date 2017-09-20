@@ -1,13 +1,13 @@
-<section class="top-m-20">
+<div class="top-m-20">
   <div class="text-center">
     <%= link_to 'Create New Automation', select_type_automations_path, class: "mdl-button mdl-js-button mdl-button--raised mdl-button--colored top-m-20"%>
   </div>
 
   <% @card_orders.each do |card| %>
-    <div id="card-<%= card.id %>">
+    <div class="mld-card top-m-20 mdl-shadow--2dp" id="card-<%= card.id %>">
       <div class="card flat card-order">
         <div class="mdl-grid">
-          <div class="mdl-cell mdl-cell--2-col">
+          <div class="mdl-cell mdl-cell--2-col mdl-cell--4-col-tablet">
             <h4 class="text-center" style="border-bottom: 1px solid grey"><%= card.type %></h4>
             <div class="text-center" style="padding: 10%">
               <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="switch-1">
@@ -16,23 +16,25 @@
               </label>
             </div>
             <div class="row text-center" style="padding: 10%">
-              <%= link_to "Delete", card, remote: true, method: :delete,
-                class: 'mdl-button mdl-js-button mdl-button--raised' %>
+              <%= link_to card, remote: true, method: :delete,
+                class: 'mdl-button mdl-js-button mdl-button--raised' do %>
+                  <i class="material-icons">delete_forever</i> Delete
+              <% end %>
             </div>
           </div>
-          <div class="mdl-cell mdl-cell--4-col">
+          <div class="mdl-cell mdl-cell--4-col mdl-cell--4-col-tablet">
             <div class="content-box">
               <!-- {{card-template isEditable=isEditable cardOrder=cardOrder edit=(action 'editCard')}} -->
             </div>
           </div>
-          <div class="mdl-cell mdl-cell--3-col">
+          <div class="mdl-cell mdl-cell--3-col mdl-cell--4-col-tablet">
             <div class="content-box">
               <h4 class="text-uppercase text-center">Config</h4>
               <p>Sending Delay: <%= card.send_delay %></p>
               <p>Filter:</p>
             </div>
           </div>
-          <div class="mdl-cell mdl-cell--3-col">
+          <div class="mdl-cell mdl-cell--3-col mdl-cell--4-col-tablet">
             <div class="content-box">
               <h4 class="text-uppercase text-center">Stats</h4>
               <p>Cards Send:</p>
@@ -43,4 +45,4 @@
       </div>
     </div>
   <% end %>
-</section>
+</div>
