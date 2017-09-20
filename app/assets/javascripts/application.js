@@ -10,11 +10,11 @@
 // Read Sprockets README (https://github.com/rails/sprockets#sprockets-directives) for details
 // about supported directives.
 //
-//= require jquery
-//= require jquery_ujs
-//= require jquery-ui
-//= require bootstrap-sprockets
-//= require bootstrap-switch
-//= require bootstrap-select
+//= require material
 //= require turbolinks
 //= require_tree .
+
+// Make turbolinks work with material framework
+document.addEventListener('turbolinks:load', function() {
+  componentHandler.upgradeDom();
+});

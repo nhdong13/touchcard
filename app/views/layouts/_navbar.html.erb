@@ -1,10 +1,12 @@
-<nav class="navbar navbar-touchcard">
-  <div class="container-fluid">
-    <ul class="nav navbar-nav">
-      <li><%= link_to('Dashboard', dashboard_index_path) %></li>
-      <li><%= link_to('Automations', app_path) %></li>
-      <li><%= link_to('FAQ/Support', faq_path) %></li>
-      <li><%= link_to('Subs', new_subscription_path) %></li>
-    </ul>
-  </div><!-- /.container-fluid -->
-</nav>
+<div class="mdl-tabs mdl-js-tabs mdl-js-ripple-effect white-bg">
+  <div class="mdl-tabs__tab-bar">
+    <%= link_to('Dashboard', dashboard_index_path,
+      class: "#{current_class?(dashboard_index_path)} mdl-tabs__tab") %>
+    <%= link_to('Automations', app_path,
+      class: "#{current_class?(app_path)} mdl-tabs__tab") %>
+    <%= link_to('FAQ/Support', faq_path,
+      class: "#{current_class?(faq_path)} mdl-tabs__tab") %>
+    <%= link_to('Subs', new_subscription_path,
+      class: "#{current_class?(new_subscription_path)} mdl-tabs__tab") %>
+  </div>
+</div>
