@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 // import ConfigureCard from '../containers/configure-card';
 // import SetupCard from '../containers/setup-card';
 
-export default class CardEditor extends Component {
+export default class CardEditorLight extends Component {
   // constructor(props) {
   //   super(props);
   // }
@@ -17,7 +17,7 @@ export default class CardEditor extends Component {
         <label>
           Name: {this.props.csrfToken}
           <input type="text" value="blah" onChange="" onSubmit="" />
-          <input name="authenticity_token" type="hidden" value={this.props.csrfToken}/>
+          <input name="authenticity_token" type="hidden" value={this.props.csrfToken} />
         </label>
         <input type="submit" value="Submit" />
       </form>
@@ -38,12 +38,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const csrfToken = document.querySelectorAll('meta[name="csrf-token"]')[0].getAttribute('content');
   console.log('csrfToken:' + csrfToken);
   ReactDOM.render(
-    <CardEditor name="CardEditor" csrfToken={csrfToken}  />,
+    <CardEditorLight name="CardEditorLight" csrfToken={csrfToken}  />,
     document.getElementById('react-app'),
   );
 });
 
-CardEditor.propTypes = {
+CardEditorLight.propTypes = {
   csrfToken: PropTypes.string.isRequired
 };
 

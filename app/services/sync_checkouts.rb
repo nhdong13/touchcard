@@ -28,7 +28,7 @@ class SyncCheckouts
   def add_to_touchcard(checkouts)
     checkouts.each do |checkout|
       row = Checkout.from_shopify(checkout, shop)
-      card = shop.card_orders.find_by(enabled: true, type: "AbandonedCard")
+      card = shop.card_orders.find_by(enabled: true, type: "AbandonedCheckout")
       next if card.nil?
       card.prepare_for_sending(row)
      end

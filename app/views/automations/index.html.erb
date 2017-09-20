@@ -1,6 +1,10 @@
 <div class="top-m-20">
   <div class="text-center">
-    <%= link_to 'Create New Automation', select_type_automations_path, class: "mdl-button mdl-js-button mdl-button--raised mdl-button--colored top-m-20"%>
+    <%= link_to 'New Automation', new_automations_path,
+                class: "mdl-button mdl-js-button mdl-button--raised mdl-button--colored top-m-20",
+                data: { turbolinks: false }%>
+    <%= link_to 'New Automation [turbo]', new_automations_path,
+                class: "mdl-button mdl-js-button mdl-button--raised mdl-button--colored top-m-20"%>
   </div>
 
   <% @card_orders.each do |card| %>

@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import DiscountInputFields from './discount-input-fields';
+import DiscountInputFields from './DiscountInputFields';
 
 const DiscountHandler = (props) => {
   if (props.showDiscount) {

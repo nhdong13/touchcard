@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import CardSide from '../components/card-side';
-import ConfigurationBox from '../components/configuration-box';
+import CardSide from '../components/CardSide';
+import ConfigurationBox from '../components/ConfigurationBox';
 
 export default class SetupCard extends Component {
   constructor() {

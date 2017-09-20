@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import CheckBox from './check-box.jsx';
-import ShowDiscountCheckBox from './show-discount-checkbox';
+import CheckBox from './CheckBox.jsx';
+import ShowDiscountCheckBox from './ShowDiscountCheckbox';
 
 const CardSideCheckboxes = props => (
   <div>

@@ -3,7 +3,7 @@ module AutomationsHelper
     {
       "Post Sale Order" => "PostSaleOrder",
       "Customer Winback" => "CustomerWinbackOrder",
-      "Abandoned Card" => "AbandonedCard",
+      "Abandoned Checkout" => "AbandonedCheckout",
       "Lifetime Purchase" => "LifetimePurchaseOrder"
     }
   end

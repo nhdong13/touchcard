@@ -143,11 +143,11 @@ RSpec.describe CardOrder, type: :model do
   end
 
   describe "#prepare_for_sending" do
-    it "adds new postcard for sending abandoned cards" do
+    it "adds new postcard for sending abandoned checkout cards" do
       customer = create(:customer)
       customer.addresses.create(address1: "Test", country_code: "US")
       checkout = create(:checkout, customer: customer)
-      card = create(:card_order, type: "AbandonedCard", send_delay: 0)
+      card = create(:card_order, type: "AbandonedCheckout", send_delay: 0)
 
       card.prepare_for_sending(checkout)
 
@@ -159,7 +159,7 @@ RSpec.describe CardOrder, type: :model do
       customer = create(:customer)
       customer.addresses.create(address1: "Test", country_code: "UK")
       checkout = create(:checkout, customer: customer)
-      card = create(:card_order, type: "AbandonedCard", international: false)
+      card = create(:card_order, type: "AbandonedCheckout", international: false)
 
       card.prepare_for_sending(checkout)
 
@@ -171,7 +171,7 @@ RSpec.describe CardOrder, type: :model do
       shop = create(:shop, credit: 0)
       customer.addresses.create(address1: "Test", country_code: "UK")
       checkout = create(:checkout, customer: customer, shop: shop)
-      card = create(:card_order, type: "AbandonedCard", international: false)
+      card = create(:card_order, type: "AbandonedCheckout", international: false)
 
       card.prepare_for_sending(checkout)
 
