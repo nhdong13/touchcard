@@ -1,7 +1,12 @@
 // Overide mdl primary colors
-$color-primary: "156, 39, 176";
-$color-primary-dark: "123,31,162";
-$color-accent: "255, 152, 0";
+
+$color-primary: "90, 60, 140";
+$color-primary-dark: "70, 40,140";
+$color-accent: "245, 140, 40";
+
+//$color-primary: "156, 39, 176";
+//$color-primary-dark: "123,31,162";
+//$color-accent: "255, 152, 0";
 
 // TODO Import only the components that we're using
 @import 'material';

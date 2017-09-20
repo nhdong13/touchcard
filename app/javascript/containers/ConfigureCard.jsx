@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import CheckBox from '../components/check-box'
+import CheckBox from '../components/CheckBox'
 
 export default class ConfigureCard extends Component {
   constructor(props) {
