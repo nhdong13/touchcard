@@ -1,18 +1,22 @@
-<div class="faq container">
+<div class="faq top-m-20">
   <section>
-    <h2>FAQ</h2>
-    <ol>
-      <% @questions.each do |question| %>
-        <li>
-          <div class="question"><%= question[:question] %></div>
+    <h3 class="uppercase">FAQ</h3>
+    <dl class="mdl-list">
+      <% @questions.each_with_index do |question, i| %>
+        <dt class="mdl-list__item">
+          <strong><%= "#{ i + 1}) #{question[:question]}" %></strong>
+        </dt>
+        <dd class="mdl-list__item-secondary-content"><%= question[:answer] %></dd>
+        <!-- <li class="mdl-list__item">
+          <div class="question"></div>
           <div class="answer"><%= question[:answer] %></div>
-        </li>
+        </li> -->
       <% end %>
-    </ol>
+    </dl>
   </section>
 
   <section>
-    <h2>Support</h2>
+    <h3 class="uppercase">Support</h3>
     For further questions email us <a href="mailto:info@touchcard.co">info@touchcard.co</a>
   </section>
 </div>
