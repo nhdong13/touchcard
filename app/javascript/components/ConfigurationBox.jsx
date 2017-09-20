@@ -13,14 +13,6 @@ const ConfigurationBox = props => (
           showDiscount={props.includeDiscount}
         />
       </div>
-      <div className="mdl-cell mdl-cell--6-col pull-right">
-        <div className="pull-right">
-          <button className="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
-            Save
-          </button>
-          <button className="mdl-button mdl-js-button mdl-button--raised">Cancel</button>
-        </div>
-      </div>
     </div>
   </section>
 );

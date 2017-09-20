@@ -32,7 +32,6 @@
         debug: <%= Rails.env.development? ? 'true' : 'false' %>,
         forceRedirect: true
     });
-    ShopifyApp.ready(ShopifyApp.Bar.loadingOff());
 </script>
 
 <% if content_for?(:javascript) %>

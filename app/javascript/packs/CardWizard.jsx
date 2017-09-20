@@ -20,9 +20,9 @@ export default class CardWizard extends Component {
       return 'Next';
     }
     if (this.state.step === 2) {
-      return 'Save & Next';
+      return 'Next';
     }
-    return 'Save';
+    return 'Finish';
   }
 
   switchStep() {
@@ -36,28 +36,40 @@ export default class CardWizard extends Component {
       case 1:
         return (
           <div className="top-m-20">
+            <div className="mdl-grid">
+              <div className="mdl-layout-spacer" />
+              <button onClick={this.switchStep} className="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
+                {this.buttonText()}
+              </button>
+              <div className="mdl-layout-spacer" />
+            </div>
             <SelectTypeForm />
-            <button onClick={this.switchStep} className="btn btn-primary">
-              {this.buttonText()}
-            </button>
           </div>
         );
       case 2:
         return (
           <div className="top-m-20">
+            <div className="mdl-grid">
+              <div className="mdl-layout-spacer" />
+              <button onClick={this.switchStep} className="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
+                {this.buttonText()}
+              </button>
+              <div className="mdl-layout-spacer" />
+            </div>
             <SetupCard />
-            <button onClick={this.switchStep} className="btn btn-primary">
-              {this.buttonText()}
-            </button>
           </div>
         );
       case 3:
         return (
           <div className="top-m-20">
+            <div className="mdl-grid">
+              <div className="mdl-layout-spacer" />
+              <button onClick={this.switchStep} className="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
+                {this.buttonText()}
+              </button>
+              <div className="mdl-layout-spacer" />
+            </div>
             <ConfigureCard />
-            <button onClick={this.switchStep} className="btn btn-primary">
-              {this.buttonText()}
-            </button>
           </div>
         );
       default:
@@ -66,7 +78,10 @@ export default class CardWizard extends Component {
   }
 }
 
+console.log('Adding Event Listener - CardWizard');
+
 document.addEventListener('DOMContentLoaded', () => {
+  console.log('DOMContentLoaded - CardWizard');
   ReactDOM.render(
     <CardWizard name="React" />,
     document.getElementById('react-app'),
@@ -75,9 +90,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 // if (document.getElementById('react-app')) {
+//   console.log('document has react-app - CardWizard');
 //   document.addEventListener('turbolinks:load', () => {
+//     console.log('turbolinks:load - CardWizard');
 //     ReactDOM.render(
-//       <CardWizard name="React" />
+//       <CardWizard name="React" />,
+//       document.getElementById('react-app'),
 //     );
 //   });
 // }
@@ -87,20 +105,3 @@ document.addEventListener('DOMContentLoaded', () => {
 // document.addEventListener('turbolinks:render', reactOnRailsPageLoaded)
 // document.addEventListener('turbolinks:before-render', reactOnRailsPageUnloaded)
 
-
-// document.addEventListener('turbolinks:load', () => {
-//   ReactDOM.render(
-//     <CardWizard name="React" />,
-//     document.getElementById('react-app'),
-//   );
-// });
-
-// if (document.getElementById('vue-app')) {
-//   document.addEventListener('turbolinks:load', () => {
-//     Vue({
-//       el: '#vue-app',
-//       template: '<App/>',
-//       components: { App },
-//     });
-//   });
-// }

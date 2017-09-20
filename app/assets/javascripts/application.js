@@ -14,7 +14,19 @@
 //= require turbolinks
 //= require_tree .
 
+// console.log('Adding Event Listener - application.js');
+
 // Make turbolinks work with material framework
 document.addEventListener('turbolinks:load', function() {
+  // console.log('turbolinks:load - application.js');
   componentHandler.upgradeDom();
 });
+
+window.onload = function() {
+  // console.log('window.onload - application.js');
+  ShopifyApp.Bar.loadingOff();
+};
+
+// document.addEventListener('DOMContentLoaded', () => {
+//   console.log('DOMContentLoaded - application.js');
+// });

@@ -3,10 +3,8 @@
     <%= link_to 'New Automation', new_automations_path,
                 class: "mdl-button mdl-js-button mdl-button--raised mdl-button--colored top-m-20",
                 data: { turbolinks: false }%>
-    <%= link_to 'New Automation [turbo]', new_automations_path,
-                class: "mdl-button mdl-js-button mdl-button--raised mdl-button--colored top-m-20"%>
+    <%= link_to '[turbolink]', new_automations_path %>
   </div>
-
   <% @card_orders.each do |card| %>
     <div class="mld-card top-m-20 mdl-shadow--2dp" id="card-<%= card.id %>">
       <div class="card flat card-order">

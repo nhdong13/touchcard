@@ -23,14 +23,6 @@ export default class CardEditorLight extends Component {
       </form>
 
     );
-    // return (
-    //   <div>
-    //     <SetupCard />
-    //     <button onClick={this.switchStep} className="btn btn-primary">
-    //       {'Save'}
-    //     </button>
-    //   </div>
-    // );
   }
 }
 
