@@ -45,8 +45,11 @@ Rails.application.routes.draw do
     delete 'cancel_postcard', on: :member
   end
 
-  resource :automation
   resource :subscription
+
+  resource :automations do
+    get 'select_type', :on => :collection
+  end
 
   # Shopify Engine
   root :to => 'automations#index' # See comments in controller

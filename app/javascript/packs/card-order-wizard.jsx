@@ -72,3 +72,35 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('react-app'),
   );
 });
+
+
+// if (document.getElementById('react-app')) {
+//   document.addEventListener('turbolinks:load', () => {
+//     ReactDOM.render(
+//       <CardOrderWizard name="React" />
+//     );
+//   });
+// }
+
+
+// document.addEventListener("DOMContentLoaded", reactOnRailsPageLoaded)
+// document.addEventListener('turbolinks:render', reactOnRailsPageLoaded)
+// document.addEventListener('turbolinks:before-render', reactOnRailsPageUnloaded)
+
+
+// document.addEventListener('turbolinks:load', () => {
+//   ReactDOM.render(
+//     <CardOrderWizard name="React" />,
+//     document.getElementById('react-app'),
+//   );
+// });
+
+// if (document.getElementById('vue-app')) {
+//   document.addEventListener('turbolinks:load', () => {
+//     Vue({
+//       el: '#vue-app',
+//       template: '<App/>',
+//       components: { App },
+//     });
+//   });
+// }

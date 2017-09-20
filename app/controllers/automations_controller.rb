@@ -3,6 +3,10 @@ class AutomationsController < BaseController
     @card_orders = @current_shop.card_orders
   end
 
+
+  def select_type
+  end
+
   def new
     @types = CardOrder::TYPES
     @card = @current_shop.card_orders.create
