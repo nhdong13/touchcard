@@ -20,7 +20,9 @@ class AutomationsController < BaseController
   end
   
   def create
-    debugger
+    puts params.to_yaml
+    CardOrder.create(type: 'PostSaleOrder', shop: @current_shop);
+    redirect_to action: 'index'
   end
 
   def destroy

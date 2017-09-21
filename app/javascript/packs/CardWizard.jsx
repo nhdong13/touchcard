@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom';
 import SelectTypeForm from '../containers/SelectTypeForm';
 import ConfigureCard from '../containers/ConfigureCard';
 import SetupCard from '../containers/SetupCard';
+import PropTypes from 'prop-types';
+
 
 export default class CardWizard extends Component {
   constructor(props) {
@@ -64,9 +66,11 @@ export default class CardWizard extends Component {
           <div className="top-m-20">
             <div className="mdl-grid">
               <div className="mdl-layout-spacer" />
-              <button onClick={this.switchStep} className="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
-                {this.buttonText()}
-              </button>
+              <form onSubmit={this.handleSubmit} action="/automations" method="post">
+                <input type="hidden" name="cardType" value="PostSaleOrder" />
+                <input type="hidden" name="authenticity_token" value={this.props.csrfToken} />
+                <input type="submit" value="Submit" className="mdl-button mdl-js-button mdl-button--raised mdl-button--colored"/>
+              </form>
               <div className="mdl-layout-spacer" />
             </div>
             <ConfigureCard />
@@ -78,12 +82,19 @@ export default class CardWizard extends Component {
   }
 }
 
-console.log('Adding Event Listener - CardWizard');
 
+CardWizard.propTypes = {
+  csrfToken: PropTypes.string.isRequired
+};
+
+
+console.log('Adding Event Listener - CardWizard');
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('DOMContentLoaded - CardWizard');
+  // console.log('DOMContentLoaded - CardWizard');
+  const csrfToken = document.querySelectorAll('meta[name="csrf-token"]')[0].getAttribute('content');
+  // console.log('csrfToken:' + csrfToken);
   ReactDOM.render(
-    <CardWizard name="React" />,
+    <CardWizard name="React" csrfToken={csrfToken} />,
     document.getElementById('react-app'),
   );
 });
@@ -99,8 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
 //     );
 //   });
 // }
-
-
+//
 // document.addEventListener("DOMContentLoaded", reactOnRailsPageLoaded)
 // document.addEventListener('turbolinks:render', reactOnRailsPageLoaded)
 // document.addEventListener('turbolinks:before-render', reactOnRailsPageUnloaded)
