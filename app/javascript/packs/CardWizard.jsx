@@ -40,7 +40,9 @@ export default class CardWizard extends Component {
           <div className="top-m-20">
             <div className="mdl-grid">
               <div className="mdl-layout-spacer" />
-              <button onClick={this.switchStep} className="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
+              <button onClick={this.switchStep}
+                className="mdl-button mdl-js-button mdl-button--raised mdl-button--colored"
+              >
                 {this.buttonText()}
               </button>
               <div className="mdl-layout-spacer" />
