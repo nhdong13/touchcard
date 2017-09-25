@@ -60,13 +60,15 @@ ActiveAdmin.register Postcard do
       row :id
       row :canceled
       row :card_order_id do |postcard|
-        link_to postcard.card_order_id, admin_card_order_path(postcard.card_order_id) if postcard.card_order_id
+        link_to postcard.card_order_id,
+                admin_card_order_path(postcard.card_order_id) if postcard.card_order_id
       end
       row :discount_code
       row :discount_pct
       row :discount_exp_at
       row "Lob Id" do |postcard|
-        link_to postcard.postcard_id, "https://dashboard.lob.com/#/postcards/#{postcard.postcard_id}"
+        link_to postcard.postcard_id,
+                "https://dashboard.lob.com/#/postcards/#{postcard.postcard_id}" if postcard.postcard.id
       end
       row :sent
       row :send_date
