@@ -1,23 +1,22 @@
 <div class="dashboard top-m-20">
   <section class="overview">
     <div class="mdl-grid">
-      <!-- {{#if shop.revenue}}
-        <div class="col-sm-6">
-          <div class="card card-info sales" {{action "lineItems"}}>
+      <% if @current_shop.revenue %>
+        <div class="mdl-cell mdl-cell--6-col">
+          <div class="card card-info sales">
             <div class="card-icon bg-success">
-              <i class="fa fa-shopping-cart"></i>
+              <i class="material-icons mdl-36">shopping_cart</i>
             </div>
             <div class="card-content">
               <div class="card-heading">SALES</div>
               <div class="card-body">
-                {{format-money shop.revenueDisplay}}
+                <%= number_to_currency @current_shop.revenue %>
              </div>
             </div>
           </div>
         </div>
-      {{/if}} -->
-      <!-- <div class="col-sm-{{if shop.revenue "6" "12"}}"> -->
-      <div class="mdl-cell mdl-cell--12-col">
+      <% end %>
+      <div class="mdl-cell mdl-cell--<%= @current_shop.revenue ? '6' : '12' %>-col">
         <div class="card card-info cards-sent">
           <div class="card-icon bg-primary">
             <i class="material-icons mdl-36">email</i>
@@ -46,7 +45,8 @@
         <% @postcards.each do |postcard| %>
           <tr id="postcard-<%= postcard.id %>">
             <td>
-              <button type="button" class="mdl-chip">
+              <button type="button"
+                class="mdl-chip mdl-color--<%= postcard.sent? ? 'light_green' : 'orange' %>">
                 <span class="mdl-chip__text"><%= postcard.status %></span>
               </button>
               <!-- <span class="label label-<%= postcard.sent ? 'success' : 'info' %>">
@@ -54,7 +54,7 @@
               </span> -->
               <% unless postcard.canceled || postcard.sent %>
                 <%= link_to "Cancel", cancel_postcard_dashboard_path(postcard),
-                  method: :delete, data: { confirm: "Are you sure" },
+                  method: :patch, data: { confirm: "Are you sure" },
                   class: 'mdl-button mdl-js-button mdl-button--raised mdl-button--accent',
                   remote: true %>
               <% end %>

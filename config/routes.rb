@@ -42,7 +42,7 @@ Rails.application.routes.draw do
 
   get 'faq', to: 'faq#index'
   resources :dashboard, only: [:index] do
-    delete 'cancel_postcard', on: :member
+    patch 'cancel_postcard', on: :member
   end
 
   resource :subscription

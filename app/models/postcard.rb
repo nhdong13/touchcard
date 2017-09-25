@@ -131,7 +131,9 @@ class Postcard < ApplicationRecord
   end
 
   def status
-    if sent?
+    if canceled?
+      "Canceled"
+    elsif sent?
       "Sent on #{date_sent.to_date}"
     else
       "Sending #{send_date.to_date}"
