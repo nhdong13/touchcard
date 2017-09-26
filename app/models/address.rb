@@ -41,4 +41,5 @@ class Address < ApplicationRecord
       address_zip: zip
     }
   end
+
 end

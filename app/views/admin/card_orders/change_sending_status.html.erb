@@ -1,0 +1,6 @@
+<%= form_for @card_order, as: :card_order, url: change_enabled_admin_card_order_path(@card_order), method: :put do |f| %>
+  Enabled: <%= f.check_box :enabled %><br />
+  <br />
+  <%= f.submit %><%= link_to "Cancel", :back %>
+<% end %>
+

@@ -2,7 +2,7 @@ class UpdateLastMonth < ActiveRecord::Migration
   def up
     Shop.where("uninstalled_at IS NULL").each do |shop|
       begin
-        shop.get_last_month
+        shop.update_last_month
       rescue ActiveResource::UnauthorizedAccess, ActiveResource::ClientError => e
         logger.error "#{e.message}"
         logger.error "Adding Uninstalled Date"

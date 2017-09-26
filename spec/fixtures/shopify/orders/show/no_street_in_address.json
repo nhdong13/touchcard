@@ -172,7 +172,7 @@
     ],
     "billing_address": {
       "first_name": "Bob",
-      "address1": "123 Amoebobacterieae St",
+      "address1": "",
       "phone": "(555)555-5555",
       "city": "Ottawa",
       "zip": "K2P0V6",
@@ -189,7 +189,7 @@
     },
     "shipping_address": {
       "first_name": "Bob",
-      "address1": "123 Amoebobacterieae St",
+      "address1": "",
       "phone": "(555)555-5555",
       "city": "Ottawa",
       "zip": "K2P0V6",
@@ -399,7 +399,25 @@
       "multipass_identifier": null,
       "tax_exempt": false,
       "tags": "",
-      "last_order_name": "#1001"
+      "last_order_name": "#1001",
+      "default_address": {
+        "id": 207119551,
+        "first_name": null,
+        "last_name": null,
+        "company": null,
+        "address1": "",
+        "address2": "",
+        "city": "Louisville",
+        "province": "Kentucky",
+        "country": "United States",
+        "zip": "40202",
+        "phone": "555-625-1199",
+        "name": "",
+        "province_code": "KY",
+        "country_code": "US",
+        "country_name": "United States",
+        "default": true
+      }
     }
   }
 }

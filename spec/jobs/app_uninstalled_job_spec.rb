@@ -20,6 +20,10 @@ RSpec.describe AppUninstalledJob, type: :job do
          with(:body => "{\"text\":\"A shop has uninstalled Touchcard: testshop1.myshopify.com.\"}",
               :headers => {'Accept'=>'*/*; q=0.5, application/xml', 'Accept-Encoding'=>'gzip, deflate', 'Content-Length'=>'69', 'User-Agent'=>'Ruby'}).
          to_return(:status => 200, :body => "", :headers => {})
+
+    stub_request(:post, /#{ENV['AC_ENDPOINT']}/).
+        with(:body => {"tags"=>"uninstalled"}).
+        to_return(:status => 200, :body => "{}", :headers => {})
   end
 
   it 'queues the job' do

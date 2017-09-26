@@ -4,7 +4,39 @@ class OrdersCreateJob < ApplicationJob
     shop = Shop.find_by(domain: shop_domain)
     shop.with_shopify_session do
       shopify_order = ShopifyAPI::Order.find(webhook["id"])
-      ProcessOrder.new(shop, shopify_order, logger).call
+      begin
+        order = Order.from_shopify!(shopify_order, shop)
+      rescue ActiveRecord::RecordInvalid
+        return puts "unable to create order (duplicate webhook?)"
+      end
+
+      order.connect_to_postcard
+      return puts "no customer" unless order.customer
+      return puts "no default address" unless shopify_order.customer.respond_to?(:default_address)
+      return puts "no default address" unless shopify_order.customer.default_address
+      return puts "no street in address" unless shopify_order.customer.default_address&.address1&.present?
+
+      # Schedule to send lifetime purchase postcard if customer is eligible for lifetime reward
+
+      ProcessLifetimePurchase.new(order.customer, shop).call
+      # TODO: Fix raise
+      raise "TODO: Fix purchase triggers. Shouldn't send duplicate cards."
+
+      # Currently only new customers receive postcards
+      return puts "customer already exists" unless order.customer.new_customer?
+
+      default_address = shopify_order.customer.default_address
+      international = default_address.country_code != "US"
+
+      # Create a new card and schedule to send
+      post_sale_order = shop.card_orders.find_by(
+        enabled: true,
+        type: "PostSaleOrder")
+      return puts "Card not setup" if post_sale_order.nil?
+      return puts "Card not enabled" unless post_sale_order.enabled?
+
+      result = post_sale_order.prepare_for_sending(order)
+      puts result if result
     end
   end
 end

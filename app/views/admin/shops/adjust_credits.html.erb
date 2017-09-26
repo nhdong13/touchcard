@@ -1,0 +1,5 @@
+<%= form_for @shop, url: change_credit_admin_shop_path(@shop), method: :put do |f| %>
+  Credit: <%= f.number_field :credit %><br />
+  <br />
+  <%= f.submit %><%= link_to "Cancel", :back %>
+<% end %>

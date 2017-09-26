@@ -26,7 +26,7 @@ class CardOrder < ApplicationRecord
   def send_postcard?(order)
     return true unless filters.count > 0
     spend = order.total_price / 100.0
-    filter = filters.first
+    filter = filters.last # Somehow got a multiple-filter bug, so make sure we use latest value
     # if the filters are nil assume they're unbounded
     min = filter.filter_data["minimum"].to_f || -1.0
     max = filter.filter_data["maximum"].to_f.positive? ? filter.filter_data["maximum"].to_f : 1_000_000_000.0
@@ -54,6 +54,10 @@ class CardOrder < ApplicationRecord
   def ensure_defaults
     self.card_side_front ||= CardSide.create!(is_back: false)
     self.card_side_back ||= CardSide.create!(is_back: true)
+    self.send_delay = 1 if send_delay.nil? && type == "PostSaleOrder"
+    self.international = false if international.nil?
+    self.enabled = false if enabled.nil?
+    # TODO: add defaults to schema that can be added
   end
 
   def discount?
@@ -68,9 +72,10 @@ class CardOrder < ApplicationRecord
   end
 
   def prepare_for_sending(postcard_trigger)
-    return logger.info "international customer not enabeled" if postcard_trigger.international && !international?
-    return logger.info "international customer not enabeled" if postcard_trigger.international && !international?
-    return logger.info "order filtered out" unless send_postcard?(postcard_trigger)
+    # This method can get called from a delayed_job, which does not allow for standard logging
+    # We thus return a string and expect the caller to log
+    return "international customer not enabeled" if postcard_trigger.international && !international?
+    return "order filtered out" unless send_postcard?(postcard_trigger)
 
     postcard = postcard_trigger.postcards.new(
       card_order: self,
@@ -81,8 +86,7 @@ class CardOrder < ApplicationRecord
       postcard.paid = true
       postcard.save
     else
-      logger.info postcard.errors.full_messages.map{|msg| msg}.join("\n")
-      false
+      return postcard.errors.full_messages.map{|msg| msg}.join("\n")
     end
   end
 

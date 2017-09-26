@@ -1,6 +1,21 @@
 #Touchcard
 Get better customer engagement with thank you postcards!
 
+#Deployment Process
+
+1. Look up next tag version (v#.#.# format)
+2. Update Changelog with changes & latest tag #.
+3. Create branch, commit, push to Gitlab, merge into Master.
+4. Ensure any ENV VAR updates are made.
+5. Pull master & deploy to staging. `git push heroku-staging v1.X.X^{}:master`
+6. Ensure migrations are run.
+7. Manually smoke test staging. Repeat #2-7 until tests pass.
+8. Tag master with tag version v#.#.#  (make sure commit matches staging)
+9. Ensure any ENV Var updates are made.
+10. Deploy tag to production. 
+11. Make sure migrations are run.
+12. Smoke test production.
+13. Push tag to Gitlab.
 
 
 # Heroku

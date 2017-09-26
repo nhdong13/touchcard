@@ -25,6 +25,7 @@ gem "sdoc", "~> 0.4.0", group: :doc
 # Admin interface
 gem "devise", "~> 4.3.0"
 gem "activeadmin", "~> 1.0.0"
+gem "active_material", git: "https://github.com/laverick/active_material"
 
 # API serializer
 gem "active_model_serializers", "~> 0.8.0"
@@ -75,7 +76,6 @@ gem "mailgunner", '~> 2.4'
 
 # add bootstrap-switch
 # gem "bootstrap-switch-rails"
-
 # gem 'bootstrap-select-rails'
 
 # Image upload
@@ -87,6 +87,8 @@ gem 'webpacker', '~> 2.0'
 
 # Use foreman to manager Procfile-based applications
 gem 'foreman'
+# ActiveCampaign ('bdad6c2' is last building version as of 2017-08-26)
+gem "active_campaign", git: "https://github.com/laverick/active_campaign", ref: "bdad6c2"
 
 group :assets do
   gem "therubyracer", platforms: :ruby

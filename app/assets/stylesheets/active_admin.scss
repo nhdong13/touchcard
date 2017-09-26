@@ -1,4 +1,16 @@
 // Active Admin's got SASS!
-@import "active_admin/mixins";
-@import "active_admin/base";
+@import "active_material";
 
+
+td.col {
+  min-width: 8em;
+}
+
+td.col.col-id,
+td.col.col-actions,
+td.col.col-quantity,
+td.col.col-domain,
+td.col.col-type {
+  word-break: normal;
+  min-width: 1px;
+}

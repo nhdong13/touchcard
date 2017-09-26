@@ -30,7 +30,8 @@ class SyncCheckouts
       row = Checkout.from_shopify(checkout, shop)
       card = shop.card_orders.find_by(enabled: true, type: "AbandonedCheckout")
       next if card.nil?
-      card.prepare_for_sending(row)
+      result = card.prepare_for_sending(row)
+      puts result if result
      end
   end
 

@@ -21,3 +21,11 @@
 
 en:
   hello: "Hello world"
+
+en:
+  date:
+    formats:
+      admin_format: "%Y-%m-%d"
+  time:
+    formats:
+      admin_format: "%Y-%m-%d %H:%M:%S"

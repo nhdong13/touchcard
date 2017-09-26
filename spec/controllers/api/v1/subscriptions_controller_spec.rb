@@ -6,6 +6,10 @@ RSpec.describe Api::V1::SubscriptionsController, type: :controller do
     stub_stripe("subscriptions", :create,
       entity_uri: "customers/#{customer_show[:id]}/subscriptions",
       overrides: { customer: customer_show[:id] })
+
+    stub_request(:post, /#{ENV['AC_ENDPOINT']}/).
+        with(:body => {"p"=>["9"]}).
+        to_return(:status => 200, :body => "{}", :headers => {})
   end
   let!(:subcription_update) do
     stub_stripe("subscriptions", :update,

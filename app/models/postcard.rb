@@ -47,7 +47,7 @@ class Postcard < ApplicationRecord
   def self.send_all
     num_failed = 0
     todays_cards = Postcard.joins(:shop)
-      .where("paid = TRUE AND sent = FALSE AND send_date <= ?
+      .where("paid = TRUE AND sent = FALSE AND canceled = FALSE AND send_date <= ?
               AND shops.approval_state != ?", Time.now, "denied")
     todays_cards.each do |card|
       begin
@@ -67,7 +67,7 @@ class Postcard < ApplicationRecord
   end
 
   def send_card
-    return logger.info "sending postcard:#{id} that is not paid for" unless paid?
+    return logger.info "attempted sending postcard:#{id} that is not paid for" unless paid?
     # TODO: all kinds of error handling
     # Test lob
     @lob = Lob.load

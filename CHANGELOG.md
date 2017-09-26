@@ -1,5 +1,31 @@
 # Changelog
 
+
+## v1.2.8
+- Hotfix 
+    - new last_month calculation was wrong because we were only counting open orders
+    - postcards/index api was sorting by updated_at. changed to created_at to be less confusing
+    - added missing include in uninstalled job
+
+## v1.2.7
+- Hotfix - New way of checking ShopifyAPI::Customer.default_address in orders/create webhook was broken. 
+
+
+## v1.2.6
+- Comprehensive Admin Tool Improvements: 
+    - Navigation 
+    - Edit: Subscription Quantity, Shop Credits, Card Order Sending Enable
+    - Send Sample Postcard
+    - Cancel Postcards
+    - Material Design Skin    
+- Add name and size tag to ActiveCampaign subscribers
+- Add subscribers to Customer list in ActiveCampaign
+- Background task install jobs (ActiveCampaign Subscribe + Slack Notify)
+- Bump default send_delay to 1 week
+- Add Data Importer Library (not yet hooked up)
+- Cap last_month value to # orders in case of import. (+remove synchronous call from install)
+
+
 ## v1.2.3
 - Add Ember Metrics for Google Tag Manager & Intercom ('booted' in GTM)
 

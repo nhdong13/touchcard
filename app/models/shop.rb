@@ -1,7 +1,4 @@
-require "ac_integrator"
-require "slack_notify"
-
-class Shop < ApplicationRecord
+class Shop < ActiveRecord::Base
   has_many :card_orders, dependent: :destroy
   has_many :postcards, through: :card_orders
   has_many :charges
@@ -32,14 +29,6 @@ class Shop < ApplicationRecord
   end
 
   class << self
-
-    # TODO: Should this should live with the session store methods?
-    # TODO: Does this need to be background-tasked?
-    def add_to_email_list(email)
-      ac = AcIntegrator::NewInstall.new
-      # ac.add_email_to_list(email)
-    end
-
     # Session store
     def store(session)
       shop = Shop.find_by(domain: session.url)
@@ -49,9 +38,7 @@ class Shop < ApplicationRecord
         shop.save!
         shop.get_shopify_id
         shop.sync_shopify_metadata
-        shop.get_last_month
-        add_to_email_list(shop.email)
-        SlackNotify.install(shop.domain, shop.email, shop.owner, shop.last_month, true)
+        AppInstalledJob.perform_later(shop)
       else
         shop.token = session.token
         shop.uninstalled_at = nil
@@ -117,6 +104,9 @@ class Shop < ApplicationRecord
     credit - subscriptions.first.quantity
   end
 
+  def increment_credit
+    increment!(:credit)
+  end
 
   # Console admin method for listing all stores that have activated with Stripe
   def self.find_active
@@ -152,9 +142,15 @@ class Shop < ApplicationRecord
     }
   end
 
-  def get_last_month
+  def update_last_month
+    # We want to know how many first time customers ordered from the shop. This value can be misleading
+    # if the shop imported data from another platform. We thus cap the number with order/processed_at,
+    # which is the number of orders actually created (not imported) in the last month.
     new_sess
-    last_month = ShopifyAPI::Customer.count(created_at_min: (Time.now - 1.month))
+    start_time = Time.now - 1.month
+    customers_created = ShopifyAPI::Customer.count(created_at_min: start_time)
+    orders_processed = ShopifyAPI::Order.count(processed_at_min: start_time, status: "any")
+    last_month = [customers_created, orders_processed].min
     update_attribute(:last_month, last_month)
   end
 
@@ -228,6 +224,6 @@ class Shop < ApplicationRecord
 
   # necessary for the active admin
   def display_name
-    self.domain
+    self.domain.split('.myshopify.com').first
   end
 end
