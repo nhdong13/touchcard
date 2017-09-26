@@ -1,4 +1,4 @@
-class AddPlanIdRemoveChargeOnShop < ActiveRecord::Migration
+class AddPlanIdRemoveChargeOnShop < ActiveRecord::Migration[4.2]
   def change
     change_table :shops do |t|
       t.remove :charge_id

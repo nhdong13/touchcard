@@ -1,4 +1,4 @@
-class AddCouponExpirationNotificationToPostcard < ActiveRecord::Migration
+class AddCouponExpirationNotificationToPostcard < ActiveRecord::Migration[4.2]
   def up
     add_column :postcards, :expiration_notification_sent, :boolean, default: false
 

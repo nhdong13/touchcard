@@ -1,4 +1,4 @@
-class CreateCustomers < ActiveRecord::Migration
+class CreateCustomers < ActiveRecord::Migration[4.2]
   def change
     create_table :customers do |t|
       t.integer :shopify_id, null: false, limit: 8

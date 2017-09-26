@@ -1,4 +1,4 @@
-class UpdatePostcardDiscountDetails < ActiveRecord::Migration
+class UpdatePostcardDiscountDetails < ActiveRecord::Migration[4.2]
   def up
     postcards = Postcard.where(sent: true)
     postcards.each do |p|

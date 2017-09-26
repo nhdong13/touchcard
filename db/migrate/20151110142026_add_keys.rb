@@ -1,4 +1,4 @@
-class AddKeys < ActiveRecord::Migration
+class AddKeys < ActiveRecord::Migration[4.2]
   def change
     rename_column :charges, :bulk_template_id, :card_template_id
     add_foreign_key :card_templates, :shops

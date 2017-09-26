@@ -1,4 +1,4 @@
-class CreateCardSides < ActiveRecord::Migration
+class CreateCardSides < ActiveRecord::Migration[4.2]
   def change
     create_table :card_sides do |t|
       t.text :image, null: false

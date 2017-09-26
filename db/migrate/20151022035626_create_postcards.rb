@@ -1,4 +1,4 @@
-class CreatePostcards < ActiveRecord::Migration
+class CreatePostcards < ActiveRecord::Migration[4.2]
   def change
     create_table :postcards do |t|
       t.belongs_to  :card_template

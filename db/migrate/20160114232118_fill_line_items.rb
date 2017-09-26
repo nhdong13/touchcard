@@ -1,9 +1,10 @@
-class FillLineItems < ActiveRecord::Migration
+class FillLineItems < ActiveRecord::Migration[4.2]
   def change
     ShopifyApp.configure do |config|
       config.api_key = ENV['SHOPIFY_CLIENT_API_KEY']
       config.secret = ENV['SHOPIFY_CLIENT_API_SECRET']
-      config.redirect_uri = ENV['SHOPIFY_REDIRECT_URI']
+#     Fix old migration - ShopifyApp no l onger contains redirect_uri as of 7.0
+#      config.redirect_uri = ENV['SHOPIFY_REDIRECT_URI']
       config.scope = "read_orders, write_orders, read_products, write_products, read_customers, write_customers, read_themes, write_themes, read_fulfillments, write_fulfillments"
       config.embedded_app = true
     end

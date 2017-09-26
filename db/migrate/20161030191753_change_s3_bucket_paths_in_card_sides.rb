@@ -1,4 +1,4 @@
-class ChangeS3BucketPathsInCardSides < ActiveRecord::Migration
+class ChangeS3BucketPathsInCardSides < ActiveRecord::Migration[4.2]
 
   # We need to move S3 bucket names. This replaces URLS pointed to by our
   # previous bucket 'touchcard-user' to our new bucket 'touchcard-data'

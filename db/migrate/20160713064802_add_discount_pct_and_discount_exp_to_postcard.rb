@@ -1,4 +1,4 @@
-class AddDiscountPctAndDiscountExpToPostcard < ActiveRecord::Migration
+class AddDiscountPctAndDiscountExpToPostcard < ActiveRecord::Migration[4.2]
   def up
     add_column :postcards, :discount_pct, :integer
     add_column :postcards, :discount_exp_at, :datetime

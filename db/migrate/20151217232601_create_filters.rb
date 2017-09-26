@@ -1,4 +1,4 @@
-class CreateFilters < ActiveRecord::Migration
+class CreateFilters < ActiveRecord::Migration[4.2]
   def change
     create_table :filters do |t|
       t.belongs_to :card_order, index: true, foreign_key: true

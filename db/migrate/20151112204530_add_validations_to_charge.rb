@@ -1,4 +1,4 @@
-class AddValidationsToCharge < ActiveRecord::Migration
+class AddValidationsToCharge < ActiveRecord::Migration[4.2]
   def change
     change_column :charges, :card_order_id, :integer, null: false
     change_column :charges, :shop_id, :integer, null: false

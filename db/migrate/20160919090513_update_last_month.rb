@@ -1,4 +1,4 @@
-class UpdateLastMonth < ActiveRecord::Migration
+class UpdateLastMonth < ActiveRecord::Migration[4.2]
   def up
     Shop.where("uninstalled_at IS NULL").each do |shop|
       begin

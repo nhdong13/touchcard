@@ -1,4 +1,4 @@
-class AddShopMetadataJson < ActiveRecord::Migration
+class AddShopMetadataJson < ActiveRecord::Migration[4.2]
   def up
     add_column :shops, :metadata, :json, default: {}
     Shop.reset_column_information

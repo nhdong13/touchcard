@@ -1,4 +1,4 @@
-class RefactorCardSideOutOfCardTemplate < ActiveRecord::Migration
+class RefactorCardSideOutOfCardTemplate < ActiveRecord::Migration[4.2]
   def change
     change_table :card_templates do |t|
       t.remove :style
