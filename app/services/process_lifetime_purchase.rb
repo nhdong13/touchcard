@@ -9,7 +9,7 @@ class ProcessLifetimePurchase
   def call
     return unless activate_session
     return if card.nil? || card.lifetime_purchase_threshold.nil? || customer.have_postcard_for_card(card)
-    process_lifetime_postcard if customer_eligible_for_lifetime_revard
+    process_lifetime_postcard if customer_eligible_for_lifetime_reward
   end
 
   def activate_session
@@ -42,7 +42,7 @@ class ProcessLifetimePurchase
     shop.card_orders.find_by(type: "LifetimePurchaseOrder", enabled: true)
   end
 
-  def customer_eligible_for_lifetime_revard
+  def customer_eligible_for_lifetime_reward
     total_spent >= card.lifetime_purchase_threshold
   end
 end
