@@ -1,3 +1,17 @@
+<script>
+  $(document).ready(function() {
+    $(document).on('change', 'input[type=checkbox]', function () {
+      var cardId = this.id.split("-").pop();
+
+      $.ajax({
+        type: "PATCH",
+        url: "/automations/" + cardId,
+        data: { card_order: { enabled: this.checked } },
+      })
+    })
+  })
+</script>
+
 <div class="top-m-20">
   <div class="text-center">
     <%= link_to 'New Automation', new_automations_path,
@@ -12,8 +26,11 @@
           <div class="mdl-cell mdl-cell--2-col mdl-cell--4-col-tablet">
             <h4 class="text-center" style="border-bottom: 1px solid grey"><%= card.type %></h4>
             <div class="text-center" style="padding: 10%">
-              <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="switch-1">
-                <input type="checkbox" id="switch-1" class="mdl-switch__input" checked>
+              <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect">
+                <%= check_box_tag "card-#{card.id}",
+                  card.enabled,
+                  card.enabled,
+                  class: 'mdl-switch__input' %>
                 <span class="mdl-switch__label"></span>
               </label>
             </div>

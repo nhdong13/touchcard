@@ -3,7 +3,6 @@ class AutomationsController < BaseController
     @card_orders = @current_shop.card_orders
   end
 
-
   def select_type
   end
 
@@ -18,7 +17,12 @@ class AutomationsController < BaseController
 
   def show
   end
-  
+
+  def update
+    @card = CardOrder.find(params[:id])
+    @card.update(permited_params)
+  end
+
   def create
     puts params.to_yaml
     CardOrder.create(type: 'PostSaleOrder', shop: @current_shop);
@@ -33,6 +37,7 @@ class AutomationsController < BaseController
   def permited_params
     params.require(:card_order).permit(
       :type,
+      :enabled,
       :discount_exp,
       :discount_pct,
       filter_attributes: [:filter_data],
