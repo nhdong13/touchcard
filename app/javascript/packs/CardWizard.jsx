@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import SelectTypeForm from '../containers/SelectTypeForm';
+import SelectTypeForm from '../containers/SelectType';
 import ConfigureCard from '../containers/ConfigureCard';
 import SetupCard from '../containers/SetupCard';
 import PropTypes from 'prop-types';
@@ -15,6 +15,11 @@ export default class CardWizard extends Component {
     };
 
     this.switchStep = this.switchStep.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  handleSubmit(event) {
+    console.log('handleSubmit');
   }
 
   buttonText() {
@@ -40,7 +45,8 @@ export default class CardWizard extends Component {
           <div className="top-m-20">
             <div className="mdl-grid">
               <div className="mdl-layout-spacer" />
-              <button onClick={this.switchStep}
+              <button
+                onClick={this.switchStep}
                 className="mdl-button mdl-js-button mdl-button--raised mdl-button--colored"
               >
                 {this.buttonText()}
@@ -68,10 +74,12 @@ export default class CardWizard extends Component {
           <div className="top-m-20">
             <div className="mdl-grid">
               <div className="mdl-layout-spacer" />
-              <form onSubmit={this.handleSubmit} action="/automations" method="post">
-                <input type="hidden" name="cardType" value="PostSaleOrder" />
+              <form onSubmit={this.handleSubmit} action="/automations" method="post">=
+                <input type="hidden" name="card_type" value="PostSaleOrder" />
                 <input type="hidden" name="authenticity_token" value={this.props.csrfToken} />
-                <input type="submit" value="Submit" className="mdl-button mdl-js-button mdl-button--raised mdl-button--colored"/>
+                <input type="hidden" name="card_image_front" value={this.state.imageSrc} />
+                <input type="hidden" name="card_image_back" value={this.state.imageSrc} />
+                <input type="submit" value="Submit" className="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" />
               </form>
               <div className="mdl-layout-spacer" />
             </div>

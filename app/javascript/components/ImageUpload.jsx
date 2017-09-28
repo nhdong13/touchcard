@@ -35,10 +35,11 @@ export default class ImageUpload extends Component {
   }
 
   validImage(img) {
-    return img.height === 1875 && img.height === 1275;
+    return img.width === 1875 && img.height === 1275;
   }
 
   handleChange(event) {
+    console.log('handleChange');
     if (!event.target.files || !event.target.files[0]) return;
     this.reader.readAsDataURL(event.target.files[0]);
   }
@@ -52,24 +53,25 @@ export default class ImageUpload extends Component {
   render() {
     return (
       <div>
-      <div className="file-upload-stylized mdl-textfield mdl-js-textfield full-width">
-        <input
-          className="mdl-textfield__input"
-          onChange={this.handleChange}
-          type="file"
-          id="image-uploader" />
-        <div>
-          <small className="help-block">
-            Image must be 1875px by 1275px including a 75px bleed -
-            <a href="/images/{this.props.isBack ? 'address' : 'image'}}-side-guide.jpg" target="_blank">
-              template
-            </a>,
-            <a href="/images/{this.props.isBack ? 'address' : 'image'}-side-example.jpg" target="_blank">
-              example
-            </a>
-          </small>
+        <div className="file-upload-stylized mdl-textfield mdl-js-textfield full-width">
+          <input
+            className="mdl-textfield__input"
+            onChange={this.handleChange}
+            type="file"
+            id="image-uploader"
+          />
+          <div>
+            <small className="help-block">
+              Image must be 1875px by 1275px including a 75px bleed -
+              <a href={`/images/${this.props.isBack ? 'address' : 'image'}-side-guide.jpg`} target="_blank">
+                template
+              </a>,
+              <a href={`/images/${this.props.isBack ? 'address' : 'image'}-side-example.jpg`} target="_blank">
+                template
+              </a>
+            </small>
+          </div>
         </div>
-      </div>
         { this.renderError() }
       </div>
     );

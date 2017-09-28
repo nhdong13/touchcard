@@ -28,9 +28,9 @@ export default class CardEditorLight extends Component {
 
 document.addEventListener('DOMContentLoaded', () => {
   const csrfToken = document.querySelectorAll('meta[name="csrf-token"]')[0].getAttribute('content');
-  console.log('csrfToken:' + csrfToken);
+  console.log(`csrfToken:${csrfToken}`);
   ReactDOM.render(
-    <CardEditorLight name="CardEditorLight" csrfToken={csrfToken}  />,
+    <CardEditorLight name="CardEditorLight" csrfToken={csrfToken} />,
     document.getElementById('react-app'),
   );
 });
