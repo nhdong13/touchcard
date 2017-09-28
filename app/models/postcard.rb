@@ -134,16 +134,6 @@ class Postcard < ApplicationRecord
     self.save!
   end
 
-  def status
-    if canceled?
-      "Canceled"
-    elsif sent?
-      "Sent on #{date_sent.to_date}"
-    else
-      "Sending #{send_date.to_date}"
-    end
-  end
-
   def city
     address.city
   end

@@ -47,7 +47,7 @@
             <td>
               <button type="button"
                       class="mdl-chip mdl-color--<%= postcard.sent? ? 'light_green' : 'orange' %> postcard-status-chip">
-                <span class="mdl-chip__text"><%= postcard.status %></span>
+                <span class="mdl-chip__text"><%= postcard_status(postcard) %></span>
               </button>
             </td>
 
