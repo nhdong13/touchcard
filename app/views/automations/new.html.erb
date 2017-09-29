@@ -1,7 +1,101 @@
-<div class="mdl-grid">
-  <div class="mdl-layout-spacer"></div>
-  <div class="mdl-spinner mdl-js-spinner mdl-spinner--single-color is-active"></div>
-  <div class="mdl-layout-spacer"></div>
+<!--<div class="mdl-grid">-->
+<!--<div class="mdl-layout-spacer"></div>-->
+<!--<div class="mdl-spinner mdl-js-spinner mdl-spinner&#45;&#45;single-color is-active"></div>-->
+<!--<div class="mdl-layout-spacer"></div>-->
+<!--</div>-->
+
+<!-- %= javascript_pack_tag 'CardWizard' % -->
+
+
+<!--<script src="https://unpkg.com/vue"></script>-->
+
+<script>
+////  var app = new Vue({
+////    el: '#app',
+////    data: {
+////      message: 'Hello Vue!'
+////    }
+////  })
+</script>
+
+
+
+<!-- %= render "form_fields" % -->
+
+<!--
+TODO:
+
+  Use form_tag instead
+  https://stackoverflow.com/questions/4805774/rails-3-form-without-model-how-do-i-create-a-form-that-is-not-tied-to-a-model
+
+  File tag uses multipart form upload
+  http://api.rubyonrails.org/classes/ActionView/Helpers/FormTagHelper.html#method-i-file_field_tag
+
+  But we probably want to go direct to S3 (via jQuery below)
+  https://devcenter.heroku.com/articles/direct-to-s3-image-uploads-in-rails
+
+
+  Another file upload strategy for Rails
+  https://medium.com/rails-ember-beyond/ajax-file-upload-in-rails-using-dropzone-and-carrierwave-6f5436fdfdb0
+
+-->
+
+
+<%= form_tag automations_path method: :post do %>
+    <%= number_field_tag "discount_pct" %> Percent
+    <%= submit_tag "Save" %>
+<% end %>
+
+
+<!--
+< %= form_for @card do |f| %>
+    < %= f.submit %>
+    <div>
+      <label htmlFor="percent"><strong>Percent</strong></label>
+      < %= f.number_field :discount_pct %>
+    </div>
+    < %= f.number_field :discount_exp %>
+    < %= f.check_box :enabled %><br />
+< % end %>
+-->
+
+<div className="card-page">
+  <section>
+    <div className="mdl-grid">
+      <div className="mdl-cell mdl-cell--6-col">
+        <h4 className="uppercase">Configure</h4>
+        <div>
+          <label className="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" htmlFor="checkbox-1">
+            <input type="checkbox" id="checkbox-1" className="mdl-checkbox__input" onClick={props.onCheck} />
+            <span className="mdl-checkbox__label"><strong>Include Discount</strong></span>
+          </label>
+          <div>
+            <div>
+              <label htmlFor="percent"><strong>Percent</strong></label>
+              <input type="number" pattern="-?[0-9]*(\.[0-9]+)?" id="percent" />
+            </div>
+            <div>
+              <label htmlFor="exp"><strong>Weeks till expiration</strong></label>
+              <input type="number" pattern="-?[0-9]*(\.[0-9]+)?" id="exp" />
+            </div>
+          </div>
+        </div>
+        <!--<div>-->
+        <!--<label className="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" htmlFor="checkbox-1">-->
+        <!--<input type="checkbox" id="checkbox-1" className="mdl-checkbox__input" onClick={props.onCheck} />-->
+        <!--<span className="mdl-checkbox__label"><strong>Include Discount</strong></span>-->
+        <!--</label>-->
+        <!--</div>-->
+      </div>
+    </div>
+  </section>
+  <section className="mdl-grid">
+    <%= render "card_side" %>
+    <%= render "card_side" %>
+  </section>
 </div>
 
-<%= javascript_pack_tag 'CardWizard' %>
+
+
+
+

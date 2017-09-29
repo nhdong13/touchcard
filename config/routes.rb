@@ -32,8 +32,16 @@ Rails.application.routes.draw do
   post '/uninstall',  to:   'shopify_app/webhooks#receive', defaults: { type: 'app_uninstalled' }
 
   # HTML Routes for Card Templates
-  resources :card_orders, only: [:update]
-  resources :post_sale_orders
+  resources :card_orders, only: [:update, :create, :destroy]
+
+  # DFL: Need this for destroy action to work
+  resources :post_sale_orders, only: [:destroy]
+
+  # DFL: Need this for create / update actions to work. (Can probably do this better)
+  resources :post_sale_orders, :controller => "card_orders", :type => "PostSaleOrder"
+
+
+
   # Routes for Admins
   devise_for :admin_users, ActiveAdmin::Devise.config
   get '/admin' => 'admin/shops#index'

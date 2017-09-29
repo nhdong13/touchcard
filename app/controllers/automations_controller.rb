@@ -7,12 +7,19 @@ class AutomationsController < BaseController
   end
 
   def new
-    @types = CardOrder::TYPES
+    # @types = CardOrder::TYPES
     @card = @current_shop.card_orders.create
+    # byebug
+
     # this is maybe not necessary --- we are using nested attributes
     # @card_side_back = @card.build_card_side_back(is_back: true)
     # @card_side_front = @card.build_card_side_front(is_back: false)
     # @filter = Filter.create(card_order: @card)
+  end
+
+  def edit
+    puts params.to_yaml
+    @card = CardOrder.find(params[:id])
   end
 
   def show

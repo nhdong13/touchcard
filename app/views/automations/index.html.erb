@@ -15,9 +15,8 @@
 <div class="top-m-20">
   <div class="text-center">
     <%= link_to 'New Automation', new_automations_path,
-                class: "mdl-button mdl-js-button mdl-button--raised mdl-button--colored top-m-20",
-                data: { turbolinks: false }%>
-    <%= link_to '[turbolink]', new_automations_path %>
+                class: "mdl-button mdl-js-button mdl-button--raised mdl-button--colored top-m-20"
+    %>
   </div>
   <% @card_orders.each do |card| %>
     <div class="mld-card top-m-20 mdl-shadow--2dp" id="card-<%= card.id %>">
@@ -39,6 +38,10 @@
                 class: 'mdl-button mdl-js-button mdl-button--raised' do %>
                   <i class="material-icons">delete_forever</i> Delete
               <% end %>
+              <%= link_to card, method: :put,
+                          class: 'mdl-button mdl-js-button mdl-button--raised' do %>
+                  <i class="material-icons">mode_edit</i> Edit
+              <% end %>
             </div>
           </div>
           <div class="mdl-cell mdl-cell--4-col mdl-cell--4-col-tablet">
@@ -46,13 +49,13 @@
               <!-- {{card-template isEditable=isEditable cardOrder=cardOrder edit=(action 'editCard')}} -->
             </div>
           </div>
-          <div class="mdl-cell mdl-cell--3-col mdl-cell--4-col-tablet">
-            <div class="content-box">
-              <h4 class="text-uppercase text-center">Config</h4>
-              <p>Sending Delay: <%= card.send_delay %></p>
-              <p>Filter:</p>
-            </div>
-          </div>
+          <!--<div class="mdl-cell mdl-cell&#45;&#45;3-col mdl-cell&#45;&#45;4-col-tablet">-->
+            <!--<div class="content-box">-->
+              <!--<h4 class="text-uppercase text-center">Config</h4>-->
+              <!--<p>Sending Delay: <!--%= card.send_delay %> </p>-->
+              <!--<p>Filter:</p>-->
+            <!--</div>-->
+          <!--</div>-->
           <div class="mdl-cell mdl-cell--3-col mdl-cell--4-col-tablet">
             <div class="content-box">
               <h4 class="text-uppercase text-center">Stats</h4>
