@@ -78,6 +78,8 @@ gem "mailgunner", '~> 2.4'
 # gem "bootstrap-switch-rails"
 # gem 'bootstrap-select-rails'
 
+gem "vuejs-rails"
+
 # Image upload
 gem 'carrierwave'
 gem 'mini_magick'

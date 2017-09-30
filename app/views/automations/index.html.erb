@@ -15,8 +15,7 @@
 <div class="top-m-20">
   <div class="text-center">
     <%= link_to 'New Automation', new_automations_path,
-                class: "mdl-button mdl-js-button mdl-button--raised mdl-button--colored top-m-20"
-    %>
+                class: "mdl-button mdl-js-button mdl-button--raised mdl-button--colored top-m-20" %>
   </div>
   <% @card_orders.each do |card| %>
     <div class="mld-card top-m-20 mdl-shadow--2dp" id="card-<%= card.id %>">

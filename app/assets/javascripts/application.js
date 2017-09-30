@@ -12,6 +12,7 @@
 //
 //= require material
 //= require turbolinks
+//= require vue
 //= require_tree .
 
 // console.log('Adding Event Listener - application.js');
@@ -30,3 +31,29 @@ window.onload = function() {
 // document.addEventListener('DOMContentLoaded', () => {
 //   console.log('DOMContentLoaded - application.js');
 // });
+
+
+
+// TODO: Add Vue Turbolinks mixin to fix hot reloading / dom caching
+// https://github.com/turbolinks/turbolinks/wiki/VueJs-and-Turbolinks
+document.addEventListener('turbolinks:load', () => {
+  var element = document.getElementById("vueEnabledCardEditor");
+  if (element != null) {
+
+    var cardEditor = new Vue({
+      el: '#vueEnabledCardEditor',
+      data: {
+        enableDiscount: true
+      }
+    });
+
+    // var vueapp = new Vue({
+    //   el: element,
+    //   template: '<App/>',
+    //   components: { App }
+    // });
+  }
+});
+
+
+

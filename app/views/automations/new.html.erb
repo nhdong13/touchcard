@@ -4,24 +4,6 @@
 <!--<div class="mdl-layout-spacer"></div>-->
 <!--</div>-->
 
-<!-- %= javascript_pack_tag 'CardWizard' % -->
-
-
-<!--<script src="https://unpkg.com/vue"></script>-->
-
-<script>
-////  var app = new Vue({
-////    el: '#app',
-////    data: {
-////      message: 'Hello Vue!'
-////    }
-////  })
-</script>
-
-
-
-<!-- %= render "form_fields" % -->
-
 <!--
 TODO:
 
@@ -40,59 +22,33 @@ TODO:
 
 -->
 
-
-<%= form_tag automations_path method: :post do %>
-    <%= number_field_tag "discount_pct" %> Percent
-    <%= submit_tag "Save" %>
-<% end %>
-
-
-<!--
-< %= form_for @card do |f| %>
-    < %= f.submit %>
-    <div>
-      <label htmlFor="percent"><strong>Percent</strong></label>
-      < %= f.number_field :discount_pct %>
-    </div>
-    < %= f.number_field :discount_exp %>
-    < %= f.check_box :enabled %><br />
-< % end %>
--->
-
-<div className="card-page">
-  <section>
-    <div className="mdl-grid">
-      <div className="mdl-cell mdl-cell--6-col">
-        <h4 className="uppercase">Configure</h4>
-        <div>
-          <label className="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" htmlFor="checkbox-1">
-            <input type="checkbox" id="checkbox-1" className="mdl-checkbox__input" onClick={props.onCheck} />
-            <span className="mdl-checkbox__label"><strong>Include Discount</strong></span>
-          </label>
-          <div>
-            <div>
-              <label htmlFor="percent"><strong>Percent</strong></label>
-              <input type="number" pattern="-?[0-9]*(\.[0-9]+)?" id="percent" />
+<div class="card-page" id="vueEnabledCardEditor">
+  <%= form_with url: automations_path, method: :post do |form| %>
+      <%= form.submit "Save it" %>
+      <section>
+      <div class="mdl-grid">
+        <div class="mdl-cell mdl-cell--3-col">
+          Include Discount:<br><%= form.check_box "enable-discount", "v-model": "enableDiscount" %>
+        </div>
+        <div class="mdl-cell mdl-cell--6-col" v-if="enableDiscount">
+          <div class="mdl-grid mdl-grid--no-spacing">
+            <div class="mdl-cell mdl-cell--4-col">
+              Percent:<br><%= form.number_field "discount_pct", id: "percent", pattern: /-?[0-9]*(\.[0-9]+)?/ %>
             </div>
-            <div>
-              <label htmlFor="exp"><strong>Weeks till expiration</strong></label>
-              <input type="number" pattern="-?[0-9]*(\.[0-9]+)?" id="exp" />
+            <div class="mdl-cell mdl-cell--4-col">
+              Weeks til expiration:<br><%= form.number_field "discount_exp", id: "exp", pattern: /-?[0-9]*(\.[0-9]+)?/ %>
             </div>
           </div>
         </div>
-        <!--<div>-->
-        <!--<label className="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" htmlFor="checkbox-1">-->
-        <!--<input type="checkbox" id="checkbox-1" className="mdl-checkbox__input" onClick={props.onCheck} />-->
-        <!--<span className="mdl-checkbox__label"><strong>Include Discount</strong></span>-->
-        <!--</label>-->
-        <!--</div>-->
       </div>
-    </div>
-  </section>
-  <section className="mdl-grid">
-    <%= render "card_side" %>
-    <%= render "card_side" %>
-  </section>
+      </section>
+      <section class="mdl-grid">
+        <%= render partial: "card_side", locals: { form: form, side: :front } %>
+        <%= render partial: "card_side", locals: { form: form, side: :back} %>
+        <!-- %= render partial: "card_side", locals: { form: form } % -->
+      </section>
+
+  <% end %>
 </div>
 
 

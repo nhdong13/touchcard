@@ -1,22 +1,33 @@
 
 
-<div className="mdl-cell mdl-cell--6-col">
-  <h3 className="uppercase"></h3>
+<!--
+If we handle the upload here with Ajax the file upload may NOT want to be part
+of the rails form, because that automatically makes the form a multipart upload
+
+< %= form.file_field :fileFieldName, accept: 'image/png,image/jpeg' %>
+-->
+
+
+
+
+
+<div class="mdl-cell mdl-cell--6-col">
+<h3 class="uppercase"></h3>
   <div>
-    <div className="file-upload-stylized mdl-textfield mdl-js-textfield full-width">
+    <div class="file-upload-stylized mdl-textfield mdl-js-textfield full-width">
       <input
-      className="mdl-textfield__input"
+      class="mdl-textfield__input"
       onChange={this.handleChange}
       type="file"
       id="image-uploader"
       />
       <div>
-        <small className="help-block">
+        <small class="help-block">
           Image must be 1875px by 1275px including a 75px bleed -
-          <a href={`/images/${this.props.isBack ? 'address' : 'image'}-side-guide.jpg`} target="_blank">
-          template
-          </a>,
-          <a href={`/images/${this.props.isBack ? 'address' : 'image'}-side-example.jpg`} target="_blank">
+          <a href="<%= "/images/#{side == :front ? 'image' : 'address' }-side-example.jpg" %>" target="_blank">
+            example
+          </a>
+          <a href="<%= "/images/#{side == :front ? 'image' : 'address' }-side-guide.jpg" %>" target="_blank">
           template
           </a>
         </small>
@@ -24,18 +35,18 @@
     </div>
   </div>
   CardSideCheckBoxes
-  <div className="layers">
-    <!--<div className={`layer ${this.state.showBleed ? 'bleed' : ''}`} />-->
-    <!--<div className={`layer ${this.state.showSafeArea ? 'safe-area' : ''}`} />-->
-    <div className="card-side">
-      <div className="layers">
-        <div className="postage layer">
+  <div class="layers">
+    <!--<div class={`layer ${this.state.showBleed ? 'bleed' : ''}`} />-->
+    <!--<div class={`layer ${this.state.showSafeArea ? 'safe-area' : ''}`} />-->
+    <div class="card-side">
+      <div class="layers">
+        <div class="postage layer">
 
           <!-- %= image_tag  "postage-no-return.png" % -->
         </div>
         Draggable - DiscountCodeBox
-        <div className="layer">
-          <img className="image" src="" />
+        <div class="layer">
+          <img class="image" src="" />
         </div>
       </div>
     </div>
