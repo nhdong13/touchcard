@@ -80,6 +80,8 @@ gem "mailgunner", '~> 2.4'
 
 gem "vuejs-rails"
 
+# add Axios for networking
+gem 'axios_rails', '~> 0.14.0'
 # Image upload
 gem 'carrierwave'
 gem 'mini_magick'

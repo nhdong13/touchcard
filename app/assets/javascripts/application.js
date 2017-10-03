@@ -12,6 +12,7 @@
 //
 //= require material
 //= require turbolinks
+//= require axios
 //= require vue
 //= require_tree .
 
@@ -44,6 +45,26 @@ document.addEventListener('turbolinks:load', () => {
       el: '#vueEnabledCardEditor',
       data: {
         enableDiscount: true
+      },
+      methods: {
+        fileChanged(e) {
+          var file = e.target.value,
+            signedUrl = e.target.form.dataset.url,
+            formData = e.target.form.dataset.formData,
+            options = {
+              headers: {
+                'Content-Type': e.target.files[0].type
+              }
+            };
+          // debugger
+          axios.put(signedUrl, file, formData, options).
+          then(function(result) {
+            debugger
+          }).
+          catch(function(result) {
+            debugger
+          })
+        }
       }
     });
 

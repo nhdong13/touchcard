@@ -1,4 +1,6 @@
 class AutomationsController < BaseController
+  before_action :set_s3_direct_post, only: [:new, :edit, :update, :create]
+
   def index
     @card_orders = @current_shop.card_orders
   end
@@ -39,6 +41,16 @@ class AutomationsController < BaseController
   def destroy
     @card = CardOrder.find(params[:id])
     @card.destroy
+  end
+
+  private
+
+  def set_s3_direct_post
+    @s3_direct_post = S3_BUCKET
+      .presigned_post(
+        key: "upload#{SecureRandom.uuid}/${filename}",
+        success_action_status: '201',
+        acl: 'public-read')
   end
 
   def permited_params
