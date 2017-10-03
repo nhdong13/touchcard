@@ -84,11 +84,6 @@ gem "vuejs-rails"
 gem 'carrierwave'
 gem 'mini_magick'
 
-# Use webpacker for React
-gem 'webpacker', '~> 2.0'
-
-# Use foreman to manager Procfile-based applications
-gem 'foreman'
 # ActiveCampaign ('bdad6c2' is last building version as of 2017-08-26)
 gem "active_campaign", git: "https://github.com/laverick/active_campaign", ref: "bdad6c2"
 
