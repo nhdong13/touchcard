@@ -94,6 +94,8 @@ gem 'foreman'
 # ActiveCampaign ('bdad6c2' is last building version as of 2017-08-26)
 gem "active_campaign", git: "https://github.com/laverick/active_campaign", ref: "bdad6c2"
 
+gem 'faker'
+
 group :assets do
   gem "therubyracer", platforms: :ruby
 end
