@@ -95,6 +95,7 @@ class CardOrder < ApplicationRecord
   end
 
   def archive
+    self.enabled = false
     self.archived = true
     self.save!
   end
