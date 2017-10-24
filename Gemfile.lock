@@ -417,7 +417,6 @@ DEPENDENCIES
   devise (~> 4.3.0)
   factory_girl_rails (~> 4.5)
   faker
-  back-to-rails-views
   hirb (~> 0.7)
   httparty (~> 0.13)
   jquery-rails
