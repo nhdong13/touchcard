@@ -6,7 +6,7 @@
       $.ajax({
         type: "PATCH",
         url: "/automations/" + cardId,
-        data: { card_order: { enabled: this.checked } },
+        data: { enabled: this.checked },
       })
     })
   })
