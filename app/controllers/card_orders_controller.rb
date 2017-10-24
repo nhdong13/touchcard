@@ -10,8 +10,8 @@ class CardOrdersController < BaseController
 
   def update
     puts params.to_yaml
-    redirect_to edit_automations_path(id: params[:id])
-    # redirect_to edit_automations_path(CardOrder.find(params[:id]))
+    redirect_to edit_automation_path(id: params[:id])
+    # redirect_to edit_automation_path(CardOrder.find(params[:id]))
   end
 
   # def destroy

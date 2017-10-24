@@ -51,7 +51,7 @@
               </button>
               <% unless postcard.canceled || postcard.sent %>
                 <%= link_to "Cancel", cancel_postcard_dashboard_path(postcard),
-                  method: :patch, data: { confirm: "Are you sure you? This can't be undone." },
+                  method: :patch, data: { confirm: "Are you sure? This can't be undone." },
                   class: 'mdl-button mdl-js-button mdl-button--raised',
                   remote: true %>
               <% end %>
