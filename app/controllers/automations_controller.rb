@@ -41,17 +41,14 @@ class AutomationsController < BaseController
   def destroy
     @card = CardOrder.find(params[:id])
     @card.archive
-    back_id = @card.card_side_back_id
-    front_id = @card.card_side_front_id
-    success = @card.destroy if @card.safe_to_destroy?
-    delete_belonging_card_sides(back_id, front_id) if success
-  end
-
-  private
-
-  def delete_belonging_card_sides(back_id, front_id)
-    CardSide.find(back_id).destroy
-    CardSide.find(front_id).destroy
+    if @card.safe_to_destroy?
+      # The CardOrder / CardSide relation is backwards for easy destroy propagation, so this is a workaround
+      @card.transaction do
+        @card.destroy
+        CardSide.find(@card.card_side_back_id).destroy
+        CardSide.find(@card.card_side_front_id).destroy
+      end
+    end
   end
 
   private
