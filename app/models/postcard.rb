@@ -112,12 +112,16 @@ class Postcard < ApplicationRecord
   end
 
   def one_active_postcard_per_customer
-    postcards = Postcard.where(
-      "customer_id = :customer_id AND estimated_arrival > :arrival",
-      customer_id: customer_id, arrival: Time.now)
+    postcards = Postcard.where.not(
+      id: self.id
+    ).where(
+      "customer_id = :customer_id AND estimated_arrival > :arrival AND canceled IS false",
+      self_id: self.id,
+      customer_id: customer_id,
+      arrival: Time.now
+    )
     if postcards.any?
-      errors.add(:customer_id, "There is alraedy one active card
-                  sent to this customer")
+      errors.add(:customer_id, "There is already one active card for this customer")
     end
   end
 

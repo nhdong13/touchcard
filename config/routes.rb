@@ -58,7 +58,7 @@ Rails.application.routes.draw do
 
   resource :subscription
 
-  resource :automations do
+  resources :automations do
     get 'select_type', :on => :collection
   end
 

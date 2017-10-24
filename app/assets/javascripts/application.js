@@ -10,8 +10,12 @@
 // Read Sprockets README (https://github.com/rails/sprockets#sprockets-directives) for details
 // about supported directives.
 //
+//= require jquery
+//= require jquery_ujs
+//= require jquery-ui
 //= require material
 //= require turbolinks
+//= require axios
 //= require vue
 //= require_tree .
 
@@ -44,6 +48,32 @@ document.addEventListener('turbolinks:load', () => {
       el: '#vueEnabledCardEditor',
       data: {
         enableDiscount: true
+      },
+      methods: {
+        fileChanged(e) {
+          var file = e.target.files[0].name,
+            signedUrl = e.target.form.dataset.url,
+            data = JSON.parse(e.target.form.dataset.formData),
+            options = {
+              headers: {
+                'Content-Type': 'multipart/form-data'
+              }
+            };
+
+          var formData = new FormData();
+          for ( i in data ) {
+            formData[i] = data[i];
+          }
+          formData['file'] = file;
+
+          axios.put(signedUrl, formData, options).
+          then(function(result) {
+            debugger
+          }).
+          catch(function(result) {
+            debugger
+          })
+        }
       }
     });
 
@@ -54,6 +84,3 @@ document.addEventListener('turbolinks:load', () => {
     // });
   }
 });
-
-
-

@@ -96,6 +96,7 @@ GEM
       jmespath (~> 1.0)
     aws-sdk-resources (2.2.34)
       aws-sdk-core (= 2.2.34)
+    axios_rails (0.14.0)
     bcrypt (3.1.11)
     binding_of_caller (0.7.2)
       debug_inspector (>= 0.0.1)
@@ -147,6 +148,8 @@ GEM
     factory_girl_rails (4.7.0)
       factory_girl (~> 4.7.0)
       railties (>= 3.0.0)
+    faker (1.8.4)
+      i18n (~> 0.5)
     faraday (0.12.2)
       multipart-post (>= 1.2, < 3)
     ffi (1.9.18)
@@ -403,6 +406,7 @@ DEPENDENCIES
   active_model_serializers (~> 0.8.0)
   activeadmin (~> 1.0.0)
   aws-sdk (~> 2.1)
+  axios_rails (~> 0.14.0)
   business_time (~> 0.7)
   byebug
   carrierwave
@@ -412,6 +416,9 @@ DEPENDENCIES
   delayed_job_active_record (~> 4.1.2)
   devise (~> 4.3.0)
   factory_girl_rails (~> 4.5)
+  faker
+  foreman
+  back-to-rails-views
   hirb (~> 0.7)
   httparty (~> 0.13)
   jquery-rails

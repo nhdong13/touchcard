@@ -80,12 +80,16 @@ gem "mailgunner", '~> 2.4'
 
 gem "vuejs-rails"
 
+# add Axios for networking
+gem 'axios_rails', '~> 0.14.0'
 # Image upload
 gem 'carrierwave'
 gem 'mini_magick'
 
 # ActiveCampaign ('bdad6c2' is last building version as of 2017-08-26)
 gem "active_campaign", git: "https://github.com/laverick/active_campaign", ref: "bdad6c2"
+
+gem 'faker'
 
 group :assets do
   gem "therubyracer", platforms: :ruby

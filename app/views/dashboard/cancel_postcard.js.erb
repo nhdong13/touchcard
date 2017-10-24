@@ -1,11 +1,8 @@
-$(function() {
-  return $("a[data-remote]").on("ajax:success", function(e, data, status, xhr) {
-    let id = "#postcard-" + <%= @postcard.id %>,
-      row = document.querySelector(id),
-      infoBtn = document.querySelector(`${id} span`),
-      cancelBtn = document.querySelector(`${id} a`);
-
-    row.querySelector('td').removeChild(cancelBtn);
-    infoBtn.innerHTML = "Canceled";
-  });
-});
+(function() {
+  var id = "#postcard-" + <%= @postcard.id %>;
+  var row = document.querySelector(id);
+  var infoBtn = document.querySelector(`${id} span`);
+  var cancelBtn = document.querySelector(`${id} a`);
+  row.querySelector('td').removeChild(cancelBtn);
+  infoBtn.innerHTML = "Canceled";
+})();

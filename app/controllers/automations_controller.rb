@@ -1,6 +1,8 @@
 class AutomationsController < BaseController
+  before_action :set_s3_direct_post, only: [:new, :edit, :update, :create]
+
   def index
-    @card_orders = @current_shop.card_orders
+    @card_orders = @current_shop.card_orders.where(archived: false)
   end
 
   def select_type
@@ -27,7 +29,7 @@ class AutomationsController < BaseController
 
   def update
     @card = CardOrder.find(params[:id])
-    @card.update(permited_params)
+    @card.update(permitted_params)
   end
 
   def create
@@ -38,11 +40,29 @@ class AutomationsController < BaseController
 
   def destroy
     @card = CardOrder.find(params[:id])
-    @card.destroy
+    @card.archive
+    if @card.safe_to_destroy?
+      # The CardOrder / CardSide relation is backwards for easy destroy propagation, so this is a workaround
+      @card.transaction do
+        @card.destroy
+        CardSide.find(@card.card_side_back_id).destroy
+        CardSide.find(@card.card_side_front_id).destroy
+      end
+    end
   end
 
-  def permited_params
-    params.require(:card_order).permit(
+  private
+
+  def set_s3_direct_post
+    @s3_direct_post = S3_BUCKET
+      .presigned_post(
+        key: "uploads/#{SecureRandom.uuid}/${filename}",
+        success_action_status: '201',
+        acl: 'public-read')
+  end
+
+  def permitted_params
+    params.permit(
       :type,
       :enabled,
       :discount_exp,

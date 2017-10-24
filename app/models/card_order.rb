@@ -94,6 +94,16 @@ class CardOrder < ApplicationRecord
     self.discount_pct = -discount_pct if discount_pct && discount_pct > 0
   end
 
+  def archive
+    self.enabled = false
+    self.archived = true
+    self.save!
+  end
+
+  def safe_to_destroy?
+    !postcards.exists?
+  end
+
   private
 
   def invalid_image_size(attributes)
