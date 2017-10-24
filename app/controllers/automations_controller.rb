@@ -29,7 +29,7 @@ class AutomationsController < BaseController
 
   def update
     @card = CardOrder.find(params[:id])
-    @card.update(permited_params)
+    @card.update(permitted_params)
   end
 
   def create
@@ -64,8 +64,8 @@ class AutomationsController < BaseController
         acl: 'public-read')
   end
 
-  def permited_params
-    params.require(:card_order).permit(
+  def permitted_params
+    params.permit(
       :type,
       :enabled,
       :discount_exp,
