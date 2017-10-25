@@ -40,7 +40,7 @@ window.onload = function() {
 
 // TODO: Add Vue Turbolinks mixin to fix hot reloading / dom caching
 // https://github.com/turbolinks/turbolinks/wiki/VueJs-and-Turbolinks
-document.addEventListener('turbolinks:load', () => {
+document.addEventListener('turbolinks:load', function() {
   var element = document.getElementById("vueEnabledCardEditor");
   if (element != null) {
 
