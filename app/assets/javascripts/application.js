@@ -50,30 +50,30 @@ document.addEventListener('turbolinks:load', function() {
         enableDiscount: true
       },
       methods: {
-        fileChanged(e) {
-          var file = e.target.files[0].name,
-            signedUrl = e.target.form.dataset.url,
-            data = JSON.parse(e.target.form.dataset.formData),
-            options = {
-              headers: {
-                'Content-Type': 'multipart/form-data'
-              }
-            };
-
-          var formData = new FormData();
-          for ( i in data ) {
-            formData[i] = data[i];
-          }
-          formData['file'] = file;
-
-          axios.put(signedUrl, formData, options).
-          then(function(result) {
-            debugger
-          }).
-          catch(function(result) {
-            debugger
-          })
-        }
+        // fileChanged(e) {
+        //   var file = e.target.files[0].name,
+        //     signedUrl = e.target.form.dataset.url,
+        //     data = JSON.parse(e.target.form.dataset.formData),
+        //     options = {
+        //       headers: {
+        //         'Content-Type': 'multipart/form-data'
+        //       }
+        //     };
+        //
+        //   var formData = new FormData();
+        //   for ( i in data ) {
+        //     formData[i] = data[i];
+        //   }
+        //   formData['file'] = file;
+        //
+        //   axios.put(signedUrl, formData, options).
+        //   then(function(result) {
+        //     debugger
+        //   }).
+        //   catch(function(result) {
+        //     debugger
+        //   })
+        // }
       }
     });
 
