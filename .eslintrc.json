@@ -1,0 +1,39 @@
+{
+    "env": {
+        "browser": true
+    },
+    "extends": "eslint:recommended",
+    "rules": {
+        "indent": [
+            "error",
+            2
+        ],
+        "linebreak-style": [
+            "error",
+            "unix"
+        ],
+        "quotes": [
+            "error",
+            "single"
+        ],
+        "semi": [
+            "error",
+            "always"
+        ]
+    }
+}
+
+// ESLINT config for ECMAscript -- Saved for switch back to Webpacker
+//    {
+//      "extends": "airbnb",
+//    //  "extends": ["airbnb", "airbnb-flow"],  // Enable Flow Type Checking
+//      "rules": {
+//        "comma-dangle": ["error", "never"],
+//        "max-len": ["warn", 120, 2, {"ignoreUrls": true, "ignoreStrings": true,"ignoreTemplateLiterals": true }]
+//    //    "no-unused-vars": ["error", { "varsIgnorePattern": "[iI]gnored|ReactDOM" }]
+//      },
+//      "globals": {
+//        "browser": true,
+//        "document": true
+//      }
+//    }
