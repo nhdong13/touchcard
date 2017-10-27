@@ -1,4 +1,4 @@
 (function() {
-  var cardDiv = $("#card-" + <%= @card.id %>);
-  cardDiv.remove();
+  document.getElementById('card-' + <%= @card.id %>);
+  cardDiv.parentNode.removeChild(cardDiv);
 })();

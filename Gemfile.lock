@@ -419,8 +419,6 @@ DEPENDENCIES
   faker
   hirb (~> 0.7)
   httparty (~> 0.13)
-  jquery-rails
-  jquery-ui-rails (~> 5.0)
   lob (~> 2.1)
   mailgunner (~> 2.4)
   material_design_lite-sass

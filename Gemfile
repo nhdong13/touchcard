@@ -16,7 +16,6 @@ gem "sass-rails", "~> 5.0", ">= 5.0.6"
 gem "uglifier", ">= 1.3.0"
 gem "coffee-rails", "~> 4.2.0"
 
-gem "jquery-rails"
 gem "momentjs-rails", ">= 2.8.1"
 gem "turbolinks"
 # gem "jbuilder", "~> 2.0"
@@ -38,9 +37,6 @@ gem 'stripe', git: 'https://github.com/stripe/stripe-ruby'
 
 # S3 connection
 gem "aws-sdk", "~> 2.1"
-
-# Card creator ui js
-gem "jquery-ui-rails", "~> 5.0"
 
 # Image Manipulation
 gem "rmagick", "~> 2.15"

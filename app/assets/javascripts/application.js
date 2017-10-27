@@ -10,78 +10,18 @@
 // Read Sprockets README (https://github.com/rails/sprockets#sprockets-directives) for details
 // about supported directives.
 //
-//= require jquery
-//= require jquery_ujs
-//= require jquery-ui
+
+// Organization tips: http://brandonhilkert.com/blog/organizing-javascript-in-rails-application-with-turbolinks/
+
+// --- Libraries ---
+//= require rails-ujs
 //= require material
 //= require turbolinks
 //= require axios
 //= require vue
-//= require_tree .
 
-// console.log('Adding Event Listener - application.js');
-
-// Make turbolinks work with material framework
-document.addEventListener('turbolinks:load', function() {
-  // console.log('turbolinks:load - application.js');
-  componentHandler.upgradeDom();
-});
-
-window.onload = function() {
-  // console.log('window.onload - application.js');
-  ShopifyApp.Bar.loadingOff();
-};
-
-// document.addEventListener('DOMContentLoaded', () => {
-//   console.log('DOMContentLoaded - application.js');
-// });
-
-
-
-// TODO: Add Vue Turbolinks mixin to fix hot reloading / dom caching
-// https://github.com/turbolinks/turbolinks/wiki/VueJs-and-Turbolinks
-document.addEventListener('turbolinks:load', function() {
-  var element = document.getElementById("vueEnabledCardEditor");
-  if (element != null) {
-
-    var cardEditor = new Vue({
-      el: '#vueEnabledCardEditor',
-      data: {
-        enableDiscount: true
-      },
-      methods: {
-        // TODO: Code below has uglifier compile issues when deployed to Heroku
-        //
-        fileChanged: function(e) {
-          var file = e.target.files[0].name,
-            signedUrl = e.target.form.dataset.url,
-            data = JSON.parse(e.target.form.dataset.formData),
-            options = {
-              headers: {
-                'Content-Type': 'multipart/form-data'
-              }
-            };
-
-          var formData = new FormData();
-          for ( i in data ) {
-            formData[i] = data[i];
-          }
-          formData['file'] = file;
-          axios.put(signedUrl, formData, options)
-            .then(function(result) {
-              debugger;
-            })
-            .catch(function(result) {
-              debugger;
-            });
-        }
-      }
-    });
-
-    // var vueapp = new Vue({
-    //   el: element,
-    //   template: '<App/>',
-    //   components: { App }
-    // });
-  }
-});
+// --- Application ---
+// # Disabled so we can define load order: `require_tree .`
+// # also keeps activeadmin from loading, I think
+//= require init
+//= require automations
