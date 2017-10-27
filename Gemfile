@@ -114,6 +114,5 @@ end
 
 group :production do
   gem "pg"
-  gem "rails_12factor"
   gem "newrelic_rpm", "~> 3.15"
 end
