@@ -1,17 +1,3 @@
-<script>
-  $(document).ready(function() {
-    $(document).on('change', 'input[type=checkbox]', function () {
-      var cardId = this.id.split("-").pop();
-
-      $.ajax({
-        type: "PATCH",
-        url: "/automations/" + cardId,
-        data: { enabled: this.checked },
-      })
-    })
-  })
-</script>
-
 <div class="top-m-20">
   <div class="text-center">
     <%= link_to 'New Automation', new_automation_path,
@@ -28,7 +14,10 @@
                 <%= check_box_tag "card-#{card.id}",
                   card.enabled,
                   card.enabled,
-                  class: 'mdl-switch__input' %>
+                  class: 'mdl-switch__input',
+                  onchange: "this.setAttribute('data-params', 'enabled=' + this.checked)",
+                  data: { remote: true, url: automation_path(card), method: :patch }
+                %>
                 <span class="mdl-switch__label"></span>
               </label>
             </div>
