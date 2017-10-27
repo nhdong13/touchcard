@@ -15,8 +15,10 @@
                   card.enabled,
                   card.enabled,
                   class: 'mdl-switch__input',
-                  onchange: "this.setAttribute('data-params', 'enabled=' + this.checked)",
-                  data: { remote: true, url: automation_path(card), method: :patch }
+                  onchange: "this.setAttribute('data-params', 'card_order[enabled]=' + this.checked)",
+                  data: { remote: true,
+                          url: automation_path(card),
+                          method: :patch}
                 %>
                 <span class="mdl-switch__label"></span>
               </label>

@@ -62,7 +62,7 @@ class AutomationsController < BaseController
   end
 
   def permitted_params
-    params.permit(
+    params.require(:card_order).permit(
       :type,
       :enabled,
       :discount_exp,
