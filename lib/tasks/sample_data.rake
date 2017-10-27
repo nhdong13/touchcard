@@ -3,14 +3,15 @@ require 'faker'
 namespace :db do
   desc "Fill database with sample data"
   task :sample_data => :environment do
-    raise 'WARNING: Task not intended for production' if Rails.env.production?  # Though might be useful on staging
     puts "Populating Database..."
     shop = Shop.last
-    raise 'To create Sample Data please create a Shop record by logging in via Shopify with at least one shop' if shop == nil
-
+    raise 'To add Sample Data please create a Shop record by logging in via Shopify with at least one shop' if shop == nil
+    if Rails.env.production? && shop.email.split('@').last != "touchcard.co"
+      raise 'WARNING: In production mode shops require @touchcard.co owner email'
+    end
+    
     create_card_order_and_sides shop if shop.card_orders.count == 0
     populate_data shop # if shop.orders.count == 0
-
   end
 
   def create_card_order_and_sides (shop)
