@@ -2,7 +2,7 @@ require "upload_sanitizer"
 
 class Api::V1::AwsController < Api::BaseController
   def sign
-    bucket_name = ENV["AWS_BUCKET_NAME"]
+    bucket_name = ENV["S3_BUCKET_NAME"]
     bucket = Aws::S3::Resource.new(region: 'us-east-1').bucket(bucket_name)
     sanitizer = UploadSanitizer.new(params[:name])
     @s3_direct_post = bucket.presigned_post(

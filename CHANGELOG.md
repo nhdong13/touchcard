@@ -1,6 +1,11 @@
 # Changelog
 
 
+## (in development)
+- ...
+- ENV
+    - Removed AWS_BUCKET_NAME, only using S3_BUCKET_NAME 
+
 ## v1.2.8
 - Hotfix 
     - new last_month calculation was wrong because we were only counting open orders
