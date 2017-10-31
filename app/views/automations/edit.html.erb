@@ -1,9 +1,1 @@
-Edit/Update should be shared with new view
-
-<%= form_for @card do |f| %>
-    <!-- %= f.text_field :type%><br /-->
-    <%= f.number_field :discount_pct %>
-    <%= f.number_field :discount_exp %>
-    <%= f.check_box :enabled %><br />
-    <%= f.submit %>
-<% end %>
+<%= render 'edit_form' %>

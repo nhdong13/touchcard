@@ -1,0 +1,42 @@
+<div class="card-page" id="vueEnabledCardEditor">
+  <%= form_with url: automations_path,
+                html: {
+                    class: "direct-upload",
+                    enctype: "multipart/form-data",
+                    data: {
+                        'form-data' => (@s3_direct_post.fields),
+                        'url' => @s3_direct_post.url,
+                        'host' => URI.parse(@s3_direct_post.url).host
+                    }
+                } do |form| %>
+      <%= form.submit "Save it" %>
+      <section>
+        <div class="mdl-grid">
+          <div class="mdl-cell mdl-cell--3-col">
+            Include Discount:<br><%= form.check_box "enable-discount", "v-model": "enableDiscount" %>
+          </div>
+          <div class="mdl-cell mdl-cell--6-col" v-if="enableDiscount">
+            <div class="mdl-grid mdl-grid--no-spacing">
+              <div class="mdl-cell mdl-cell--4-col">
+                Percent:<br><%= form.number_field "discount_pct", id: "percent", pattern: /-?[0-9]*(\.[0-9]+)?/ %>
+              </div>
+              <div class="mdl-cell mdl-cell--4-col">
+                Weeks til expiration:<br><%= form.number_field "discount_exp", id: "exp", pattern: /-?[0-9]*(\.[0-9]+)?/ %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="mdl-grid">
+        <%= render partial: "card_side", locals: { form: form, side: :front } %>
+        <%= render partial: "card_side", locals: { form: form, side: :back} %>
+        <!-- %= render partial: "card_side", locals: { form: form } % -->
+      </section>
+
+  <% end %>
+</div>
+
+
+
+
+
