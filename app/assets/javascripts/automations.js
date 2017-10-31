@@ -27,8 +27,7 @@ document.addEventListener('turbolinks:load', function() {
               image_url = result.data.url;
               var options = {
                 headers: {
-                  'Content-Type': file.type,
-                  'acl': 'public-read'
+                  'Content-Type': file.type
                 }
               };
               return axios.put(signedUrl, file, options);
