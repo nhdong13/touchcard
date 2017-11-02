@@ -1,4 +1,9 @@
 Rails.application.routes.draw do
+  # Shopify Engine
+  mount ShopifyApp::Engine, at: '/'
+
+  root 'automations#index' # See comments in controller
+
   # API routes
   namespace :api, defaults: {format: 'json'} do
     namespace :v1 do
@@ -62,9 +67,4 @@ Rails.application.routes.draw do
     get 'select_type', :on => :collection
   end
 
-  # Shopify Engine
-  root :to => 'automations#index' # See comments in controller
-  mount ShopifyApp::Engine, at: '/'
-  get '/app' => 'automations#index'
-  get '/app/*path' => 'root#app'
 end
