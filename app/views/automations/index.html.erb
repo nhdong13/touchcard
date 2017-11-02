@@ -10,18 +10,22 @@
           <div class="mdl-cell mdl-cell--2-col mdl-cell--4-col-tablet">
             <h4 class="text-center" style="border-bottom: 1px solid grey"><%= card.type %></h4>
             <div class="text-center" style="padding: 10%">
-              <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect">
+              <div class="mdc-switch">
                 <%= check_box_tag "card-#{card.id}",
-                  card.enabled,
-                  card.enabled,
-                  class: 'mdl-switch__input',
-                  onchange: "this.setAttribute('data-params', 'card_order[enabled]=' + this.checked)",
-                  data: { remote: true,
-                          url: automation_path(card),
-                          method: :patch}
+                                  card.enabled,
+                                  card.enabled,
+                                  id: "basic-switch",
+                                  class: 'mdc-switch__native-control',
+                                  onchange: "this.setAttribute('data-params', 'card_order[enabled]=' + this.checked)",
+                                  data: { remote: true,
+                                          url: automation_path(card),
+                                          method: :patch}
                 %>
-                <span class="mdl-switch__label"></span>
-              </label>
+                <div class="mdc-switch__background">
+                  <div class="mdc-switch__knob"></div>
+                </div>
+              </div>
+              <label for="basic-switch" class="mdc-switch-label">off/on</label>
             </div>
             <div class="row text-center" style="padding: 10%">
               <%= link_to automation_path(card),

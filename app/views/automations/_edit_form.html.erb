@@ -12,6 +12,16 @@
       <%= form.submit "Save it" %>
       <section>
         <div class="mdl-grid">
+          <div class="mdc-switch">
+            <%= form.check_box "enable-discount",
+                               id: "basic-switch",
+                               class:"mdc-switch__native-control",
+                               "v-model": "enableDiscount" %>
+            <div class="mdc-switch__background">
+              <div class="mdc-switch__knob"></div>
+            </div>
+          </div>
+          <label for="basic-switch" class="mdc-switch-label">off/on</label>
           <div class="mdl-cell mdl-cell--3-col">
             Include Discount:<br><%= form.check_box "enable-discount", "v-model": "enableDiscount" %>
           </div>
