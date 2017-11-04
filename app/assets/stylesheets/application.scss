@@ -9,17 +9,17 @@ $color-accent: "245, 140, 40";
 //$color-accent: "255, 152, 0";
 
 // TODO Import only the components that we're using
-//@import "@material/button/mdc-button";
-//@import "@material/card/mdc-card";
+@import "@material/button/mdc-button";
+@import "@material/card/mdc-card";
 //@import "@material/checkbox/mdc-checkbox";
 //@import "@material/dialog/mdc-dialog";
 //@import "@material/drawer/mdc-drawer";
-//@import "@material/elevation/mdc-elevation";
+@import "@material/elevation/mdc-elevation";
 //@import "@material/fab/mdc-fab";
 //@import "@material/form-field/mdc-form-field";
 //@import "@material/grid-list/mdc-grid-list";
 //@import "@material/icon-toggle/mdc-icon-toggle";
-//@import "@material/layout-grid/mdc-layout-grid";
+@import "@material/layout-grid/mdc-layout-grid";
 //@import "@material/linear-progress/mdc-linear-progress";
 @import "@material/list/mdc-list";
 //@import "@material/menu/mdc-menu";
@@ -37,7 +37,16 @@ $color-accent: "245, 140, 40";
 @import "@material/fonts/material-icons";
 //@import "@material/fonts/roboto";
 
-@import "mdl/data_table";
+@import "mdl/data-table";
+@import "mdl/resets";
+@import "mdl/chip";
+@import "mdl/shadow";
+
+
+// Nav bar
+.main-nav {
+  background: rebeccapurple;
+}
 
 .mdc-tab {
   min-width: 80px;
@@ -47,10 +56,11 @@ $color-accent: "245, 140, 40";
 //body {
 //  background: #f4f6f8;
 //}
-//html > body {
-//  font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif !important;
-//}
-//
+html > body {
+  //font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif !important;
+  font:normal 13px "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Geneva, Verdana, sans-serif;
+}
+
 //a {
 //  color: black;
 //  text-decoration: none;
@@ -72,10 +82,14 @@ $color-accent: "245, 140, 40";
 //  justify-content: flex-start;
 //}
 //
-//.mdl-data-table td {
-//  text-align: left;
-//}
-//
+.mdl-data-table {
+  td, th {
+    text-align: left;
+  }
+}
+
+
+
 //.mdl-36 {
 //  font-size: 36px;
 //}
@@ -433,14 +447,14 @@ $color-accent: "245, 140, 40";
 //  font-size: 500%;
 //}
 //
-//.white-bg {
-//  background: white;
-//}
-//
-//.full-width {
-//  width: 100%;
-//}
-//
+.white-bg {
+  background: white;
+}
+
+.full-width {
+  width: 100%;
+}
+
 //input[type="text"], input[type="number"] {
 //  padding: 10px;
 //  border: solid 1px #dcdcdc;
