@@ -12,3 +12,14 @@
     text-align: left;
   }
 }
+.sales-realized-card {
+  @include white-bg();
+}
+
+.cards-sent-card {
+  @include white-bg();
+}
+
+.scheduled-cards-container {
+  @include top-m-20();
+}

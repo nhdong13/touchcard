@@ -1,83 +1,73 @@
-<div class="dashboard top-m-20">
-  <section class="overview">
-    <div class="mdc-layout-grid">
-      <div class="mdc-layout-grid__inner">
-        <% if @current_shop.revenue %>
-            <div class="mdc-layout-grid__cell">
-              <div class="mdc-card white-bg">
-                <div class="mdc-card__horizontal-block">
-                  <div class="mdc-card__media mdc-card__media-item">
-                    <i class="material-icons mdc-card__media-item" style="font-size: 300%;">shopping_cart</i>
-                  </div>
-                  <section class="mdc-card__primary">
-                    <h2 class="mdc-card__subtitle">Sales</h2>
-                    <h1 class="mdc-card__title mdc-card__title--large"><%= number_to_currency @current_shop.revenue %></h1>
-                  </section>
-                </div>
-              </div>
+<div class="mdc-layout-grid__inner">
+  <% if @current_shop.revenue %>
+      <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4">
+        <div class="mdc-card sales-realized-card">
+          <div class="mdc-card__horizontal-block">
+            <div class="mdc-card__media mdc-card__media-item">
+              <i class="material-icons mdc-card__media-item" style="font-size: 300%;">shopping_cart</i>
             </div>
-        <% end %>
-        <div class="mdc-layout-grid__cell">
-          <div class="mdc-card white-bg">
-            <div class="mdc-card__horizontal-block">
-              <div class="mdc-card__media mdc-card__media-item">
-                <i class="material-icons mdc-card__media-item" style="font-size: 300%;">email</i>
-              </div>
-              <section class="mdc-card__primary">
-                <h2 class="mdc-card__subtitle">Cards Sent</h2>
-                <h1 class="mdc-card__title mdc-card__title--large"><%= @current_shop.cards_sent %></h1>
-              </section>
-            </div>
+            <section class="mdc-card__primary">
+              <h2 class="mdc-card__subtitle">Sales</h2>
+              <h1 class="mdc-card__title mdc-card__title--large"><%= number_to_currency @current_shop.revenue %></h1>
+            </section>
           </div>
         </div>
       </div>
-    </div>
-  </section>
-
-  <div class="mdc-layout-grid">
-    <div class="mdc-layout-grid__inner">
-      <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12">
-        <section class="cards-sent">
-          <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
-            <thead>
-            <tr>
-              <th class="mdl-data-table__cell--non-numeric">Status</th>
-              <th class="text-center">Name</th>
-              <th class="text-center">Location</th>
-            </tr>
-            </thead>
-            <tbody>
-            <% @postcards.each do |postcard| %>
-                <tr id="postcard-<%= postcard.id %>">
-                  <td>
-                    <button type="button"
-                            class="mdl-chip mdl-color--<%= postcard.sent? ? 'light_green' : 'orange' %>">
-                      <span class="mdl-chip__text"><%= postcard.status %></span>
-                    </button>
-                  </td>
-                  <td><%= postcard.customer.full_name %></td>
-                  <td><%= postcard.city %>, <%= postcard.state %>, <%= postcard.country %></td>
-                  <td>
-                    <% unless postcard.canceled || postcard.sent %>
-                        <%= link_to(cancel_postcard_dashboard_path(postcard),
-                                    method: :patch,
-                                    data: {
-                                        confirm:
-                                            "Are you sure you want to cancel this postcard? This can't be undone.",
-                                        hover: "Cancel this postcard"},
-                                    class: 'mdc-material-icons mdc-button__icon tooltip',
-                                    remote: true) do %>
-                            <i class="material-icons mdc-button__icon cancel-postcard-button">cancel</i>
-                        <% end %>
-                    <% end %>
-                  </td>
-                </tr>
-            <% end %>
-            </tbody>
-          </table>
+  <% end %>
+  <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4">
+    <div class="mdc-card cards-sent-card">
+      <div class="mdc-card__horizontal-block">
+        <div class="mdc-card__media mdc-card__media-item">
+          <i class="material-icons mdc-card__media-item" style="font-size: 300%;">email</i>
+        </div>
+        <section class="mdc-card__primary">
+          <h2 class="mdc-card__subtitle">Cards Sent</h2>
+          <h1 class="mdc-card__title mdc-card__title--large"><%= @current_shop.cards_sent %></h1>
         </section>
-
       </div>
     </div>
+  </div>
+</div>
+<div class="mdc-layout-grid__inner scheduled-cards-container">
+  <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12">
+    <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
+      <thead>
+      <tr>
+        <th class="mdl-data-table__cell--non-numeric">Status</th>
+        <th class="mdl-data-table__cell--non-numeric">Name</th>
+        <th class="mdl-data-table__cell--non-numeric">Location</th>
+        <th class="mdl-data-table__cell--non-numeric"></th>
+      </tr>
+      </thead>
+      <tbody>
+      <% @postcards.each do |postcard| %>
+          <tr id="postcard-<%= postcard.id %>">
+            <td>
+              <button type="button"
+                      class="mdl-chip mdl-color--<%= postcard.sent? ? 'light_green' : 'orange' %>">
+                <span class="mdl-chip__text"><%= postcard.status %></span>
+              </button>
+            </td>
+
+            <td><%= postcard.customer.full_name %></td>
+            <td><%= postcard.city %>, <%= postcard.state %>, <%= postcard.country %></td>
+            <td>
+              <% unless postcard.canceled || postcard.sent %>
+                  <%= link_to(cancel_postcard_dashboard_path(postcard),
+                              method: :patch,
+                              data: {
+                                  confirm:
+                                      "Are you sure you want to cancel this postcard? This can't be undone.",
+                                  hover: "Cancel postcard"},
+                              class: 'mdc-material-icons mdc-button__icon tooltip',
+                              remote: true) do %>
+                      <i class="material-icons mdc-button__icon cancel-postcard-button">cancel</i>
+                  <% end %>
+              <% end %>
+            </td>
+          </tr>
+      <% end %>
+      </tbody>
+    </table>
   </div>
 </div>

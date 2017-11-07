@@ -4,63 +4,68 @@
                 class: "mdl-button mdl-js-button mdl-button--raised mdl-button--colored" %>
   </div>
   <% @card_orders.each do |card| %>
-    <div class="mdl-card top-m-20 mdl-shadow--2dp" id="card-<%= card.id %>">
-      <div class="card flat card-order">
-        <div class="mdl-grid">
-          <div class="mdl-cell mdl-cell--2-col mdl-cell--4-col-tablet">
-            <h4 class="text-center" style="border-bottom: 1px solid grey"><%= card.type %></h4>
-            <div class="text-center" style="padding: 10%">
-              <div class="mdc-switch">
-                <%= check_box_tag "card-#{card.id}",
-                                  card.enabled,
-                                  card.enabled,
-                                  id: "basic-switch",
-                                  class: 'mdc-switch__native-control',
-                                  onchange: "this.setAttribute('data-params', 'card_order[enabled]=' + this.checked)",
-                                  data: { remote: true,
-                                          url: automation_path(card),
-                                          method: :patch}
-                %>
-                <div class="mdc-switch__background">
-                  <div class="mdc-switch__knob"></div>
+
+      <!--<div id="card-< %= card.id %>"> </div>-->
+
+      <div id="card-<%= card.id %>" class="panel automation-listing">
+        <div>
+          <h3 style="padding: 0;"><%= card.type %></h3>
+        </div>
+        <div class="automation-main">
+          <table>
+            <tr>
+              <td class="automation-controls">
+                <div class="automation-toggle tooltip" data-hover="on/off">
+                  <div class="mdc-switch">
+                    <%= check_box_tag "card-#{card.id}",
+                                      card.enabled,
+                                      card.enabled,
+                                      id: "basic-switch",
+                                      class: 'mdc-switch__native-control',
+                                      onchange: "this.setAttribute('data-params', 'card_order[enabled]=' + this.checked)",
+                                      data: { remote: true,
+                                              url: automation_path(card),
+                                              method: :patch}
+                    %>
+                    <div class="mdc-switch__background">
+                      <div class="mdc-switch__knob"></div>
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <label for="basic-switch" class="mdc-switch-label">off/on</label>
-            </div>
-            <div class="row text-center" style="padding: 10%">
-              <%= link_to automation_path(card),
-                          remote: true,
-                          method: :delete,
-                          data: { confirm: "Are you sure you want to delete this automation?" },
-                          class: 'mdl-button mdl-js-button mdl-button--raised' do %>
-                  <i class="material-icons">delete_forever</i> Delete
-              <% end %>
-              <%= link_to edit_automation_path(card),
-                          method: :get,
-                          class: 'mdl-button mdl-js-button mdl-button--raised' do %>
-                  <i class="material-icons">mode_edit</i> Edit
-              <% end %>
-            </div>
-          </div>
-          <div class="mdl-cell mdl-cell--4-col mdl-cell--4-col-tablet">
-            <div class="content-box">
-              <!-- {{card-template isEditable=isEditable cardOrder=cardOrder edit=(action 'editCard')}} -->
-            </div>
-          </div>
-          <!--<div class="mdl-cell mdl-cell&#45;&#45;3-col mdl-cell&#45;&#45;4-col-tablet">-->
-            <!--<div class="content-box">-->
-              <!--<h4 class="text-uppercase text-center">Config</h4>-->
-              <!--<p>Sending Delay: <!--%= card.send_delay %> </p>-->
-              <!--<p>Filter:</p>-->
-            <!--</div>-->
-          <!--</div>-->
-          <div class="mdl-cell mdl-cell--3-col mdl-cell--4-col-tablet">
-            <div class="content-box">
-              <h4 class="text-uppercase text-center">Stats</h4>
-              <p>Cards Send:</p>
-              <p>Revenue:</p>
-            </div>
-          </div>
+                <br><br>
+                <div>
+                  <%= link_to edit_automation_path(card),
+                              method: :get,
+                              data: { hover: "Edit"},
+                              class: 'mdl-button mdl-js-button mdl-button--raised tooltip' do %>
+                      <i class="material-icons">mode_edit</i>
+                  <% end %>
+                </div>
+                <br>
+                <div class="automation-delete-button">
+                  <%= link_to automation_path(card),
+                              remote: true,
+                              method: :delete,
+                              data: { confirm: "Are you sure you want to delete this automation? This can't be undone.",
+                                      hover: "Delete"},
+                              class: 'mdc-material-icons mdc-button__icon tooltip' do %>
+                      <i class="material-icons mdc-button__icon cancel-postcard-button">delete</i>
+                  <% end %>
+                </div>
+              </td>
+
+              <td class="automation-image">
+                <img class="automation" src="images/image-side-example.jpg">
+              </td>
+
+              <td class="automation-data">
+                <h4>Stats</h4>
+                <p>Cards Send:</p>
+                <p>Revenue:</p>
+              </td>
+            </tr>
+          </table>
+
         </div>
       </div>
     </div>

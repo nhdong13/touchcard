@@ -1,5 +1,7 @@
 // Overide mdl primary colors
 
+@import "@material/elevation/mixins";
+
 //$color-primary: "90, 60, 140";
 //$color-primary-dark: "70, 40,140";
 //$color-accent: "245, 140, 40";
@@ -19,14 +21,25 @@ html > body {
 }
 
 
-.white-bg {
-  background: white;
-}
+//.white-bg {
+//  background: white;
+//}
 
+
+.main-layout-grid {
+  max-width: 960px;
+}
 .full-width {
   width: 100%;
 }
 
+// Simple panel to match Material Design layout
+//
+.panel {
+  @include mdc-elevation(1);
+  @include white-bg();
+  padding: 0.01em 1em 1em 1em;  // 0.01em top fixes H child, which ignores own padding unless parent != 0
+}
 
 //a {
 //  color: black;

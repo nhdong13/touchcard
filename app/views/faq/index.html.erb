@@ -1,26 +1,19 @@
-<div class="mdc-layout-grid">
-  <div class="mdc-layout-grid__inner white-bg mdc-elevation--z1">
-    <div class="mdc-layout-grid__cell  mdc-layout-grid__cell--span-12">
-      <div class="faq">
-        <section>
-          <h3 class="uppercase">FAQ</h3>
-          <dl class="mdl-list">
-            <% @questions.each_with_index do |question, i| %>
-                <dt class="mdl-list__item">
-                  <strong><%= "#{ i + 1}) #{question[:question]}" %></strong>
-                </dt>
-                <dd class="mdl-list__item-secondary-content"><%= question[:answer] %></dd>
-                <br>
-            <% end %>
-          </dl>
-        </section>
+<div class="panel faq">
+  <section>
+    <h3>FAQ</h3>
+    <dl class="mdl-list">
+      <% @questions.each_with_index do |question, i| %>
+          <dt class="mdl-list__item">
+            <strong><%= "#{ i + 1}) #{question[:question]}" %></strong>
+          </dt>
+          <dd class="mdl-list__item-secondary-content"><%= question[:answer] %></dd>
+          <br>
+      <% end %>
+    </dl>
+  </section>
 
-        <section>
-          <h3 class="uppercase">Support</h3>
-          For further questions email us <a href="mailto:info@touchcard.co">info@touchcard.co</a>
-        </section>
-      </div>
-
-    </div>
-  </div>
+  <section>
+    <h3 class="uppercase">Support</h3>
+    For further questions email us <a href="mailto:info@touchcard.co">info@touchcard.co</a>
+  </section>
 </div>
