@@ -1,5 +1,4 @@
 <div class="dashboard top-m-20">
-
   <section class="overview">
     <div class="mdc-layout-grid">
       <div class="mdc-layout-grid__inner">
@@ -39,10 +38,10 @@
     <div class="mdc-layout-grid__inner">
       <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12">
         <section class="cards-sent">
-          <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp full-width">
+          <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
             <thead>
             <tr>
-              <th class="mdl-data-table__cell--non-numeric full-width">Status</th>
+              <th class="mdl-data-table__cell--non-numeric">Status</th>
               <th class="text-center">Name</th>
               <th class="text-center">Location</th>
             </tr>
@@ -58,6 +57,20 @@
                   </td>
                   <td><%= postcard.customer.full_name %></td>
                   <td><%= postcard.city %>, <%= postcard.state %>, <%= postcard.country %></td>
+                  <td>
+                    <% unless postcard.canceled || postcard.sent %>
+                        <%= link_to(cancel_postcard_dashboard_path(postcard),
+                                    method: :patch,
+                                    data: {
+                                        confirm:
+                                            "Are you sure you want to cancel this postcard? This can't be undone.",
+                                        hover: "Cancel this postcard"},
+                                    class: 'mdc-material-icons mdc-button__icon tooltip',
+                                    remote: true) do %>
+                            <i class="material-icons mdc-button__icon cancel-postcard-button">cancel</i>
+                        <% end %>
+                    <% end %>
+                  </td>
                 </tr>
             <% end %>
             </tbody>
@@ -67,7 +80,4 @@
       </div>
     </div>
   </div>
-
-
-
 </div>
