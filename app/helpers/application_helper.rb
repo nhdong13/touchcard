@@ -1,5 +1,5 @@
 module ApplicationHelper
   def current_class?(path)
-    path == request.path ? 'is-active' : ''
+    path == request.path ? 'mdc-tab--active' : ''
   end
 end

@@ -1,0 +1,25 @@
+// Place all the styles related to the dashboard controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+
+.cancel-postcard-button {
+  color: grey;
+}
+
+
+.mdl-data-table {
+  td, th {
+    text-align: left;
+  }
+}
+.sales-realized-card {
+  @include white-bg();
+}
+
+.cards-sent-card {
+  @include white-bg();
+}
+
+.scheduled-cards-container {
+  @include top-m-20();
+}
