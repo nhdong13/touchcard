@@ -1,14 +1,5 @@
 <div class="card-page" id="vueEnabledCardEditor">
-  <%= form_with url: automations_path,
-                html: {
-                    class: "direct-upload",
-                    enctype: "multipart/form-data",
-                    data: {
-                        'form-data' => (@s3_direct_post.fields),
-                        'url' => @s3_direct_post.url,
-                        'host' => URI.parse(@s3_direct_post.url).host
-                    }
-                } do |form| %>
+  <%= form_with url: automations_path do |form| %>
       <%= form.submit "Save it" %>
       <section>
         <div class="mdl-grid">

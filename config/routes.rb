@@ -62,6 +62,9 @@ Rails.application.routes.draw do
     get 'select_type', :on => :collection
   end
 
+  # Routes for AWS Controller (to sign S3 uploads)
+  get '/aws/sign', to: 'aws#sign'
+
   # Shopify Engine
   root :to => 'automations#index' # See comments in controller
   mount ShopifyApp::Engine, at: '/'
