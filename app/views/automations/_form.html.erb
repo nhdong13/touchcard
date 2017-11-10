@@ -1,27 +1,17 @@
 <div class="card-page" id="vueEnabledCardEditor">
 
-  <%= form_with path: automations_path(@card_order), local: true do |form| %>
+  <%= form_with(model: automation, url: url, local: true) do |form| %>
       <%= form.submit "Save it" %>
       <br><br>
       <section>
         <div>
-          <!--<div class="mdc-switch">-->
-          <!-- %= form.check_box "enable-discount",
-                             id: "basic-switch",
-                             class:"mdc-switch__native-control",
-                             "v-model": "enableDiscount" % -->
-          <!--<div class="mdc-switch__background">-->
-          <!--<div class="mdc-switch__knob"></div>-->
-          <!--</div>-->
-          <!--</div>-->
-          <!--<label for="basic-switch" class="mdc-switch-label">off/on</label>-->
           <div v-if="enableDiscount">
             <div>
               <div>
-                Percent:<br><%= form.number_field "discount_pct", id: "percent", pattern: /-?[0-9]*(\.[0-9]+)?/ %>
+                Percent:<br><%= form.number_field :discount_pct, id: "percent", pattern: /-?[0-9]*(\.[0-9]+)?/ %>
               </div>
               <div>
-                Weeks til expiration:<br><%= form.number_field "discount_exp", id: "exp", pattern: /-?[0-9]*(\.[0-9]+)?/ %>
+                Weeks til expiration:<br><%= form.number_field :discount_exp, id: "exp", pattern: /-?[0-9]*(\.[0-9]+)?/ %>
               </div>
             </div>
           </div>
@@ -35,8 +25,3 @@
 
   <% end %>
 </div>
-
-
-
-
-

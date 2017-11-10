@@ -1,1 +1,1 @@
-<%= render 'form', card_order: @card_order %>
+<%= render 'form', automation: @automation.becomes(CardOrder), url: automation_path(@automation) %>

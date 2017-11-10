@@ -9,8 +9,7 @@ class AutomationsController < BaseController
   end
 
   def new
-    puts params.to_yaml
-    @card_order = @current_shop.card_orders.new
+    @automation = @current_shop.card_orders.new
 
     # this is maybe not necessary --- we are using nested attributes
     # @card_side_back = @card.build_card_side_back(is_back: true)
@@ -20,23 +19,14 @@ class AutomationsController < BaseController
 
 
   def edit
-    puts params.to_yaml
-    # puts params.to_yaml
-    # @card = CardOrder.find(params[:id])
   end
 
   def show
-    puts params.to_yaml
   end
 
   def update
-    puts params.to_yaml
-    # @card = CardOrder.find(params[:id])
-    # @card.update(permitted_params)
-    # redirect_to action: 'index'
-
-    if @card_order.update(card_order_params)
-      redirect_to @card_order
+    if @automation.update(automation_params)
+      redirect_to automations_path, flash: { notice: "You've sucessfully update automation"}
     else
       render :edit
     end
@@ -44,25 +34,20 @@ class AutomationsController < BaseController
 
 
   def create
-    puts params.to_yaml
-    # CardOrder.create(type: 'PostSaleOrder', shop: @current_shop);
-    # redirect_to action: 'index'
+    @automation = @current_shop.post_sale_orders.create(automation_params)
 
-    # Type could come from as hidden field, param, etc
-    create_params = {type: 'PostSaleOrder'}.merge(card_order_params)
-    @card_order = @current_shop.card_orders.create(create_params)
-    if @card_order.save
+    if @automation.save
       redirect_to action: 'index', flash: { notice: "Automation successfully created" }
     else
-      flash[:error] = @card_order.errors.full_messages.join("\n")
+      flash[:error] = @automation.errors.full_messages.join("\n")
       render :new
     end
   end
 
 
   def destroy
-    @card_order.archive
-    @card_order.destroy_with_sides
+    @automation.archive
+    @automation.destroy_with_sides
 
     # TODO: Rescue exception
   # rescue
@@ -72,10 +57,10 @@ class AutomationsController < BaseController
   private
 
   def set_card_order
-    @card_order = @current_shop.card_orders.find(params[:id])
+    @automation = @current_shop.card_orders.find(params[:id])
   end
 
-  def card_order_params
+  def automation_params
     params.require(:card_order).permit(
       :type,
       :enabled,
@@ -86,17 +71,4 @@ class AutomationsController < BaseController
       card_side_back_attributes: [:image]
     )
   end
-
-  # def permitted_params
-  #   params.require(:card_order).permit(
-  #     :type,
-  #     :enabled,
-  #     :discount_exp,
-  #     :discount_pct,
-  #     filter_attributes: [:filter_data],
-  #     card_side_front_attributes: [:image],
-  #     card_side_back_attributes: [:image]
-  #   )
-  # end
-
 end
