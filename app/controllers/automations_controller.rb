@@ -1,17 +1,15 @@
 class AutomationsController < BaseController
-  before_action :set_s3_direct_post, only: [:new, :edit, :update, :create]
+  before_action :set_card_order, only: [:edit, :update, :show, :destroy]
 
   def index
-    @card_orders = @current_shop.card_orders.where(archived: false)
+    @card_orders = @current_shop.card_orders.active
   end
 
   def select_type
   end
 
   def new
-    # @types = CardOrder::TYPES
-    @card = @current_shop.card_orders.create
-    # byebug
+    @automation = @current_shop.card_orders.new
 
     # this is maybe not necessary --- we are using nested attributes
     # @card_side_back = @card.build_card_side_back(is_back: true)
@@ -19,54 +17,57 @@ class AutomationsController < BaseController
     # @filter = Filter.create(card_order: @card)
   end
 
+
   def edit
-    puts params.to_yaml
-    @card = CardOrder.find(params[:id])
   end
 
   def show
   end
 
   def update
-    @card = CardOrder.find(params[:id])
-    @card.update(permitted_params)
+    if @automation.update(automation_params)
+      redirect_to automations_path, flash: { notice: "You've sucessfully update automation"}
+    else
+      render :edit
+    end
   end
+
 
   def create
-    puts params.to_yaml
-    CardOrder.create(type: 'PostSaleOrder', shop: @current_shop);
-    redirect_to action: 'index'
+    @automation = @current_shop.post_sale_orders.create(automation_params)
+
+    if @automation.save
+      redirect_to action: 'index', flash: { notice: "Automation successfully created" }
+    else
+      flash[:error] = @automation.errors.full_messages.join("\n")
+      render :new
+    end
   end
 
+
   def destroy
-    @card = CardOrder.find(params[:id])
-    @card.archive
-    if @card.safe_to_destroy?
-      # The CardOrder / CardSide relation is backwards for easy destroy propagation, so this is a workaround
-      @card.transaction do
-        @card.destroy
-        CardSide.find(@card.card_side_back_id).destroy
-        CardSide.find(@card.card_side_front_id).destroy
-      end
-    end
+    @automation.archive
+    @automation.destroy_with_sides
+
+    # TODO: Rescue exception
+  # rescue
+    # Catch error from transaction and do something
   end
 
   private
 
-  def set_s3_direct_post
-    @s3_direct_post = S3_BUCKET
-      .presigned_post(
-        key: "uploads/#{SecureRandom.uuid}/${filename}",
-        success_action_status: '201',
-        acl: 'public-read')
+  def set_card_order
+    @automation = @current_shop.card_orders.find(params[:id])
   end
 
-  def permitted_params
+  def automation_params
     params.require(:card_order).permit(
       :type,
       :enabled,
       :discount_exp,
       :discount_pct,
+      :international,
+      :send_delay,
       filter_attributes: [:filter_data],
       card_side_front_attributes: [:image],
       card_side_back_attributes: [:image]

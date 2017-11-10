@@ -1,0 +1,448 @@
+// Overide mdl primary colors
+
+@import "@material/elevation/mixins";
+
+//$color-primary: "90, 60, 140";
+//$color-primary-dark: "70, 40,140";
+//$color-accent: "245, 140, 40";
+
+//$color-primary: "156, 39, 176";
+//$color-primary-dark: "123,31,162";
+//$color-accent: "255, 152, 0";
+
+
+
+//body {
+//  background: #f4f6f8;
+//}
+html > body {
+  //font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif !important;
+  font:normal 13px "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Geneva, Verdana, sans-serif;
+}
+
+
+//.white-bg {
+//  background: white;
+//}
+
+
+.main-layout-grid {
+  max-width: 960px;
+}
+.full-width {
+  width: 100%;
+}
+
+// Simple panel to match Material Design layout
+//
+.panel {
+  @include mdc-elevation(1);
+  @include white-bg();
+  padding: 0.01em 1em 1em 1em;  // 0.01em top fixes H child, which ignores own padding unless parent != 0
+}
+
+//a {
+//  color: black;
+//  text-decoration: none;
+//}
+//
+//.mdl-layout__container {
+//  position: static;
+//}
+//
+//.mdl-layout__header-row {
+//  padding: 0;
+//}
+//
+//.mdl-layout__header {
+//  background-color: white;
+//}
+//
+//.mdl-tabs__tab-bar {
+//  justify-content: flex-start;
+//}
+//
+
+
+
+
+//.mdl-36 {
+//  font-size: 36px;
+//}
+//
+//.mdl-58 {
+//  font-size: 58px;
+//}
+//
+//h1 .material-icons {
+//  font-size: inherit;
+//}
+//
+//h3 {
+//  margin-top: 0;
+//}
+//
+//// END OVERIDE MDL
+//
+//section {
+//  margin: 0 0 1.2em;
+//  background: #FBFBFB;
+//  padding: 1em;
+//  // h2 {
+//  //   color: lightgrey;
+//  //   text-transform: uppercase;
+//  //   font-weight: normal;
+//  //   margin: 0.25em 0 1em;
+//  // }
+//}
+//
+//.discount-box {
+//  display: none;
+//}
+//
+//.recommend {
+//  margin-top: 2em;
+//  strong {
+//    font-size: 110%;
+//  }
+//}
+//
+//.card-side {
+//  width: 100%;
+//  border: 1px solid #eee;
+//  background: #fff;
+//  box-shadow: 0 1px 2px rgba(0, 0, 0, .1);
+//  // position: relative;
+//  .layers {
+//    position: relative;
+//    &:before {
+//      display: block;
+//      content: "";
+//      width: 100%;
+//      padding-top: (17 / 25) * 100%;
+//    }
+//    > .content {
+//      position: absolute;
+//      top: 0;
+//      left: 0;
+//      right: 0;
+//      bottom: 0;
+//    }
+//  }
+//  .discount{
+//    width: 94%;
+//    height: 91.17647059%;
+//    left: 3%;
+//    top: 4.41176471%;
+//    z-index: 5;
+//    .percent {
+//      // font-size: 2vw;
+//      font-weight: 700;
+//      margin: 0.4006vw 0 0;
+//    }
+//  }
+//}
+//
+//.postage{
+//  left: 42.87756074%;
+//  top: 38.19201121%;
+//  width: 52.73939971%;
+//  height: 55.99159075%;
+//  // border: 1px dotted red;
+//  z-index: 6;
+//  background: white;
+//  pointer-events: none;
+//  img {
+//    width: 100%;
+//  }
+//}
+//
+//.code {
+//  font-size: 1.1333vw;
+//}
+//
+//.expiration {
+//  margin-top: 0.7333vw;
+//  font-size: 0.6vw;
+//}
+//
+//.box {
+//  width: 28%;
+//  height: 25%;
+//  text-align: center;
+//  font-family: 'Montserrat';
+//  color: black;
+//}
+//
+//.layers {
+//  position: relative;
+//  .layer {
+//    position: absolute;
+//  }
+//}
+//
+//.discount-checkbox {
+//  display: none;
+//}
+//
+//.percent {
+//  // font-size: 2vw;
+//  font-weight: 700;
+//  margin: 0.4006vw 0 0;
+//}
+//
+//.code {
+//  font-size: 1.1333vw;
+//}
+//
+//.expiration {
+//  margin-top: 0.7333vw;
+//  font-size: 0.6vw;
+//}
+//
+//.bleed {
+//  left: 2%;
+//  top: 2.94117647%;
+//  width: 96%;
+//  height: 94.11764706%;
+//  border: 1px dotted red;
+//  z-index: 2;
+//}
+//
+//.safe-area{
+//  width: 94%;
+//  height: 91.17647059%;
+//  left: 3%;
+//  top: 4.41176471%;
+//  border: 1px dotted green;
+//  z-index: 3;
+//}
+//
+//.box {
+//  width: 28%;
+//  height: 25%;
+//  text-align: center;
+//  font-family: 'Montserrat';
+//  color: black;
+//}
+//
+//.card-side.is-editable {
+//  .discount {
+//    .box {
+//      cursor: move;
+//    }
+//    .box:hover{
+//      background: rgba(255,255,255, 0.3);
+//    }
+//  }
+//}
+//
+//.bleed {
+//  // display: none;
+//}
+//// new style end
+//
+//.scopes-msg {
+//  padding: 10% 15%;
+//  font-size: large;
+//}
+//
+//
+//#mail_support_line {
+//  font-style: italic;
+//  font-size: small;
+//}
+//
+//.navbar-touchcard{
+//  background: white;
+//  a {
+//    color: black;
+//  }
+//  li:hover a, li:active a, li a:focus{
+//    text-decoration: underline;
+//    background: none;
+//  }
+//  .active {
+//    a:focus {
+//      text-decoration: none;
+//    }
+//    background: none;
+//    text-decoration: none;
+//    font-weight: bold;
+//  }
+//  li.active:after{
+//    content: ' ';
+//    display: block;
+//    background: blue;
+//    height: 3px;
+//  }
+//}
+//
+//// DASHBOARD
+//
+//.dashboard{
+//  .table-wrap{
+//    background: white;
+//    padding: 2em;
+//  }
+//
+//  .table > tbody > tr > td {
+//    vertical-align: middle;
+//  }
+//
+//  .label {
+//    font-size: 120%;
+//    font-weight: normal;
+//    padding: 0.4em 0.8em;
+//    margin-top: 0.1em;
+//    display: inline-block;
+//  }
+//
+//  .sales {
+//    cursor: pointer;
+//  }
+//}
+//
+//.card {
+//  box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+//  background: #fff;
+//  border-radius: 2px;
+//  padding: 1em;
+//}
+//
+//.card.flat{
+//  box-shadow: none;
+//}
+//
+//.card-info{
+//  min-height: 8em;
+//  width: 100%;
+//  margin-bottom: 1.25em;
+//  padding: 0.25em;
+//  font-size: 80%;
+//  .card-icon{
+//    float: left;
+//    height: 2em;
+//    width: 2em;
+//    text-align: center;
+//    font-size: 375%;
+//    line-height: 220%;
+//  }
+//  .card-content{
+//    padding: 5px 10px;
+//    margin-left: 7.5em;
+//  }
+//  .card-heading{
+//    font-size: 150%;
+//    white-space: nowrap;
+//    overflow: hidden;
+//    text-overflow: ellipsis;
+//  }
+//  .card-body{
+//    display: block;
+//    font-weight: bold;
+//    font-size: 175%;
+//  }
+//  .card-text{
+//    font-size: 150%;
+//  }
+//}
+//
+//.bg-primary {
+//  color: white;
+//  background-color: rgb(156, 39, 176);
+//}
+//
+//.bg-success {
+//  color: white;
+//  background: rgb(245, 140, 40);
+//}
+//
+//.jumbotron {
+//  padding-top: 30px;
+//  padding-bottom: 30px;
+//  margin-bottom: 30px;
+//  color: inherit;
+//  background-color: #eee;
+//
+//  p {
+//    margin-bottom: 15px;
+//    font-size: 21px;
+//    font-weight: 200;
+//  }
+//}
+//
+//.alert-info {
+//  background-color: #d9edf7;
+//  border-color: #bce8f1;
+//  color: #31708f;
+//}
+//
+//.alert {
+//  padding: 15px;
+//  margin-bottom: 20px;
+//  border: 1px solid transparent;
+//  border-radius: 4px;
+//}
+//
+//.help-block {
+//  color: gray;
+//}
+//
+//// CUSTOM
+//
+//.text-center {
+//  text-align: center;
+//}
+//
+//.text-right {
+//  text-align: right;
+//}
+//
+//.pull-right {
+//  float: right;
+//}
+//
+//.top-m-20 {
+//  margin-top: 20px;
+//}
+//
+//.uppercase {
+//  text-transform: uppercase;
+//  color: #777;
+//}
+//
+//.container {
+//  margin-right: auto;
+//  margin-left: auto;
+//  padding-left: 15px;
+//  padding-right: 15px;
+//}
+//
+//.f-s-500 {
+//  font-size: 500%;
+//}
+//
+
+
+//input[type="text"], input[type="number"] {
+//  padding: 10px;
+//  border: solid 1px #dcdcdc;
+//  transition: box-shadow 0.3s, border 0.3s;
+//}
+//input[type="text"]:focus,
+//input[type="text"].focus {
+//  border: solid 1px #707070;
+//  box-shadow: 0 0 5px 1px #969696;
+//}
+//
+//input[type="number"] {
+//  width: 40px;
+//  margin-left: 2%;
+//}
+//
+//.turbolinks-progress-bar {
+//  height: 2px;
+//  background-color: #f0c0ff;
+//  //  visibility: hidden;
+//}

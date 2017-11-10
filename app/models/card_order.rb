@@ -23,6 +23,8 @@ class CardOrder < ApplicationRecord
 
   delegate :current_subscription, to: :shop
 
+  scope :active, -> { where(archived: false) }
+
   def send_postcard?(order)
     return true unless filters.count > 0
     spend = order.total_price / 100.0
@@ -102,6 +104,17 @@ class CardOrder < ApplicationRecord
 
   def safe_to_destroy?
     !postcards.exists?
+  end
+
+  # The CardOrder / CardSide relation is backwards for easy destroy propagation, so this is a workaround
+  def destroy_with_sides
+    return unless self.safe_to_destroy?
+
+    ActiveRecord::Base.transaction do
+      self.destroy!
+      CardSide.find(@card_order.card_side_back_id).destroy!
+      CardSide.find(@card_order.card_side_front_id).destroy!
+    end
   end
 
   private

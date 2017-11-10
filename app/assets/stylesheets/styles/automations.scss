@@ -1,0 +1,41 @@
+// Place all the styles related to the automations controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+
+@import "../base/mixins";
+
+.automation-listing {
+  //@include white-bg();
+  //min-width: 800px;
+  width: 640px;
+}
+
+.automation-main {
+  // background: lightsalmon;
+}
+
+
+.automation-controls {
+  // background: cyan;
+}
+
+.automation-controls > div {
+  text-align: center;
+  // background: cyan;
+}
+
+
+.automation-image {
+  // background: darkorange;
+}
+
+.automation-image img{
+  //align: float;
+  width: 300px;
+  padding: 1em;
+}
+
+
+.automation-data {
+  // background: greenyellow;
+}

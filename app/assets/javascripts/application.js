@@ -15,7 +15,7 @@
 
 // --- Libraries ---
 //= require rails-ujs
-//= require material
+// require material-components-web
 //= require turbolinks
 //= require axios
 //= require vue
