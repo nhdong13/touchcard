@@ -26,7 +26,7 @@ class AutomationsController < BaseController
 
   def update
     if @automation.update(automation_params)
-      redirect_to automations_path, flash: { notice: "You've sucessfully update automation"}
+      redirect_to automations_path, flash: { notice: "Automation successfully updated"}
     else
       render :edit
     end
