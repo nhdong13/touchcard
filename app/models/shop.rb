@@ -1,5 +1,6 @@
 class Shop < ActiveRecord::Base
   has_many :card_orders, dependent: :destroy
+  has_many :post_sale_orders, dependent: :destroy
   has_many :postcards, through: :card_orders
   has_many :charges
   has_many :subscriptions

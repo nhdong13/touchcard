@@ -1,0 +1,35 @@
+<div class="card-page" id="vueEnabledCardEditor">
+
+  <%= form_with(model: automation, url: url, local: true) do |form| %>
+      <%= form.submit "Save it" %>
+      <br><br>
+      <section>
+        <div>
+          <div v-if="enableDiscount">
+            <div>
+              <div>
+                Percent:<br><%= form.number_field :discount_pct, id: "percent", pattern: /-?[0-9]*(\.[0-9]+)?/ %>
+              </div>
+              <div>
+                Weeks til expiration:<br><%= form.number_field :discount_exp, id: "exp", pattern: /-?[0-9]*(\.[0-9]+)?/ %>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="field">
+          <%= form.check_box :international %>
+          <%= form.label :international, "Send to international addresses" %>
+        </div>
+        <div class="field">
+          <%= form.label :international, "Send delay" %>
+          <%= form.number_field :send_delay %>
+        </div>
+      </section>
+      <section>
+        <%= render partial: "card_side", locals: { form: form, side: :front } %>
+        <%= render partial: "card_side", locals: { form: form, side: :back} %>
+        <!-- %= render partial: "card_side", locals: { form: form } % -->
+      </section>
+
+  <% end %>
+</div>

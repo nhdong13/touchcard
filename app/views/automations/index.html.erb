@@ -1,7 +1,7 @@
 <div class="top-m-20">
   <div class="text-center">
     <%= link_to 'New Automation', new_automation_path,
-                class: "mdl-button mdl-js-button mdl-button--raised mdl-button--colored" %>
+                class: "mdc-button" %>
   </div>
   <% @card_orders.each do |card| %>
 
@@ -43,7 +43,7 @@
                 </div>
                 <br>
                 <div class="automation-delete-button">
-                  <%= link_to automation_path(card),
+                  <%= link_to card,
                               remote: true,
                               method: :delete,
                               data: { confirm: "Are you sure you want to delete this automation? This can't be undone.",
@@ -54,7 +54,7 @@
                 </div>
               </td>
               <td class="automation-image">
-                <img class="automation" src="images/image-side-example.jpg">
+                <img src="/images/image-side-example.jpg">
               </td>
               <td class="automation-data">
                 <h4>Stats</h4>
