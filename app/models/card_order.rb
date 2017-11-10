@@ -112,8 +112,8 @@ class CardOrder < ApplicationRecord
 
     ActiveRecord::Base.transaction do
       self.destroy!
-      CardSide.find(@card_order.card_side_back_id).destroy!
-      CardSide.find(@card_order.card_side_front_id).destroy!
+      CardSide.find(self.card_side_back_id).destroy!
+      CardSide.find(self.card_side_front_id).destroy!
     end
   end
 

@@ -1,5 +1,5 @@
 class AutomationsController < BaseController
-  before_action :set_card_order, only: [:edit, :update, :show, :destroy]
+  before_action :set_automation, only: [:edit, :update, :show, :destroy]
 
   def index
     @card_orders = @current_shop.card_orders.active
@@ -56,7 +56,7 @@ class AutomationsController < BaseController
 
   private
 
-  def set_card_order
+  def set_automation
     @automation = @current_shop.card_orders.find(params[:id])
   end
 
