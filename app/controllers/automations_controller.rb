@@ -66,6 +66,8 @@ class AutomationsController < BaseController
       :enabled,
       :discount_exp,
       :discount_pct,
+      :international,
+      :send_delay,
       filter_attributes: [:filter_data],
       card_side_front_attributes: [:image],
       card_side_back_attributes: [:image]

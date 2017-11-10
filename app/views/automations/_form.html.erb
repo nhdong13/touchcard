@@ -16,6 +16,14 @@
             </div>
           </div>
         </div>
+        <div class="field">
+          <%= form.check_box :international %>
+          <%= form.label :international, "Send to international addresses" %>
+        </div>
+        <div class="field">
+          <%= form.label :international, "Send delay" %>
+          <%= form.number_field :send_delay %>
+        </div>
       </section>
       <section>
         <%= render partial: "card_side", locals: { form: form, side: :front } %>
