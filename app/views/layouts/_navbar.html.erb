@@ -1,12 +1,11 @@
-
 <header class="mdc-toolbar main-nav">
   <div class="mdc-toolbar__row">
     <div class="mdc-toolbar__section mdc-toolbar__section--align-start mdc-toolbar__section--shrink-to-fit">
         <nav id="toolbar-tab-bar" class="mdc-tab-bar">
           <%= link_to('Dashboard', dashboard_index_path,
                       class: "#{current_class?(dashboard_index_path)} mdc-tab") %>
-          <%= link_to('Automations', app_path,
-                      class: "#{current_class?(app_path)} mdc-tab") %>
+          <%= link_to('Automations', root_path,
+                      class: "#{current_class?(root_path)} mdc-tab") %>
           <%= link_to('Help', faq_path,
                       class: "#{current_class?(faq_path)} mdc-tab") %>
           <%= link_to('Subscription', new_subscription_path,
