@@ -108,10 +108,6 @@ GEM
       activesupport (>= 3.1.0)
       tzinfo
     byebug (8.2.4)
-    carrierwave (1.1.0)
-      activemodel (>= 4.0.0)
-      activesupport (>= 4.0.0)
-      mime-types (>= 1.16)
     clipboard (1.1.0)
     coffee-rails (4.2.2)
       coffee-script (>= 2.2.0)
@@ -215,7 +211,6 @@ GEM
       sass (>= 3.4)
     method_source (0.8.2)
     mime-types (2.99.3)
-    mini_magick (4.8.0)
     mini_portile2 (2.2.0)
     minitest (5.10.3)
     momentjs-rails (2.11.1)
@@ -404,7 +399,6 @@ DEPENDENCIES
   axios_rails (~> 0.14.0)
   business_time (~> 0.7)
   byebug
-  carrierwave
   clipboard (~> 1.0)
   coffee-rails (~> 4.2.0)
   daemons (~> 1.2)
@@ -417,7 +411,6 @@ DEPENDENCIES
   lob (~> 2.1)
   mailgunner (~> 2.4)
   material_components_web-sass
-  mini_magick
   momentjs-rails (>= 2.8.1)
   newrelic_rpm (~> 3.15)
   pg
