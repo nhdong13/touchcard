@@ -10,11 +10,8 @@ class AutomationsController < BaseController
 
   def new
     @automation = @current_shop.card_orders.new
-
-    # this is maybe not necessary --- we are using nested attributes
-    # @card_side_back = @card.build_card_side_back(is_back: true)
-    # @card_side_front = @card.build_card_side_front(is_back: false)
-    # @filter = Filter.create(card_order: @card)
+    @automation.build_card_side_back(is_back: true)
+    @automation.build_card_side_front(is_back: false)
   end
 
 
@@ -47,8 +44,7 @@ class AutomationsController < BaseController
 
   def destroy
     @automation.archive
-    @automation.destroy_with_sides
-
+    @automation.safe_destroy!
     # TODO: Rescue exception
   # rescue
     # Catch error from transaction and do something

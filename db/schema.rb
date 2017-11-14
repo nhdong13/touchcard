@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170922151439) do
+ActiveRecord::Schema.define(version: 20171113074535) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -86,8 +86,6 @@ ActiveRecord::Schema.define(version: 20170922151439) do
     t.string "status"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "card_side_front_id", null: false
-    t.integer "card_side_back_id", null: false
     t.integer "winback_delay"
     t.integer "lifetime_purchase_threshold"
     t.boolean "archived", default: false
@@ -101,6 +99,8 @@ ActiveRecord::Schema.define(version: 20170922151439) do
     t.datetime "updated_at", null: false
     t.integer "discount_y"
     t.integer "discount_x"
+    t.bigint "card_order_id"
+    t.index ["card_order_id"], name: "index_card_sides_on_card_order_id"
   end
 
   create_table "charges", id: :serial, force: :cascade do |t|
@@ -323,9 +323,8 @@ ActiveRecord::Schema.define(version: 20170922151439) do
   end
 
   add_foreign_key "addresses", "customers"
-  add_foreign_key "card_orders", "card_sides", column: "card_side_back_id"
-  add_foreign_key "card_orders", "card_sides", column: "card_side_front_id"
   add_foreign_key "card_orders", "shops"
+  add_foreign_key "card_sides", "card_orders"
   add_foreign_key "charges", "card_orders"
   add_foreign_key "charges", "shops"
   add_foreign_key "checkouts", "customers"

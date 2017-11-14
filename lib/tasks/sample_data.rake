@@ -15,16 +15,12 @@ namespace :db do
   end
 
   def create_card_order_and_sides (shop)
-    card_side_back = CardSide.create!(is_back: true)
-    card_side_front = CardSide.create!(is_back: false)
     shop.card_orders.create!(
       type: 'PostSaleOrder',
       discount_pct: rand(10..30),
       enabled: true,
       international: false,
       send_delay: 1,
-      card_side_front_id: card_side_front.id,
-      card_side_back_id: card_side_back.id,
     )
   end
 

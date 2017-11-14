@@ -2,10 +2,16 @@ class CardOrder < ApplicationRecord
   TYPES = ['PostSaleOrder', 'CustomerWinbackOrder', 'LifetimePurchaseOrder', 'AbandonedCheckout']
 
   belongs_to :shop
-  belongs_to :card_side_front, class_name: "CardSide",
-              foreign_key: "card_side_front_id"
-  belongs_to :card_side_back, class_name: "CardSide",
-              foreign_key: "card_side_back_id"
+  has_one :card_side_front,
+          -> { where(is_back: false) },
+          class_name: "CardSide",
+          dependent: :destroy
+
+  has_one :card_side_back,
+          -> { where(is_back: true) },
+          class_name: "CardSide",
+          dependent: :destroy
+
   has_many :filters, dependent: :destroy
   has_many :postcards
 
@@ -54,8 +60,8 @@ class CardOrder < ApplicationRecord
   end
 
   def ensure_defaults
-    self.card_side_front ||= CardSide.create!(is_back: false)
-    self.card_side_back ||= CardSide.create!(is_back: true)
+    self.build_card_side_front(is_back: false) unless self.card_side_front
+    self.build_card_side_back(is_back: true) unless self.card_side_back
     self.send_delay = 1 if send_delay.nil? && type == "PostSaleOrder"
     self.international = false if international.nil?
     self.enabled = false if enabled.nil?
@@ -102,19 +108,8 @@ class CardOrder < ApplicationRecord
     self.save!
   end
 
-  def safe_to_destroy?
-    !postcards.exists?
-  end
-
-  # The CardOrder / CardSide relation is backwards for easy destroy propagation, so this is a workaround
-  def destroy_with_sides
-    return unless self.safe_to_destroy?
-
-    ActiveRecord::Base.transaction do
-      self.destroy!
-      CardSide.find(self.card_side_back_id).destroy!
-      CardSide.find(self.card_side_front_id).destroy!
-    end
+  def safe_destroy!
+    self.destroy! unless postcards.exists?
   end
 
   private

@@ -25,10 +25,21 @@
           <%= form.number_field :send_delay %>
         </div>
       </section>
+      <br><br>
       <section>
-        <%= render partial: "card_side", locals: { form: form, side: :front } %>
-        <%= render partial: "card_side", locals: { form: form, side: :back} %>
-        <!-- %= render partial: "card_side", locals: { form: form } % -->
+        <%= form.fields_for :card_side_back do |card_back| %>
+            <% if card_back.object.image %>
+              <%= image_tag card_back.object.image, class: 'card_side_image' %>
+            <% end %>
+             <%= card_back.file_field :image %>
+        <% end %>
+        <br><br>
+        <%= form.fields_for :card_side_front do |card_front| %>
+            <% if card_front.object.image %>
+                <%= image_tag card_front.object.image, class: 'card_side_image' %>
+            <% end %>
+            <%= card_front.file_field :image %>
+        <% end %>
       </section>
 
   <% end %>
