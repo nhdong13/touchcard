@@ -41,7 +41,7 @@
                 </div>
                 <br>
                 <div class="automation-delete-button">
-                  <%= link_to card,
+                  <%= link_to automation_path(card),
                               remote: true,
                               method: :delete,
                               data: { confirm: "Are you sure you want to delete this automation? This can't be undone.",
@@ -56,6 +56,7 @@
               </td>
               <td class="automation-data">
                 <h4>Stats</h4>
+                <p>Discount: <%= card.discount_pct %></p>
                 <p>Cards Send:</p>
                 <p>Revenue:</p>
               </td>

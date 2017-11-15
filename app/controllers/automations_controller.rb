@@ -5,8 +5,11 @@ class AutomationsController < BaseController
     @card_orders = @current_shop.card_orders.active
   end
 
-  def select_type
+  def show
   end
+
+  # def select_type
+  # end
 
   def new
     @automation = @current_shop.card_orders.new
@@ -18,28 +21,44 @@ class AutomationsController < BaseController
   def edit
   end
 
-  def show
-  end
+  # POST /automations
+  # POST /automations.json
 
-  def update
-    if @automation.update(automation_params)
-      redirect_to automations_path, flash: { notice: "Automation successfully updated"}
-    else
-      render :edit
-    end
-  end
-
-
+  # AND NOW DO THIS: TODO: And now copy over html / json responses
   def create
     @automation = @current_shop.post_sale_orders.create(automation_params)
+    respond_to do |format|
+      if @automation.save
+        flash[:notice] = "Automation successfully created"
+        format.html { redirect_to action: 'index'}
+        format.json { render json: @automation }
+      else
+        flash[:error] = @automation.errors.full_messages.join("\n")
+        format.html { render :new }
+        format.json { render json: @automation.errors, status: :unprocessable_entity }
+      end
+    end
 
-    if @automation.save
-      redirect_to action: 'index', flash: { notice: "Automation successfully created" }
-    else
-      flash[:error] = @automation.errors.full_messages.join("\n")
-      render :new
+  end
+
+  # PATCH/PUT /automations/1
+  # PATCH/PUT /automations/1.json
+  def update
+    respond_to do |format|
+      if @automation.update(automation_params)
+        flash[:notice] = "Automation successfully updated"
+        format.html { redirect_to automations_path }
+        format.json { render json: {}, status: :ok }
+      else
+        flash[:error] = @automation.errors.full_messages.join("\n")
+        format.html { render :edit }
+        format.json { render json: @automation.errors, status: :unprocessable_entity }
+      end
     end
   end
+
+
+
 
 
   def destroy

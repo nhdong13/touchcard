@@ -1,4 +1,28 @@
-<div class="card-page" id="vueEnabledCardEditor">
+<span class="card-page" id="vueEnabledCardEditor">
+
+  <%= content_tag :div,
+                  id: "automation-editor",
+                  data: {
+                      id: automation.id,
+                      automation: automation.to_json(only: [:type, :discount_pct, :discount_exp, :enabled, :international, :send_delay]),
+                      # players_attributes: team.players.to_json(except: [:team_id, :created_at, :updated_at]),
+                  } do %>
+
+      <button v-on:click="saveAutomation">Save</button>
+      <h3>{{automation.type}}</h3>
+
+      <input type="checkbox" v-model="enableDiscount">
+
+
+      <div v-if="enableDiscount">
+        <div>Discount Percent: <input type="number" min="0" max="100" v-model="automation.discount_pct"></div>
+        <div>Discount Expiration (weeks):<input type="number" min="1" max="999" v-model="automation.discount_exp"></div>
+      </div>
+
+  <% end %>
+
+  <br><br><br>
+  <hr />
 
   <%= form_with(model: automation, url: url, local: true) do |form| %>
       <%= form.submit "Save it" %>
