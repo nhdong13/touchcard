@@ -1,5 +1,6 @@
 class AutomationsController < BaseController
   before_action :set_automation, only: [:edit, :update, :show, :destroy]
+  before_action :set_aws_sign_endpoint, only: [:new, :edit]
 
   def index
     @card_orders = @current_shop.card_orders.active
@@ -58,9 +59,6 @@ class AutomationsController < BaseController
   end
 
 
-
-
-
   def destroy
     @automation.archive
     @automation.safe_destroy!
@@ -73,6 +71,10 @@ class AutomationsController < BaseController
 
   def set_automation
     @automation = @current_shop.card_orders.find(params[:id])
+  end
+
+  def set_aws_sign_endpoint
+    @aws_sign_endpoint = root_url + aws_sign_path
   end
 
   def automation_params

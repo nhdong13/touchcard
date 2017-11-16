@@ -15,9 +15,9 @@ class CardOrder < ApplicationRecord
   has_many :filters, dependent: :destroy
   has_many :postcards
 
-  accepts_nested_attributes_for :card_side_front
+  accepts_nested_attributes_for :card_side_front, update_only: true
   # , reject_if: :invalid_image_size
-  accepts_nested_attributes_for :card_side_back
+  accepts_nested_attributes_for :card_side_back, update_only: true
   # , reject_if: :invalid_image_size
   accepts_nested_attributes_for :filters,
     allow_destroy: true,

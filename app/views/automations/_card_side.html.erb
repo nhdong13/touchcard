@@ -15,7 +15,10 @@ of the rails form, because that automatically makes the form a multipart upload
 <h3 class="uppercase"></h3>
   <div>
     <div class="file-upload-stylized mdc-textfield full-width">
-      <%= form.file_field "image", id: side, class: "mdl-textfield__input", "@change" => "fileChanged" %>
+      <%= form.file_field "image",
+                          id: side,
+                          class: "mdl-textfield__input",
+                          "@change" => "fileChanged" %>
       <div>
         <small class="help-block">
           Image must be 1875px by 1275px including a 75px bleed -

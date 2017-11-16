@@ -1,70 +1,40 @@
-<span class="card-page" id="vueEnabledCardEditor">
+<%= content_tag :div,
+                id: "automation-editor",
+                data: {
+                    id: automation.id,
+                    automation: automation.to_json(include: [:card_side_front, :card_side_back]),
+                    # automation: automation.to_json(only: [:type, :discount_pct, :discount_exp, :enabled, :international, :send_delay, :card_side_back]),
+                    aws_sign_endpoint: aws_sign_endpoint
+                    # players_attributes: team.players.to_json(except: [:team_id, :created_at, :updated_at]),
+                } do %>
 
-  <%= content_tag :div,
-                  id: "automation-editor",
-                  data: {
-                      id: automation.id,
-                      automation: automation.to_json(only: [:type, :discount_pct, :discount_exp, :enabled, :international, :send_delay]),
-                      # players_attributes: team.players.to_json(except: [:team_id, :created_at, :updated_at]),
-                  } do %>
+    <button v-on:click="saveAutomation">Save</button>
+    <h3>{{automation.type}}</h3>
 
-      <button v-on:click="saveAutomation">Save</button>
-      <h3>{{automation.type}}</h3>
-
-      <input type="checkbox" v-model="enableDiscount">
+    <input type="checkbox" v-model="enableDiscount">
 
 
-      <div v-if="enableDiscount">
-        <div>Discount Percent: <input type="number" min="0" max="100" v-model="automation.discount_pct"></div>
-        <div>Discount Expiration (weeks):<input type="number" min="1" max="999" v-model="automation.discount_exp"></div>
-      </div>
+    <div v-if="enableDiscount">
+      <div>Discount Percent: <input type="number" min="0" max="100" v-model="automation.discount_pct"></div>
+      <div>Discount Expiration (weeks):<input type="number" min="1" max="999" v-model="automation.discount_exp"></div>
+    </div>
 
-  <% end %>
+    <hr />
 
-  <br><br><br>
-  <hr />
+    <h2>Front</h2>
+    Select an image: <input type="file" accept="image/png,image/jpeg"  v-on:change="onFrontImageFileChange">
+    <br>
+    <img class="card_side_image" v-bind:src="frontSideImage || automation.card_side_front.image">
 
-  <%= form_with(model: automation, url: url, local: true) do |form| %>
-      <%= form.submit "Save it" %>
-      <br><br>
-      <section>
-        <div>
-          <div v-if="enableDiscount">
-            <div>
-              <div>
-                Percent:<br><%= form.number_field :discount_pct, id: "percent", pattern: /-?[0-9]*(\.[0-9]+)?/ %>
-              </div>
-              <div>
-                Weeks til expiration:<br><%= form.number_field :discount_exp, id: "exp", pattern: /-?[0-9]*(\.[0-9]+)?/ %>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="field">
-          <%= form.check_box :international %>
-          <%= form.label :international, "Send to international addresses" %>
-        </div>
-        <div class="field">
-          <%= form.label :international, "Send delay" %>
-          <%= form.number_field :send_delay %>
-        </div>
-      </section>
-      <br><br>
-      <section>
-        <%= form.fields_for :card_side_back do |card_back| %>
-            <% if card_back.object.image %>
-              <%= image_tag card_back.object.image, class: 'card_side_image' %>
-            <% end %>
-             <%= card_back.file_field :image %>
-        <% end %>
-        <br><br>
-        <%= form.fields_for :card_side_front do |card_front| %>
-            <% if card_front.object.image %>
-                <%= image_tag card_front.object.image, class: 'card_side_image' %>
-            <% end %>
-            <%= card_front.file_field :image %>
-        <% end %>
-      </section>
+    <hr />
 
-  <% end %>
-</div>
+    <h2>Back</h2>
+    Select an image: <input type="file" accept="image/png,image/jpeg"  v-on:change="onBackImageFileChange">
+    <br>
+    <img class="card_side_image" v-bind:src="backSideImage || automation.card_side_back.image">
+
+    <hr />
+
+<% end %>
+
+
