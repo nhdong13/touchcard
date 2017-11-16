@@ -3,6 +3,6 @@
   var row = document.querySelector(id);
   var infoBtn = document.querySelector(`${id} span`);
   var cancelBtn = document.querySelector(`${id} a`);
-  row.querySelector('td').removeChild(cancelBtn);
+  cancelBtn.parentNode.removeChild(cancelBtn);
   infoBtn.innerHTML = "Canceled";
 })();
