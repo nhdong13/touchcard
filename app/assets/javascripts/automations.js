@@ -12,13 +12,11 @@ document.addEventListener('turbolinks:load', function() {
 
     var id = element.dataset.id;
     var automation = JSON.parse(element.dataset.automation);
-
-    console.log(automation);
     var awsSignEndpoint = element.dataset.awsSignEndpoint;
+    automation.card_side_front_attributes = JSON.parse(element.dataset.cardSideFrontAttributes);
+    automation.card_side_back_attributes = JSON.parse(element.dataset.cardSideBackAttributes);
 
-    // automation.card_side_front_attributes = {};
-    // automation.card_side_back_attributes = {};
-    // // automation.card_side_front_attributes['image'] =
+    // automation.card_side_front_attributes['image'] =
     // //   'https://touchcard-data.s3.amazonaws.com/uploads/5e53d741-4ad3-4e02-a8fc-bd5f91af1e05/thank-you-card-front5.jpg';
 
     var app = new Vue({
@@ -30,82 +28,98 @@ document.addEventListener('turbolinks:load', function() {
           automation: automation,
           awsSignEndpoint: awsSignEndpoint,
           enableDiscount: true,
-          frontSideImage: null,
-          frontSideImageUrl: null,
-          backSideImage: null,
-          backSideImageUrl: null,
+          newFrontImage: null,
+          newFrontImageData: null,
+          newBackImage: null,
+          newBackImageData: null,
         };
-      },
-      watch: {
-        frontSideImage: function (newImage) {
-          // AND NOW DO THIS --- TODO:
-          // whenever frontSideImage changes (user action)
-          // upload it to S3, block the respective SAVE and CHOOSE FILE buttons
-          //
-          // when that's done, set the backSideImageURL, which  unblocks the SAVE and CHOOSEFILE buttons
-          //
-          // SAVE must stay blocked if two images are uploading and one finishes...
-          //
-          // Alternatively... may be simpler if we do a full upload on save
-          // otherwise we may need the option to cancel an upload
-          //
-          // File input
-          // https://forum.vuejs.org/t/vuejs2-file-input/633/3
-          // https://codepen.io/Atinux/pen/qOvawK
-          //
-        }
       },
       methods: {
         saveAutomation: function() {
-          // Create a new automation
-          if (this.id == null) {
-            this.$http.post('/automations.json', { card_order: this.automation}).then(function(response) {
-              // debugger;
-              console.log(response);
-              Turbolinks.visit('/automations');
-            }).catch(function (error) {
-              console.log(error);
-            });
-            // Edit existing automation
-          } else {
-            target = `/automations/${this.id}.json`;
-            this.$http.put(target, { card_order: this.automation }).then(function(response) {
-              console.log(response);
-              Turbolinks.visit('/automations');
-            }).catch(function (error) {
-              console.log(error);
-            });
+
+          // Upload new files, if necessary
+
+        //   var promises = [];
+        //   if (this.newFrontImage) {
+        //     promises.push(uploadToS3(this.newFrontImage));
+        //   }
+        //   if (this.newBackImage) {
+        //     promises.push(uploadToS3(this.newBackImage));
+        //   }
+        //
+        //   Promise.all(promises)
+        //     .then(function(results)=>{
+        //     // Have URL, save automation
+        //   })
+        // .catch(function (err) {
+        //     // console.log(err);
+        //   });
+
+          var vm = this;
+          function postForm() {
+            // Create a new automation
+            if (vm.id == null) {
+              axios.post('/automations.json', { card_order: vm.automation})
+                .then(function(response) {
+                  console.log(response);
+                  Turbolinks.visit('/automations');
+                }).catch(function (error) {
+                console.log(error);
+              });
+              // Edit existing automation
+            } else {
+              target = `/automations/${vm.id}.json`;
+              axios.put(target, { card_order: vm.automation })
+                .then(function(response) {
+                  console.log(response);
+                  Turbolinks.visit('/automations');
+                }).catch(function (error) {
+                console.log(error);
+              });
+            }
           }
+
+          if (this.newFrontImage) {
+            this.uploadFileToS3(this.newFrontImage, function(error, result){
+              console.log(error);
+              console.log(result);
+
+              // CAREFUL - an exception here fails the promise from which we call this callback
+              if (result) {
+                automation.card_side_front_attributes.image = result;
+                postForm();
+              }
+            });
+          } else {
+            postForm();
+          }
+
         },
-        onFrontImageFileChange(e) {
+        onNewFrontImage(e) {
           var files = e.target.files || e.dataTransfer.files;
           if (!files.length)
             return;
+          this.newFrontImage = files[0];
+
           var vm = this;
-          this.createImage(files[0], function(fileData){ vm.frontSideImage = fileData;});
+          this.createImage(this.newFrontImage, function(fileData){ vm.newFrontImageData = fileData;});
         },
         createImage(file, onLoad) {
           var image = new Image();
           var reader = new FileReader();
-          debugger;
           var vm = this;
 
           reader.onload = (e) => {
-            debugger;
-            console.log(e.target.result);
+            // console.log(e.target.result);
             onLoad(e.target.result);
           };
           reader.readAsDataURL(file);
         },
-        removeImage: function (e) {
-          this.frontSideImage = null;
-        },
-        uploadFilesToS3: function() {
-          var file = this.uploadFile;
-
+        uploadFileToS3: function(file, callback) {
           if (typeof this.awsSignEndpoint == 'undefined'){
             throw 'Missing Upload URL';
           }
+          // Get S3 Upload URL from Touchcard Server
           axios.get(this.awsSignEndpoint, {
             params: {
               name: file.name,
@@ -113,29 +127,32 @@ document.addEventListener('turbolinks:load', function() {
             }
           })
             .then(function (result) {
-              // console.log(result)
+              console.log(result)
               var signedUrl = result.data.signedUrl;
 
-              // var options = {
-              //   headers: {
-              //     'Content-Type': file.type
-              //   }
-              // };
-              // axios.put(signedUrl, file, options)
-              //   .then(function (result) {
-              //     console.log(result);
-              //     var imageUrl = result.request.responseURL && result.request.responseURL.split('?')[0];
-              //
-              //     automation.card_side_front_attributes['image'] = imageUrl;
-              //
-              //   })
-              //   .catch(function (err) {
-              //     // console.log(err);
-              //     // debugger;
-              //   });
+              var options = {
+                headers: {
+                  'Content-Type': file.type
+                }
+              };
+              // Upload File to S3
+              axios.put(signedUrl, file, options)
+                .then(function (result) {
+                  console.log(result);
+                  var imageUrl = result.request.responseURL && result.request.responseURL.split('?')[0];
+                  if (typeof callback === "function") {
+                    callback(null, imageUrl);
+                  }
+                })
+                .catch(function (err) {
+                  console.log(err);
+                  if (typeof callback === "function") {
+                    callback(err);
+                  }
+                });
             })
             .catch(function (err) {
-              // console.log(err)
+              console.log(err)
             });
         }
       }

@@ -24,8 +24,6 @@ class AutomationsController < BaseController
 
   # POST /automations
   # POST /automations.json
-
-  # AND NOW DO THIS: TODO: And now copy over html / json responses
   def create
     @automation = @current_shop.post_sale_orders.create(automation_params)
     respond_to do |format|
@@ -87,7 +85,7 @@ class AutomationsController < BaseController
       :send_delay,
       filter_attributes: [:filter_data],
       card_side_front_attributes: [:image],
-      card_side_back_attributes: [:image]
+      card_side_back_attributes: [:image],
     )
   end
 end
