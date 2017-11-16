@@ -56,6 +56,8 @@ document.addEventListener('turbolinks:load', function() {
         //   });
 
           var vm = this;
+
+          // Step 3. Callback to post the result
           function postForm() {
             // Create a new automation
             if (vm.id == null) {
@@ -79,6 +81,25 @@ document.addEventListener('turbolinks:load', function() {
             }
           }
 
+          // Step 2. Callback to upload back image
+          function uploadBackImage() {
+            if (vm.newBackImage) {
+              vm.uploadFileToS3(vm.newBackImage, function(error, result){
+                console.log(error);
+                console.log(result);
+
+                // CAREFUL - an exception here fails the promise from which we call this callback
+                if (result) {
+                  automation.card_side_back_attributes.image = result;
+                  postForm();
+                }
+              });
+            } else {
+              postForm();
+            }
+          }
+
+          // Step 1. Start by uploading back image
           if (this.newFrontImage) {
             this.uploadFileToS3(this.newFrontImage, function(error, result){
               console.log(error);
@@ -87,14 +108,25 @@ document.addEventListener('turbolinks:load', function() {
               // CAREFUL - an exception here fails the promise from which we call this callback
               if (result) {
                 automation.card_side_front_attributes.image = result;
-                postForm();
+                uploadBackImage();
               }
             });
           } else {
-            postForm();
+            uploadBackImage();
           }
 
         },
+        // TODO: Refactor to combine Front & Back
+        onNewBackImage(e) {
+          var files = e.target.files || e.dataTransfer.files;
+          if (!files.length)
+            return;
+          this.newBackImage = files[0];
+
+          var vm = this;
+          this.createImage(this.newBackImage, function(fileData){ vm.newBackImageData = fileData;});
+        },
+        // TODO: Refactor to combine Front & Back
         onNewFrontImage(e) {
           var files = e.target.files || e.dataTransfer.files;
           if (!files.length)

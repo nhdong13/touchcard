@@ -51,7 +51,9 @@
                 </div>
               </td>
               <td class="automation-image">
-                <!-- %= image_tag card.card_side_front.image % -->
+                <% if card.card_side_front.image %>
+                    <%= image_tag card.card_side_front.image %>
+                <% end %>
               </td>
               <td class="automation-data">
                 <h4>Stats</h4>
