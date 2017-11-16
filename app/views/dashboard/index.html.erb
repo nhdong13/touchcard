@@ -44,7 +44,7 @@
           <tr id="postcard-<%= postcard.id %>">
             <td>
               <button type="button"
-                      class="mdl-chip mdl-color--<%= postcard.sent? ? 'light_green' : 'orange' %>">
+                      class="mdl-chip mdl-color--<%= postcard.sent? ? 'light_green' : 'orange' %> postcard-status-chip">
                 <span class="mdl-chip__text"><%= postcard.status %></span>
               </button>
             </td>
@@ -59,9 +59,9 @@
                                   confirm:
                                       "Are you sure you want to cancel this postcard? This can't be undone.",
                                   hover: "Cancel postcard"},
-                              class: 'mdc-material-icons mdc-button__icon tooltip',
+                              class: 'mdc-material-icons mdc-button__icon cancel-postcard-button tooltip',
                               remote: true) do %>
-                      <i class="material-icons mdc-button__icon cancel-postcard-button">cancel</i>
+                      <i class="material-icons mdc-button__icon cancel-postcard-button-icon">cancel</i>
                   <% end %>
               <% end %>
             </td>
