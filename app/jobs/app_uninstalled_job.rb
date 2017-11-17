@@ -9,7 +9,7 @@ class AppUninstalledJob < ApplicationJob
       shop.subscriptions.each { |s| s.destroy }
       shop.update_attributes(credit: 0, uninstalled_at: Time.now)
       slack_msg = "A shop has uninstalled Touchcard: #{shop.domain}."
-      SlackNotify.message(slack_msg)
+      SlackNotify.message(slack_msg) unless Rails.env.development?
 
       sync_params = {
           "email" => shop.email,
