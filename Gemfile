@@ -85,6 +85,10 @@ gem 'faker'
 # Javascript Pipeline
 gem "webpacker", "~> 3.0"
 
+# For running server processes in development
+gem "foreman", "~> 0.84"
+gem "thor", "~> 0.19.1"
+
 group :assets do
   gem "therubyracer", platforms: :ruby
 end

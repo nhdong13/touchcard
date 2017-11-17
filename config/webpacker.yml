@@ -35,16 +35,19 @@ development:
 
   # Reference: https://webpack.js.org/configuration/dev-server/
   dev_server:
-    https: false
+    # Webpack dev server / Hot module reload is not currently working as there
+    # was trouble routing it (and rails) through ngrok with the right port & CORS config
+    https: true
     host: localhost
     port: 3035
-    public: localhost:3035
+    public: touchcard.ngrok.io
     hmr: false
     # Inline should be set to true if using HMR
     inline: true
     overlay: true
     disable_host_check: true
     use_local_ip: false
+#    allowedHosts: .ngrok.io
 
 test:
   <<: *default
