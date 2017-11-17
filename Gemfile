@@ -82,6 +82,9 @@ gem "active_campaign", git: "https://github.com/laverick/active_campaign", ref: 
 
 gem 'faker'
 
+# Javascript Pipeline
+gem "webpacker", "~> 3.0"
+
 group :assets do
   gem "therubyracer", platforms: :ruby
 end
