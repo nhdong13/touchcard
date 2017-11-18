@@ -71,12 +71,6 @@ gem "business_time", "~> 0.7"
 # send mails using mailgun
 gem "mailgunner", '~> 2.4'
 
-
-gem "vuejs-rails"
-
-# add Axios for networking
-gem 'axios_rails', '~> 0.14.0'
-
 # ActiveCampaign ('bdad6c2' is last building version as of 2017-08-26)
 gem "active_campaign", git: "https://github.com/laverick/active_campaign", ref: "bdad6c2"
 
@@ -103,7 +97,6 @@ end
 group :development, :test do
   # Call "byebug" anywhere in the code to stop execution and get a debugger console
   gem "byebug"
-  gem "sqlite3"
   gem "clipboard", "~> 1.0"
   gem 'simplecov', :require => false
 end
