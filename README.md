@@ -1,5 +1,11 @@
 #Touchcard
-Get better customer engagement with thank you postcards!
+
+# Development Process
+Make sure you set up a `local_env.yml` file. See `local_env.yml.example`.
+Make sure you install gems & npm packages.
+Run `bin/server` - this will start rails server, webpacker server, and delayed_jobs 
+
+
 
 #Deployment Process
 
