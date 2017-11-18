@@ -1,7 +1,9 @@
 <div class="top-m-20">
   <div class="text-center">
     <%= link_to 'New Automation', new_automation_path,
-                class: "mdc-button" %>
+                class: "mdc-button",
+                data: { turbolinks: false }
+    %>
   </div>
   <% @card_orders.each do |card| %>
       <div id="card-<%= card.id %>" class="panel automation-listing">

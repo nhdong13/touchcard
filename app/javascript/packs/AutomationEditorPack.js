@@ -1,6 +1,8 @@
 import Vue from 'vue/dist/vue.esm'
 import axios from 'axios'
 import TurbolinksAdapter from 'vue-turbolinks'
+Vue.use(TurbolinksAdapter);
+
 import AutomationEditor from '../containers/AutomationEditor'
 
 
@@ -15,7 +17,7 @@ import AutomationEditor from '../containers/AutomationEditor'
 // TODO: Add Vue Turbolinks mixin to fix hot reloading / dom caching
 // https://github.com/turbolinks/turbolinks/wiki/VueJs-and-Turbolinks
 
-document.addEventListener('turbolinks:load',  () => {
+document.addEventListener('turbolinks:load',  function load() {
   Vue.prototype.$http = axios;
   Vue.prototype.$http.defaults.headers.common['X-CSRF-Token'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
   // console.log(document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
@@ -34,7 +36,6 @@ document.addEventListener('turbolinks:load',  () => {
 
     var app = new Vue({
       el: element,
-      // mixins: [TurbolinksAdapter],
       data: function() {
         return {
           id: id,
@@ -155,7 +156,7 @@ document.addEventListener('turbolinks:load',  () => {
           var reader = new FileReader();
           var vm = this;
 
-          reader.onload = (e) => {
+          reader.onload = function load(e) {
             // console.log(e.target.result);
             onLoad(e.target.result);
           };
