@@ -50,7 +50,8 @@ class Shop < ActiveRecord::Base
     # Session store
     def retrieve(id)
       if shop = find_by(id: id)
-        # ShopifyAPI::Session.new(shop.domain, nil)
+        # If shop was uninstalled, we need a new session. Otherwise reinstall breaks.
+        return if shop.uninstalled_at.present?
         ShopifyAPI::Session.new(shop.domain, shop.token)
       end
     end

@@ -1,5 +1,7 @@
 # Changelog
 
+## v1.2.9
+- Fix app re-install (make sure that all Shops have correct value for uninstalled_at)
 
 ## v1.2.8
 - Hotfix 
