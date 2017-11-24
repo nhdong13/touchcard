@@ -1,9 +1,5 @@
 import axios from 'axios'
-
 import loadAutomationEditor from '../containers/AutomationEditor'
-
-
-console.log("\n\n=== AutomationEditorPack.js ===\n\n");
 
 document.addEventListener('turbolinks:load', () => {
 
