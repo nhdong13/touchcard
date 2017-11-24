@@ -20,7 +20,9 @@
 //            "error",
 //            "always"
 //        ]
-    }
+    },
+    "parser": "babel-eslint"
+
 }
 
 // ESLINT config for ECMAscript -- Saved for switch back to Webpacker
