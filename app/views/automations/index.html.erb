@@ -1,8 +1,7 @@
 <div class="top-m-20">
   <div class="text-center">
     <%= link_to 'New Automation', new_automation_path,
-                class: "mdc-button",
-                data: { turbolinks: false }
+                class: "mdc-button"
     %>
   </div>
   <% @card_orders.each do |card| %>
@@ -34,7 +33,6 @@
                 <br><br>
                 <div>
                   <%= link_to edit_automation_path(card),
-                              method: :get,
                               data: { hover: "Edit"},
                               class: 'mdl-button mdl-js-button mdl-button--raised tooltip' do %>
                       <i class="material-icons">mode_edit</i>
@@ -70,3 +68,4 @@
       </div>
   <% end %>
 </div>
+

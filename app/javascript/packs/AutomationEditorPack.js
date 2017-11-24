@@ -6,24 +6,17 @@ Vue.use(TurbolinksAdapter);
 import AutomationEditor from '../containers/AutomationEditor'
 
 
-// document.addEventListener('turbolinks:load', () => {
-// });
-// console.log('AutomationEditorPack.js');
-// console.log(AutomationEditor);
+console.log("\n\n=== AutomationEditorPack.js ===\n\n");
 
 
+function loadVueAppIfTagExists()
+{
 
-
-// TODO: Add Vue Turbolinks mixin to fix hot reloading / dom caching
-// https://github.com/turbolinks/turbolinks/wiki/VueJs-and-Turbolinks
-
-document.addEventListener('turbolinks:load',  function load() {
-  Vue.prototype.$http = axios;
-  Vue.prototype.$http.defaults.headers.common['X-CSRF-Token'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-  // console.log(document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
+  axios.defaults.headers.common['X-CSRF-Token'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
   var element = document.getElementById('automation-editor');
   if (element != null) {
+
 
     var id = element.dataset.id;
     var automation = JSON.parse(element.dataset.automation);
@@ -34,7 +27,7 @@ document.addEventListener('turbolinks:load',  function load() {
     // automation.card_side_front_attributes['image'] =
     // //   'https://touchcard-data.s3.amazonaws.com/uploads/5e53d741-4ad3-4e02-a8fc-bd5f91af1e05/thank-you-card-front5.jpg';
 
-    var app = new Vue({
+    const vueApp = new Vue({
       el: element,
       data: function() {
         return {
@@ -48,6 +41,18 @@ document.addEventListener('turbolinks:load',  function load() {
           newBackImageData: null,
         };
       },
+      mounted: function () {
+        this.$nextTick(function () {
+          // Code that will run only after the
+          // entire view has been rendered
+          console.log('\n\n\n=== VUE MOUNTED ===\n\n\n');
+        })},
+      destroyed: function () {
+        this.$nextTick(function () {
+          // Code that will run only after the
+          // entire view has been rendered
+          console.log('\n\n\n=== VUE DESTROYED ===\n\n\n');
+        })},
       methods: {
         saveAutomation: function() {
 
@@ -102,7 +107,6 @@ document.addEventListener('turbolinks:load',  function load() {
                 console.log(error);
                 console.log(result);
 
-                debugger;
                 // CAREFUL - an exception here fails the promise from which we call this callback
                 if (result) {
                   automation.card_side_back_attributes.image = result;
@@ -211,10 +215,9 @@ document.addEventListener('turbolinks:load',  function load() {
         }
       }
     });
-
-    window.tc = app;
-
     console.log('Vue Loaded');
+    window.tc = vueApp;
   }
-});
+}
 
+document.addEventListener('turbolinks:load', loadVueAppIfTagExists);

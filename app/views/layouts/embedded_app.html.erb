@@ -4,8 +4,9 @@
   <meta charset="utf-8" />
   <% application_name = ShopifyApp.configuration.application_name %>
   <title><%= application_name %></title>
-  <%= stylesheet_link_tag 'application' %>
-  <%= javascript_include_tag 'application', "data-turbolinks-track" => true %>
+  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+  <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+  <%= javascript_pack_tag 'AutomationEditorPack' %>
   <%= csrf_meta_tags %>
 
   <!-- Google Tag Manager -->
