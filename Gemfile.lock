@@ -214,8 +214,6 @@ GEM
     mime-types (2.99.3)
     mini_portile2 (2.2.0)
     minitest (5.10.3)
-    momentjs-rails (2.11.1)
-      railties (>= 3.1)
     multi_json (1.12.1)
     multi_xml (0.6.0)
     multipart-post (2.0.0)
@@ -404,7 +402,6 @@ DEPENDENCIES
   business_time (~> 0.7)
   byebug
   clipboard (~> 1.0)
-  coffee-rails (~> 4.2.0)
   daemons (~> 1.2)
   delayed_job_active_record (~> 4.1.2)
   devise (~> 4.3.0)
@@ -416,7 +413,6 @@ DEPENDENCIES
   lob (~> 2.1)
   mailgunner (~> 2.4)
   material_components_web-sass
-  momentjs-rails (>= 2.8.1)
   newrelic_rpm (~> 3.15)
   pg
   rails (= 5.1.0)
