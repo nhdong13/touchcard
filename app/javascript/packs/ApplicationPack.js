@@ -9,6 +9,6 @@ document.addEventListener('turbolinks:load', () => {
 
   if (element != null) {
     const vueApp = loadAutomationEditor(element);
-    window.tc = vueApp;
+    window.Vue = vueApp;
   }
 });

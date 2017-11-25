@@ -1,7 +1,9 @@
 import Vue from 'vue/dist/vue.esm'
-import axios from 'axios'
 import TurbolinksAdapter from 'vue-turbolinks'
 Vue.use(TurbolinksAdapter);
+import axios from 'axios'
+
+import * as api from '../Api'
 
 
 export default function loadAutomationEditor (element) {
@@ -11,9 +13,6 @@ export default function loadAutomationEditor (element) {
   var awsSignEndpoint = element.dataset.awsSignEndpoint;
   automation.card_side_front_attributes = JSON.parse(element.dataset.cardSideFrontAttributes);
   automation.card_side_back_attributes = JSON.parse(element.dataset.cardSideBackAttributes);
-
-  // automation.card_side_front_attributes['image'] =
-  // //   'https://touchcard-data.s3.amazonaws.com/uploads/5e53d741-4ad3-4e02-a8fc-bd5f91af1e05/thank-you-card-front5.jpg';
 
   return new Vue({
     el: element,
@@ -29,18 +28,18 @@ export default function loadAutomationEditor (element) {
         newBackImageData: null,
       };
     },
-    mounted: function () {
-      this.$nextTick(function () {
-        // Code that will run only after the
-        // entire view has been rendered
-        console.log('\n\n\n=== VUE MOUNTED ===\n\n\n');
-      })},
-    destroyed: function () {
-      this.$nextTick(function () {
-        // Code that will run only after the
-        // entire view has been rendered
-        console.log('\n\n\n=== VUE DESTROYED ===\n\n\n');
-      })},
+    // mounted: function () {
+    //   this.$nextTick(function () {
+    //     // Code that will run only after the
+    //     // entire view has been rendered
+    //     console.log('\n\n\n=== VUE MOUNTED ===\n\n\n');
+    //   })},
+    // destroyed: function () {
+    //   this.$nextTick(function () {
+    //     // Code that will run only after the
+    //     // entire view has been rendered
+    //     console.log('\n\n\n=== VUE DESTROYED ===\n\n\n');
+    //   })},
     methods: {
       saveAutomation: function() {
 
@@ -91,7 +90,7 @@ export default function loadAutomationEditor (element) {
         // Step 2. Callback to upload back image
         function uploadBackImage() {
           if (vm.newBackImage) {
-            vm.uploadFileToS3(vm.newBackImage, function(error, result){
+            api.uploadFileToS3(this.awsSignEndpoint, vm.newBackImage, function(error, result){
               console.log(error);
               console.log(result);
 
@@ -108,7 +107,7 @@ export default function loadAutomationEditor (element) {
 
         // Step 1. Start by uploading back image
         if (this.newFrontImage) {
-          this.uploadFileToS3(this.newFrontImage, function(error, result){
+          api.uploadFileToS3(this.awsSignEndpoint, this.newFrontImage, function(error, result){
             console.log(error);
             console.log(result);
 
@@ -123,83 +122,28 @@ export default function loadAutomationEditor (element) {
         }
 
       },
-      // TODO: Refactor to combine Front & Back
       onNewBackImage(e) {
         var files = e.target.files || e.dataTransfer.files;
         if (!files.length)
           return;
         this.newBackImage = files[0];
-
         var vm = this;
         this.createImage(this.newBackImage, function(fileData){ vm.newBackImageData = fileData;});
       },
-      // TODO: Refactor to combine Front & Back
       onNewFrontImage(e) {
         var files = e.target.files || e.dataTransfer.files;
         if (!files.length)
           return;
         this.newFrontImage = files[0];
-
         var vm = this;
         this.createImage(this.newFrontImage, function(fileData){ vm.newFrontImageData = fileData;});
       },
       createImage(file, onLoad) {
-        var image = new Image();
         var reader = new FileReader();
-        var vm = this;
-
         reader.onload = function load(e) {
-          // console.log(e.target.result);
           onLoad(e.target.result);
         };
         reader.readAsDataURL(file);
-      },
-      uploadFileToS3: function(file, callback) {
-        if (typeof this.awsSignEndpoint == 'undefined'){
-          throw 'Missing Upload URL';
-        }
-        // Get S3 Upload URL from Touchcard Server
-        axios.get(this.awsSignEndpoint, {
-          params: {
-            name: file.name,
-            type: file.type
-          }
-        })
-          .then(function (result) {
-            console.log(result)
-            var signedUrl = result.data.signedUrl;
-
-            var options = {
-              headers: {
-                'Content-Type': file.type
-              }
-            };
-            // Upload File to S3
-            axios.put(signedUrl, file, options)
-
-            // transformResponse: [function (data) {
-            //   // Do whatever you want to transform the data
-            //
-            //   return data;
-            // }],
-            //
-              .then(function (result) {
-                console.log(result);
-                var imageUrl = result.request.responseURL && result.request.responseURL.split('?')[0];
-                if (typeof callback === "function") {
-                  callback(null, imageUrl);
-                }
-              })
-              .catch(function (err) {
-                console.log(err);
-                if (typeof callback === "function") {
-                  callback(err);
-                }
-              });
-          })
-          .catch(function (err) {
-            console.log(err)
-          });
       }
     }
   });
