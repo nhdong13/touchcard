@@ -25,13 +25,13 @@ export function uploadFileToS3 (awsSignEndpoint, file, callback) {
         .then(function (result) {
           console.log(result);
           var imageUrl = result.request.responseURL && result.request.responseURL.split('?')[0];
-          if (typeof callback === "function") {
+          if (typeof callback === 'function') {
             callback(null, imageUrl);
           }
         })
         .catch(function (err) {
           console.log(err);
-          if (typeof callback === "function") {
+          if (typeof callback === 'function') {
             callback(err);
           }
         });
