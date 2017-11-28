@@ -1,0 +1,3 @@
+web: PORT=3000 bundle exec rails s
+webpacker: NODE_ENV=production ./bin/webpack --watch --progress --colors
+worker: bundle exec rails jobs:work
