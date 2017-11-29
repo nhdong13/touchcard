@@ -104,4 +104,6 @@ Rails.application.configure do
     config.logger = ActiveSupport::TaggedLogging.new(logger)
   end
 
+  config.fullscreen_debug = false
+
 end

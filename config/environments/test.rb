@@ -47,4 +47,6 @@ Rails.application.configure do
   HTTPI.log = false if Rails.env == "test"
   HTTPI.log_level = :info
 
+  config.fullscreen_debug = false
+
 end
