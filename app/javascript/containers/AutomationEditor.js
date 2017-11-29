@@ -1,11 +1,11 @@
 /* global Turbolinks */
-
 import Vue from 'vue/dist/vue.esm'
 import TurbolinksAdapter from 'vue-turbolinks'
 Vue.use(TurbolinksAdapter);
 import axios from 'axios'
-
 import * as api from '../Api'
+import CardEditor from '../components/CardEditor'
+
 
 export default function loadAutomationEditor (element) {
 
@@ -28,6 +28,9 @@ export default function loadAutomationEditor (element) {
         newBackImage: null,
         newBackImageData: null,
       };
+    },
+    components: {
+      'card-editor': CardEditor
     },
     methods: {
       saveAutomation: function() {

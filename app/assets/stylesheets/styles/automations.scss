@@ -45,9 +45,23 @@
 // Card Editor
 
 .card-side-image {
-  max-width: 425px;
+  max-width: 825px;
 }
 
 [v-cloak] {
   display: none;
+}
+
+
+.card-side-canvas {
+  //width: (1875/3)px;
+  //height: (1275/3)px;
+  width: 625px;
+  height: 425px;
+  border-width: 5px;
+  border-style: dotted;
+  background-color: rgba(230, 255, 230, 0.5);
+
+  // style="  background-color: lightyellow;"
+  // background-color: lightyellow;
 }
