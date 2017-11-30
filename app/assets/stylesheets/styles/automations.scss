@@ -54,13 +54,16 @@
 
 
 .card-side-canvas {
-  //width: (1875/3)px;
-  //height: (1275/3)px;
-  width: 625px;
-  height: 425px;
-  border-width: 5px;
+
+  position: relative;
+
+  max-width: 625px;
+  max-height: 425px;
+
+  border-width: 1px;
   border-style: dotted;
   background-color: rgba(230, 255, 230, 0.5);
+
 
   // style="  background-color: lightyellow;"
   // background-color: lightyellow;
