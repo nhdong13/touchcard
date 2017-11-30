@@ -1,5 +1,10 @@
 import axios from 'axios'
-import loadAutomationEditor from '../containers/AutomationEditor'
+import loadAutomationEditor from '../containers/AutomationForm'
+
+// To get Turbolinks working it helped to put the javascript pack tag in the <head>
+// If we need to expand Vue to other parts of the application I suspect it would help
+// to keep this structure and load individual containers loaded from this file.
+// (with Webpacker code splitting if necessary)
 
 document.addEventListener('turbolinks:load', () => {
 
