@@ -1,8 +1,8 @@
 (function() {
   var id = "#postcard-" + <%= @postcard.id %>;
   var row = document.querySelector(id);
-  var infoBtn = document.querySelector(`${id} span`);
-  var cancelBtn = document.querySelector(`${id} a`);
-  row.querySelector('td').removeChild(cancelBtn);
-  infoBtn.innerHTML = "Canceled";
+  var infoBtn = document.querySelector(`${id} .postcard-status-chip`);
+  var cancelBtn = document.querySelector(`${id} .cancel-postcard-button`)
+  cancelBtn.parentNode.removeChild(cancelBtn);
+  infoBtn.innerText = "Canceled";
 })();
