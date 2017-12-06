@@ -16,7 +16,10 @@ Remember your domain `YOUR_DEV_SHOP.myshopify.com` for later.
 
 ### Set up Rails, Gems, and NPM packages
 
-Make sure you have `rvm` installed and the latest ruby as denoted in `Gemfile`
+Make sure you have `rvm` installed and the latest ruby as denoted in `Gemfile`. 
+
+Also make sure you have a recent version of Postgres installed on your system. 
+For Mac the easiest way is to use [Postgres.app](https://postgresapp.com/documentation/gui-tools.html)
 
 `gem install bundler`
 
@@ -38,7 +41,6 @@ This tunnels your localhost port 3000 to YOUR_DEV_APP.ngrok.io
 
 Set up your local configs so the server doesn't give any errors.
 Copy `local_env.yml.example` to `local_env.yml` Fill in any special credentials you have (`AWS_` keys, `APP_URL`, etc) 
-
 
 Run the server
 `bin/server`
