@@ -1,12 +1,12 @@
 source "https://rubygems.org"
 
-#ruby=2.3.3
+#ruby=2.4.2
 #ruby-gemset=touchcard
 
-ruby "2.3.3"
+ruby "2.4.2"
 
-gem "rails", "5.1.0"
-gem "rake", "11.1.2"
+gem "rails", "5.1.4"
+gem "rake", "~> 12.3.0"
 gem "rb-readline", "~> 0.5.3"
 
 # # Add material design lite for CSS
