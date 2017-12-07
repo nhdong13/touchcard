@@ -2,32 +2,23 @@ import { fabric }from 'fabric-browseronly'
 
 // import 'stylesheets/styles/automations'
 
+const FullCanvasWidth = 1875;
+const FullCanvasHeight = 1275;
 
-// function resizeCanvasToDisplaySize(canvas) {
-//   // look up the size the canvas is being displayed
-//   const width = canvas.clientWidth;
-//   const height = canvas.clientHeight;
-//
-//   // If it's resolution does not match change it
-//   if (canvas.width !== width || canvas.height !== height) {
-//     canvas.width = width;
-//     canvas.height = height;
-//     return true;
-//   }
-//
-//   return false;
-// }
-
-// Coupon is 510px by 300px
+let template_markup = `
+    <div class="card-editor-container">
+        <canvas id="front-side-canvas" class="card-side-canvas" width=${FullCanvasWidth} height=${FullCanvasHeight}></canvas>
+        <canvas id="back-side-canvas" class="card-side-canvas" width=${FullCanvasWidth} height=${FullCanvasHeight}></canvas>
+    </div>
+`;
 
 let CardEditor = {
-  template: '<div class="card-editor-container"><canvas id="card-editor-canvas" class="card-side-canvas" width=1875 height=1275></canvas></div>',
+  template: template_markup,
   data: function() {
     return {
       rect: null,
-      canvas: null,
-      originalCanvasHeight: 1275,
-      originalCanvasWidth: 1875,
+      frontCanvas: null,
+      backCanvas: null,
     }
   },
   beforeDestroy: function () {
@@ -40,15 +31,18 @@ let CardEditor = {
     // });
 
     // create a wrapper around native canvas element (with id="c")
-    this.canvas = new fabric.Canvas('card-editor-canvas', { stateful: true });
-    let rect = new fabric.Rect({ left: 100, top: 100, fill: 'red', width: 510, height: 300, hasControls: false, hasBorders: false });
-    this.canvas.add(rect);
+    this.frontCanvas = new fabric.Canvas('front-side-canvas', { stateful: true });
+    let frontCoupon = new fabric.Rect({ left: 100, top: 100, fill: 'red', width: 510, height: 300, hasControls: false, hasBorders: false });
+    this.frontCanvas.add(frontCoupon);
+    this.frontCanvas.on('object:moving', this.handleObjectMoved);
 
+    this.backCanvas = new fabric.Canvas('back-side-canvas', { stateful: true });
+    let backCoupon = new fabric.Rect({ left: 100, top: 100, fill: 'red', width: 510, height: 300, hasControls: false, hasBorders: false });
+    this.backCanvas.add(backCoupon);
+    this.backCanvas.on('object:moving', this.handleObjectMoved);
 
-    this.canvas.on('object:moving', this.handleObjectMoved);
 
     window.addEventListener('resize', this.handleResize);
-
     this.handleResize();
 
     // document.addEventListener('resize', () => { console.log('RESIZING'); });
@@ -61,7 +55,7 @@ let CardEditor = {
       // console.log('x      : ' + obj.left + ' y      :' + obj.top);
       // console.log('x bound: ' + obj.getBoundingRect().left + ' y bound:' + obj.getBoundingRect().top);
 
-      var obj = e.target;
+      let obj = e.target;
 
       // Solution (modified): https://stackoverflow.com/a/24238960/1181104
 
@@ -71,21 +65,24 @@ let CardEditor = {
       if (obj.left < 0) {
         obj.left = 0;
       }
-      if (obj.top + obj.height > this.originalCanvasHeight) {
-        obj.top = this.originalCanvasHeight - obj.height;
+      if (obj.top + obj.height > FullCanvasHeight) {
+        obj.top = FullCanvasHeight - obj.height;
       }
-      if (obj.left + obj.width > this.originalCanvasWidth) {
-        obj.left = this.originalCanvasWidth - obj.width;
+      if (obj.left + obj.width > FullCanvasWidth) {
+        obj.left = FullCanvasWidth - obj.width;
       }
 
     },
     handleResize: function() {
       console.log('handleResize');
 
-      let ratio = (Math.min(this.originalCanvasWidth/3, window.innerWidth)/ 1875) * 0.90;
+      let ratio = (Math.min(FullCanvasWidth, window.innerWidth)/ FullCanvasWidth) * 0.45;
 
-      this.canvas.setDimensions({ width: this.originalCanvasWidth * ratio, height: this.originalCanvasHeight * ratio });
-      this.canvas.setZoom(ratio);
+      this.frontCanvas.setDimensions({ width: FullCanvasWidth * ratio, height: FullCanvasHeight * ratio });
+      this.frontCanvas.setZoom(ratio);
+
+      this.backCanvas.setDimensions({ width: FullCanvasWidth * ratio, height: FullCanvasHeight * ratio });
+      this.backCanvas.setZoom(ratio);
     },
   }
 };

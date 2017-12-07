@@ -55,7 +55,7 @@
 
 .card-side-canvas {
 
-  position: relative;
+  //position: relative;
 
   //max-width: 625px;
   //max-height: 425px;
@@ -65,12 +65,21 @@
   background-color: rgba(230, 255, 230, 0.5);
 
 
+  //display:inline-block;
   // style="  background-color: lightyellow;"
   // background-color: lightyellow;
 }
 
-//.card-editor-container {
-//  //width: 100px;
-//  //height: 100px;
-//  //background-color: lightyellow;
-//}
+.card-editor-container {
+  //width: 100px;
+  //height: 100px;
+  background-color: lightyellow;
+}
+
+// Fabric.js automatically creates a div of classs `canvas-container` to wrap
+// the canvas object.
+.canvas-container {
+  background-color: purple;
+  display:inline-block;
+}
+
