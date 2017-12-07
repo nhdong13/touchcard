@@ -54,6 +54,7 @@ Once you've installed your shop you can optionally run this command to generate 
 
 If you want to run the shop without embedding into the Touchcard admin you can set the `FULLSCREEN_DEBUG` environment variable. 
 **This is experimental**, so I'd only recommend it if you're doing a lot of client reloading for javascript work, but not for testing, etc.
+When you do that you should be able to load the application via `http://localhost:3000/`, and in turn loading should be much snappier.
 
 `FULLSCREEN_DEBUG=true bin/server`
 
