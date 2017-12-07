@@ -13,6 +13,12 @@ let template_markup = `
 `;
 
 let CardEditor = {
+  props: ['front-side-image'],
+  watch: {
+    frontSideImage: function(newVal, oldVal) { // watch it
+      console.log('Prop changed: ', newVal, ' | was: ', oldVal)
+    }
+  },
   template: template_markup,
   data: function() {
     return {
@@ -47,7 +53,7 @@ let CardEditor = {
 
     // document.addEventListener('resize', () => { console.log('RESIZING'); });
 
-
+    console.log('this.frontSideImage: ' + this.frontSideImage);
   },
   methods: {
     handleObjectMoved: function(e) {

@@ -24,7 +24,7 @@
 
     <hr />
 
-    <card-editor></card-editor>
+    <card-editor :front-side-image="newFrontImageData || automation.card_side_front_attributes.image"></card-editor>
     <!--<canvas id="card-editor" class="card-side-canvas" width=1875 height=1275></canvas>-->
 
     <hr />
@@ -37,12 +37,12 @@
 
     <hr />
 
-    <h2>Back</h2>
-    Select an image: <input type="file" accept="image/png,image/jpeg" v-on:change="onNewBackImage">
-    <br>
-    <img class="card-side-image" v-bind:src="newBackImageData || automation.card_side_back_attributes.image">
+    <!--<h2>Back</h2>-->
+    <!--Select an image: <input type="file" accept="image/png,image/jpeg" v-on:change="onNewBackImage">-->
+    <!--<br>-->
+    <!--<img class="card-side-image" v-bind:src="newBackImageData || automation.card_side_back_attributes.image">-->
 
-    <hr />
+    <!--<hr />-->
 
 
 <% end %>
