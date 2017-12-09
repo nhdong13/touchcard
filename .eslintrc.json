@@ -1,7 +1,8 @@
 {
   "env": {
     "browser": true,
-    "es6": true
+    "es6": true,
+    "node": true
   },
   "globals": {
 
@@ -21,11 +22,8 @@
       "single"
     ],
     // TO FIX
-    "no-console": "off"
-    //        "semi": [
-    //            "error",
-    //            "always"
-    //        ]
+    "no-console": "off",
+    "semi": "off"
   },
   "parser": "babel-eslint"
 

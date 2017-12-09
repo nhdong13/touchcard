@@ -1,27 +1,12 @@
 import { fabric } from 'fabric-browseronly'
 
+import template_markup from './CardEditor.html'
+
 // import 'stylesheets/styles/automations'
 
 const FullCanvasWidth = 1875;
 const FullCanvasHeight = 1275;
 
-//------------------------------------------------------------------------
-
-let template_markup = `
-    <div class="card-editor-container">
-        <!--<hr />-->
-        <h2>Front</h2>
-        Select an image: <input type="file" accept="image/png,image/jpeg"  v-on:change="onUpdateFrontBackground">
-        <br>
-        <canvas id="front-side-canvas" class="card-side-canvas" width=${FullCanvasWidth} height=${FullCanvasHeight}></canvas>
-        <br>
-        Select an image: <input type="file" accept="image/png,image/jpeg"  v-on:change="onUpdateBackBackground">
-        <br>
-        <canvas id="back-side-canvas" class="card-side-canvas" width=${FullCanvasWidth} height=${FullCanvasHeight}></canvas>
-    </div>
-`;
-
-//------------------------------------------------------------------------
 
 // Card Side Model
 class CardSide {
@@ -107,7 +92,18 @@ class CardSideCanvas extends fabric.Canvas {
 //------------------------------------------------------------------------
 
 let CardEditor = {
-  props: ['front_attributes', 'back_attributes'],
+
+  props: {
+    front_attributes: {
+      type: Object,
+      required: true
+    },
+    back_attributes: {
+      type: Object,
+      required: true
+    }
+  },
+
   // watch: {
   //   frontSideImage: function(newVal, oldVal) { // watch it
   //     console.log('Prop changed: ', newVal, ' | was: ', oldVal)

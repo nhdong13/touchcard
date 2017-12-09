@@ -1,0 +1,11 @@
+
+<div class="card-editor-container">
+  <h2>Front</h2>
+  Select an image: <input type="file" accept="image/png,image/jpeg"  v-on:change="onUpdateFrontBackground">
+  <br>
+  <canvas id="front-side-canvas" class="card-side-canvas" width=${FullCanvasWidth} height=${FullCanvasHeight}></canvas>
+  <br>
+  Select an image: <input type="file" accept="image/png,image/jpeg"  v-on:change="onUpdateBackBackground">
+  <br>
+  <canvas id="back-side-canvas" class="card-side-canvas" width=${FullCanvasWidth} height=${FullCanvasHeight}></canvas>
+</div>
