@@ -45,7 +45,8 @@
 // Card Editor
 
 .card-side-image {
-  max-width: 825px;
+  //max-width: 825px;
+  max-width: 625px;
 }
 
 [v-cloak] {
@@ -61,8 +62,8 @@
   //max-height: 425px;
 
   border-width: 1px;
-  border-style: dotted;
-  background-color: rgba(230, 255, 230, 0.5);
+  border-style: dashed;
+  //background-color: rgba(230, 255, 230, 0.5);
 
 
   //display:inline-block;
@@ -73,13 +74,13 @@
 .card-editor-container {
   //width: 100px;
   //height: 100px;
-  background-color: lightyellow;
+  //background-color: lightyellow;
 }
 
 // Fabric.js automatically creates a div of classs `canvas-container` to wrap
 // the canvas object.
-.canvas-container {
-  background-color: purple;
-  display:inline-block;
-}
+//.canvas-container {
+//  //background-color: purple;
+//  display:inline-block;
+//}
 

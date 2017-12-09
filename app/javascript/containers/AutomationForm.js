@@ -15,22 +15,21 @@ export default function loadAutomationEditor (element) {
   automation.card_side_front_attributes = JSON.parse(element.dataset.cardSideFrontAttributes);
   automation.card_side_back_attributes = JSON.parse(element.dataset.cardSideBackAttributes);
 
+  let cardDesign =  {
+    front: JSON.parse(element.dataset.cardSideFrontAttributes),
+    back: JSON.parse(element.dataset.cardSideBackAttributes),
+  }
+
   return new Vue({
     el: element,
     data: function() {
       return {
         id: id,
         automation: automation,
+        cardDesign: cardDesign,
         awsSignEndpoint: awsSignEndpoint,
-        enableDiscount: true,
-        newFrontImage: null,
-        newFrontImageData: null,
-        newBackImage: null,
-        newBackImageData: null
+        enableDiscount: true
       };
-    },
-    beforeDestroy: function () {
-      window.removeEventListener('resize', this.handleResize)
     },
     components: {
       'card-editor': CardEditor
@@ -98,27 +97,6 @@ export default function loadAutomationEditor (element) {
             reject();
           });
         });
-      },
-      onNewBackImage: function(e) {
-        let files = e.target.files || e.dataTransfer.files;
-        if (!files.length)
-          return;
-        this.newBackImage = files[0];
-        this.createImage(this.newBackImage, (fileData) => { this.newBackImageData = fileData;});
-      },
-      onNewFrontImage: function(e) {
-        let files = e.target.files || e.dataTransfer.files;
-        if (!files.length)
-          return;
-        this.newFrontImage = files[0];
-        this.createImage(this.newFrontImage, (fileData) => { this.newFrontImageData = fileData;});
-      },
-      createImage: function(file, onLoad) {
-        let reader = new FileReader();
-        reader.onload = (e) => {
-          onLoad(e.target.result);
-        };
-        reader.readAsDataURL(file);
       }
     }
   });

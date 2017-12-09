@@ -3,7 +3,7 @@
                 id: "automation-editor",
                 data: {
                     id: automation.id,
-                    automation: automation.to_json(only: [:id, :type, :discount_pct, :discount_exp, :enabled, :international, :send_delay, :card_side_back]),
+                    automation: automation.to_json(only: [:id, :type, :discount_pct, :discount_exp, :enabled, :international, :send_delay]),
                     card_side_front_attributes: automation.card_side_front.to_json(only: [:image, :discount_x, :discount_y]),
                     card_side_back_attributes: automation.card_side_back.to_json(only: [:image, :discount_x, :discount_y]),
                     aws_sign_endpoint: aws_sign_endpoint,
@@ -24,26 +24,14 @@
 
     <hr />
 
-    <card-editor :front-side-image="newFrontImageData || automation.card_side_front_attributes.image"></card-editor>
-    <!--<canvas id="card-editor" class="card-side-canvas" width=1875 height=1275></canvas>-->
-
+    <card-editor
+      v-bind:front="automation.card_side_front_attributes"
+      v-bind:back="automation.card_side_back_attributes"
+    >
+      <!--v-on:front_updated="onCardFrontUpdated"-->
+      <!--v-on:back_updated="onCardBackUpdated"-->
+    </card-editor>
     <hr />
-
-
-    <h2>Front</h2>
-    Select an image: <input type="file" accept="image/png,image/jpeg"  v-on:change="onNewFrontImage">
-    <br>
-    <img class="card-side-image" v-bind:src="newFrontImageData || automation.card_side_front_attributes.image">
-
-    <hr />
-
-    <!--<h2>Back</h2>-->
-    <!--Select an image: <input type="file" accept="image/png,image/jpeg" v-on:change="onNewBackImage">-->
-    <!--<br>-->
-    <!--<img class="card-side-image" v-bind:src="newBackImageData || automation.card_side_back_attributes.image">-->
-
-    <!--<hr />-->
-
 
 <% end %>
 
