@@ -13,18 +13,12 @@ export default function loadAutomationEditor (element) {
   automation.card_side_front_attributes = JSON.parse(element.dataset.cardSideFrontAttributes);
   automation.card_side_back_attributes = JSON.parse(element.dataset.cardSideBackAttributes);
 
-  let cardDesign =  {
-    front: JSON.parse(element.dataset.cardSideFrontAttributes),
-    back: JSON.parse(element.dataset.cardSideBackAttributes),
-  }
-
   return new Vue({
     el: element,
     data: function() {
       return {
         id: id,
         automation: automation,
-        cardDesign: cardDesign,
         awsSignEndpoint: awsSignEndpoint,
         enableDiscount: true
       };
