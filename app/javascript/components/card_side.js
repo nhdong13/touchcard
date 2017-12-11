@@ -1,4 +1,3 @@
-// Card Side Model
 import { fabric } from 'fabric-browseronly'
 
 export class CardSide {

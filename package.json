@@ -5,7 +5,6 @@
     "axios": "^0.17.1",
     "coffeescript": "1.12.7",
     "fabric-browseronly": "^1.7.19",
-    "html-loader": "^0.5.1",
     "vue": "^2.5.8",
     "vue-loader": "^13.5.0",
     "vue-template-compiler": "^2.5.8",

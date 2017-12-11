@@ -56,7 +56,7 @@
       window.removeEventListener('resize', this.handleResize)
     },
     methods: {
-      requestSave: function(readyCallback) {
+      requestSave: function() {
 
         // TODO: We should probably have a data structure to monitor parallel uploads + completion
         // And would be nice if uploads happened as soon as added + CardSide has loading icon + completion for not-yet-uploaded images
@@ -67,13 +67,7 @@
         if (this.back.newBackImage) {
           promises.push(this.uploadNewBackground(this.back));
         }
-        Promise.all(promises).then((results) => {
-          console.log(results);
-          readyCallback();
-        }).catch(function (err) {
-          console.log(err);
-          readyCallback();
-        });
+        return Promise.all(promises);
       },
       uploadNewBackground: function(cardSide) {
         return new Promise((resolve, reject)=> {

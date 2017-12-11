@@ -39,9 +39,13 @@ export default function loadAutomationEditor (element) {
     methods: {
       requestSave: function() {
         // Ask the CardEditor to finish its uploads and serialization (attributes are written back via :props.sync)
-        this.$refs.cardEditor.requestSave( () => {
-          this.postOrPutForm();
-        });
+        this.$refs.cardEditor.requestSave()
+          .then((results) => {
+            console.log(results)
+            this.postOrPutForm()
+          }).catch(function (err) {
+            console.log(err)
+          })
       },
       postOrPutForm: function() {
 

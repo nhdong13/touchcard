@@ -2,11 +2,11 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.html$/,
-        exclude: /node_modules/,
-        use: {loader: 'html-loader'}
+        // No longer loading .html, using .vue instead
+        // test: /\.html$/,
+        // exclude: /node_modules/,
+        // use: {loader: 'html-loader'}
       }
     ]
   }
-
 }
