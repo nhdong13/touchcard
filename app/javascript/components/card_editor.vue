@@ -13,7 +13,7 @@
 
 <script>
   import { fabric } from 'fabric-browseronly'
-  import { Api } from '../Api';
+  import { Api } from '../api';
   import { CardSide } from './card_side';
 
   const FullCanvasWidth = 1875;
