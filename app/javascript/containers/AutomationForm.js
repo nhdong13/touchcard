@@ -4,8 +4,6 @@ import TurbolinksAdapter from 'vue-turbolinks'
 Vue.use(TurbolinksAdapter);
 import axios from 'axios'
 import * as api from '../Api'
-import CardEditor from '../components/CardEditor'
-
 
 export default function loadAutomationEditor (element) {
 
@@ -32,7 +30,11 @@ export default function loadAutomationEditor (element) {
       };
     },
     components: {
-      'card-editor': CardEditor
+      'card-editor': () => ({
+        // https://vuejs.org/v2/guide/components.html#Async-Components
+        component: import('../components/CardEditor') // For .vue component may need to use import(...).then(m => m.default) // https://forum.vuejs.org/t/issue-with-async-components-solved/13678/2
+        // loading: LoadingComp, error: ErrorComp, delay: 200, timeout: 3000
+      })
     },
     methods: {
       saveAutomation: function() {
