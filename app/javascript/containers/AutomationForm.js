@@ -39,25 +39,9 @@ export default function loadAutomationEditor (element) {
     methods: {
       requestSave: function() {
         // Ask the CardEditor to finish its uploads and serialization (attributes are written back via :props.sync)
-        this.$refs.cardEditor.requestSave(function(){
-          this.saveAutomation();
-        });
-      },
-      saveAutomation: function() {
-        let promises = [];
-        if (this.newFrontImage) {
-          promises.push(this.uploadFrontImage());
-        }
-        if (this.newBackImage) {
-          promises.push(this.uploadBackImage());
-        }
-        Promise.all(promises).then((results) => {
-          console.log(results);
+        this.$refs.cardEditor.requestSave( () => {
           this.postOrPutForm();
-        })
-          .catch(function (err) {
-            console.log(err);
-          });
+        });
       },
       postOrPutForm: function() {
 
@@ -81,30 +65,6 @@ export default function loadAutomationEditor (element) {
               console.log(error);
             });
         }
-      },
-      uploadBackImage: function() {
-        return new Promise((resolve, reject)=> {
-          api.uploadFileToS3(this.awsSignEndpoint, this.newBackImage, (error, result) => {
-            console.log(error ? error : result);
-            if (result) {
-              automation.card_side_back_attributes.image = result;
-              return resolve();
-            }
-            reject();
-          });
-        });
-      },
-      uploadFrontImage: function() {
-        return new Promise((resolve, reject)=> {
-          api.uploadFileToS3(this.awsSignEndpoint, this.newFrontImage, (error, result) => {
-            console.log(error ? error : result);
-            if (result) {
-              automation.card_side_front_attributes.image = result;
-              return resolve();
-            }
-            reject();
-          });
-        });
       }
     }
   });

@@ -1,6 +1,6 @@
 import { fabric } from 'fabric-browseronly'
-
 import template_markup from './CardEditor.html'
+import { Api } from '../Api';
 
 // import 'stylesheets/styles/automations'
 
@@ -38,6 +38,7 @@ class CardSide {
 
 }
 
+// TODO: Could maybe extract everything and just put it into CardSide?
 class CardSideCanvas extends fabric.Canvas {
   constructor(element_id, background_image) {
 
@@ -49,7 +50,6 @@ class CardSideCanvas extends fabric.Canvas {
     if (background_image) {
       this.setBackgroundImage(background_image, this.renderAll.bind(this));
     }
-
   }
 
   handleObjectMoved (e) {
@@ -58,21 +58,11 @@ class CardSideCanvas extends fabric.Canvas {
     // console.log('x bound: ' + obj.getBoundingRect().left + ' y bound:' + obj.getBoundingRect().top);
 
     let obj = e.target;
-
-    // Solution (modified): https://stackoverflow.com/a/24238960/1181104
-
-    if (obj.top < 0) {
-      obj.top = 0;
-    }
-    if (obj.left < 0) {
-      obj.left = 0;
-    }
-    if (obj.top + obj.height > FullCanvasHeight) {
-      obj.top = FullCanvasHeight - obj.height;
-    }
-    if (obj.left + obj.width > FullCanvasWidth) {
-      obj.left = FullCanvasWidth - obj.width;
-    }
+    // Via (modified): https://stackoverflow.com/a/24238960/1181104
+    obj.top = (obj.top < 0) ? 0 : obj.top // don't move off top
+    obj.left = (obj.left < 0) ? 0 : obj.left // don't move off left
+    obj.top = (obj.top + obj.height > FullCanvasHeight) ? (FullCanvasHeight - obj.height) : obj.top
+    obj.left = (obj.left + obj.width > FullCanvasWidth) ? (FullCanvasWidth - obj.width) : obj.left
   }
 
 }
@@ -89,14 +79,12 @@ let CardEditor = {
     back_attributes: {
       type: Object,
       required: true
+    },
+    aws_sign_endpoint: {
+      type: String,
+      required: true
     }
   },
-
-  // watch: {
-  //   frontSideImage: function(newVal, oldVal) { // watch it
-  //     console.log('Prop changed: ', newVal, ' | was: ', oldVal)
-  //   }
-  // },
   data: function() {
     return {
       front: null,
@@ -107,25 +95,47 @@ let CardEditor = {
     window.removeEventListener('resize', this.handleResize)
   },
   mounted: function() {
-    console.log('CardEditor Mounted');
+    console.log('CardEditor Mounted')
     // this.$nextTick(function () {
     // code that assumes this.$el is in-document
     // });
-
+    this.api = new Api(this.aws_sign_endpoint)
     this.front = new CardSide(this.front_attributes, 'front-side-canvas');
     this.back = new CardSide(this.back_attributes, 'back-side-canvas');
 
-    window.addEventListener('resize', this.handleResize);
     this.handleResize();
-
-    window.cardEditor = this;
-
+    window.addEventListener('resize', this.handleResize);
   },
   methods: {
-    requestSave: function(callback) {
-      setTimeout(function() {
-        callback();
-      }, 1000*3);
+    requestSave: function(ready_callback) {
+
+      // TODO: We should probably move this into CardSide and create an upload process for all files
+      let promises = [];
+      if (this.front.newImage) {
+        promises.push(this.uploadNewBackground(this.front));
+      }
+      if (this.back.newBackImage) {
+        promises.push(this.uploadNewBackground(this.back));
+      }
+      Promise.all(promises).then((results) => {
+        console.log(results);
+        ready_callback();
+      }).catch(function (err) {
+        console.log(err);
+        ready_callback();
+      });
+    },
+    uploadNewBackground: function(cardSide) {
+      return new Promise((resolve, reject)=> {
+        this.api.uploadFileToS3(cardSide.newImage, (error, result) => {
+          console.log(error ? error : result);
+          if (result) {
+            cardSide.attrs.image = result;
+            return resolve();
+          }
+          reject();
+        });
+      });
     },
     handleResize: function() {
       console.log('handleResize');
@@ -134,7 +144,6 @@ let CardEditor = {
       let ratio = (Math.min(FullCanvasWidth/4, window.innerWidth)/ FullCanvasWidth) * 0.9;
       this.front.resizeCanvas(ratio);
       this.back.resizeCanvas(ratio);
-
     },
     onUpdateFrontBackground: function(e) {
       this.updateBackground(e, this.front)
