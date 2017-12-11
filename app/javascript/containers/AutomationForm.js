@@ -37,6 +37,12 @@ export default function loadAutomationEditor (element) {
       })
     },
     methods: {
+      requestSave: function() {
+        // Ask the CardEditor to finish its uploads and serialization (attributes are written back via :props.sync)
+        this.$refs.cardEditor.requestSave(function(){
+          this.saveAutomation();
+        });
+      },
       saveAutomation: function() {
         let promises = [];
         if (this.newFrontImage) {

@@ -16,12 +16,10 @@ class CardSide {
   // constructor() { }
 
   constructor(attributes, element_id) {
-    this.image = attributes.image;
-    this.discount_x = attributes.discount_x;
-    this.discount_y = attributes.discount_y;
+    this.attrs = attributes
     this.newImage = null;
 
-    this.canvas = new CardSideCanvas(element_id, this.image);
+    this.canvas = new CardSideCanvas(element_id, this.attrs.image);
   }
 
   updateBackground(file) {
@@ -38,16 +36,6 @@ class CardSide {
     this.canvas.setZoom(ratio);
   }
 
-  // How about... call serialize from parent component,
-  // then during serialize upload the files, when done
-  // return the full version?
-  //
-  // This way would be 'future proof' if we need to wait on
-  // other uploads for the serialize to be ready
-  //
-  // serialize(){
-  //  // TODO: if this.newImage make sure it's uploaded
-  // }
 }
 
 class CardSideCanvas extends fabric.Canvas {
@@ -134,7 +122,11 @@ let CardEditor = {
 
   },
   methods: {
-
+    requestSave: function(callback) {
+      setTimeout(function() {
+        callback();
+      }, 1000*3);
+    },
     handleResize: function() {
       console.log('handleResize');
 

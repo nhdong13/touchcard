@@ -10,7 +10,7 @@
 
     } do %>
 
-    <button v-on:click="saveAutomation">Save</button>
+    <button v-on:click="requestSave">Save</button>
     <!-- div v-cloak></div -->
     <h3>{{automation.type}}</h3>
 
@@ -25,11 +25,11 @@
     <hr />
 
     <card-editor
-      v-bind:front_attributes="automation.card_side_front_attributes"
-      v-bind:back_attributes="automation.card_side_back_attributes"
+      ref="cardEditor"
+      v-bind:front_attributes.sync="automation.card_side_front_attributes"
+      v-bind:back_attributes.sync="automation.card_side_back_attributes"
     >
-      <!--v-on:front_updated="onCardFrontUpdated"-->
-      <!--v-on:back_updated="onCardBackUpdated"-->
+
     </card-editor>
     <hr />
 
