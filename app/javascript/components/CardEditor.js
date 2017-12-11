@@ -109,7 +109,8 @@ let CardEditor = {
   methods: {
     requestSave: function(ready_callback) {
 
-      // TODO: We should probably move this into CardSide and create an upload process for all files
+      // TODO: We should probably have a data structure to monitor parallel uploads + completion
+      // And would be nice if uploads happened as soon as added + CardSide has loading icon + completion for not-yet-uploaded images
       let promises = [];
       if (this.front.newImage) {
         promises.push(this.uploadNewBackground(this.front));
