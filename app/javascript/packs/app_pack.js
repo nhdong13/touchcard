@@ -30,12 +30,9 @@ document.addEventListener('turbolinks:load', () => {
           awsSignEndpoint: element.dataset.awsSignEndpoint
         }
       },
-
       template: '<AutomationForm :id="id" :automation="automation" :aws-sign-endpoint="awsSignEndpoint" ></AutomationForm>',
       components: { AutomationForm }
     })
-
     window.Vue = vueApp;
-
   }
 });

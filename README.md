@@ -10,7 +10,7 @@ Create a free Shopify Partner account at https://www.shopify.com/partners
 Set up a development app under 'Apps'. Under the App Info tab, make sure to set: 
 
 App Name = `https://YOUR_DEV_APP.ngrok.io/`
-Whitelisted redirection URL = `https://touchcard.ngrok.io/auth/shopify/callback`
+Whitelisted redirection URL = `https://YOUR_DEV_APP.ngrok.io/auth/shopify/callback`
 
 Remember your domain `YOUR_DEV_SHOP.myshopify.com` for later.
 

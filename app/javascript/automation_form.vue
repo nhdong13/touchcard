@@ -34,6 +34,7 @@
         required: true
       },
       awsSignEndpoint: {
+        type: String,
         required: true
       }
     },
@@ -61,7 +62,6 @@
         })
       },
       postOrPutForm: function() {
-
         if (this.id) {
           // Edit existing automation (PUT)
           let target = `/automations/${this.id}.json`;

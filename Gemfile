@@ -81,6 +81,8 @@ gem "webpacker", "~> 3.0"
 gem "foreman", "~> 0.84"
 gem "thor", "~> 0.19.1"
 
+gem "pg"
+
 group :assets do
   gem "therubyracer", platforms: :ruby
 end
@@ -106,6 +108,5 @@ group :test do
 end
 
 group :production do
-  gem "pg"
   gem "newrelic_rpm", "~> 3.15"
 end
