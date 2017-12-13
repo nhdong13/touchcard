@@ -85,7 +85,7 @@
         console.log('handleResize');
 
         // let ratio = (Math.min(FullCanvasWidth/2, window.innerWidth)/ FullCanvasWidth) * 0.9;
-        let ratio = (Math.min(FullCanvasWidth/4, window.innerWidth)/ FullCanvasWidth) * 0.9;
+        let ratio = (Math.min(FullCanvasWidth/2, window.innerWidth)/ FullCanvasWidth) * 0.9;
         this.front.resizeCanvas(ratio);
         this.back.resizeCanvas(ratio);
       },
