@@ -32,7 +32,7 @@ gem "active_model_serializers", "~> 0.8.0"
 gem "shopify_app", "~> 7.3.0"
 
 # Stripe
-gem 'stripe', git: 'https://github.com/stripe/stripe-ruby'
+gem 'stripe'
 
 # S3 connection
 gem "aws-sdk", "~> 2.1"
@@ -41,7 +41,7 @@ gem "aws-sdk", "~> 2.1"
 gem "rmagick", "~> 2.15"
 
 # Lob integration
-gem "lob", "~> 2.1"
+gem "lob"
 
 # Key Value store
 gem "redis", "~> 3.2"
@@ -50,7 +50,7 @@ gem "redis", "~> 3.2"
 gem "httparty", "~> 0.13"
 
 # Rest Client for Slack notifications
-gem "rest-client", "1.8"
+gem "rest-client"
 
 # Use Unicorn as the app server
 gem "unicorn", "~> 4.9"

@@ -70,7 +70,7 @@ class Postcard < ApplicationRecord
     return logger.info "attempted sending postcard:#{id} that is not paid for" unless paid?
     # TODO: all kinds of error handling
     # Test lob
-    @lob = Lob.load
+    @lob ||= Lob::Client.new(api_key: ENV['LOB_API_KEY'])
     self.estimated_arrival = estimated_transit_days.business_days.from_now.end_of_day
 
     if card_order.discount?
