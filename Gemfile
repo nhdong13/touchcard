@@ -89,8 +89,8 @@ end
 
 group :development do
   # Access an IRB console on exception pages or by using <%= console %> in views
-  gem "web-console", "~> 2.0"
-  gem "thin", "~> 1.7.2"
+  gem "web-console"
+  gem "thin"
   gem "spring"
 end
 
