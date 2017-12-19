@@ -47,7 +47,7 @@ class Discount extends fabric.Group {
       {
         hasControls: false,
         hasBorders: false,
-        selectionBackgroundColor: 'yellow',
+        selectionBackgroundColor: 'rgba(235,235,235, 0.5)',
       });
   }
 }

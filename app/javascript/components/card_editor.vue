@@ -120,7 +120,7 @@
 
 <style scoped>
 
-  <!-- Required for Coupon -->
+  /* Required for Coupon used by card_side.js */
   @import url('https://fonts.googleapis.com/css?family=Montserrat');
 
   p {
