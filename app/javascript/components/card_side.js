@@ -1,59 +1,6 @@
 // @flow
 import { fabric } from 'fabric-browseronly'
 
-
-// .discount {
-//   position: absolute;
-//   top: #{options[:discount_y] || 0}%;
-//   left: #{options[:discount_x] || 0}%;
-//   width: 28%;
-//   height: 25%;
-//   text-align: center;
-//   font-family: 'Montserrat';
-// }
-//
-// .percent // AMOUNT {
-//   font-size: 0.30in;
-//   font-weight: 800;
-//   margin: 0.06in 0 0;
-// }
-//
-// .code {
-//   font-size: 0.17in;
-// }
-//
-// .expiration {
-//   margin-top: 0.11in;
-//   font-size: 0.09in;
-// }
-
-
-// bounding box
-// w: 493.46875
-// h: 290.625
-
-// margin 17.28
-
-// %
-// w:
-// h: 35.2
-// font: 86.4
-
-
-// margin 0
-
-// code
-// w:
-// h: 20
-// font: 48.96
-
-// margin 31.68
-
-// exp
-// w:
-// h: 10.4
-// font: 25.92
-
 class Discount extends fabric.Group {
   constructor() {
 
