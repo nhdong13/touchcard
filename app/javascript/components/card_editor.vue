@@ -2,8 +2,11 @@
   <div class="card-editor-container">
     <h2>Front</h2>
     Select an image: <input type="file" accept="image/png,image/jpeg"  v-on:change="onUpdateFrontBackground">
+    <button v-on:click="front.addDiscount()">Add Discount</button>
+    <button v-on:click="front.removeDiscount()">Remove Discount</button>
+    <!--<input type="checkbox" v-model="enableFrontDiscount">-->
     <br>
-    <canvas id="front-side-canvas" class="card-side-canvas" width=${FullCanvasWidth} height=${FullCanvasHeight}></canvas>
+    <canvas id="front-side-canvas" class="card-side-canvas" width=1875 height=1275></canvas>
     <br>
     Select an image: <input type="file" accept="image/png,image/jpeg"  v-on:change="onUpdateBackBackground">
     <br>
@@ -38,8 +41,19 @@
       return {
         front: null,
         back: null,
+        enableFrontDiscount: false,
+        enableBackDiscount: false,
       }
     },
+    // watch: {
+    //   enableFrontDiscount: function(val) {
+    //
+    //   },
+    //   enableBackDiscount: function(val) {
+    //     this.automation.card_side_front_attributes = val;
+    //     this.automation.card_side_back_attributes = val;
+    //   }
+    // },
     mounted: function() {
       console.log('CardEditor Mounted')
       // this.$nextTick(function () {
@@ -51,6 +65,8 @@
 
       this.handleResize();
       window.addEventListener('resize', this.handleResize);
+
+      window.card_editor = this;
     },
     beforeDestroy: function () {
       window.removeEventListener('resize', this.handleResize)
@@ -64,7 +80,7 @@
         if (this.front.newImage) {
           promises.push(this.uploadNewBackground(this.front));
         }
-        if (this.back.newBackImage) {
+        if (this.back.newImage) {
           promises.push(this.uploadNewBackground(this.back));
         }
         return Promise.all(promises);
@@ -106,9 +122,13 @@
 </script>
 
 <style scoped>
+
+  @import url('https://fonts.googleapis.com/css?family=Montserrat');
+
   p {
     font-size: 2em;
     text-align: center;
   }
+
 </style>
 
