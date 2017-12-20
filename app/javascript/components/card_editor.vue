@@ -9,17 +9,16 @@
       </div>
       <div class="flex-spacer"></div>
       <div class="editor-menu">
-        Upload Background: <input type="file" accept="image/png,image/jpeg"  v-on:change="onUpdateFrontBackground">
-        <br>
-        <br>
-        <div v-if="enableDiscount">
-          <input type="checkbox" v-model="enableDiscount"> Show discount on this side
+        <strong>Upload Background</strong>
+        <input type="file" accept="image/png,image/jpeg"  v-on:change="onUpdateFrontBackground">
+        <hr />
+        <input type="checkbox" v-model="enableFrontDiscount"><strong>Include Expiring Discount</strong>
+        <div class="discount-config" v-if="enableFrontDiscount">
+          <span><input type="number" min="0" max="100" v-model="globalDiscountPct"> % off</span><br>
+          <span><input type="number" min="1" max="52" v-model="globalDiscountExp"> weeks expiration</span>
         </div>
-    <!--<input type="checkbox" v-model="enableFrontDiscount">-->
-    <br>
       </div>
     </div>
-
     <br>
     Select an image: <input type="file" accept="image/png,image/jpeg"  v-on:change="onUpdateBackBackground">
     <br>
@@ -37,9 +36,9 @@
 
   export default {
     props: {
-      enableDiscount: {
-        type: Boolean,
-        required: true
+      discount_pct: {
+      },
+      discount_exp: {
       },
       front_attributes: {
         type: Object,
@@ -58,19 +57,28 @@
       return {
         front: null,
         back: null,
-        enableFrontDiscount: false,
-        enableBackDiscount: false,
+        enableFrontDiscount: null,
+        enableBackDiscount: null,
+        globalDiscountPct: this.discount_pct,
+        globalDiscountExp: this.discount_exp,
       }
     },
-    // watch: {
-    //   enableFrontDiscount: function(val) {
-    //
-    //   },
-    //   enableBackDiscount: function(val) {
-    //     this.automation.card_side_front_attributes = val;
-    //     this.automation.card_side_back_attributes = val;
-    //   }
-    // },
+    watch: {
+      globalDiscountPct: function(val) {
+        this.$emit('update:discount_pct', val);
+      },
+      globalDiscountExp: function(val) {
+        this.$emit('update:discount_exp', val);
+      },
+      // TODO: For backwards-compatability's sake we would like to null out card_order.discount_pct and
+      // card_order.discount_exp if neither card side has a discount, but that may just complicate
+      // things without being absolutely necessary
+      //
+      // enableFrontDiscount: function(val) {
+      // },
+      // enableBackDiscount: function(val) {
+      // }
+    },
     mounted: function() {
       console.log('CardEditor Mounted')
       // this.$nextTick(function () {
@@ -79,6 +87,7 @@
       this.api = new Api(this.aws_sign_endpoint)
       this.front = new CardSide(this.front_attributes, 'front-side-canvas', FullCanvasWidth, FullCanvasHeight);
       this.back = new CardSide(this.back_attributes, 'back-side-canvas', FullCanvasWidth, FullCanvasHeight);
+      // this.enableFrontDiscount = this.front_attributes
 
       this.handleResize();
       window.addEventListener('resize', this.handleResize);
@@ -147,7 +156,6 @@
     text-align: center;
   }
 
-
   /*.canvas-container-wrapper {*/
   /*}*/
 
@@ -155,7 +163,7 @@
     display: flex;
     padding: 10px;
     /*margin: 20px;*/
-    background: orange;
+    background: #fff0da;
   }
 
   /* Fabric.js adds a canvas-container around the canvas */
@@ -180,6 +188,10 @@
     padding: 10px;
   }
 
+  .discount-config {
+    padding-top: 10px;
+    padding-left: 10px;
+  }
 
 
 </style>

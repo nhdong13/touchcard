@@ -3,15 +3,10 @@
     <button v-on:click="requestSave">Save</button>
     <!-- div v-cloak></div -->
     <h3>{{automation.type}}</h3>
-    <input type="checkbox" v-model="enableDiscount"> Include Expiring Discount
-    <div v-if="enableDiscount">
-      <span>Percent Off: <input type="number" min="0" max="100" v-model="automation.discount_pct"></span>
-      <span>Expiration (in weeks):<input type="number" min="1" max="999" v-model="automation.discount_exp"></span>
-    </div>
-    <hr />
     <card-editor
         ref="cardEditor"
-        v-bind:enableDiscount="enableDiscount"
+        v-bind:discount_pct.sync="automation.discount_pct"
+        v-bind:discount_exp.sync="automation.discount_exp"
         v-bind:front_attributes.sync="automation.card_side_front_attributes"
         v-bind:back_attributes.sync="automation.card_side_back_attributes"
         v-bind:aws_sign_endpoint="awsSignEndpoint"
@@ -39,11 +34,10 @@
         required: true
       }
     },
-    data: function() {
-      return {
-        enableDiscount: true
-      };
-    },
+    // data: function() {
+    //   return {
+    //   };
+    // },
     components: {
       'card-editor': () => ({
         // https://vuejs.org/v2/guide/components.html#Async-Components
