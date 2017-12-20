@@ -1,12 +1,25 @@
 <template>
   <div class="card-editor-container">
     <h2>Front</h2>
-    Select an image: <input type="file" accept="image/png,image/jpeg"  v-on:change="onUpdateFrontBackground">
-    <button v-on:click="front.addDiscount()">Add Discount</button>
-    <button v-on:click="front.removeDiscount()">Remove Discount</button>
+    <!--<button v-on:click="front.addDiscount()">Add Discount</button>-->
+    <!--<button v-on:click="front.removeDiscount()">Remove Discount</button>-->
+    <div class="card-side-container">
+      <div class="canvas-container-wrapper">
+        <canvas id="front-side-canvas" class="card-side-canvas" width=1875 height=1275></canvas>
+      </div>
+      <div class="flex-spacer"></div>
+      <div class="editor-menu">
+        Upload Background: <input type="file" accept="image/png,image/jpeg"  v-on:change="onUpdateFrontBackground">
+        <br>
+        <br>
+        <div v-if="enableDiscount">
+          <input type="checkbox" v-model="enableDiscount"> Show discount on this side
+        </div>
     <!--<input type="checkbox" v-model="enableFrontDiscount">-->
     <br>
-    <canvas id="front-side-canvas" class="card-side-canvas" width=1875 height=1275></canvas>
+      </div>
+    </div>
+
     <br>
     Select an image: <input type="file" accept="image/png,image/jpeg"  v-on:change="onUpdateBackBackground">
     <br>
@@ -24,6 +37,10 @@
 
   export default {
     props: {
+      enableDiscount: {
+        type: Boolean,
+        required: true
+      },
       front_attributes: {
         type: Object,
         required: true
@@ -98,7 +115,9 @@
         });
       },
       handleResize: function() {
-        let ratio = (Math.min(FullCanvasWidth/2, window.innerWidth)/ FullCanvasWidth) * 0.9;
+        // TODO: get dynamically from CSS
+        const MenuWidth = 180;
+        let ratio = Math.min(620/FullCanvasWidth, Math.max(320/FullCanvasWidth, (Math.min(FullCanvasWidth/2, window.innerWidth - MenuWidth)/ FullCanvasWidth) * 0.8));
         this.front.resizeCanvas(ratio);
         this.back.resizeCanvas(ratio);
       },
@@ -127,6 +146,41 @@
     font-size: 2em;
     text-align: center;
   }
+
+
+  /*.canvas-container-wrapper {*/
+  /*}*/
+
+  .card-side-container {
+    display: flex;
+    padding: 10px;
+    /*margin: 20px;*/
+    background: orange;
+  }
+
+  /* Fabric.js adds a canvas-container around the canvas */
+  /*.canvas-container { }*/
+
+  .card-side-canvas {
+    border-width: 1px;
+    border-color: grey;
+    border-style: dashed;
+  }
+
+  .flex-spacer {
+    flex-grow: 0;
+    flex-shrink: 0;
+    flex-basis: 10px;
+  }
+  .editor-menu {
+    background: lightgrey;
+    flex-grow: 0;
+    flex-shrink: 0;
+    flex-basis: 180px;
+    padding: 10px;
+  }
+
+
 
 </style>
 

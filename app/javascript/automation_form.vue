@@ -3,14 +3,15 @@
     <button v-on:click="requestSave">Save</button>
     <!-- div v-cloak></div -->
     <h3>{{automation.type}}</h3>
-    <input type="checkbox" v-model="enableDiscount">
+    <input type="checkbox" v-model="enableDiscount"> Include Expiring Discount
     <div v-if="enableDiscount">
-      <div>Discount Percent: <input type="number" min="0" max="100" v-model="automation.discount_pct"></div>
-      <div>Discount Expiration (weeks):<input type="number" min="1" max="999" v-model="automation.discount_exp"></div>
+      <span>Percent Off: <input type="number" min="0" max="100" v-model="automation.discount_pct"></span>
+      <span>Expiration (in weeks):<input type="number" min="1" max="999" v-model="automation.discount_exp"></span>
     </div>
     <hr />
     <card-editor
         ref="cardEditor"
+        v-bind:enableDiscount="enableDiscount"
         v-bind:front_attributes.sync="automation.card_side_front_attributes"
         v-bind:back_attributes.sync="automation.card_side_back_attributes"
         v-bind:aws_sign_endpoint="awsSignEndpoint"
@@ -88,4 +89,7 @@
 </script>
 
 <style scoped>
+  [v-cloak] {
+    display: none;
+  }
 </style>
