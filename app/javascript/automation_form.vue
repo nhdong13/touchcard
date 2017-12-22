@@ -7,11 +7,8 @@
         ref="cardEditor"
         v-bind:discount_pct.sync="automation.discount_pct"
         v-bind:discount_exp.sync="automation.discount_exp"
-        v-bind:front_attributes.sync="automation.card_side_front_attributes"
-        v-bind:back_attributes.sync="automation.card_side_back_attributes"
         v-bind:aws_sign_endpoint="awsSignEndpoint"
-    >
-    </card-editor>
+    ></card-editor>
     <hr />
   </div>
 </template>
@@ -41,7 +38,7 @@
     components: {
       'card-editor': () => ({
         // https://vuejs.org/v2/guide/components.html#Async-Components
-        component: import('./components/card_editor')
+        component: import('./components/card_editor.vue')
         // loading: LoadingComp, error: ErrorComp, delay: 200, timeout: 3000
       })
     },

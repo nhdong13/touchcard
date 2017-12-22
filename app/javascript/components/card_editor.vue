@@ -9,6 +9,8 @@
         <card-side
             ref="frontSide"
             :backgroundUrl="frontBackgroundImageUrl"
+            :enableDiscount="enableFrontDiscount"
+
         >
         </card-side>
       </div>
@@ -36,22 +38,14 @@
   import { Api } from '../api';
   import CardSide from './card_side.vue';
 
-  const FullCanvasWidth = 1875;
-  const FullCanvasHeight = 1275;
+  // const FullCanvasWidth = 1875;
+  // const FullCanvasHeight = 1275;
 
   export default {
     props: {
       discount_pct: {
       },
       discount_exp: {
-      },
-      front_attributes: {
-        type: Object,
-        required: true
-      },
-      back_attributes: {
-        type: Object,
-        required: true
       },
       aws_sign_endpoint: {
         type: String,
@@ -69,7 +63,7 @@
         front: null,
         back: null,
         frontBackgroundImageUrl: null,
-        enableFrontDiscount: null,
+        enableFrontDiscount: false,
         enableBackDiscount: null,
         globalDiscountPct: this.discount_pct,
         globalDiscountExp: this.discount_exp,
@@ -85,11 +79,7 @@
       // TODO: For backwards-compatability's sake we would like to null out card_order.discount_pct and
       // card_order.discount_exp if neither card side has a discount, but that may just complicate
       // things without being absolutely necessary
-      //
-      // enableFrontDiscount: function(val) {
-      // },
-      // enableBackDiscount: function(val) {
-      // }
+
     },
     mounted: function() {
       console.log('CardEditor Mounted')
@@ -97,9 +87,6 @@
       // code that assumes this.$el is in-document
       // });
       this.api = new Api(this.aws_sign_endpoint)
-      // this.front = new CardSide(this.front_attributes, 'front-side-canvas', FullCanvasWidth, FullCanvasHeight);
-      // this.back = new CardSide(this.back_attributes, 'back-side-canvas', FullCanvasWidth, FullCanvasHeight);
-      // this.enableFrontDiscount = this.front_attributes
 
       window.card_editor = this;
     },
@@ -158,8 +145,6 @@
     position: relative;
     background: lightblue; /** <-- For the demo **/
   }
-
-
 
   .card-side-canvas {
     border-width: 1px;

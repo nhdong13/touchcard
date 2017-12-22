@@ -3,22 +3,23 @@
         class="card-side-canvas"
         :style="backgroundStyle"
     >
-        <!--:style="{ backgroundImage: `url('${backgroundImage}')` }"-->
+      <div
+          class="discount"
+          :style="discountStyle"
+      >
+      </div>
+
     </div>
+
+
 </template>
 
 <script>
 
   export default {
     props: {
-      backgroundUrl: {
-        String,
-        default: 'https://touchcard-data-dev.s3.amazonaws.com/uploads/611c3d3b-bf2b-456a-a0a8-f369c7d9f6ba/__card_04.jpg'
-      },
-      bgColor: {
-        type: String,
-        default: 'green'
-      }
+      backgroundUrl: { String, default: '' },
+      enableDiscount: { Boolean }
     },
     // mounted: function() {
     //   window.card_side = this;
@@ -26,12 +27,18 @@
     watch: {
       backgroundUrl: function(val) {
         this.backgroundStyle.backgroundImage = `url('${val}')`;
-      }
+      },
+      enableDiscount: function(val) {
+        this.discountStyle.display = val ? 'inline': 'none';
+      },
     },
     data: function() {
       return {
+        discountStyle: {
+          display: 'none',
+          backgroundColor: 'purple'
+        },
         backgroundStyle: {
-          backgroundColor: this.bgColor, //'red',
           backgroundImage: this.backgroundUrl ? `url('${this.backgroundUrl}')` : null, // `url('${this.backgroundUrl}')`
         }
       }
@@ -61,6 +68,17 @@
     /*position: absolute;*/
     /*top: 0; bottom: 0; left: 0; right: 0;*/
   /*}*/
+
+
+  .discount {
+    position: absolute;
+    top: 30%;
+    left: 30%;
+    width: 28%;
+    height: 25%;
+    text-align: center;
+    font-family: 'Montserrat';
+  }
 
 
   .card-side-canvas {
