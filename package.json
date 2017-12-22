@@ -4,7 +4,6 @@
     "@rails/webpacker": "^3.0.2",
     "axios": "^0.17.1",
     "coffeescript": "1.12.7",
-    "fabric-browseronly": "^1.7.19",
     "vue": "^2.5.8",
     "vue-loader": "^13.5.0",
     "vue-template-compiler": "^2.5.8",
