@@ -52,9 +52,6 @@
         required: true
       }
     },
-    mounted: function () {
-      debugger;
-    },
     components:{
       'card-side': CardSide
     },
@@ -67,6 +64,7 @@
         enableBackDiscount: null,
         globalDiscountPct: this.discount_pct,
         globalDiscountExp: this.discount_exp,
+        viewScale: 1.0
       }
     },
     watch: {
@@ -88,9 +86,67 @@
       // });
       this.api = new Api(this.aws_sign_endpoint)
 
+      this.handleResize();
+      window.addEventListener('resize', this.handleResize);
       window.card_editor = this;
+
+    },
+    beforeDestroy: function () {
+      window.removeEventListener('resize', this.handleResize)
     },
     methods: {
+      handleResize: function() {
+
+        // let leftWidth = document.getElementsByClassName('left')[0].offsetWidth;
+        // let card = document.getElementsByClassName('card')[0];
+
+
+        // this.$refs.frontSide.
+
+        // debugger;
+
+        // TODO: get dynamically from CSS
+        const MenuWidth = 180;
+        const FullCanvasWidth = 6.25 * 96;
+        const FullCanvasHeight = 4.25 * 96;
+
+        // this.viewScale = Math.min(620/FullCanvasWidth, Math.max(320/FullCanvasWidth, (Math.min(FullCanvasWidth/2, window.innerWidth - MenuWidth)/ FullCanvasWidth) * 0.8));
+
+        this.viewScale = Math.min(1.0, window.innerWidth/ FullCanvasWidth * 0.7);
+
+
+        // let existingStyle = this.$refs.frontSide.$el.style;
+        // this.$refs.frontSide.$el.style =  {...existingStyle, transform: `scale(${this.viewScale})`};
+
+        // this.$refs.frontSide.$el.style = "{transform: `scale(${viewScale})`}"
+        // Object.assign({}, source1, source2);
+
+        // console.log(this.viewScale);
+
+        // this.front.resizeCanvas(scale);
+        // this.back.resizeCanvas(scale);
+
+        //   var scale = Math.min(
+        //   availableWidth / contentWidth,
+        //   availableHeight / contentHeight
+        // );
+
+        // scale = 0.3;
+
+        // this.$refs.frontSide.style.transform = `scale(${scale})`;
+        // this.$refs.frontSide.style['-o-transform'] = `scale(${scale})`;
+        // this.$refs.frontSide.style['-webkit-transform'] = `scale(${scale})`;
+        // this.$refs.frontSide.style['-moz-transform'] = `scale(${scale})`;
+
+
+
+      },
+      resizeCanvas: function (ratio) {
+        // let newWidth = this.fullCanvasWidth * ratio;
+        // let newHeight = this.fullCanvasHeight * ratio;
+        // this._canvas.setDimensions({ width: newWidth, height: newHeight});
+        // this._canvas.setZoom(ratio);
+      },
       requestSave: function() {
         //
         // // TODO: We should probably have a data structure to monitor parallel uploads + completion
