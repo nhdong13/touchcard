@@ -1,20 +1,26 @@
 <template>
-    <div
-        class="card-side-canvas"
-        :style="backgroundStyle"
+  <div ref="cardSideCanvas" class="card-side-canvas" :style="backgroundStyle">
+    <card-element
+        ref="discountElement"
+        class="discount"
+        :style="discountStyle"
+        :parent="true"
+
     >
-      <div
-          class="discount"
-          :style="discountStyle"
-      >
-      </div>
+    </card-element>
+    <!--<vue-draggable-resizable :w="170" :h="100" :parent="true">-->
+    <!--<p>draggable</p>-->
+    <!--</vue-draggable-resizable>-->
 
-    </div>
-
-
+  </div>
 </template>
 
 <script>
+
+  import CardElement from './card_element.vue'
+  import VueDraggableResizable from 'vue-draggable-resizable';
+  import CardSide from './card_side.vue';
+
 
   export default {
     props: {
@@ -36,21 +42,27 @@
       return {
         discountStyle: {
           display: 'none',
-          backgroundColor: 'purple'
-        },
+        }
         backgroundStyle: {
           backgroundImage: this.backgroundUrl ? `url('${this.backgroundUrl}')` : null, // `url('${this.backgroundUrl}')`
         }
       }
-    }
+    },
+    components:{
+      'card-element': VueDraggableResizable
+    },
     // methods: {
     //   updateBackground: function() {
-    //   },
+    //   }
     // }
   }
 </script>
-
 <style scoped>
+
+
+  :focus {
+    outline: 5px dotted black;
+  }
 
   /* Required for Coupon */
   @import url('https://fonts.googleapis.com/css?family=Montserrat');
@@ -60,16 +72,6 @@
     text-align: center;
   }
 
-  /*.canvas-container-wrapper {*/
-  /*}*/
-
-
-  /*#card-side-aspect-padder > div {*/
-    /*position: absolute;*/
-    /*top: 0; bottom: 0; left: 0; right: 0;*/
-  /*}*/
-
-
   .discount {
     position: absolute;
     top: 30%;
@@ -78,44 +80,25 @@
     height: 25%;
     text-align: center;
     font-family: 'Montserrat';
+    background-color: mediumpurple;
   }
 
 
   .card-side-canvas {
-    padding-bottom: 68%;
 
-    /*background-image: url('https://touchcard-data-dev.s3.amazonaws.com/uploads/7113021b-7ca8-4b35-b634-f2feaaad8696/__card_01.jpg');*/
-    /*background-size: 96% 95%;*/
+    width: 6.25in;
+    height: 4.25in;
+    margin: 0 auto;
+    transform-origin: left;
+
+    /*box-shadow: 5px 5px 10px #555;*/
+
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+    background-color: lightsalmon;
 
-    /*background: lightyellow;*/
-
-
-  /*position: relative;*/
-    /*top: 0;*/
-    /*bottom: 0;*/
-    /*left: 0;*/
-    /*right: 0;*/
-
-    /*width: 6.25in;*/
-    /*height: 4.25in;*/
-
-    /*width: 100%;*/
-    /*height: 100%;*/
-    /*height: 425px;*/
-
-    /*padding-bottom: 68%;*/
-
-    /*display: flex;*/
-    /*padding: 10px;*/
-    /*!*margin: 20px;*!*/
-    /*background: #fff0da;*/
   }
-
-
-
 
 </style>
 

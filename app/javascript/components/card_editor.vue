@@ -1,25 +1,17 @@
 <template>
   <div class="card-editor-container">
     <h2>Front</h2>
-    <!--<button v-on:click="front.addDiscount()">Add Discount</button>-->
-    <!--<button v-on:click="front.removeDiscount()">Remove Discount</button>-->
-    <div class="card-side-editor-container">
-
-      <div class="card-side-aspect-padder">
+    <div class="editor-columns-container">
+      <div ref="editorLeftColumn" class="editor-left-column">
         <card-side
             ref="frontSide"
             :backgroundUrl="frontBackgroundImageUrl"
             :enableDiscount="enableFrontDiscount"
-
+            :style="cardSideStyle"
         >
         </card-side>
       </div>
-
-      <!--<div class="canvas-container-wrapper">-->
-        <!--<canvas id="front-side-canvas" class="card-side-canvas" width=1875 height=1275></canvas>-->
-      <!--</div>-->
-      <div class="flex-spacer"></div>
-      <div class="editor-menu">
+      <div class="editor-menu editor-right-column">
         <strong>Upload Background</strong>
         <input type="file" accept="image/png,image/jpeg"  @change="updateBackground($event, front)">
         <hr />
@@ -38,9 +30,6 @@
   import { Api } from '../api';
   import CardSide from './card_side.vue';
 
-  // const FullCanvasWidth = 1875;
-  // const FullCanvasHeight = 1275;
-
   export default {
     props: {
       discount_pct: {
@@ -50,6 +39,15 @@
       aws_sign_endpoint: {
         type: String,
         required: true
+      }
+    },
+    computed: {
+      cardSideStyle: function() {
+        return {
+          margin: '0 auto',
+          'transform-origin': 'left',
+          transform: `scale(${this.viewScale})`
+        }
       }
     },
     components:{
@@ -97,55 +95,21 @@
     methods: {
       handleResize: function() {
 
-        // let leftWidth = document.getElementsByClassName('left')[0].offsetWidth;
-        // let card = document.getElementsByClassName('card')[0];
+        // TODO: get dimensions dynamically from CSS
 
+        let leftColumnWidth = this.$refs.editorLeftColumn.offsetWidth;
 
-        // this.$refs.frontSide.
+        console.log('leftColumnWidth: ' + leftColumnWidth)
 
-        // debugger;
-
-        // TODO: get dynamically from CSS
-        const MenuWidth = 180;
-        const FullCanvasWidth = 6.25 * 96;
-        const FullCanvasHeight = 4.25 * 96;
-
-        // this.viewScale = Math.min(620/FullCanvasWidth, Math.max(320/FullCanvasWidth, (Math.min(FullCanvasWidth/2, window.innerWidth - MenuWidth)/ FullCanvasWidth) * 0.8));
-
-        this.viewScale = Math.min(1.0, window.innerWidth/ FullCanvasWidth * 0.7);
-
-
-        // let existingStyle = this.$refs.frontSide.$el.style;
-        // this.$refs.frontSide.$el.style =  {...existingStyle, transform: `scale(${this.viewScale})`};
-
-        // this.$refs.frontSide.$el.style = "{transform: `scale(${viewScale})`}"
-        // Object.assign({}, source1, source2);
-
-        // console.log(this.viewScale);
-
-        // this.front.resizeCanvas(scale);
-        // this.back.resizeCanvas(scale);
-
-        //   var scale = Math.min(
-        //   availableWidth / contentWidth,
-        //   availableHeight / contentHeight
-        // );
-
-        // scale = 0.3;
+        const divisor = (6.25 * 96); // Card Width in inches TODO: Make dynamic / common width variable
+        this.viewScale = Math.max(0.1, Math.min(1.0, leftColumnWidth / divisor));
+        console.log('viewScale: ' + this.viewScale);
 
         // this.$refs.frontSide.style.transform = `scale(${scale})`;
         // this.$refs.frontSide.style['-o-transform'] = `scale(${scale})`;
         // this.$refs.frontSide.style['-webkit-transform'] = `scale(${scale})`;
         // this.$refs.frontSide.style['-moz-transform'] = `scale(${scale})`;
 
-
-
-      },
-      resizeCanvas: function (ratio) {
-        // let newWidth = this.fullCanvasWidth * ratio;
-        // let newHeight = this.fullCanvasHeight * ratio;
-        // this._canvas.setDimensions({ width: newWidth, height: newHeight});
-        // this._canvas.setZoom(ratio);
       },
       requestSave: function() {
         //
@@ -184,48 +148,32 @@
     text-align: center;
   }
 
-  /*.canvas-container-wrapper {*/
-  /*}*/
-
-  .card-side-editor-container {
+  .editor-columns-container {
     display: flex;
-    padding: 10px;
-    /*margin: 20px;*/
-    background: lightsalmon;
+    background: lightblue;
   }
 
-  /*!* https://stackoverflow.com/questions/1495407/maintain-the-aspect-ratio-of-a-div-with-css *!*/
-  .card-side-aspect-padder {
+  .editor-left-column {
     width: 100%;
-    /*padding-bottom: 68%;*/
-    position: relative;
-    background: lightblue; /** <-- For the demo **/
+    min-height: 300px;
+    background: lightgreen;
+    min-width: 100px;
+    margin: 0 10px 0;
   }
 
-  .card-side-canvas {
-    border-width: 1px;
-    border-color: grey;
-    border-style: dashed;
-  }
-
-  .flex-spacer {
-    flex-grow: 0;
-    flex-shrink: 0;
-    flex-basis: 10px;
-  }
   .editor-menu {
     background: lightgrey;
     flex-grow: 0;
     flex-shrink: 0;
     flex-basis: 180px;
     padding: 10px;
+    /*margin: 0 0 0 10px;*/
   }
 
   .discount-config {
     padding-top: 10px;
     padding-left: 10px;
   }
-
 
 </style>
 
