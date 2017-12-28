@@ -42,7 +42,7 @@
       return {
         discountStyle: {
           display: 'none',
-        }
+        },
         backgroundStyle: {
           backgroundImage: this.backgroundUrl ? `url('${this.backgroundUrl}')` : null, // `url('${this.backgroundUrl}')`
         }
