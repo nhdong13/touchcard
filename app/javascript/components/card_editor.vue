@@ -94,19 +94,9 @@
     },
     methods: {
       handleResize: function() {
-
-        // TODO: get dimensions dynamically from CSS
-
         let leftColumnWidth = this.$refs.editorLeftColumn.offsetWidth;
-
-        console.log('leftColumnWidth: ' + leftColumnWidth)
-
         let cardWidth = this.$refs.frontSide.$el.offsetWidth // Expecting 6.25in * 96 px = 608
-
-
-        // const divisor = (6.25 * 96); // Card Width in inches TODO: Make dynamic / common width variable
         this.cardScaleFactor = Math.max(0.1, Math.min(1.0, leftColumnWidth / cardWidth));
-        console.log('cardScaleFactor: ' + this.cardScaleFactor);
 
         // this.$refs.frontSide.style.transform = `scale(${scale})`;
         // this.$refs.frontSide.style['-o-transform'] = `scale(${scale})`;

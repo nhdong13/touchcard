@@ -48,11 +48,11 @@
           display: 'none',
         },
         backgroundStyle: {
-            backgroundImage: this.backgroundUrl ? `url('${this.backgroundUrl}')` : null, // `url('${this.backgroundUrl}')`,
+            backgroundImage: this.backgroundUrl ? `url('${this.backgroundUrl}')` : null,
         },
         // IGNORE ON SERIALIZATION
         cardScaleStyle: {
-          transform: null
+          transform: `scale(${this.scaleFactor})`
         }
       }
     },
