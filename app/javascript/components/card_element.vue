@@ -29,6 +29,14 @@
       onDrag: function (x, y) {
         this.x = x
         this.y = y
+
+        // TODO:
+        //
+        // Use the scale, found via this:
+        // to fix drag scaling
+        //
+        // window.card_editor.$refs.frontSide.$el.getBoundingClientRect().width / window.card_editor.$refs.frontSide.$el.offsetWidth
+
       }
     },
     components: {
@@ -48,16 +56,13 @@
     border-radius: 5px; /* */
     font-size: 1px;
     background: #333333; /* #EEE; */
-    border: 0;
     border: 1px solid white;
-    transform: scale(5.0);
   }
 
   .vdr .handle-tl {
     top: -5px;
     left: -5px;
     cursor: nwse-resize;
-    transform: scale(5.0);
   }
 
   .vdr .handle-tm {

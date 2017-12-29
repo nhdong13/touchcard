@@ -1,11 +1,12 @@
 <template>
-  <div ref="cardSideCanvas" class="card-side-canvas" :style="backgroundStyle">
+  <div ref="cardSideCanvas"
+       class="card-side-canvas"
+       :style="Object.assign({}, this.backgroundStyle, this.cardScaleStyle)">
     <card-element
         ref="discountElement"
         class="discount"
         :style="discountStyle"
         :parent="true"
-
     >
     </card-element>
     <!--<vue-draggable-resizable :w="170" :h="100" :parent="true">-->
@@ -18,14 +19,14 @@
 <script>
 
   import CardElement from './card_element.vue'
-  import VueDraggableResizable from 'vue-draggable-resizable';
   import CardSide from './card_side.vue';
 
 
   export default {
     props: {
       backgroundUrl: { String, default: '' },
-      enableDiscount: { Boolean }
+      enableDiscount: { Boolean },
+      scaleFactor: { Number, default: 1.0 },
     },
     // mounted: function() {
     //   window.card_side = this;
@@ -37,6 +38,9 @@
       enableDiscount: function(val) {
         this.discountStyle.display = val ? 'inline': 'none';
       },
+      scaleFactor: function(val) {
+        this.cardScaleStyle.transform = this.scaleFactor ? `scale(${this.scaleFactor})`: null;
+      }
     },
     data: function() {
       return {
@@ -44,12 +48,16 @@
           display: 'none',
         },
         backgroundStyle: {
-          backgroundImage: this.backgroundUrl ? `url('${this.backgroundUrl}')` : null, // `url('${this.backgroundUrl}')`
+            backgroundImage: this.backgroundUrl ? `url('${this.backgroundUrl}')` : null, // `url('${this.backgroundUrl}')`,
+        },
+        // IGNORE ON SERIALIZATION
+        cardScaleStyle: {
+          transform: null
         }
       }
     },
     components:{
-      'card-element': VueDraggableResizable
+      'card-element': CardElement
     },
     // methods: {
     //   updateBackground: function() {
@@ -59,9 +67,8 @@
 </script>
 <style scoped>
 
-
   :focus {
-    outline: 5px dotted black;
+    outline: 1px dotted black;
   }
 
   /* Required for Coupon */
@@ -83,21 +90,17 @@
     background-color: mediumpurple;
   }
 
-
   .card-side-canvas {
-
     width: 6.25in;
     height: 4.25in;
     margin: 0 auto;
-    transform-origin: left;
-
-    /*box-shadow: 5px 5px 10px #555;*/
-
+    transform-origin: left 25%;
+    box-shadow: 1px 1px 3px 1px rgba(0.2, 0.2, 0.2, 0.3);
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    background-color: lightsalmon;
-
+    /*background-color: lightsalmon;*/
+    /*border: 1px dashed;*/
   }
 
 </style>

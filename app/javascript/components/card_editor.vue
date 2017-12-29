@@ -7,7 +7,7 @@
             ref="frontSide"
             :backgroundUrl="frontBackgroundImageUrl"
             :enableDiscount="enableFrontDiscount"
-            :style="cardSideStyle"
+            :scaleFactor="cardScaleFactor"
         >
         </card-side>
       </div>
@@ -41,15 +41,15 @@
         required: true
       }
     },
-    computed: {
-      cardSideStyle: function() {
-        return {
-          margin: '0 auto',
-          'transform-origin': 'left',
-          transform: `scale(${this.viewScale})`
-        }
-      }
-    },
+    // computed: {
+    //   cardSideStyle: function() {
+    //     return {
+    //       margin: '0 auto',
+    //       'transform-origin': 'left',
+    //       transform: `scale(${this.viewScale})`
+    //     }
+    //   }
+    // },
     components:{
       'card-side': CardSide
     },
@@ -62,7 +62,7 @@
         enableBackDiscount: null,
         globalDiscountPct: this.discount_pct,
         globalDiscountExp: this.discount_exp,
-        viewScale: 1.0
+        cardScaleFactor: 1.0
       }
     },
     watch: {
@@ -101,9 +101,12 @@
 
         console.log('leftColumnWidth: ' + leftColumnWidth)
 
-        const divisor = (6.25 * 96); // Card Width in inches TODO: Make dynamic / common width variable
-        this.viewScale = Math.max(0.1, Math.min(1.0, leftColumnWidth / divisor));
-        console.log('viewScale: ' + this.viewScale);
+        let cardWidth = this.$refs.frontSide.$el.offsetWidth // Expecting 6.25in * 96 px = 608
+
+
+        // const divisor = (6.25 * 96); // Card Width in inches TODO: Make dynamic / common width variable
+        this.cardScaleFactor = Math.max(0.1, Math.min(1.0, leftColumnWidth / cardWidth));
+        console.log('cardScaleFactor: ' + this.cardScaleFactor);
 
         // this.$refs.frontSide.style.transform = `scale(${scale})`;
         // this.$refs.frontSide.style['-o-transform'] = `scale(${scale})`;
@@ -150,19 +153,19 @@
 
   .editor-columns-container {
     display: flex;
-    background: lightblue;
+    /*background: lightblue;*/
   }
 
   .editor-left-column {
     width: 100%;
     min-height: 300px;
-    background: lightgreen;
+    /*background: lightgreen;*/
     min-width: 100px;
     margin: 0 10px 0;
   }
 
   .editor-menu {
-    background: lightgrey;
+    /*background: lightgrey;*/
     flex-grow: 0;
     flex-shrink: 0;
     flex-basis: 180px;
