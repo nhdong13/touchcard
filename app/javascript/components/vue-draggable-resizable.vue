@@ -1,3 +1,5 @@
+<!-- https://github.com/mauricius/vue-draggable-resizable  | master as of 2017-12-29 -->
+
 <template>
   <div class="vdr" @mousedown.stop="elmDown" @dblclick="fillParent" :style="style"
     :class="{ draggable: draggable, resizable: resizable, active: enabled, dragging: dragging, resizing: resizing }"
