@@ -1,50 +1,21 @@
 <template>
-   <vue-draggable-resizable
-       class="card-element"
-       v-on:dragging="onDrag"
-       :parent="true"
-   >
-  </vue-draggable-resizable>
 </template>
 
 <script>
   import VueDraggableResizable from 'vue-draggable-resizable';
 
   export default {
-    data: function () {
-      return {
-        // width: 0,
-        // height: 0,
-        x: 0,
-        y: 0
-      }
+    name: 'base_element',
+    // data: function() { return {} }
+    components:{
+      'base-element': VueDraggableResizable
     },
-    methods: {
-      // onResize: function (x, y, width, height) {
-      //   this.x = x
-      //   this.y = y
-      //   this.width = width
-      //   this.height = height
-      // },
-      onDrag: function (x, y) {
-        this.x = x
-        this.y = y
+  };
 
-        // TODO:
-        //
-        // Use the scale, found via this:
-        // to fix drag scaling
-        //
-        // window.card_editor.$refs.frontSide.$el.getBoundingClientRect().width / window.card_editor.$refs.frontSide.$el.offsetWidth
-
-      }
-    },
-    components: {
-      'vue-draggable-resizable': VueDraggableResizable
-    }
-    // mixins: [VueDraggableResizable],
-  }
 </script>
+
+<style scoped>
+</style>
 
 <style>
   .vdr .handle {
@@ -122,6 +93,5 @@
     right: -5px;
     cursor: se-resize;
   }
-
 
 </style>

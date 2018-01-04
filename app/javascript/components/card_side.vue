@@ -2,25 +2,30 @@
   <div ref="cardSideCanvas"
        class="card-side-canvas"
        :style="Object.assign({}, this.backgroundStyle, this.cardScaleStyle)">
-    <card-element
-        ref="discountElement"
-        class="discount"
-        :style="discountStyle"
-        :parent="true"
-    >
-    </card-element>
-    <!--<vue-draggable-resizable :w="170" :h="100" :parent="true">-->
-    <!--<p>draggable</p>-->
-    <!--</vue-draggable-resizable>-->
+
+    <!--<card-element v-for="object in model.objects" :key="object.id" type="object.type"></card-element>-->
+
+    <card-side-element
+        :type="enableDiscount ? 'discount' : null"
+    ></card-side-element>
+
+    <!--<card-element-->
+        <!--ref="discountElement"-->
+        <!--class="discount"-->
+        <!--:style="discountStyle"-->
+        <!--:parent="true"-->
+        <!--:w="170"-->
+        <!--:h="100"-->
+        <!--:resizable="false"-->
+    <!--&gt;-->
+    <!--</card-element>-->
 
   </div>
 </template>
 
 <script>
 
-  import CardElement from './card_element.vue'
-  import CardSide from './card_side.vue';
-
+  import CardSideElement from './card_side_element.vue'
 
   export default {
     props: {
@@ -57,7 +62,7 @@
       }
     },
     components:{
-      'card-element': CardElement
+      'card-side-element': CardSideElement
     },
     // methods: {
     //   updateBackground: function() {
@@ -79,16 +84,6 @@
     text-align: center;
   }
 
-  .discount {
-    position: absolute;
-    top: 30%;
-    left: 30%;
-    width: 28%;
-    height: 25%;
-    text-align: center;
-    font-family: 'Montserrat';
-    background-color: mediumpurple;
-  }
 
   .card-side-canvas {
     width: 6.25in;
