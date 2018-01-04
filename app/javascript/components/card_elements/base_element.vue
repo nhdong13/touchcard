@@ -2,7 +2,7 @@
 </template>
 
 <script>
-  import VueDraggableResizable from 'vue-draggable-resizable';
+  import VueDraggableResizable from './vue-draggable-resizable';
 
   export default {
     name: 'base_element',

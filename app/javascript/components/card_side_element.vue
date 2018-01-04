@@ -1,7 +1,9 @@
 <template>
   <discount-element v-if="type === 'discount'"></discount-element>
 
-  <!-- <ANOTHER-KIND-OF-ELEMENT  v-if="type === 'discount'"></discount-element> -->
+  <!-- list all elements - acts like a switch to select components -->
+  <!-- <another-element v-if="type === 'another'"></another-element> -->
+
 </template>
 
 <script>

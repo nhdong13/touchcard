@@ -3,6 +3,14 @@
        class="card-side-canvas"
        :style="Object.assign({}, this.backgroundStyle, this.cardScaleStyle)">
 
+    <!--<template v-for="object in model.objects">-->
+      <!-- element switch -->
+      <!-- <concrete-element v-if="object.type === 'concrete'"></concrete-element> -->
+      <!-- <another-element v-if="object.type === 'another'"></another-element> -->
+    <!--</template>-->
+
+    <!-- OR -->
+
     <!--<card-element v-for="object in model.objects" :key="object.id" type="object.type"></card-element>-->
 
     <card-side-element
