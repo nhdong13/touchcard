@@ -7,8 +7,11 @@
         ref="cardEditor"
         :discount_pct.sync="automation.discount_pct"
         :discount_exp.sync="automation.discount_exp"
+        :front_attributes.sync="automation.card_side_front_attributes"
+        :back_attributes.sync="automation.card_side_back_attributes"
         :aws_sign_endpoint="awsSignEndpoint"
     ></card-editor>
+
     <hr />
   </div>
 </template>

@@ -3,7 +3,11 @@
        class="card-side-canvas"
        :style="Object.assign({}, this.backgroundStyle, this.scaleStyle)">
 
-    <discount-element v-if="enableDiscount"></discount-element>
+    <discount-element :discount_x.sync="attributes.discount_x"
+                      :discount_y.sync="attributes.discount_y"
+                      v-if="enableDiscount"
+    >
+    </discount-element>
 
     <!--<template v-for="object in model.objects">-->
       <!-- element switch -->
@@ -20,6 +24,13 @@
 
   export default {
     props: {
+      attributes: {
+        type: Object,
+        required: true,
+        // validator: function (value) {
+        //   return false;
+        // }
+      },
       backgroundUrl: { String, default: '' },
       enableDiscount: { Boolean },
       scaleFactor: { Number, default: 1.0 },
@@ -27,7 +38,7 @@
     watch: {
       backgroundUrl: function(val) {
         this.backgroundStyle.backgroundImage = `url('${val}')`;
-      }
+      },
     },
     computed: {
       scaleStyle: function () {
@@ -45,10 +56,6 @@
     components:{
       DiscountElement
     },
-    // methods: {
-    //   updateBackground: function() {
-    //   }
-    // }
   }
 </script>
 <style scoped>

@@ -5,6 +5,7 @@
       <div ref="editorLeftColumn" class="editor-left-column">
         <card-side
             ref="frontSide"
+            :attributes.sync="front_attributes"
             :backgroundUrl="frontBackgroundImageUrl"
             :enableDiscount="enableFrontDiscount"
             :scaleFactor="cardScaleFactor"
@@ -18,10 +19,13 @@
         <input type="checkbox" v-model="enableFrontDiscount"><strong>Include Expiring Discount</strong>
         <div class="discount-config" v-if="enableFrontDiscount">
           <span>
-            <input type="number" min="0" max="100" v-bind:value="discount_pct" @input="$emit('update:discount_pct', Number($event.target.value))"> % off
+            <input type="number" min="0" max="100" :value="discount_pct" @input="$emit('update:discount_pct', Number($event.target.value))">
+            <!--<input type="number" min="0" max="100" :value="automation.discount_pct" @input="$emit('update:automation', Object.assign(automation, {discount_pct: Number($event.target.value)}))">-->
+            % off
           </span><br>
           <span>
-            <input type="number" min="1" max="52" :value="discount_exp" @input="$emit('update:discount_exp', Number($event.target.value))"> weeks expiration
+            <input type="number" min="1" max="52" :value="discount_exp" @input="$emit('update:discount_exp', Number($event.target.value))">
+            weeks expiration
           </span>
         </div>
       </div>
@@ -36,29 +40,26 @@
 
   export default {
     props: {
-      discount_pct: null,
-      discount_exp: null,
+      discount_pct: Number,
+      discount_exp: Number,
+      front_attributes: {
+        type: Object,
+        required: true,
+      },
+      back_attributes: {
+        type: Object,
+        required: true,
+      },
       aws_sign_endpoint: {
         type: String,
         required: true
       }
     },
-    // computed: {
-    //   cardSideStyle: function() {
-    //     return {
-    //       margin: '0 auto',
-    //       'transform-origin': 'left',
-    //       transform: `scale(${this.viewScale})`
-    //     }
-    //   }
-    // },
     components:{
       'card-side': CardSide
     },
     data: function() {
       return {
-        front: null,
-        back: null,
         frontBackgroundImageUrl: null,
         enableFrontDiscount: false,
         enableBackDiscount: null,
