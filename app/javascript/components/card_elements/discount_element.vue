@@ -5,6 +5,8 @@
       :h="100"
       :resizable="false"
       :parent="true"
+      :x="215"
+      :y="154"
   ></base-element>
 </template>
 

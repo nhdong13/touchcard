@@ -1,10 +1,9 @@
 <template>
   <div ref="cardSideCanvas"
        class="card-side-canvas"
-       :style="Object.assign({}, this.backgroundStyle, this.cardScaleStyle)">
+       :style="Object.assign({}, this.backgroundStyle, this.scaleStyle)">
 
     <discount-element v-if="enableDiscount"></discount-element>
-    <!--:style="discountStyle"-->
 
     <!--<template v-for="object in model.objects">-->
       <!-- element switch -->
@@ -25,31 +24,21 @@
       enableDiscount: { Boolean },
       scaleFactor: { Number, default: 1.0 },
     },
-    // mounted: function() {
-    //   window.card_side = this;
-    // },
     watch: {
       backgroundUrl: function(val) {
         this.backgroundStyle.backgroundImage = `url('${val}')`;
-      },
-      enableDiscount: function(val) {
-        this.discountStyle.display = val ? 'inline': 'none';
-      },
-      scaleFactor: function(val) {
-        this.cardScaleStyle.transform = this.scaleFactor ? `scale(${this.scaleFactor})`: null;
+      }
+    },
+    computed: {
+      scaleStyle: function () {
+        // TODO: We need to include all the browser-specific scale transforms
+        return (this.scaleFactor ? {transform: `scale(${this.scaleFactor})` }: null);
       }
     },
     data: function() {
       return {
-        discountStyle: {
-          display: 'none',
-        },
         backgroundStyle: {
             backgroundImage: this.backgroundUrl ? `url('${this.backgroundUrl}')` : null,
-        },
-        // IGNORE ON SERIALIZATION
-        cardScaleStyle: {
-          transform: `scale(${this.scaleFactor})`
         }
       }
     },
