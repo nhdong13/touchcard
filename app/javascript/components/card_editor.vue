@@ -17,8 +17,12 @@
         <hr />
         <input type="checkbox" v-model="enableFrontDiscount"><strong>Include Expiring Discount</strong>
         <div class="discount-config" v-if="enableFrontDiscount">
-          <span><input type="number" min="0" max="100" v-model="globalDiscountPct"> % off</span><br>
-          <span><input type="number" min="1" max="52" v-model="globalDiscountExp"> weeks expiration</span>
+          <span>
+            <input type="number" min="0" max="100" v-bind:value="discount_pct" @input="$emit('update:discount_pct', Number($event.target.value))"> % off
+          </span><br>
+          <span>
+            <input type="number" min="1" max="52" :value="discount_exp" @input="$emit('update:discount_exp', Number($event.target.value))"> weeks expiration
+          </span>
         </div>
       </div>
     </div>
@@ -32,10 +36,8 @@
 
   export default {
     props: {
-      discount_pct: {
-      },
-      discount_exp: {
-      },
+      discount_pct: null,
+      discount_exp: null,
       aws_sign_endpoint: {
         type: String,
         required: true
@@ -60,22 +62,13 @@
         frontBackgroundImageUrl: null,
         enableFrontDiscount: false,
         enableBackDiscount: null,
-        globalDiscountPct: this.discount_pct,
-        globalDiscountExp: this.discount_exp,
         cardScaleFactor: 1.0
       }
     },
     watch: {
-      globalDiscountPct: function(val) {
-        this.$emit('update:discount_pct', val);
-      },
-      globalDiscountExp: function(val) {
-        this.$emit('update:discount_exp', val);
-      },
       // TODO: For backwards-compatability's sake we would like to null out card_order.discount_pct and
       // card_order.discount_exp if neither card side has a discount, but that may just complicate
       // things without being absolutely necessary
-
     },
     mounted: function() {
       console.log('CardEditor Mounted')

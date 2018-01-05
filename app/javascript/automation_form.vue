@@ -5,9 +5,9 @@
     <h3>{{automation.type}}</h3>
     <card-editor
         ref="cardEditor"
-        v-bind:discount_pct.sync="automation.discount_pct"
-        v-bind:discount_exp.sync="automation.discount_exp"
-        v-bind:aws_sign_endpoint="awsSignEndpoint"
+        :discount_pct.sync="automation.discount_pct"
+        :discount_exp.sync="automation.discount_exp"
+        :aws_sign_endpoint="awsSignEndpoint"
     ></card-editor>
     <hr />
   </div>
