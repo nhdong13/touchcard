@@ -3,37 +3,21 @@
        class="card-side-canvas"
        :style="Object.assign({}, this.backgroundStyle, this.cardScaleStyle)">
 
+    <discount-element v-if="enableDiscount"></discount-element>
+    <!--:style="discountStyle"-->
+
     <!--<template v-for="object in model.objects">-->
       <!-- element switch -->
       <!-- <concrete-element v-if="object.type === 'concrete'"></concrete-element> -->
       <!-- <another-element v-if="object.type === 'another'"></another-element> -->
     <!--</template>-->
 
-    <!-- OR -->
-
-    <!--<card-element v-for="object in model.objects" :key="object.id" type="object.type"></card-element>-->
-
-    <card-side-element
-        :type="enableDiscount ? 'discount' : null"
-    ></card-side-element>
-
-    <!--<card-element-->
-        <!--ref="discountElement"-->
-        <!--class="discount"-->
-        <!--:style="discountStyle"-->
-        <!--:parent="true"-->
-        <!--:w="170"-->
-        <!--:h="100"-->
-        <!--:resizable="false"-->
-    <!--&gt;-->
-    <!--</card-element>-->
-
   </div>
 </template>
 
 <script>
 
-  import CardSideElement from './card_side_element.vue'
+  import DiscountElement from './card_elements/discount_element.vue';
 
   export default {
     props: {
@@ -70,7 +54,7 @@
       }
     },
     components:{
-      'card-side-element': CardSideElement
+      DiscountElement
     },
     // methods: {
     //   updateBackground: function() {
@@ -84,14 +68,13 @@
     outline: 1px dotted black;
   }
 
-  /* Required for Coupon */
+  /* Required for Discount */
   @import url('https://fonts.googleapis.com/css?family=Montserrat');
 
   p {
     font-size: 2em;
     text-align: center;
   }
-
 
   .card-side-canvas {
     width: 6.25in;

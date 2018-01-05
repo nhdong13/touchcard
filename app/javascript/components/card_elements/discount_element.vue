@@ -4,6 +4,7 @@
       :w="170"
       :h="100"
       :resizable="false"
+      :parent="true"
   ></base-element>
 </template>
 
