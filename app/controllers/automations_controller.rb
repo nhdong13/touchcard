@@ -84,8 +84,8 @@ class AutomationsController < BaseController
       :international,
       :send_delay,
       filter_attributes: [:filter_data],
-      card_side_front_attributes: [:image],
-      card_side_back_attributes: [:image],
+      card_side_front_attributes: [:image, :discount_x, :discount_y],
+      card_side_back_attributes: [:image, :discount_x, :discount_y],
     )
   end
 end
