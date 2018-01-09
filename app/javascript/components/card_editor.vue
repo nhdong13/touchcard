@@ -8,6 +8,8 @@
             :attributes.sync="front_attributes"
             :enableDiscount="enableFrontDiscount"
             :scaleFactor="cardScaleFactor"
+            :discount_pct="discount_pct"
+            :discount_exp="discount_exp"
         >
         </card-side>
       </div>
@@ -39,8 +41,12 @@
 
   export default {
     props: {
-      discount_pct: Number,
-      discount_exp: Number,
+      discount_pct: {
+        type: Number
+      },
+      discount_exp: {
+        type: Number
+      },
       front_attributes: {
         type: Object,
         required: true,
@@ -61,7 +67,9 @@
       return {
         enableFrontDiscount: this.discount_pct && this.discount_exp,
         enableBackDiscount: null,
-        cardScaleFactor: 1.0
+        cardScaleFactor: 1.0,
+        cachedDiscountPct: this.discount_pct || 20,
+        cachedDiscountExp: this.discount_exp || 3,
       }
     },
     watch: {
@@ -69,10 +77,8 @@
       // card_order.discount_exp if neither card side has a discount, but that may just complicate
       // things without being absolutely necessary
       enableFrontDiscount: function(val) {
-        let pct_val = val ? 20 : null;
-        let exp_val = val ? 3 : null;
-        this.$emit('update:discount_pct', pct_val);
-        this.$emit('update:discount_exp', exp_val);
+        this.$emit('update:discount_pct', val ? this.cachedDiscountPct : null);
+        this.$emit('update:discount_exp', val ? this.cachedDiscountExp : null);
       }
     },
     mounted: function() {

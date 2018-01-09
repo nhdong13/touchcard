@@ -2,15 +2,19 @@
   <base-element
       ref="discountRect"
       class="discount"
-      :w="170"
-      :h="100"
+      :w="160"
+      :h="95"
       :resizable="false"
       :parent="true"
       :x="discount_x || 215"
       :y="discount_y || 154"
       @dragstop="emitDiscountCoords"
 
-  ></base-element>
+  >
+      <div class="percent">{{discount_pct}}% OFF</div>
+      <div class="code">DIS-CNT-COD</div>
+      <div class="expiration">{{dateToday}}</div>
+  </base-element>
 </template>
 
 <script>
@@ -33,6 +37,20 @@
         validator: function (val) {
           return val === null || typeof val === 'number'
         }
+      },
+      discount_pct: {
+        required: true,
+        type: Number
+      },
+      discount_exp: {
+        required: true,
+        type: Number
+      }
+    },
+    computed: {
+      dateToday: function() {
+        let today= new Date();
+        return `${today.getDate()}/${today.getMonth() + 1}/${today.getFullYear()}`;
       }
     },
     beforeDestroy: function() {
@@ -49,12 +67,12 @@
     //     return (this.discount_y === null) ? 154 : this.discount_y;
     //   },
     // },
-    // First 'Mounted' happens before first 'Computed'
-    mounted: function() {
-      // Make sure the intial centering is reflected in parent component
-      console.log('mounted')
-      this.emitDiscountCoords(this.discountLeft, this.discountTop);
-    },
+    // // First 'Mounted' happens before first 'Computed'
+    // mounted: function() {
+    //   // Make sure the intial centering is reflected in parent component
+    //   // console.log('mounted')
+    //   // this.emitDiscountCoords(this.discountLeft, this.discountTop);
+    // },
     methods: {
       emitDiscountCoords: function(left, top) {
         // Convert Discount to % and Emit
@@ -70,8 +88,31 @@
   .discount {
     position: absolute;
     text-align: center;
+    width: 160px;
+    height: 95px;
     font-family: 'Montserrat';
     background-color: orange;
+    user-select: none;
   }
+
+  .discount:hover {
+    outline: 1px dotted;
+  }
+
+  .percent {
+    font-size: 0.30in;
+    font-weight: 800;
+    margin: 0.06in 0 0;
+  }
+
+  .code {
+    font-size: 0.17in;
+  }
+
+  .expiration {
+    margin-top: 0.11in;
+    font-size: 0.09in;
+  }
+
 
 </style>

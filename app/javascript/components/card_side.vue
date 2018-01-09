@@ -1,20 +1,23 @@
 <template>
   <div ref="cardSideCanvas"
-       class="card-side-canvas"
+       class="card-side-body"
        :style="Object.assign({}, this.backgroundStyle, this.scaleStyle)">
 
-    <discount-element :discount_x.sync="attributes.discount_x"
-                      :discount_y.sync="attributes.discount_y"
-                      v-if="enableDiscount"
-    >
-    </discount-element>
+    <div class="card-side-safe-area">
+      <discount-element :discount_x.sync="attributes.discount_x"
+                        :discount_y.sync="attributes.discount_y"
+                        :discount_pct="discount_pct"
+                        :discount_exp="discount_exp"
+                        v-if="enableDiscount"
+      >
+      </discount-element>
 
-    <!--<template v-for="object in model.objects">-->
-      <!-- element switch -->
-      <!-- <concrete-element v-if="object.type === 'concrete'"></concrete-element> -->
-      <!-- <another-element v-if="object.type === 'another'"></another-element> -->
-    <!--</template>-->
-
+      <!--<template v-for="object in model.objects">-->
+        <!-- element switch -->
+        <!-- <concrete-element v-if="object.type === 'concrete'"></concrete-element> -->
+        <!-- <another-element v-if="object.type === 'another'"></another-element> -->
+      <!--</template>-->
+    </div>
   </div>
 </template>
 
@@ -33,6 +36,8 @@
       },
       enableDiscount: { Boolean },
       scaleFactor: { Number, default: 1.0 },
+      discount_pct: { Number },
+      discount_exp: { Number },
     },
     computed: {
       scaleStyle: function () {
@@ -66,7 +71,7 @@
     text-align: center;
   }
 
-  .card-side-canvas {
+  .card-side-body {
     width: 6.25in;
     height: 4.25in;
     margin: 0 auto;
@@ -77,6 +82,15 @@
     background-repeat: no-repeat;
     /*background-color: lightsalmon;*/
     /*border: 1px dashed;*/
+  }
+
+  .card-side-safe-area {
+    position: absolute;
+    width: 5.875in;
+    height: 3.875in;
+    left: 0.1875in;
+    top: 0.1875in;
+    background-color: rgba(255, 255, 220, 0.35);
   }
 
 </style>
