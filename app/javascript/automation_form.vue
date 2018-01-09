@@ -47,14 +47,20 @@
     },
     methods: {
       requestSave: function() {
-        // Ask the CardEditor to finish its uploads and serialization (attributes are written back via :props.sync)
-        this.$refs.cardEditor.requestSave()
-          .then((results) => {
-            console.log(results)
-            this.postOrPutForm()
-          }).catch(function (err) {
-          console.log(err)
-        })
+
+        // TODO: Wait for uploads to complete in CardEditor
+
+        this.postOrPutForm();
+
+        // // Ask the CardEditor to finish its uploads and serialization (attributes are writt
+        // back via :props.sync)
+        // this.$refs.cardEditor.requestSave()
+        //   .then((results) => {
+        //     console.log(results)
+        //     this.postOrPutForm()
+        //   }).catch(function (err) {
+        //   console.log(err)
+        // })
       },
       postOrPutForm: function() {
         if (this.id) {

@@ -6,7 +6,6 @@
         <card-side
             ref="frontSide"
             :attributes.sync="front_attributes"
-            :backgroundUrl="frontBackgroundImageUrl"
             :enableDiscount="enableFrontDiscount"
             :scaleFactor="cardScaleFactor"
         >
@@ -14,7 +13,7 @@
       </div>
       <div class="editor-menu editor-right-column">
         <strong>Upload Background</strong>
-        <input type="file" accept="image/png,image/jpeg"  @change="updateBackground($event, front)">
+        <input type="file" accept="image/png,image/jpeg"  @change="updateFrontBackground($event)">
         <hr />
         <input type="checkbox" v-model="enableFrontDiscount"><strong>Include Expiring Discount</strong>
         <div class="discount-config" v-if="enableFrontDiscount">
@@ -60,8 +59,7 @@
     },
     data: function() {
       return {
-        frontBackgroundImageUrl: null,
-        enableFrontDiscount: false,
+        enableFrontDiscount: this.discount_pct && this.discount_exp,
         enableBackDiscount: null,
         cardScaleFactor: 1.0
       }
@@ -70,6 +68,12 @@
       // TODO: For backwards-compatability's sake we would like to null out card_order.discount_pct and
       // card_order.discount_exp if neither card side has a discount, but that may just complicate
       // things without being absolutely necessary
+      enableFrontDiscount: function(val) {
+        let pct_val = val ? 20 : null;
+        let exp_val = val ? 3 : null;
+        this.$emit('update:discount_pct', pct_val);
+        this.$emit('update:discount_exp', exp_val);
+      }
     },
     mounted: function() {
       console.log('CardEditor Mounted')
@@ -99,7 +103,6 @@
 
       },
       requestSave: function() {
-        //
         // // TODO: We should probably have a data structure to monitor parallel uploads + completion
         // // And would be nice if uploads happened as soon as added + CardSide has loading icon + completion for not-yet-uploaded images
         // let promises = [];
@@ -111,7 +114,7 @@
         // }
         // return Promise.all(promises);
       },
-      updateBackground: function(e, cardSide) {
+      updateFrontBackground: function(e) {
         let files = e.target.files || e.dataTransfer.files;
         if (!files.length)
           return;
@@ -120,10 +123,10 @@
         this.api.uploadFileToS3(files[0], (error, result) => {
           console.log(error ? error : result);
           if (result) {
-            this.frontBackgroundImageUrl = result;
+            this.$emit('update:front_attributes', Object.assign(this.front_attributes, {image: result}));
           }
         });
-      },
+      }
     }
   }
 </script>

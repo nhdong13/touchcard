@@ -31,28 +31,22 @@
         //   return false;
         // }
       },
-      backgroundUrl: { String, default: '' },
       enableDiscount: { Boolean },
       scaleFactor: { Number, default: 1.0 },
-    },
-    watch: {
-      backgroundUrl: function(val) {
-        this.backgroundStyle.backgroundImage = `url('${val}')`;
-      },
     },
     computed: {
       scaleStyle: function () {
         // TODO: We need to include all the browser-specific scale transforms
         return (this.scaleFactor ? {transform: `scale(${this.scaleFactor})` }: null);
+      },
+      backgroundStyle: function () {
+        return { backgroundImage: this.attributes.image ? `url('${this.attributes.image}')` : null }
       }
     },
-    data: function() {
-      return {
-        backgroundStyle: {
-            backgroundImage: this.backgroundUrl ? `url('${this.backgroundUrl}')` : null,
-        }
-      }
-    },
+    // data: function() {
+    //   return {
+    //   }
+    // },
     components:{
       DiscountElement
     },
