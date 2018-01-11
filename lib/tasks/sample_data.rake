@@ -9,7 +9,7 @@ namespace :db do
     if Rails.env.production? && shop.email.split('@').last != "touchcard.co"
       raise 'WARNING: In production mode shops require @touchcard.co owner email'
     end
-    
+
     create_card_order_and_sides shop if shop.card_orders.count == 0
     populate_data shop # if shop.orders.count == 0
   end
@@ -59,6 +59,7 @@ namespace :db do
         zip: Faker::Address.zip_code,
         first_name: c.first_name,
         last_name: c.last_name,
+        name: "#{c.first_name} #{c.last_name}".chomp(" "),
         default: true,
       )
 
@@ -132,7 +133,7 @@ namespace :db do
     # end
 
   end
-  
+
   # def load_record(key, overrides={})
   #   order_text = File.read("#{Rails.root}/lib/assets/tasks/sample_data/#{key}.json")
   #   order_obj = JSON.parse(order_text).with_indifferent_access

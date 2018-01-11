@@ -90,7 +90,7 @@
     height: 3.875in;
     left: 0.1875in;
     top: 0.1875in;
-    background-color: rgba(255, 255, 220, 0.35);
+    /*background-color: rgba(255, 255, 220, 0.35);*/
   }
 
 </style>

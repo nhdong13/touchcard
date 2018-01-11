@@ -19,6 +19,7 @@
 <script>
   /* global Turbolinks */
   import axios from 'axios'
+  import CardEditor from './components/card_editor.vue'
 
   export default {
     props: {
@@ -39,11 +40,12 @@
     //   };
     // },
     components: {
-      'card-editor': () => ({
-        // https://vuejs.org/v2/guide/components.html#Async-Components
-        component: import('./components/card_editor.vue')
-        // loading: LoadingComp, error: ErrorComp, delay: 200, timeout: 3000
-      })
+      // 'card-editor': () => ({
+      //   // https://vuejs.org/v2/guide/components.html#Async-Components
+      //   component: import('./components/card_editor.vue')
+      //   // loading: LoadingComp, error: ErrorComp, delay: 200, timeout: 3000
+      // })
+      'card-editor': CardEditor
     },
     methods: {
       requestSave: function() {
