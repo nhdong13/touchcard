@@ -83,6 +83,8 @@ gem "thor", "~> 0.19.1"
 
 gem "pg"
 
+gem "selenium-webdriver"
+
 group :assets do
   gem "therubyracer", platforms: :ruby
 end

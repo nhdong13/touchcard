@@ -2,6 +2,7 @@ require "aws_utils"
 require "card_html"
 require "newrelic_rpm"
 require "discount_manager"
+require "lob_render_util"
 
 class Postcard < ApplicationRecord
   belongs_to :card_order
@@ -83,20 +84,33 @@ class Postcard < ApplicationRecord
       return unless @discount_manager.has_valid_code?
     end
 
-    front_html, back_html = [
-      card_order.card_side_front,
-      card_order.card_side_back
-    ].map do |card_side|
-      CardHtml.generate(
-        background_image: card_side.image,
-        discount_x: card_side.discount_x,
-        discount_y: card_side.discount_y,
-        discount_pct: discount_pct ? discount_pct.abs : nil,
-        # Make customer think coupon expires a day early to avoid last minute disappoint for e.g. timezone issues
-        discount_exp: discount_exp_at ? (discount_exp_at - 1.day).strftime("%m/%d/%Y") : nil,
-        discount_code: card_side.show_discount? ? discount_code : nil
-      )
-    end
+    front_html = LobApiController.render(:card_side,
+                                         assigns: {
+                                             postcard: self,
+                                             card_side: self.card_order.card_side_front,
+                                             lob_js_pack_path: LobRenderUtil.lob_js_pack_path,
+                                             lob_css_pack_path: LobRenderUtil.lob_css_pack_path })
+
+    back_html = "http://touchcard.ngrok.io/lob_render_test.html"
+
+    puts "---FRONT HTML START---"
+    puts front_html
+    puts "---END FRONT HTML---"
+
+    # front_html, back_html = [
+    #   card_order.card_side_front,
+    #   card_order.card_side_back
+    # ].map do |card_side|
+    #   CardHtml.generate(
+    #     background_image: card_side.image,
+    #     discount_x: card_side.discount_x,
+    #     discount_y: card_side.discount_y,
+    #     discount_pct: discount_pct ? discount_pct.abs : nil,
+    #     # Make customer think coupon expires a day early to avoid last minute disappoint for e.g. timezone issues
+    #     discount_exp: discount_exp_at ? (discount_exp_at - 1.day).strftime("%m/%d/%Y") : nil,
+    #     discount_code: card_side.show_discount? ? discount_code : nil
+    #   )
+    # end
 
     sent_card = @lob.postcards.create(
       description: "A #{card_order.type} card sent by #{shop.domain}",

@@ -99,6 +99,8 @@ GEM
       activesupport (>= 3.2.0)
       tzinfo
     byebug (8.2.4)
+    childprocess (0.8.0)
+      ffi (~> 1.0, >= 1.0.11)
     clipboard (1.1.0)
     coffee-rails (4.2.2)
       coffee-script (>= 2.2.0)
@@ -306,6 +308,7 @@ GEM
       rspec-mocks (~> 3.6.0)
       rspec-support (~> 3.6.0)
     rspec-support (3.6.0)
+    rubyzip (1.2.1)
     safe_yaml (1.0.4)
     sass (3.5.3)
       sass-listen (~> 4.0.0)
@@ -321,6 +324,9 @@ GEM
     sdoc (0.4.1)
       json (~> 1.7, >= 1.7.7)
       rdoc (~> 4.0)
+    selenium-webdriver (3.8.0)
+      childprocess (~> 0.5)
+      rubyzip (~> 1.0)
     shopify_api (4.9.0)
       activeresource (>= 3.0.0)
       rack
@@ -423,6 +429,7 @@ DEPENDENCIES
   rspec-rails (~> 3.6.0)
   sass-rails (~> 5.0, >= 5.0.6)
   sdoc (~> 0.4.0)
+  selenium-webdriver
   shopify_app (~> 7.3.0)
   simplecov
   spring
