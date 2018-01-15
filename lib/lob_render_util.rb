@@ -29,10 +29,12 @@ module LobRenderUtil
     # options.add_argument('--window-size=600,408')
     #
 
+    FileUtils.mkdir_p "#{Rails.root}/public/lob/"
+
     options = Selenium::WebDriver::Chrome::Options.new
     options.add_argument('--headless')
     options.add_argument('--window-size=937,637')
-    file_path = "#{Rails.root}/tmp/lob_selenium_in.html"
+    file_path = "#{Rails.root}/public/lob/selenium_in.html"
     File.open(file_path, 'w') {|f| f.write(html) }
     driver = Selenium::WebDriver.for :chrome, options: options
 
@@ -42,14 +44,14 @@ module LobRenderUtil
     rendered_html = driver.execute_script("return document.documentElement.innerHTML")
 
     screenshot_data = driver.screenshot_as :base64
-    File.open("#{Rails.root}/tmp/lob_selenium_out.png", 'wb') {|f| f.write(Base64.decode64(screenshot_data)) }
-    File.open("#{Rails.root}/tmp/lob_selenium_out.html", 'wb') {|f| f.write(rendered_html) }
+    File.open("#{Rails.root}/public/lob/selenium_out.png", 'wb') {|f| f.write(Base64.decode64(screenshot_data)) }
+    File.open("#{Rails.root}/public/lob/selenium_out.html", 'wb') {|f| f.write(rendered_html) }
 
     rendered_html
   end
 
 
-  # 1. Write file to local filesystem (careful - heroku ephemereal limitations ($HOME, /tmp).) Maybe use SecureRandom.uuid
+  # 1. Write file to local filesystem (careful - heroku ephemereal limitations / prefs ($HOME, /tmp) (latest stack can write anywhere, apparently).) Maybe use SecureRandom.uuid
   #
   # 2. Load it:
   #     driver.navigate.to "file:///" + pwd + "/public/lob_render_test.html"
