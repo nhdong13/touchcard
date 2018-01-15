@@ -84,18 +84,21 @@ class Postcard < ApplicationRecord
       return unless @discount_manager.has_valid_code?
     end
 
-    front_html = LobApiController.render(:card_side,
+    input_html = LobApiController.render(:card_side,
                                          assigns: {
                                              postcard: self,
                                              card_side: self.card_order.card_side_front,
                                              lob_js_pack_path: LobRenderUtil.lob_js_pack_path,
                                              lob_css_pack_path: LobRenderUtil.lob_css_pack_path })
 
-    back_html = "http://touchcard.ngrok.io/lob_render_test.html"
+    front_html = LobRenderUtil.render_dom(input_html)
 
-    puts "---FRONT HTML START---"
-    puts front_html
-    puts "---END FRONT HTML---"
+    back_html = front_html
+    # back_html = "http://touchcard.ngrok.io/lob_render_test.html"
+
+    # puts "---FRONT HTML START---"
+    # puts front_html
+    # puts "---END FRONT HTML---"
 
     # front_html, back_html = [
     #   card_order.card_side_front,

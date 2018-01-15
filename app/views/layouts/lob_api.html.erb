@@ -2,27 +2,34 @@
 <head>
   <meta charset="UTF-8">
   <title>Touchcard 4x6 Postcard Template</title>
+  <link rel="stylesheet" type="text/css" href="<%= @lob_css_pack_path %>">
+  <style>
+
+    *, *:before, *:after {
+      -webkit-box-sizing: border-box;
+      -moz-box-sizing: border-box;
+      box-sizing: border-box;
+    }
+
+    body {
+      width: 6.25in;
+      height: 4.25in;
+      margin: 0;
+      padding: 0;
+      background-color: darkturquoise;
+    }
+
+    .card-side-body {
+      transform-origin: left top !important;
+      transform: scale(1.5625) !important; /* 600 * 3.125 pixels = 1875. 3.125 / 2  for retina adjust*/
+    }
+
+  </style>
+  <script src="<%= @lob_js_pack_path %>"></script>
 </head>
 <body>
 
 <%= yield %>
-<script src="<%= @lob_js_pack_path %>"></script>
-<link rel="stylesheet" type="text/css" href="<%= @lob_css_pack_path %>">
-<style>
 
-  *, *:before, *:after {
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
-  }
-
-  body {
-    width: 6.25in;
-    height: 4.25in;
-    margin: 0;
-    padding: 0;
-    background-color: darkturquoise;
-  }
-</style>
 </body>
 </html>

@@ -1,4 +1,4 @@
-module LobUtil
+module LobRenderUtil
   module_function
   # def generate(options)
   # end
@@ -20,7 +20,51 @@ module LobUtil
     "#{app_root}#{lob_css_path}"
   end
 
+  def render_dom(html)
+    # options.add_argument('--remote-debugging-port=9222')
+    # driver.navigate.to "http://touchcard.ngrok.io/lob_render_test.html"
+    # html = "<html><head><title>yoyo</title></head><body></body></html>"
+    # driver.title
+    # driver.screenshot_as :png
+    # options.add_argument('--window-size=600,408')
+    #
+
+    options = Selenium::WebDriver::Chrome::Options.new
+    options.add_argument('--headless')
+    options.add_argument('--window-size=937,637')
+    file_path = "#{Rails.root}/tmp/lob_selenium_in.html"
+    File.open(file_path, 'w') {|f| f.write(html) }
+    driver = Selenium::WebDriver.for :chrome, options: options
+
+    # TODO: TEST  FILE STUFF FROM HEROKU DEV ASAP
+    #
+    driver.navigate.to "file:///#{file_path}"
+    rendered_html = driver.execute_script("return document.documentElement.innerHTML")
+
+    screenshot_data = driver.screenshot_as :base64
+    File.open("#{Rails.root}/tmp/lob_selenium_out.png", 'wb') {|f| f.write(Base64.decode64(screenshot_data)) }
+    File.open("#{Rails.root}/tmp/lob_selenium_out.html", 'wb') {|f| f.write(rendered_html) }
+
+    rendered_html
+  end
+
+
+  # 1. Write file to local filesystem (careful - heroku ephemereal limitations ($HOME, /tmp).) Maybe use SecureRandom.uuid
+  #
+  # 2. Load it:
+  #     driver.navigate.to "file:///" + pwd + "/public/lob_render_test.html"
+  #
+  # 3. Get DOM via something like:
+  #     contents = driver.execute_script("return document.documentElement.innerHTML")
+  #
+  # 4. Send it to Lob
+  #
+  #
+  #
+
+
 end
+
 
 
 
