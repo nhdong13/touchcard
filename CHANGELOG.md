@@ -4,7 +4,18 @@
 ## (in development)
 - ...
 - ENV
-    - Removed AWS_BUCKET_NAME, only using S3_BUCKET_NAME 
+    - Removed AWS_BUCKET_NAME, only using S3_BUCKET_NAME
+    
+- DEPLOYMENT    
+    heroku buildpacks:add https://github.com/heroku/heroku-buildpack-google-chrome.git
+    heroku buildpacks:add https://github.com/heroku/heroku-buildpack-chromedriver.git
+    
+    ### looks like nodejs buildpack is still required as well.
+    
+    
+    Chrome Buildpack
+    https://github.com/heroku/heroku-buildpack-google-chrome/issues/26
+     
 
 ## v1.2.8
 - Hotfix 

@@ -31,9 +31,12 @@ module LobRenderUtil
 
     FileUtils.mkdir_p "#{Rails.root}/public/lob/"
 
+    chrome_bin = ENV.fetch('GOOGLE_CHROME_SHIM', nil)
+    Selenium::WebDriver::Chrome.driver_path = chrome_bin if chrome_bin
+
     options = Selenium::WebDriver::Chrome::Options.new
     options.add_argument('--headless')
-    options.add_argument('--window-size=937,637')
+    # options.add_argument('--window-size=937,637')
     file_path = "#{Rails.root}/public/lob/selenium_in.html"
     File.open(file_path, 'w') {|f| f.write(html) }
     driver = Selenium::WebDriver.for :chrome, options: options
