@@ -6,6 +6,11 @@ module LobRenderUtil
   # LobApiController.render :card_side, assigns: { postcard: Postcard.last, card_side: Postcard.last.card_order.card_side_front, lob_js_pack_path: LobApiController.lob_js_pack_path, lob_css_pack_path: LobApiController.lob_css_pack_path }
   #  File.open('lob_render_test.html', 'w') {|f| f.write(LobApiController.render :card_side, assigns: { postcard: Postcard.last, card_side: Postcard.last.card_order.card_side_front, lob_js_pack_path: LobApiController.lob_js_pack_path, lob_css_pack_path: LobApiController.lob_css_pack_path })}
 
+
+  # def internal_lob_js_pack_path
+  #   "#{Rails.public_path}#{Webpacker.manifest.lookup("lob_render_pack.js")}"
+  # end
+
   def lob_js_pack_path
     app_root = ENV['APP_URL']
     lob_js_path = Webpacker.manifest.lookup("lob_render_pack.js")
@@ -20,34 +25,37 @@ module LobRenderUtil
     "#{app_root}#{lob_css_path}"
   end
 
-  def render_dom(html)
-    # options.add_argument('--remote-debugging-port=9222')
-    # driver.navigate.to "http://touchcard.ngrok.io/lob_render_test.html"
-    # html = "<html><head><title>yoyo</title></head><body></body></html>"
-    # driver.title
-    # driver.screenshot_as :png
-    # options.add_argument('--window-size=600,408')
-    #
+  def headless_render(html)
 
+    # Write html to local path so Chrome can open it
     FileUtils.mkdir_p "#{Rails.root}/public/lob/"
+    file_id = SecureRandom.uuid
+    file_path = "#{Rails.root}/tmp/lob_input_#{file_id}.html"
+    File.open(file_path, 'w') {|f| f.write(html) }
 
+    # Headless Chrome browsing via Selenium
     options = Selenium::WebDriver::Chrome::Options.new
     options.add_argument('--headless')
     chrome_bin = ENV.fetch('GOOGLE_CHROME_SHIM', nil)
     options.binary = chrome_bin if chrome_bin # custom binary path is only for heroku
-    # options.add_argument('--window-size=937,637')
-    file_path = "#{Rails.root}/public/lob/selenium_in.html"
-    File.open(file_path, 'w') {|f| f.write(html) }
+    options.add_argument('--window-size=937,637')
     driver = Selenium::WebDriver.for :chrome, options: options
-
-    # TODO: TEST  FILE STUFF FROM HEROKU DEV ASAP
-    #
     driver.navigate.to "file:///#{file_path}"
+
+    # Make sure our javascript actually executed
+    begin
+      wait = Selenium::WebDriver::Wait.new
+      wait.until { element = driver.find_element(:css, 'div.render-complete')}
+    rescue Selenium::WebDriver::Error::TimeOutError
+      raise "Unable to render Postcard for printing in Selenium"
+    end
+
+    # Pull out HTML after ()javascript has formatted it)
     rendered_html = driver.execute_script("return document.documentElement.innerHTML")
 
     screenshot_data = driver.screenshot_as :base64
-    File.open("#{Rails.root}/public/lob/selenium_out.png", 'wb') {|f| f.write(Base64.decode64(screenshot_data)) }
-    File.open("#{Rails.root}/public/lob/selenium_out.html", 'wb') {|f| f.write(rendered_html) }
+    File.open("#{Rails.root}/tmp/lob_output_#{file_id}.png", 'wb') {|f| f.write(Base64.decode64(screenshot_data)) }
+    File.open("#{Rails.root}/tmp/lob_output_#{file_id}.html", 'wb') {|f| f.write(rendered_html) }
 
     rendered_html
   end

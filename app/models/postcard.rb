@@ -91,7 +91,7 @@ class Postcard < ApplicationRecord
                                              lob_js_pack_path: LobRenderUtil.lob_js_pack_path,
                                              lob_css_pack_path: LobRenderUtil.lob_css_pack_path })
 
-    front_html = LobRenderUtil.render_dom(input_html)
+    front_html = LobRenderUtil.headless_render(input_html)
 
     back_html = front_html
     # back_html = "http://touchcard.ngrok.io/lob_render_test.html"

@@ -12,7 +12,6 @@ if (document.readyState == 'loading') {
 function loadCardSide(){
 
   var element = document.getElementById('lob-api-card-side');
-  debugger;
   if (element != null) {
     console.log("Lob Renderer Pack LOADING");
     const vueApp = new Vue({
@@ -26,14 +25,18 @@ function loadCardSide(){
         >
         </card-side>`,
       data: function() {
-        console.log('element:');
-        console.log(element);
         return {
-          attributes: {image: 'https://touchcard-data-dev.s3.amazonaws.com/uploads/d687ec10-91e7-4bbc-828c-500887765189/__card_01.jpg', discount_x: 50, discount_y: 50}, // JSON.parse(element.dataset.attributes),
-          discount_pct: 1, // JSON.parse(element.dataset.discount_pct),
-          discount_exp: 3, // JSON.parse(element.dataset.discount_exp),
-          discount_code: 'xoxoya' //JSON.parse(element.dataset.discount_code)
+          attributes: JSON.parse(element.dataset.attributes),
+          discount_pct: Number(element.dataset.discountPct),
+          discount_exp: Number(element.dataset.discountExp),
+          discount_code: element.dataset.discountCode
         }
+      },
+      mounted: function () {
+        // Set a div that signals completion to Selenium
+        let signalingDiv = document.createElement('div');
+        signalingDiv.setAttribute('class', 'render-complete');
+        document.head.appendChild(signalingDiv);
       },
       components:{
         'card-side': CardSide
