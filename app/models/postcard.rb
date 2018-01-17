@@ -91,7 +91,7 @@ class Postcard < ApplicationRecord
                                              lob_js_pack_path: LobRenderUtil.lob_js_pack_path,
                                              lob_css_pack_path: LobRenderUtil.lob_css_pack_path })
 
-    front_html = LobRenderUtil.headless_render(input_html)
+    front_html, png_path = LobRenderUtil.headless_render(input_html)
 
     back_html = front_html
     # back_html = "http://touchcard.ngrok.io/lob_render_test.html"
@@ -119,7 +119,7 @@ class Postcard < ApplicationRecord
       description: "A #{card_order.type} card sent by #{shop.domain}",
       to: to_address,
       # from: shop_address, # Return address for Shop
-      front: front_html,
+      front:  File.new(png_path),
       back: back_html
     )
     self.sent = true
