@@ -24,8 +24,11 @@ class CardOrder < ApplicationRecord
     reject_if: :all_blank
 
   validates :shop, :card_side_front, :card_side_back, presence: true
+  validates :discount_pct, numericality: { greater_than_or_equal_to: -100,
+                                           less_than_or_equal_to: 0,
+                                           only_integer: true,
+                                           allow_nil: true }
 
-  before_update :convert_discount_pct, if: :discount_pct_changed?
 
   delegate :current_subscription, to: :shop
 
@@ -98,9 +101,15 @@ class CardOrder < ApplicationRecord
     end
   end
 
-  def convert_discount_pct
-    self.discount_pct = -discount_pct if discount_pct && discount_pct > 0
+  def discount_pct=(val)
+    write_attribute(:discount_pct, val.nil? ? nil : -(val.abs))
   end
+
+  def discount_pct
+    val = self[:discount_pct]
+    val.nil? ? nil : val.abs
+  end
+
 
   def archive
     self.enabled = false
