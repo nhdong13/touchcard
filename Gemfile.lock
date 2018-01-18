@@ -426,7 +426,7 @@ DEPENDENCIES
   sass-rails (~> 5.0, >= 5.0.6)
   sdoc (~> 0.4.0)
   selenium-webdriver
-  shopify_app (~> 7.3)
+  shopify_app (~> 7.3.0)
   simplecov
   spring
   stripe
