@@ -47,7 +47,7 @@ gem "lob"
 gem "redis", "~> 3.2"
 
 # Httparty for debug
-gem "httparty", "~> 0.13"
+gem "httparty"
 
 # Rest Client for Slack notifications
 gem "rest-client"
@@ -99,14 +99,13 @@ end
 group :development, :test do
   # Call "byebug" anywhere in the code to stop execution and get a debugger console
   gem "byebug"
-  gem "clipboard", "~> 1.0"
   gem 'simplecov', :require => false
 end
 
 group :test do
-  gem "rspec-rails", "~> 3.6.0"
-  gem "factory_girl_rails", "~> 4.5"
-  gem "webmock", "~> 1.22"
+  gem "rspec-rails"
+  gem "factory_bot"
+  gem "webmock"
 end
 
 group :production do
