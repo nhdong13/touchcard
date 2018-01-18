@@ -12,7 +12,7 @@ RSpec.describe Postcard, type: :model do
     # TODO: handle negative cases
     it "works" do
       price_rule_id = stub_shopify(:price_rules, :create)[:price_rule][:id]
-      stub_shopify(:discounts, :create, for_discount: true, price_rule_id: price_rule_id, entity_uri: "discount_codes")
+      stub_shopify(:discounts, :create, entity_uri: "price_rules/#{price_rule_id}/discount_codes")
       stub_request(:post, "https://#{ENV['LOB_API_KEY']}:@api.lob.com/v1/postcards")
         .to_return(body: File.read("#{Rails.root}/spec/fixtures/lob/postcards/create/default.json"))
 

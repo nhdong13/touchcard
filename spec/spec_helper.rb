@@ -87,6 +87,7 @@ RSpec.configure do |config|
   original_stdout = $stdout
 
   config.before(:all) do
+    FactoryBot.reload
     # Redirect stderr and stdout
     $stderr = File.new(File.join(File.dirname(__FILE__), '..', 'log', 'rspec_out.log'), 'w')
     $stdout = File.new(File.join(File.dirname(__FILE__), '..', 'log', 'rspec_out.log'), 'w')

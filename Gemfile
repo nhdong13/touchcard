@@ -32,7 +32,7 @@ gem "active_model_serializers", "~> 0.8.0"
 gem "shopify_app", "~> 7.3.0"
 
 # Stripe
-gem 'stripe', git: 'https://github.com/stripe/stripe-ruby'
+gem "stripe", "~> 3.9"
 
 # S3 connection
 gem "aws-sdk", "~> 2.1"
@@ -41,16 +41,16 @@ gem "aws-sdk", "~> 2.1"
 gem "rmagick", "~> 2.15"
 
 # Lob integration
-gem "lob", "~> 2.1"
+gem "lob", "~> 4.1"
 
 # Key Value store
 gem "redis", "~> 3.2"
 
 # Httparty for debug
-gem "httparty", "~> 0.13"
+gem "httparty", "~> 0.15"
 
 # Rest Client for Slack notifications
-gem "rest-client", "1.8"
+gem "rest-client", "~> 2.0"
 
 # Use Unicorn as the app server
 gem "unicorn", "~> 4.9"
@@ -83,28 +83,29 @@ gem "thor", "~> 0.19.1"
 
 gem "pg"
 
+gem "selenium-webdriver"
+
 group :assets do
   gem "therubyracer", platforms: :ruby
 end
 
 group :development do
   # Access an IRB console on exception pages or by using <%= console %> in views
-  gem "web-console", "~> 2.0"
-  gem "thin", "~> 1.7.2"
+  gem "web-console"
+  gem "thin"
   gem "spring"
 end
 
 group :development, :test do
   # Call "byebug" anywhere in the code to stop execution and get a debugger console
   gem "byebug"
-  gem "clipboard", "~> 1.0"
   gem 'simplecov', :require => false
 end
 
 group :test do
-  gem "rspec-rails", "~> 3.6.0"
-  gem "factory_girl_rails", "~> 4.5"
-  gem "webmock", "~> 1.22"
+  gem "rspec-rails", "~> 3.7"
+  gem "factory_bot", "~> 4.8"
+  gem "webmock", "~> 3.2"
 end
 
 group :production do

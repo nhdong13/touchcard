@@ -46,7 +46,6 @@ Rails.application.routes.draw do
   resources :post_sale_orders, :controller => "card_orders", :type => "PostSaleOrder"
 
 
-
   # Routes for Admins
   devise_for :admin_users, ActiveAdmin::Devise.config
   get '/admin' => 'admin/shops#index'
@@ -69,5 +68,9 @@ Rails.application.routes.draw do
 
   # Routes for AWS Controller (to sign S3 uploads)
   get '/aws/sign', to: 'aws#sign'
+
+  if Rails.env.development?
+    get '/lob_debug' => 'lob_api#debug'
+  end
 
 end

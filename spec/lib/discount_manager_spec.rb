@@ -15,7 +15,8 @@ RSpec.describe DiscountManager do
 
   it "generates price rule and discount when values for percentage and expire date exist" do
     price_rule_id = stub_shopify(:price_rules, :create)[:price_rule][:id]
-    stub_shopify(:discounts, :create, for_discount: true, price_rule_id: price_rule_id, entity_uri: "discount_codes")
+    stub_shopify(:discounts, :create, entity_uri: "price_rules/#{price_rule_id}/discount_codes")
+
     discount_manager.generate_discount
 
     expect(discount_manager.price_rule_id).to eq(price_rule_id)
