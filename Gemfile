@@ -32,7 +32,7 @@ gem "active_model_serializers", "~> 0.8.0"
 gem "shopify_app", "~> 7.3.0"
 
 # Stripe
-gem 'stripe'
+gem "stripe", "~> 3.9"
 
 # S3 connection
 gem "aws-sdk", "~> 2.1"
@@ -41,16 +41,16 @@ gem "aws-sdk", "~> 2.1"
 gem "rmagick", "~> 2.15"
 
 # Lob integration
-gem "lob"
+gem "lob", "~> 4.1"
 
 # Key Value store
 gem "redis", "~> 3.2"
 
 # Httparty for debug
-gem "httparty"
+gem "httparty", "~> 0.15"
 
 # Rest Client for Slack notifications
-gem "rest-client"
+gem "rest-client", "~> 2.0"
 
 # Use Unicorn as the app server
 gem "unicorn", "~> 4.9"
@@ -103,9 +103,9 @@ group :development, :test do
 end
 
 group :test do
-  gem "rspec-rails"
-  gem "factory_bot"
-  gem "webmock"
+  gem "rspec-rails", "~> 3.7"
+  gem "factory_bot", "~> 4.8"
+  gem "webmock", "~> 3.2"
 end
 
 group :production do
