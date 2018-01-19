@@ -19,7 +19,7 @@ RSpec.describe Postcard, type: :model do
 
       ## TODO: Actually test the postcard output (PNG image data in form)
       #
-      # 
+      #
       postcard.send_card
       expect(postcard.sent).to eq true
       expect(postcard.date_sent).to eq Date.today
