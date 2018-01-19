@@ -11,7 +11,7 @@
       @dragstop="emitDiscountCoords"
 
   >
-      <div class="percent">{{discount_pct}}% OFF</div>
+      <div class="percent">{{Math.abs(discount_pct)}}% OFF</div>
       <div class="code">DIS-CNT-COD</div>
       <div class="expiration">{{dateToday}}</div>
   </base-element>

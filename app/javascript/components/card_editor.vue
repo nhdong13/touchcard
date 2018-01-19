@@ -20,7 +20,7 @@
         <input type="checkbox" v-model="enableFrontDiscount"><strong>Include Expiring Discount</strong>
         <div class="discount-config" v-if="enableFrontDiscount">
           <span>
-            <input type="number" min="0" max="100" :value="discount_pct" @input="$emit('update:discount_pct', Number($event.target.value))">
+            <input type="number" min="0" max="100" :value="Math.abs(discount_pct)" @input="$emit('update:discount_pct', Number(-$event.target.value))">
             <!--<input type="number" min="0" max="100" :value="automation.discount_pct" @input="$emit('update:automation', Object.assign(automation, {discount_pct: Number($event.target.value)}))">-->
             % off
           </span><br>

@@ -84,21 +84,18 @@ class Postcard < ApplicationRecord
       return unless @discount_manager.has_valid_code?
     end
 
-    input_html = LobApiController.render(:card_side,
-                                         assigns: {
-                                             postcard: self,
-                                             card_side: self.card_order.card_side_front,
-                                             lob_js_pack_path: LobRenderUtil.lob_js_pack_path,
-                                             lob_css_pack_path: LobRenderUtil.lob_css_pack_path })
-
-    front_html, png_path = LobRenderUtil.headless_render(input_html)
-
-    back_html = front_html
-    # back_html = "http://touchcard.ngrok.io/lob_render_test.html"
-
-    # puts "---FRONT HTML START---"
-    # puts front_html
-    # puts "---END FRONT HTML---"
+    front_png_path, back_png_path = [
+        card_order.card_side_front,
+        card_order.card_side_back
+    ].map do |card_side|
+      input_html = LobApiController.render(:card_side,
+                              assigns: {
+                                  postcard: self,
+                                  card_side: card_side,
+                                  lob_js_pack_path: LobRenderUtil.lob_js_pack_path,
+                                  lob_css_pack_path: LobRenderUtil.lob_css_pack_path })
+      LobRenderUtil.headless_render(input_html)
+    end
 
     # front_html, back_html = [
     #   card_order.card_side_front,
@@ -119,8 +116,8 @@ class Postcard < ApplicationRecord
       description: "A #{card_order.type} card sent by #{shop.domain}",
       to: to_address,
       # from: shop_address, # Return address for Shop
-      front:  File.new(png_path),
-      back: back_html
+      front:  File.new(front_png_path),
+      back: File.new(back_png_path)
     )
     self.sent = true
     self.date_sent = Date.today

@@ -101,16 +101,6 @@ class CardOrder < ApplicationRecord
     end
   end
 
-  def discount_pct=(val)
-    write_attribute(:discount_pct, val.nil? ? nil : -(val.abs))
-  end
-
-  def discount_pct
-    val = self[:discount_pct]
-    val.nil? ? nil : val.abs
-  end
-
-
   def archive
     self.enabled = false
     self.archived = true

@@ -11,19 +11,37 @@ module LobRenderUtil
   #   "#{Rails.public_path}#{Webpacker.manifest.lookup("lob_render_pack.js")}"
   # end
 
+
+
   def lob_js_pack_path
-    app_root = ENV['APP_URL']
-    lob_js_path = Webpacker.manifest.lookup("lob_render_pack.js")
-    raise 'Unable to find Javascript for rendering Postcard to Lob API' unless (app_root and lob_js_path)
-    "#{app_root}#{lob_js_path}"
+    root = Rails.public_path
+    path = Webpacker.manifest.lookup("lob_render_pack.js")
+    raise "Can't resolve path for lob_render_pack.js" if root.blank? and path.blank?
+    "#{root}#{path}"
   end
 
   def lob_css_pack_path
-    app_root = ENV['APP_URL']
-    lob_css_path = Webpacker.manifest.lookup("lob_render_pack.css")
-    raise 'Unable to find CSS for rendering Postcard to Lob API' unless (app_root and lob_css_path)
-    "#{app_root}#{lob_css_path}"
+    root = Rails.public_path
+    path = Webpacker.manifest.lookup("lob_render_pack.css")
+    raise "Error resolving path for lob_render_pack.css" if root.blank? and path.blank?
+    "#{root}#{path}"
   end
+
+
+
+  # def public_lob_js_pack_path
+  #   app_root = ENV['APP_URL']
+  #   lob_js_path = Webpacker.manifest.lookup("lob_render_pack.js")
+  #   raise 'Unable to find Javascript for rendering Postcard to Lob API' unless (app_root and lob_js_path)
+  #   "#{app_root}#{lob_js_path}"
+  # end
+  #
+  # def public_lob_css_pack_path
+  #   app_root = ENV['APP_URL']
+  #   lob_css_path = Webpacker.manifest.lookup("lob_render_pack.css")
+  #   raise 'Unable to find CSS for rendering Postcard to Lob API' unless (app_root and lob_css_path)
+  #   "#{app_root}#{lob_css_path}"
+  # end
 
 
   def headless_render(html)
@@ -31,6 +49,10 @@ module LobRenderUtil
     # Write html to local path so Chrome can open it
     FileUtils.mkdir_p "#{Rails.root}/public/lob/"
     file_id = SecureRandom.uuid
+
+    # TODO: Stick into subdir?
+    #
+    #
     file_path = "#{Rails.root}/tmp/lob_input_#{file_id}.html"
     File.open(file_path, 'w') {|f| f.write(html) }
 
@@ -45,7 +67,7 @@ module LobRenderUtil
 
     # Make sure our javascript actually executed
     begin
-      wait = Selenium::WebDriver::Wait.new
+      wait = Selenium::WebDriver::Wait.new(:timeout => 10)
       wait.until { element = driver.find_element(:css, 'div.render-complete')}
     rescue Selenium::WebDriver::Error::TimeOutError
       raise "Unable to render Postcard for printing in Selenium"
@@ -59,7 +81,8 @@ module LobRenderUtil
     File.open(png_path, 'wb') {|f| f.write(Base64.decode64(png_data)) }
     File.open("#{Rails.root}/tmp/lob_output_#{file_id}.html", 'wb') {|f| f.write(rendered_html) }
 
-    return rendered_html, png_path
+    # rendered_html - also available as return value
+    png_path
   end
 
 
