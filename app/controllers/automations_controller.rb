@@ -3,6 +3,13 @@ class AutomationsController < BaseController
   before_action :set_aws_sign_endpoint, only: [:new, :edit]
 
   def index
+    # Create default automation if there isn't one already
+    if @current_shop.card_orders.count == 0
+      card_order = @current_shop.card_orders.new
+      card_order.build_card_side_back(is_back: true)
+      card_order.build_card_side_front(is_back: false)
+      card_order.save
+    end
     @card_orders = @current_shop.card_orders.active
   end
 
@@ -12,11 +19,13 @@ class AutomationsController < BaseController
   # def select_type
   # end
 
-  def new
-    @automation = @current_shop.card_orders.new
-    @automation.build_card_side_back(is_back: true)
-    @automation.build_card_side_front(is_back: false)
-  end
+  # TODO: Re-enable automation creation
+  #
+  # def new
+  #   @automation = @current_shop.card_orders.new
+  #   @automation.build_card_side_back(is_back: true)
+  #   @automation.build_card_side_front(is_back: false)
+  # end
 
 
   def edit
@@ -56,14 +65,15 @@ class AutomationsController < BaseController
     end
   end
 
-
-  def destroy
-    @automation.archive
-    @automation.safe_destroy!
-    # TODO: Rescue exception
-  # rescue
-    # Catch error from transaction and do something
-  end
+  # TODO: Re-enable automation destruction
+  #
+  # def destroy
+  #   @automation.archive
+  #   @automation.safe_destroy!
+  #   # TODO: Rescue exception
+  # # rescue
+  #   # Catch error from transaction and do something
+  # end
 
   private
 

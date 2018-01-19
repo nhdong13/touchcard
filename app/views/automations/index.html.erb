@@ -2,9 +2,7 @@
 
 <div class="top-m-20">
   <div class="text-center">
-    <%= link_to 'New Automation', new_automation_path,
-                class: "mdc-button"
-    %>
+    <!-- %= link_to 'New Automation', new_automation_path, class: "mdc-button" % -->
   </div>
   <% @card_orders.each do |card| %>
       <div id="card-<%= card.id %>" class="panel automation-listing">
@@ -42,14 +40,14 @@
                 </div>
                 <br>
                 <div class="automation-delete-button">
-                  <%= link_to automation_path(card),
+                  <!-- %= link_to automation_path(card),
                               remote: true,
                               method: :delete,
                               data: { confirm: "Are you sure you want to delete this automation? This can't be undone.",
                                       hover: "Delete"},
-                              class: 'mdc-material-icons mdc-button__icon tooltip' do %>
-                      <i class="material-icons mdc-button__icon cancel-automation-button">delete</i>
-                  <% end %>
+                              class: 'mdc-material-icons mdc-button__icon tooltip' do % -->
+                      <!--<i class="material-icons mdc-button__icon cancel-automation-button">delete</i>-->
+                  <!-- % end % -->
                 </div>
               </td>
               <td class="automation-image">

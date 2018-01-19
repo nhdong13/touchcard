@@ -62,8 +62,8 @@ Rails.application.routes.draw do
 
   resource :subscription
 
-  resources :automations do
-    get 'select_type', :on => :collection
+  resources :automations, only: [:index, :show, :edit, :update] do
+    # get 'select_type', :on => :collection
   end
 
   # Routes for AWS Controller (to sign S3 uploads)
