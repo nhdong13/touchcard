@@ -1,4 +1,4 @@
-image: "nbulai/ruby-chromedriver"
+image: "ruby:2.4.2"
 
 services:
   - postgres:latest
