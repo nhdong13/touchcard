@@ -1,9 +1,9 @@
 source "https://rubygems.org"
 
-#ruby=2.4.2
+#ruby=2.4.3
 #ruby-gemset=touchcard
 
-ruby "2.4.2"
+ruby "2.4.3"
 
 gem "rails", "5.1.4"
 gem "rake", "~> 12.3.0"
