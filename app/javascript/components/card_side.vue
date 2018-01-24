@@ -1,26 +1,27 @@
 <template>
-  <div ref="cardSideCanvas"
-       class="card-side-body"
-       :style="Object.assign({}, this.backgroundStyle, this.scaleStyle)">
+  <div class="card-side-body--wrapper" :style="this.scaleStyle">
+    <div ref="cardSideCanvas"
+         class="card-side-body"
+         :style="Object.assign({}, this.backgroundStyle)">
 
-    <div class="card-side-safe-area">
-      <discount-element :discount_x.sync="attributes.discount_x"
-                        :discount_y.sync="attributes.discount_y"
-                        :discount_pct="discount_pct"
-                        :discount_exp="discount_exp"
-                        v-if="enableDiscount"
-      >
-      </discount-element>
+      <div class="card-side-safe-area">
+        <discount-element :discount_x.sync="attributes.discount_x"
+                          :discount_y.sync="attributes.discount_y"
+                          :discount_pct="discount_pct"
+                          :discount_exp="discount_exp"
+                          v-if="enableDiscount"
+        >
+        </discount-element>
 
-      <!--<template v-for="object in model.objects">-->
+        <!--<template v-for="object in model.objects">-->
         <!-- element switch -->
         <!-- <concrete-element v-if="object.type === 'concrete'"></concrete-element> -->
         <!-- <another-element v-if="object.type === 'another'"></another-element> -->
-      <!--</template>-->
+        <!--</template>-->
+      </div>
     </div>
   </div>
 </template>
-
 <script>
 
   import DiscountElement from './card_elements/discount_element.vue';
@@ -71,19 +72,31 @@
     text-align: center;
   }
 
-  .card-side-body {
+  .card-side-body--wrapper {
     width: 6.25in;
     height: 4.25in;
-    margin: 0 auto;
     transform-origin: left 25%;
-    box-shadow: 1px 1px 3px 1px rgba(0.2, 0.2, 0.2, 0.3);
+  }
+
+  .card-side-body--wrapper:not(:hover) {
+    filter: drop-shadow(1px 1px 3px rgba(0.2, 0.2, 0.2, 0.3));
+    pointer-events: none;
+  }
+
+  .card-side-body {
+    width: inherit;
+    height: inherit;
+    margin: 0 auto;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    /*background-color: lightsalmon;*/
-    /*border: 1px dashed;*/
+    clip-path: inset(12px 12px 12px 12px);
+    pointer-events: auto;
   }
 
+  .card-side-body:hover {
+    clip-path: none;
+  }
   .card-side-safe-area {
     position: absolute;
     width: 5.875in;

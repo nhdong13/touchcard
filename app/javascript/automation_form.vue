@@ -11,8 +11,6 @@
         :back_attributes.sync="automation.card_side_back_attributes"
         :aws_sign_endpoint="awsSignEndpoint"
     ></card-editor>
-
-    <hr />
   </div>
 </template>
 

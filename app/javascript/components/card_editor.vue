@@ -31,7 +31,8 @@
         </div>
       </div>
     </div>
-    <hr>
+    <br>
+    <hr />
     <h2>Back</h2>
     <div class="editor-columns-container">
       <div ref="editorLeftColumn" class="editor-left-column">
@@ -143,10 +144,6 @@
         let cardWidth = this.$refs.frontSide.$el.offsetWidth // Expecting 6.25in * 96 px = 608
         this.cardScaleFactor = Math.max(0.1, Math.min(1.0, leftColumnWidth / cardWidth));
 
-        // this.$refs.frontSide.style.transform = `scale(${scale})`;
-        // this.$refs.frontSide.style['-o-transform'] = `scale(${scale})`;
-        // this.$refs.frontSide.style['-webkit-transform'] = `scale(${scale})`;
-        // this.$refs.frontSide.style['-moz-transform'] = `scale(${scale})`;
 
       },
       requestSave: function() {
