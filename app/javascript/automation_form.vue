@@ -1,6 +1,7 @@
 <template>
   <div>
-    <button v-on:click="requestSave">Save</button>
+    <button v-on:click="requestSave" class="mdc-button mdc-button--raised">Save</button>
+
     <!-- div v-cloak></div -->
     <h3>{{automation.type}}</h3>
     <card-editor

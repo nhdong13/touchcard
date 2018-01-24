@@ -179,6 +179,33 @@
   }
 </script>
 
+<style>
+
+  /* Transition delay not quite working */
+  /*.editor-left-column {*/
+    /*transition: all 1s ease-out;*/
+  /*}*/
+
+  /* Show Print Guidelines when hovering near card. This is here so it's decoupled from print rendering */
+  .card-side-body {
+    clip-path: inset(12px 12px 12px 12px);
+  }
+  .editor-left-column:not(:hover) {
+    filter: drop-shadow(1px 1px 3px rgba(0.2, 0.2, 0.2, 0.3));
+  }
+
+  .editor-left-column:hover .card-side-body {
+    clip-path: none;
+    outline:1px dashed grey;
+  }
+
+  .editor-left-column:hover .card-side-safe-area {
+    /*background: orange;*/
+    /*border: 1px dotted red;*/
+    outline:1px dashed orangered;
+  }
+
+</style>
 <style scoped>
 
   p {

@@ -1,7 +1,6 @@
 <template>
   <div class="card-side-body--wrapper" :style="this.scaleStyle">
-    <div ref="cardSideCanvas"
-         class="card-side-body"
+    <div class="card-side-body"
          :style="Object.assign({}, this.backgroundStyle)">
 
       <div class="card-side-safe-area">
@@ -78,11 +77,6 @@
     transform-origin: left 25%;
   }
 
-  .card-side-body--wrapper:not(:hover) {
-    filter: drop-shadow(1px 1px 3px rgba(0.2, 0.2, 0.2, 0.3));
-    pointer-events: none;
-  }
-
   .card-side-body {
     width: inherit;
     height: inherit;
@@ -91,19 +85,15 @@
     background-position: center;
     background-repeat: no-repeat;
     clip-path: inset(12px 12px 12px 12px);
-    pointer-events: auto;
+    /*pointer-events: auto;*/
   }
 
-  .card-side-body:hover {
-    clip-path: none;
-  }
   .card-side-safe-area {
     position: absolute;
     width: 5.875in;
     height: 3.875in;
     left: 0.1875in;
     top: 0.1875in;
-    /*background-color: rgba(255, 255, 220, 0.35);*/
   }
 
 </style>
