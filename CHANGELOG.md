@@ -5,6 +5,7 @@
 - ...
 - ENV
     - Removed AWS_BUCKET_NAME, only using S3_BUCKET_NAME
+    - add GTM_ENVIRONMENT_PARAMS (see gtm_helper.rb)
     
 - DEPLOYMENT    
     heroku buildpacks:add https://github.com/heroku/heroku-buildpack-google-chrome.git
