@@ -21,12 +21,9 @@ document.addEventListener('turbolinks:load', () => {
     const vueApp = new Vue({
       el: element,
       data: function() {
-        let tmp_automation = JSON.parse(element.dataset.automation);
-        tmp_automation.card_side_front_attributes = JSON.parse(element.dataset.cardSideFrontAttributes);
-        tmp_automation.card_side_back_attributes = JSON.parse(element.dataset.cardSideBackAttributes);
         return {
           id: element.dataset.id,
-          automation: tmp_automation,
+          automation: JSON.parse(element.dataset.automation),
           awsSignEndpoint: element.dataset.awsSignEndpoint
         }
       },

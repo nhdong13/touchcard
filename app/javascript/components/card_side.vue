@@ -45,7 +45,7 @@
         return (this.scaleFactor ? {transform: `scale(${this.scaleFactor})` }: null);
       },
       backgroundStyle: function () {
-        return { backgroundImage: this.attributes.image ? `url('${this.attributes.image}')` : null }
+        return { backgroundImage: this.attributes.background_url ? `url('${this.attributes.background_url}')` : null }
       }
     },
     // data: function() {

@@ -168,9 +168,9 @@
           console.log(error ? error : result);
           if (result) {
             if (side === this.FRONT_TYPE) {
-              this.$emit('update:front_attributes', Object.assign(this.front_attributes, {image: result}));
+              this.$emit('update:front_attributes', Object.assign(this.front_attributes, {background_url: result}));
             } else if (side === this.BACK_TYPE) {
-              this.$emit('update:back_attributes', Object.assign(this.back_attributes, {image: result}));
+              this.$emit('update:back_attributes', Object.assign(this.back_attributes, {background_url: result}));
             }
           }
         });
