@@ -81,6 +81,7 @@
     width: inherit;
     height: inherit;
     margin: 0 auto;
+    background-color: white;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
