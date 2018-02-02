@@ -6,8 +6,8 @@
             :h="95"
             :resizable="false"
             :parent="true"
-            :x="discount_x || 215"
-            :y="discount_y || 154"
+            :x="safe_discount_x"
+            :y="safe_discount_y"
             @dragstop="emitDiscountCoords"
 
     >
@@ -51,6 +51,12 @@
       dateToday: function() {
         let today= new Date();
         return `${today.getDate()}/${today.getMonth() + 1}/${today.getFullYear()}`;
+      },
+      safe_discount_x: function() {
+        return (typeof this.discount_x === 'number') ? this.discount_x : 215;
+      },
+      safe_discount_y: function() {
+        return (typeof this.discount_y === 'number') ? this.discount_y : 154;
       }
     },
     beforeDestroy: function() {

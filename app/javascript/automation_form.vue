@@ -34,6 +34,15 @@
         required: true
       }
     },
+    beforeMount: function() {
+      if (!this.isValidAttributes(this.automation.front_json)) {
+        this.automation.front_json = this.defaultAttributes();
+      }
+
+      if (!this.isValidAttributes(this.automation.back_json)) {
+        this.automation.back_json = this.defaultAttributes();
+      }
+    },
     // data: function() {
     //   return {
     //   };
@@ -47,6 +56,30 @@
       'card-editor': CardEditor
     },
     methods: {
+      defaultAttributes: function() {
+        return {
+          'version': 0,
+          'background_url': null,
+          'discount_x': null, // default?
+          'discount_y': null,
+          // 'objects' : []
+        };
+      },
+      isValidAttributes: function (attrs) {
+        if (attrs === null) {
+          return false;
+        }
+        let valid = true;
+        let data = this.defaultAttributes();
+        valid &= 'version' in attrs && attrs.version === data.version;
+        for (var key in data) {
+          // check if the property/key is defined in the object itself, not in parent
+          if (data.hasOwnProperty(key)) {
+            valid &= key in attrs;
+          }
+        }
+        return valid;
+      },
       requestSave: function() {
 
         // TODO: Wait for uploads to complete in CardEditor
