@@ -93,7 +93,7 @@ class AutomationsController < BaseController
       :discount_pct,
       :international,
       :send_delay,
-      filter_attributes: [:filter_data],
+      filters_attributes: [[:id, :_destroy, filter_data: [:minimum, :maximum]]],
       front_json: [:version, :background_url, :discount_x, :discount_y],
       back_json: [:version, :background_url, :discount_x, :discount_y],
     )

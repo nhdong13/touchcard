@@ -21,13 +21,16 @@ document.addEventListener('turbolinks:load', () => {
     const vueApp = new Vue({
       el: element,
       data: function() {
+        let tmp_automation = JSON.parse(element.dataset.automation);
+        // Discard all filters except last one, then pass as single entry in array
+        tmp_automation.filters_attributes = JSON.parse(element.dataset.filters);
         return {
           id: element.dataset.id,
-          automation: JSON.parse(element.dataset.automation),
-          awsSignEndpoint: element.dataset.awsSignEndpoint
+          automation: tmp_automation,
+          awsSignEndpoint: element.dataset.awsSignEndpoint,
         }
       },
-      template: '<automation-form :id="id" :automation="automation" :aws-sign-endpoint="awsSignEndpoint" ></automation-form>',
+      template: '<automation-form :id="id" :automation="automation" :aws-sign-endpoint="awsSignEndpoint"></automation-form>',
       components: {
         'automation-form': AutomationForm
       }

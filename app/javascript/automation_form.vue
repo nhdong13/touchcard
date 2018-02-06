@@ -4,6 +4,21 @@
 
     <!-- div v-cloak></div -->
     <h3>{{automation.type}}</h3>
+    <input type="checkbox" v-model="automation.international" ><strong>Send outside USA</strong>
+    <div class="international-note nested-toggle" v-if="automation.international">
+          <span>
+            <em>Note: International postcards cost two credits.</em>
+          </span>
+    </div>
+    <br v-if="!automation.international">
+    <br>
+    <input type="checkbox" v-model="enableFiltering"><strong>Filter by Order Size</strong>
+    <div class="filter-config nested-toggle" v-if="enableFiltering">
+      <span>
+        Minimum: <input type="number" min="1" max="9999" v-model="automation.filters_attributes[automation.filters_attributes.length-1].filter_data.minimum">
+      </span>
+    </div>
+
     <card-editor
         ref="cardEditor"
         :discount_pct.sync="automation.discount_pct"
@@ -32,7 +47,7 @@
       awsSignEndpoint: {
         type: String,
         required: true
-      }
+      },
     },
     beforeMount: function() {
       if (!this.isValidAttributes(this.automation.front_json)) {
@@ -43,10 +58,31 @@
         this.automation.back_json = this.defaultAttributes();
       }
     },
-    // data: function() {
-    //   return {
-    //   };
-    // },
+    watch: {
+      enableFiltering: function(enable) {
+        console.log('enableFiltering: ' + enable);
+        if (enable) {
+          const default_min_max = {minimum: 10, maximum: 99999};
+          if (this.automation.filters_attributes.length > 0) {
+            let last_index = this.automation.filters_attributes.length-1;
+            this.automation.filters_attributes[last_index].filter_data = default_min_max;
+          } else {
+            this.automation.filters_attributes = [{ filter_data: default_min_max}];
+          }
+        } else {
+          if (this.automation.filters_attributes.length > 0) {
+            let last_index = this.automation.filters_attributes.length-1;
+            let last_filter_id = this.automation.filters_attributes[last_index].id;
+            this.automation.filters_attributes[last_index] = {'id': last_filter_id, _destroy: true};
+          }
+        }
+      }
+    },
+    data: function() {
+      return {
+        enableFiltering: (this.automation.filters_attributes.length > 0)
+      }
+    },
     components: {
       // 'card-editor': () => ({
       //   // https://vuejs.org/v2/guide/components.html#Async-Components
@@ -125,5 +161,14 @@
 <style scoped>
   [v-cloak] {
     display: none;
+  }
+
+  .nested-toggle {
+    padding-top: 10px;
+    padding-left: 10px;
+  }
+
+  .international-note {
+    color: orangered;
   }
 </style>
