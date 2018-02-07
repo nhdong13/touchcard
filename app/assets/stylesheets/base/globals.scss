@@ -15,6 +15,12 @@
 //body {
 //  background: #f4f6f8;
 //}
+
+:root {
+  --mdc-theme-primary: #5b3e82; // rebeccapurple
+  --mdc-theme-secondary: #f58b26;
+}
+
 html > body {
   //font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif !important;
   font:normal 13px "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Geneva, Verdana, sans-serif;

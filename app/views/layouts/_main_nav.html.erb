@@ -1,11 +1,25 @@
 <%= content_for :main_navigation do %>
   <div class="mdc-toolbar__section mdc-toolbar__section--align-start mdc-toolbar__section--shrink-to-fit">
+    <div class="mdc-toolbar__section--table-style-wrapper">
       <nav id="toolbar-tab-bar" class="mdc-tab-bar">
         <%= nav_tab 'Dashboard', dashboard_index_path, current: current_tab %>
         <%= nav_tab 'Automations', root_path, current: current_tab %>
         <%= nav_tab 'Help', faq_path, current: current_tab %>
-        <%= nav_tab 'Subscription', new_subscription_path, current: current_tab %>
         <span class="mdc-tab-bar__indicator"></span>
       </nav>
+    </div>
   </div>
+  <div class="mdc-toolbar__section mdc-toolbar__section--shrink-to-fit mdc-toolbar__section--align-end">
+    <span class="mdc-tab"></span>
+  </div>
+  <div class="mdc-toolbar__section mdc-toolbar__section--shrink-to-fit mdc-toolbar__section--align-end">
+    <button class="mdc-button secondary-filled-button" style="font-weight: bold; color: white; background: darkorange;">Start Sending</button>
+  </div>
+  <%= link_to "Ok", { action: "index" }, { class: 'btn btn-primary btn-lg' } %>
+
+  <%= link_to 'New Customer Welcome', root_path, class: 'mdc-button', data: { turbolinks: false }%>
+
 <% end %>
+
+
+<%= link_to 'New Customer Welcome', root_path, class: 'mdc-button', data: { turbolinks: false }%>
