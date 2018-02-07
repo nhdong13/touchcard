@@ -1,26 +1,26 @@
 <template>
-  <div ref="cardSideCanvas"
-       class="card-side-body"
-       :style="Object.assign({}, this.backgroundStyle, this.scaleStyle)">
+  <div class="card-side-body--wrapper" :style="this.scaleStyle">
+    <div class="card-side-body"
+         :style="Object.assign({}, this.backgroundStyle)">
 
-    <div class="card-side-safe-area">
-      <discount-element :discount_x.sync="attributes.discount_x"
-                        :discount_y.sync="attributes.discount_y"
-                        :discount_pct="discount_pct"
-                        :discount_exp="discount_exp"
-                        v-if="enableDiscount"
-      >
-      </discount-element>
+      <div class="card-side-safe-area">
+        <discount-element :discount_x.sync="attributes.discount_x"
+                          :discount_y.sync="attributes.discount_y"
+                          :discount_pct="discount_pct"
+                          :discount_exp="discount_exp"
+                          v-if="enableDiscount"
+        >
+        </discount-element>
 
-      <!--<template v-for="object in model.objects">-->
+        <!--<template v-for="object in model.objects">-->
         <!-- element switch -->
         <!-- <concrete-element v-if="object.type === 'concrete'"></concrete-element> -->
         <!-- <another-element v-if="object.type === 'another'"></another-element> -->
-      <!--</template>-->
+        <!--</template>-->
+      </div>
     </div>
   </div>
 </template>
-
 <script>
 
   import DiscountElement from './card_elements/discount_element.vue';
@@ -45,7 +45,7 @@
         return (this.scaleFactor ? {transform: `scale(${this.scaleFactor})` }: null);
       },
       backgroundStyle: function () {
-        return { backgroundImage: this.attributes.image ? `url('${this.attributes.image}')` : null }
+        return { backgroundImage: this.attributes.background_url ? `url('${this.attributes.background_url}')` : null }
       }
     },
     // data: function() {
@@ -71,17 +71,22 @@
     text-align: center;
   }
 
-  .card-side-body {
+  .card-side-body--wrapper {
     width: 6.25in;
     height: 4.25in;
-    margin: 0 auto;
     transform-origin: left 25%;
-    box-shadow: 1px 1px 3px 1px rgba(0.2, 0.2, 0.2, 0.3);
+  }
+
+  .card-side-body {
+    width: inherit;
+    height: inherit;
+    margin: 0 auto;
+    background-color: white;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    /*background-color: lightsalmon;*/
-    /*border: 1px dashed;*/
+    clip-path: inset(12px 12px 12px 12px);
+    /*pointer-events: auto;*/
   }
 
   .card-side-safe-area {
@@ -90,7 +95,6 @@
     height: 3.875in;
     left: 0.1875in;
     top: 0.1875in;
-    /*background-color: rgba(255, 255, 220, 0.35);*/
   }
 
 </style>

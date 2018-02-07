@@ -1,20 +1,20 @@
 <template>
-  <base-element
-      ref="discountRect"
-      class="discount"
-      :w="160"
-      :h="95"
-      :resizable="false"
-      :parent="true"
-      :x="discount_x || 215"
-      :y="discount_y || 154"
-      @dragstop="emitDiscountCoords"
+    <base-element
+            ref="discountRect"
+            class="discount"
+            :w="160"
+            :h="95"
+            :resizable="false"
+            :parent="true"
+            :x="safe_discount_x"
+            :y="safe_discount_y"
+            @dragstop="emitDiscountCoords"
 
-  >
-      <div class="percent">{{Math.abs(discount_pct)}}% OFF</div>
-      <div class="code">DIS-CNT-COD</div>
-      <div class="expiration">{{dateToday}}</div>
-  </base-element>
+    >
+        <div class="percent">{{Math.abs(discount_pct)}}% OFF</div>
+        <div class="code">DIS-CNT-COD</div>
+        <div class="expiration">{{dateToday}}</div>
+    </base-element>
 </template>
 
 <script>
@@ -51,6 +51,12 @@
       dateToday: function() {
         let today= new Date();
         return `${today.getDate()}/${today.getMonth() + 1}/${today.getFullYear()}`;
+      },
+      safe_discount_x: function() {
+        return (typeof this.discount_x === 'number') ? this.discount_x : 215;
+      },
+      safe_discount_y: function() {
+        return (typeof this.discount_y === 'number') ? this.discount_y : 154;
       }
     },
     beforeDestroy: function() {
@@ -83,36 +89,43 @@
   }
 </script>
 
+<style>
+    .discount.dragging, .discount:hover {
+        background: repeating-linear-gradient(
+                45deg,
+                rgba(200, 200, 200, 0.3),
+                rgba(200, 200, 200, 0.3) 5px,
+                rgba(150, 150, 150, 0.3) 5px,
+                rgba(150, 150, 150, 0.3) 10px );
+    }
+
+</style>
 <style scoped>
 
-  .discount {
-    position: absolute;
-    text-align: center;
-    width: 160px;
-    height: 95px;
-    font-family: 'Montserrat';
-    background-color: orange;
-    user-select: none;
-  }
+    .discount {
+        position: absolute;
+        text-align: center;
+        width: 160px;
+        height: 95px;
+        font-family: 'Montserrat';
+        user-select: none;
+    }
 
-  .discount:hover {
-    outline: 1px dotted;
-  }
 
-  .percent {
-    font-size: 0.30in;
-    font-weight: 800;
-    margin: 0.06in 0 0;
-  }
+    .percent {
+        font-size: 0.30in;
+        font-weight: 800;
+        margin: 0.06in 0 0;
+    }
 
-  .code {
-    font-size: 0.17in;
-  }
+    .code {
+        font-size: 0.17in;
+    }
 
-  .expiration {
-    margin-top: 0.11in;
-    font-size: 0.09in;
-  }
+    .expiration {
+        margin-top: 0.11in;
+        font-size: 0.09in;
+    }
 
 
 </style>

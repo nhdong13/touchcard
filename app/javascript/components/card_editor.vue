@@ -15,7 +15,7 @@
       </div>
       <div class="editor-menu editor-right-column">
         <strong>Upload Background</strong>
-        <input type="file" accept="image/png,image/jpeg"  @change="updateFrontBackground($event)">
+        <input type="file" accept="image/png,image/jpeg"  @change="updateBackground($event, FRONT_TYPE)">
         <hr />
         <input type="checkbox" v-model="enableFrontDiscount"><strong>Include Expiring Discount</strong>
         <div class="discount-config" v-if="enableFrontDiscount">
@@ -31,6 +31,40 @@
         </div>
       </div>
     </div>
+    <br>
+    <hr />
+    <h2>Back</h2>
+    <div class="editor-columns-container">
+      <div ref="editorLeftColumn" class="editor-left-column">
+        <card-side
+                ref="frontSide"
+                :attributes.sync="back_attributes"
+                :enableDiscount="enableBackDiscount"
+                :scaleFactor="cardScaleFactor"
+                :discount_pct="discount_pct"
+                :discount_exp="discount_exp"
+        >
+        </card-side>
+      </div>
+      <div class="editor-menu editor-right-column">
+        <strong>Upload Background</strong>
+        <input type="file" accept="image/png,image/jpeg"  @change="updateBackground($event, BACK_TYPE)">
+        <hr />
+        <input type="checkbox" v-model="enableBackDiscount"><strong>Include Expiring Discount</strong>
+        <div class="discount-config" v-if="enableBackDiscount">
+          <span>
+            <input type="number" min="0" max="100" :value="Math.abs(discount_pct)" @input="$emit('update:discount_pct', Number(-$event.target.value))">
+            <!--<input type="number" min="0" max="100" :value="automation.discount_pct" @input="$emit('update:automation', Object.assign(automation, {discount_pct: Number($event.target.value)}))">-->
+            % off
+          </span><br>
+          <span>
+            <input type="number" min="1" max="52" :value="discount_exp" @input="$emit('update:discount_exp', Number($event.target.value))">
+            weeks expiration
+          </span>
+        </div>
+      </div>
+    </div>
+
     <br>
   </div>
 </template>
@@ -66,7 +100,7 @@
     data: function() {
       return {
         enableFrontDiscount: this.discount_pct && this.discount_exp,
-        enableBackDiscount: null,
+        enableBackDiscount: this.discount_pct && this.discount_exp,
         cardScaleFactor: 1.0,
         cachedDiscountPct: this.discount_pct || 20,
         cachedDiscountExp: this.discount_exp || 3,
@@ -77,8 +111,12 @@
       // card_order.discount_exp if neither card side has a discount, but that may just complicate
       // things without being absolutely necessary
       enableFrontDiscount: function(val) {
-        this.$emit('update:discount_pct', val ? this.cachedDiscountPct : null);
-        this.$emit('update:discount_exp', val ? this.cachedDiscountExp : null);
+        this.$emit('update:discount_pct', (val || this.enableBackDiscount) ? this.cachedDiscountPct : null);
+        this.$emit('update:discount_exp', (val || this.enableBackDiscount) ? this.cachedDiscountExp : null);
+      },
+      enableBackDiscount: function(val) {
+        this.$emit('update:discount_pct', (val || this.enableFrontDiscount) ? this.cachedDiscountPct : null);
+        this.$emit('update:discount_exp', (val || this.enableFrontDiscount) ? this.cachedDiscountExp : null);
       }
     },
     mounted: function() {
@@ -96,16 +134,16 @@
     beforeDestroy: function () {
       window.removeEventListener('resize', this.handleResize)
     },
+    computed: {
+      FRONT_TYPE: function() { return 'FRONT_TYPE' },
+      BACK_TYPE: function() { return 'BACK_TYPE' }
+    },
     methods: {
       handleResize: function() {
         let leftColumnWidth = this.$refs.editorLeftColumn.offsetWidth;
         let cardWidth = this.$refs.frontSide.$el.offsetWidth // Expecting 6.25in * 96 px = 608
         this.cardScaleFactor = Math.max(0.1, Math.min(1.0, leftColumnWidth / cardWidth));
 
-        // this.$refs.frontSide.style.transform = `scale(${scale})`;
-        // this.$refs.frontSide.style['-o-transform'] = `scale(${scale})`;
-        // this.$refs.frontSide.style['-webkit-transform'] = `scale(${scale})`;
-        // this.$refs.frontSide.style['-moz-transform'] = `scale(${scale})`;
 
       },
       requestSave: function() {
@@ -120,7 +158,7 @@
         // }
         // return Promise.all(promises);
       },
-      updateFrontBackground: function(e) {
+      updateBackground: function(e, side) {
         let files = e.target.files || e.dataTransfer.files;
         if (!files.length)
           return;
@@ -129,7 +167,11 @@
         this.api.uploadFileToS3(files[0], (error, result) => {
           console.log(error ? error : result);
           if (result) {
-            this.$emit('update:front_attributes', Object.assign(this.front_attributes, {image: result}));
+            if (side === this.FRONT_TYPE) {
+              this.$emit('update:front_attributes', Object.assign(this.front_attributes, {background_url: result}));
+            } else if (side === this.BACK_TYPE) {
+              this.$emit('update:back_attributes', Object.assign(this.back_attributes, {background_url: result}));
+            }
           }
         });
       }
@@ -137,6 +179,33 @@
   }
 </script>
 
+<style>
+
+  /* Transition delay not quite working */
+  /*.editor-left-column {*/
+    /*transition: all 1s ease-out;*/
+  /*}*/
+
+  /* Show Print Guidelines when hovering near card. This is here so it's decoupled from print rendering */
+  .card-side-body {
+    clip-path: inset(12px 12px 12px 12px);
+  }
+  .editor-left-column:not(:hover) {
+    filter: drop-shadow(1px 1px 3px rgba(0.2, 0.2, 0.2, 0.3));
+  }
+
+  .editor-left-column:hover .card-side-body {
+    clip-path: none;
+    outline:1px dashed grey;
+  }
+
+  .editor-left-column:hover .card-side-safe-area {
+    /*background: orange;*/
+    /*border: 1px dotted red;*/
+    outline:1px dashed orangered;
+  }
+
+</style>
 <style scoped>
 
   p {

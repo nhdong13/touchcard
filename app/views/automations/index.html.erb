@@ -51,8 +51,8 @@
                 </div>
               </td>
               <td class="automation-image">
-                <% if card.card_side_front.image %>
-                    <%= image_tag card.card_side_front.image %>
+                <% if card.front_json['background_url'] %>
+                  <%= image_tag card.front_json['background_url'] %>
                 <% end %>
               </td>
               <td class="automation-data">

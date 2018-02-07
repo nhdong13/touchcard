@@ -22,15 +22,15 @@ document.addEventListener('turbolinks:load', () => {
       el: element,
       data: function() {
         let tmp_automation = JSON.parse(element.dataset.automation);
-        tmp_automation.card_side_front_attributes = JSON.parse(element.dataset.cardSideFrontAttributes);
-        tmp_automation.card_side_back_attributes = JSON.parse(element.dataset.cardSideBackAttributes);
+        // Discard all filters except last one, then pass as single entry in array
+        tmp_automation.filters_attributes = JSON.parse(element.dataset.filters);
         return {
           id: element.dataset.id,
           automation: tmp_automation,
-          awsSignEndpoint: element.dataset.awsSignEndpoint
+          awsSignEndpoint: element.dataset.awsSignEndpoint,
         }
       },
-      template: '<automation-form :id="id" :automation="automation" :aws-sign-endpoint="awsSignEndpoint" ></automation-form>',
+      template: '<automation-form :id="id" :automation="automation" :aws-sign-endpoint="awsSignEndpoint"></automation-form>',
       components: {
         'automation-form': AutomationForm
       }

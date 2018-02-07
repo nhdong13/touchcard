@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171113074535) do
+ActiveRecord::Schema.define(version: 20180105153625) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -89,6 +89,8 @@ ActiveRecord::Schema.define(version: 20171113074535) do
     t.integer "winback_delay"
     t.integer "lifetime_purchase_threshold"
     t.boolean "archived", default: false
+    t.json "front_json", default: {}
+    t.json "back_json", default: {}
   end
 
   create_table "card_sides", id: :serial, force: :cascade do |t|
