@@ -1,58 +1,90 @@
 <script src="https://checkout.stripe.com/checkout.js"></script>
 
-<%= currently_at "Subscription" %>
 
-<div class="billing top-m-20">
-  <section>
-    <button class="mdl-button mdl-js-button mdl-button--raised">
-      <i class="material-icons">keyboard_backspace</i> Back
-    </button>
-    <div class="card text-center">
-      <div class="jumbotron text-center">
-          <div class="container">
-          <h1><i class="material-icons">print</i> + <i class="material-icons">email</i> = 99&cent;</h1>
-          <p>
-            <strong>PRINT</strong> and <strong>MAIL</strong> cards for just <strong>99&cent;</strong> in the USA
-          </p>
-        </div>
+
+
+<div class="billing top-m-20 panel">
+  <br>
+  <%= link_to :back, class: "mdc-button mdc-button--stroked" do %>
+    <!--<i class="material-icons mdc-button__icon">keyboard_backspace</i>-->
+    Back
+  <% end %>
+  <br>
+  <section class="text-center">
+    <br>
+    <div class="jumbotron top-m-20">
+      <div class="container">
+        <div class="f-s-300"><i class="material-icons">print</i> + <i class="material-icons">email</i> = 99&cent;</div>
+        <div><strong>PRINT</strong> and <strong>MAIL</strong> cards for just <strong>99&cent;</strong> in the USA</div>
       </div>
-      <!-- {{#if subscription}} -->
-        <div class="alert alert-info current-plan">
-          Your current plan is for <strong>plan name</strong> cards/month.
-        </div>
-      <!-- {{/if}} -->
-      <h4>How many customers do you want to reach this month?</h4>
-      <div class="customers">
-        <i class="material-icons f-s-500">group_add</i>
-        <input type="text" class="number f-s-500" size="2" />
-        <!-- {{input
-          class="number"
-          type="text"
-          pattern="^([0-9]+)$"
-          maxlength="4"
-          value=model.cards}} -->
-      </div>
-      <div class="text-center top-m-20">
-        <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent">
-          We recommend at least <strong>no of customers</strong> customers*
-        </button>
-        <div>
-          <small>*based on new customers last month</small>
-        </div>
-      </div>
-      <br>
-      <p>
-        <strong class="price">
-          10.00
-        </strong>
-         to raise your customer lifetime value
-        <button id="customButton" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
-          Buy Now
-        </button>
-      </p>
     </div>
+
+
+    <h3>How many customers do you want to reach this month?</h3>
+
+    <div><span class="checkout-quantity-display f-s-400">&nbsp</span><span class="f-s-200">&nbsp</span></div>
+
+
+    <!-- IMPORTANT: If you change these you have to change the slider quantity `aria-valuemax` as well -->
+    Last Month: <%= @current_shop.last_month %>
+
+    <select class="hidden checkout-quantity-select">
+      <option value="25">25</option>
+      <option value="50">50</option>
+      <option value="75">75</option>
+      <option value="100">100</option>
+      <option value="150">150</option>
+      <option value="200">200</option>
+      <option value="250">250</option>
+      <option value="300">300</option>
+      <option value="400">400</option>
+      <option value="500">500</option>
+      <option value="750">750</option>
+      <option value="1000">1000</option>
+      <option value="1500">1500</option>
+      <option value="3000">2000</option>
+      <option value="3000">3000</option>
+      <option value="3000">4000</option>
+      <option value="5000+">5000</option>
+    </select>
+
+
+    <div class="checkout-slider-wrapper">
+      <div class="mdc-slider" tabindex="0" role="slider"
+           aria-valuemin="0" aria-valuemax="16" aria-valuenow="10" data-step="1"
+           aria-label="Select Value">
+        <div class="mdc-slider__track-container">
+          <div class="mdc-slider__track"></div>
+        </div>
+        <div class="mdc-slider__thumb-container">
+          <!--<div class="mdc-slider__pin">-->
+          <!--<span class="mdc-slider__pin-value-marker">10</span>-->
+          <!--</div>-->
+          <svg class="mdc-slider__thumb" width="21" height="21">
+            <circle cx="10.5" cy="10.5" r="7.875"></circle>
+          </svg>
+          <div class="mdc-slider__focus-ring"></div>
+        </div>
+      </div>
+    </div>
+
+
+    <!--<div><small>*based on new customers last month</small></div>-->
+
+    <br><br>
+
+    <div>
+      <strong><span class="checkout-display-price">&nbsp</span></strong>
+      to raise your customer lifetime value &nbsp
+      <button id="checkout-purchase-button" class="mdc-button mdc-button--raised">
+        Buy Now
+      </button>
+    </div>
+    <br>
   </section>
 </div>
+
+
 
 <script>
   // TODO: Remove Jquery dependency
@@ -72,7 +104,7 @@
   //   }
   // });
 
-//  document.getElementById('customButton').addEventListener('click', function(e) {
+//  document.getElementById('checkout-purchase-button').addEventListener('click', function(e) {
 //    // Open Checkout with further options:
 //    handler.open({
 //      name: 'Stripe.com',

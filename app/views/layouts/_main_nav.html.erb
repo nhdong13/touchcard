@@ -1,4 +1,7 @@
 <%= content_for :main_navigation do %>
+  <header class="mdc-toolbar main-nav">
+    <div class="mdc-toolbar__row">
+
   <div class="mdc-toolbar__section mdc-toolbar__section--align-start mdc-toolbar__section--shrink-to-fit">
     <div class="mdc-toolbar__section--table-style-wrapper">
       <nav id="toolbar-tab-bar" class="mdc-tab-bar">
@@ -13,13 +16,15 @@
     <span class="mdc-tab"></span>
   </div>
   <div class="mdc-toolbar__section mdc-toolbar__section--shrink-to-fit mdc-toolbar__section--align-end">
-    <button class="mdc-button secondary-filled-button" style="font-weight: bold; color: white; background: darkorange;">Start Sending</button>
+    <%= link_to 'Start Sending', new_subscription_path, class: "mdc-button mdc-button--raised secondary-filled-button start-checkout-button" %>
   </div>
-  <%= link_to "Ok", { action: "index" }, { class: 'btn btn-primary btn-lg' } %>
 
-  <%= link_to 'New Customer Welcome', root_path, class: 'mdc-button', data: { turbolinks: false }%>
 
+
+    </div>
+  </header>
 <% end %>
 
 
-<%= link_to 'New Customer Welcome', root_path, class: 'mdc-button', data: { turbolinks: false }%>
+
+

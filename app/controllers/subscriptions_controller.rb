@@ -1,5 +1,6 @@
 class SubscriptionsController < BaseController
   def new
+    @shop = @current_shop
     @subscription = Subscription.new
   end
 

@@ -364,21 +364,21 @@ html > body {
 //  color: white;
 //  background: rgb(245, 140, 40);
 //}
-//
-//.jumbotron {
-//  padding-top: 30px;
-//  padding-bottom: 30px;
-//  margin-bottom: 30px;
-//  color: inherit;
-//  background-color: #eee;
-//
-//  p {
-//    margin-bottom: 15px;
-//    font-size: 21px;
-//    font-weight: 200;
-//  }
-//}
-//
+
+.jumbotron {
+  padding-top: 30px;
+  padding-bottom: 30px;
+  margin-bottom: 30px;
+  color: inherit;
+  background-color: #eee;
+
+  p {
+    margin-bottom: 15px;
+    font-size: 21px;
+    font-weight: 200;
+  }
+}
+
 //.alert-info {
 //  background-color: #d9edf7;
 //  border-color: #bce8f1;
@@ -398,10 +398,10 @@ html > body {
 //
 //// CUSTOM
 //
-//.text-center {
-//  text-align: center;
-//}
-//
+.text-center {
+  text-align: center;
+}
+
 //.text-right {
 //  text-align: right;
 //}
@@ -425,11 +425,28 @@ html > body {
 //  padding-left: 15px;
 //  padding-right: 15px;
 //}
-//
-//.f-s-500 {
-//  font-size: 500%;
-//}
-//
+
+.f-s-500 {
+  font-size: 500%;
+}
+
+.f-s-400 {
+  font-size: 500%;
+}
+
+.f-s-300 {
+  font-size: 300%;
+}
+
+
+.f-s-250 {
+  font-size: 250%;
+}
+
+.f-s-200 {
+  font-size: 200%;
+}
+
 
 
 //input[type="text"], input[type="number"] {

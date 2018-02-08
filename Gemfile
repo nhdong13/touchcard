@@ -9,9 +9,7 @@ gem "rails", "5.1.4"
 gem "rake", "~> 12.3.0"
 gem "rb-readline", "~> 0.5.3"
 
-# # Add material design lite for CSS
 gem 'material_components_web-sass'
-
 
 gem "sass-rails", "~> 5.0", ">= 5.0.6"
 gem "uglifier", ">= 1.3.0"
