@@ -5,30 +5,30 @@ Rails.application.routes.draw do
   root 'automations#index' # See comments in controller
 
   # API routes
-  namespace :api, defaults: {format: 'json'} do
-    namespace :v1 do
-      get 'sign', to: 'aws#sign'
-      resources :card_sides, only: [:show, :update, :create]
-      resources :filters, only: [:show, :update, :destroy, :create]
-      resources :shops, only: [:show, :update] do
-        collection { get :current }
-      end
-      resources :card_orders, only: [:index, :show, :create, :update, :destroy]
-      resources :postcards, only: [:index, :show, :create, :update] do
-        patch 'cancel', on: :member
-      end
-      resources :line_items, only: [:index, :show]
-      resources :subscriptions, only: [:show, :create, :update]
-      resources :plans, only: [:show, :index]
-      # Switched to stripe this is not used for now
-      # resources :charges, only: [:show, :create, :update] do
-      #   get 'activate', on: :collection
-      # end
-      resources :shopify_customers, only: [] do
-        collection { get :count }
-      end
-    end
-  end
+  # namespace :api, defaults: {format: 'json'} do
+  #   namespace :v1 do
+  #     get 'sign', to: 'aws#sign'
+  #     resources :card_sides, only: [:show, :update, :create]
+  #     resources :filters, only: [:show, :update, :destroy, :create]
+  #     resources :shops, only: [:show, :update] do
+  #       collection { get :current }
+  #     end
+  #     resources :card_orders, only: [:index, :show, :create, :update, :destroy]
+  #     resources :postcards, only: [:index, :show, :create, :update] do
+  #       patch 'cancel', on: :member
+  #     end
+  #     resources :line_items, only: [:index, :show]
+  #     resources :subscriptions, only: [:show, :create, :update]
+  #     resources :plans, only: [:show, :index]
+  #     # Switched to stripe this is not used for now
+  #     # resources :charges, only: [:show, :create, :update] do
+  #     #   get 'activate', on: :collection
+  #     # end
+  #     resources :shopify_customers, only: [] do
+  #       collection { get :count }
+  #     end
+  #   end
+  # end
   # Stripe wobhook routes
   post '/stripe/events', to: 'stripe_webhook#hook'
 
@@ -60,7 +60,7 @@ Rails.application.routes.draw do
     patch 'cancel_postcard', on: :member
   end
 
-  resource :subscription
+  resources :subscriptions, only: [:new, :show, :create, :update]
 
   resources :automations, only: [:index, :show, :edit, :update] do
     # get 'select_type', :on => :collection

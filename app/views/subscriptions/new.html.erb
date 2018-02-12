@@ -1,11 +1,6 @@
-<script src="https://checkout.stripe.com/checkout.js"></script>
-
-
-
-
 <div class="billing top-m-20 panel">
   <br>
-  <%= link_to :back, class: "mdc-button mdc-button--stroked" do %>
+  <%= link_to root_path, class: "mdc-button mdc-button--stroked" do %>
     <!--<i class="material-icons mdc-button__icon">keyboard_backspace</i>-->
     Back
   <% end %>
@@ -28,30 +23,11 @@
     <!-- IMPORTANT: If you change these you have to change the slider quantity `aria-valuemax` as well -->
     Last Month: <%= @current_shop.last_month %>
 
-    <select class="hidden checkout-quantity-select">
-      <option value="25">25</option>
-      <option value="50">50</option>
-      <option value="75">75</option>
-      <option value="100">100</option>
-      <option value="150">150</option>
-      <option value="200">200</option>
-      <option value="250">250</option>
-      <option value="300">300</option>
-      <option value="400">400</option>
-      <option value="500">500</option>
-      <option value="750">750</option>
-      <option value="1000">1000</option>
-      <option value="1500">1500</option>
-      <option value="3000">2000</option>
-      <option value="3000">3000</option>
-      <option value="3000">4000</option>
-      <option value="5000+">5000</option>
-    </select>
 
 
     <div class="checkout-slider-wrapper">
       <div class="mdc-slider" tabindex="0" role="slider"
-           aria-valuemin="0" aria-valuemax="16" aria-valuenow="10" data-step="1"
+           aria-valuemin="0" aria-valuemax="12" aria-valuenow="8" data-step="1"
            aria-label="Select Value">
         <div class="mdc-slider__track-container">
           <div class="mdc-slider__track"></div>
@@ -76,47 +52,89 @@
     <div>
       <strong><span class="checkout-display-price">&nbsp</span></strong>
       to raise your customer lifetime value &nbsp
-      <button id="checkout-purchase-button" class="mdc-button mdc-button--raised">
-        Buy Now
-      </button>
     </div>
     <br>
+     = form_with(model: @subscription, local: true, id:'checkout-form') do |form| %>
+
+      <%= form.select(:quantity, nil, {}, {class: 'hidden checkout-quantity-select'}) do %>
+        <%= options_for_select([['50', 50],
+                                ['100', 100],
+                                ['150', 150],
+                                ['200', 200],
+                                ['250', 250],
+                                ['300', 300],
+                                ['400', 400],
+                                ['500', 500],
+                                ['750', 750],
+                                ['1000', 1000],
+                                ['1500', 1500],
+                                ['2000', 2000],
+                                ['3000', 3000]
+                               ]) %>
+      <% end %>
+
+
+      <%= hidden_field_tag(:stripeToken) %>
+
+      <button id="checkout-purchase-button" class="mdc-button mdc-button--raised">Buy Now</button>
+
+
+      <% if flash[:error].present? %>
+        <div id="error_explanation">
+          ERROR EXPLANATION:
+          <p><%= flash[:error] %></p>
+        </div>
+      <% end %>
+
+
+    <% end %>
+
   </section>
 </div>
 
 
+<br>
+
 
 <script>
-  // TODO: Remove Jquery dependency
-  // var handler = StripeCheckout.configure({
-  //   key: 'pk_test_6pRNASCoBOKtIshFeQd4XMUh',
-  //   image: 'https://stripe.com/img/documentation/checkout/marketplace.png',
-  //   locale: 'auto',
-  //   token: function(token) {
-  //     var quantity = $('.number').val();
-  //     $.post({
-  //       type: 'POST',
-  //       url: '/subscription',
-  //       data: { token: token.id, quantity: quantity }
-  //     })
-  //     // You can access the token ID with `token.id`.
-  //     // Get the token ID to your server-side code for use.
-  //   }
-  // });
+  var handler = StripeCheckout.configure({
+    key: '<%= Rails.configuration.stripe[:publishable_key] %>',
+    locale: 'auto',
+    name: 'Touchcard',
+    description: 'Postcard Subscription',
+    image: '/touchcard-logo-white-spaced-700x700.jpg',
+    zipCode: true,
+    panelLabel: 'Subscribe',
+    // allowRememberMe: false,
+    // label: 'BUY IT NOW',
+    // custom
+    token: function(token) {
+      document.querySelector('input#stripeToken').value = token.id;
+      document.querySelector('#checkout-form').submit();
+    }
+  });
 
-//  document.getElementById('checkout-purchase-button').addEventListener('click', function(e) {
-//    // Open Checkout with further options:
-//    handler.open({
-//      name: 'Stripe.com',
-//      description: '2 widgets',
-//      zipCode: true,
-//      amount: 2000
-//    });
-//    e.preventDefault();
-//  });
-//
-//  // Close Checkout on page navigation:
-//  window.addEventListener('popstate', function() {
-//    handler.close();
-//  });
+   document.getElementById('checkout-purchase-button').addEventListener('click', function(e) {
+     // Open Checkout with further options:
+     handler.open({
+       amount: window.checkoutPriceDisplay
+     });
+     e.preventDefault();
+   });
+
+   // Close Checkout on page navigation:
+
+  // TODO: Get this handler.close() working without repeat eventListeners
+  //
+  // function closeStripeOnExit () {
+  //   debugger;
+  //   handler.close();
+  //   // window.removeEventListener('popstate', closeStripeOnExit);
+  // }
+  //
+  //
+  // window.addEventListener('popstate', closeStripeOnExit, {once: true});
+
+
 </script>
+
