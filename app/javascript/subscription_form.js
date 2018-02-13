@@ -1,7 +1,7 @@
 /* global mdc */
 /* global StripeCheckout */
 
-export default function(element) {
+export default function(element, stripePubKey) {
   return {
     el: element,
     // props: {
@@ -15,7 +15,7 @@ export default function(element) {
         slider: null,
         quantity: 0,
         stripeHandler: StripeCheckout.configure({
-          key: 'pk_test_b2E1nYrhI3XF6qpyNFIxHEb8', // TODO: Get key dynamically
+          key: stripePubKey,
           locale: 'auto',
           name: 'Touchcard',
           description: 'Postcard Subscription',
@@ -26,6 +26,7 @@ export default function(element) {
           // label: 'BUY IT NOW',
           // custom
           token: function (token) {
+            // TODO: Clean up w/ Refs / models
             document.querySelector('input#stripeToken').value = token.id;
             document.querySelector('#checkout-form').submit();
           }

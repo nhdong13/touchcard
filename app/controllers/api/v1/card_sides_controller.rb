@@ -6,7 +6,7 @@ class Api::V1::CardSidesController < Api::BaseController
   end
 
   def create
-    @card_side = CardSide.create!(permited_params)
+    @card_side = CardSide.create!(permitted_params)
     return render_validation_errors(@card_side) unless @card_side.valid?
     render json: @card_side, serializer: CardSideSerializer
   end
@@ -23,7 +23,7 @@ class Api::V1::CardSidesController < Api::BaseController
     params.require(:card_side).permit(:image, :discount_x, :discount_y)
   end
 
-  def permited_params
+  def permitted_params
     params.require(:card_side).permit(
       :image,
       :discount_x,

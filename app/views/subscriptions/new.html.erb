@@ -1,3 +1,5 @@
+<%= tag.div id: "stripe-pub-key", data: { stripe_pub_key: Rails.configuration.stripe[:publishable_key] } %>
+
 <div id="subscription-form" class="billing top-m-20 panel">
   <br>
   <%= link_to root_path, class: "mdc-button mdc-button--stroked" do %>
@@ -47,31 +49,18 @@
     </div>
     <br>
     <%= form_with(model: @subscription, local: true, id:'checkout-form') do |form| %>
-
       <%= form.select(:quantity, nil, {}, {class: 'hidden checkout-quantity-select', ref: 'quantitySelect', 'v-model':'quantity' }) do %>
-        <!-- IMPORTANT: If you change these you have to change the slider quantity `aria-valuemax` as well -->
         <%= options_for_select(select_options, selected_value(@current_shop)) %>
-
       <% end %>
-
       <%= hidden_field_tag(:stripeToken) %>
-
       <button id="checkout-purchase-button" class="mdc-button mdc-button--raised" @click="checkoutSubmit">Buy Now</button>
-
       <% if flash[:error].present? %>
         <div id="error_explanation">
           ERROR EXPLANATION:
           <p><%= flash[:error] %></p>
         </div>
       <% end %>
-
     <% end %>
-
 
   </section>
 </div>
-<br>
-<br>
-<h2>FIX ME</h2>
-<h3><%= Rails.configuration.stripe[:publishable_key] %></h3>
-<strong>Need to pass the stripe key properly instead of hardcoding into .js vue file</strong>

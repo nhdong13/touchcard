@@ -16,8 +16,7 @@ document.addEventListener('turbolinks:load', () => {
 
   var automationElement = document.getElementById('automation-editor');
   var subscriptionElement = document.getElementById('subscription-form');
-
-
+  
   if (automationElement != null) {
 
     const automationVueApp = new Vue({
@@ -41,7 +40,8 @@ document.addEventListener('turbolinks:load', () => {
   }
 
   if (subscriptionElement != null) {
-    const subscriptionVueApp = new Vue(SubscriptionForm(subscriptionElement));
+    var stripeKeyElement = document.getElementById('stripe-pub-key');
+    const subscriptionVueApp = new Vue(SubscriptionForm(subscriptionElement, stripeKeyElement.dataset.stripePubKey));
     window.VueSubscription = subscriptionVueApp;
   }
 });
