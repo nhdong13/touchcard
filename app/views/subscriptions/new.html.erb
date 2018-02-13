@@ -1,4 +1,4 @@
-<div class="billing top-m-20 panel">
+<div id="subscription-form" class="billing top-m-20 panel">
   <br>
   <%= link_to root_path, class: "mdc-button mdc-button--stroked" do %>
     <!--<i class="material-icons mdc-button__icon">keyboard_backspace</i>-->
@@ -17,7 +17,7 @@
 
     <h3>How many customers do you want to reach this month?</h3>
 
-    <div><span class="checkout-quantity-display f-s-400">&nbsp</span><span class="f-s-200">&nbsp</span></div>
+    <div><span ref="quantityDisplay" class="checkout-quantity-display f-s-400">&nbsp</span><span class="f-s-200">&nbsp</span></div>
 
 
     <!-- IMPORTANT: If you change these you have to change the slider quantity `aria-valuemax` as well -->
@@ -26,7 +26,7 @@
 
 
     <div class="checkout-slider-wrapper">
-      <div class="mdc-slider" tabindex="0" role="slider"
+      <div ref="quantitySlider" class="mdc-slider" tabindex="0" role="slider"
            aria-valuemin="0" aria-valuemax="12" aria-valuenow="8" data-step="1"
            aria-label="Select Value">
         <div class="mdc-slider__track-container">
@@ -50,13 +50,13 @@
     <br><br>
 
     <div>
-      <strong><span class="checkout-display-price">&nbsp</span></strong>
+      <strong><span ref="checkoutPriceDisplay" class="checkout-display-price">&nbsp</span></strong>
       to raise your customer lifetime value &nbsp
     </div>
     <br>
-     = form_with(model: @subscription, local: true, id:'checkout-form') do |form| %>
+    <%= form_with(model: @subscription, local: true, id:'checkout-form') do |form| %>
 
-      <%= form.select(:quantity, nil, {}, {class: 'hidden checkout-quantity-select'}) do %>
+      <%= form.select(:quantity, nil, {}, {class: 'hidden checkout-quantity-select', ref: 'quantitySelect'}) do %>
         <%= options_for_select([['50', 50],
                                 ['100', 100],
                                 ['150', 150],
@@ -86,8 +86,8 @@
         </div>
       <% end %>
 
-
     <% end %>
+
 
   </section>
 </div>
@@ -114,15 +114,15 @@
     }
   });
 
-   document.getElementById('checkout-purchase-button').addEventListener('click', function(e) {
-     // Open Checkout with further options:
-     handler.open({
-       amount: window.checkoutPriceDisplay
-     });
-     e.preventDefault();
-   });
+  document.getElementById('checkout-purchase-button').addEventListener('click', function(e) {
+    // Open Checkout with further options:
+    handler.open({
+      amount: window.checkoutPriceDisplay
+    });
+    e.preventDefault();
+  });
 
-   // Close Checkout on page navigation:
+  // Close Checkout on page navigation:
 
   // TODO: Get this handler.close() working without repeat eventListeners
   //
