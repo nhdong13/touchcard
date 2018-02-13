@@ -14,20 +14,15 @@
       </div>
     </div>
 
-
     <h3>How many customers do you want to reach this month?</h3>
 
-    <div><span ref="quantityDisplay" class="checkout-quantity-display f-s-400">&nbsp</span><span class="f-s-200">&nbsp</span></div>
+    <div><span v-cloak class="checkout-quantity-display f-s-400">{{ quantity || <%= selected_value(@current_shop) %> }}</span><span class="f-s-200">&nbsp</span></div>
 
-
-    <!-- IMPORTANT: If you change these you have to change the slider quantity `aria-valuemax` as well -->
     Last Month: <%= @current_shop.last_month %>
-
-
 
     <div class="checkout-slider-wrapper">
       <div ref="quantitySlider" class="mdc-slider" tabindex="0" role="slider"
-           aria-valuemin="0" aria-valuemax="12" aria-valuenow="8" data-step="1"
+           aria-valuemin="0" aria-valuemax="<%= slider_max %>" aria-valuenow="<%= slider_index(@current_shop) %>" data-step="1"
            aria-label="Select Value">
         <div class="mdc-slider__track-container">
           <div class="mdc-slider__track"></div>
@@ -44,40 +39,24 @@
       </div>
     </div>
 
-
-    <!--<div><small>*based on new customers last month</small></div>-->
-
     <br><br>
 
     <div>
-      <strong><span ref="checkoutPriceDisplay" class="checkout-display-price">&nbsp</span></strong>
+      <strong><span class="checkout-display-price">$ {{ this.price.toFixed(2) }}</span></strong>
       to raise your customer lifetime value &nbsp
     </div>
     <br>
     <%= form_with(model: @subscription, local: true, id:'checkout-form') do |form| %>
 
-      <%= form.select(:quantity, nil, {}, {class: 'hidden checkout-quantity-select', ref: 'quantitySelect'}) do %>
-        <%= options_for_select([['50', 50],
-                                ['100', 100],
-                                ['150', 150],
-                                ['200', 200],
-                                ['250', 250],
-                                ['300', 300],
-                                ['400', 400],
-                                ['500', 500],
-                                ['750', 750],
-                                ['1000', 1000],
-                                ['1500', 1500],
-                                ['2000', 2000],
-                                ['3000', 3000]
-                               ]) %>
-      <% end %>
+      <%= form.select(:quantity, nil, {}, {class: 'hidden checkout-quantity-select', ref: 'quantitySelect', 'v-model':'quantity' }) do %>
+        <!-- IMPORTANT: If you change these you have to change the slider quantity `aria-valuemax` as well -->
+        <%= options_for_select(select_options, selected_value(@current_shop)) %>
 
+      <% end %>
 
       <%= hidden_field_tag(:stripeToken) %>
 
-      <button id="checkout-purchase-button" class="mdc-button mdc-button--raised">Buy Now</button>
-
+      <button id="checkout-purchase-button" class="mdc-button mdc-button--raised" @click="checkoutSubmit">Buy Now</button>
 
       <% if flash[:error].present? %>
         <div id="error_explanation">
@@ -91,50 +70,8 @@
 
   </section>
 </div>
-
-
 <br>
-
-
-<script>
-  var handler = StripeCheckout.configure({
-    key: '<%= Rails.configuration.stripe[:publishable_key] %>',
-    locale: 'auto',
-    name: 'Touchcard',
-    description: 'Postcard Subscription',
-    image: '/touchcard-logo-white-spaced-700x700.jpg',
-    zipCode: true,
-    panelLabel: 'Subscribe',
-    // allowRememberMe: false,
-    // label: 'BUY IT NOW',
-    // custom
-    token: function(token) {
-      document.querySelector('input#stripeToken').value = token.id;
-      document.querySelector('#checkout-form').submit();
-    }
-  });
-
-  document.getElementById('checkout-purchase-button').addEventListener('click', function(e) {
-    // Open Checkout with further options:
-    handler.open({
-      amount: window.checkoutPriceDisplay
-    });
-    e.preventDefault();
-  });
-
-  // Close Checkout on page navigation:
-
-  // TODO: Get this handler.close() working without repeat eventListeners
-  //
-  // function closeStripeOnExit () {
-  //   debugger;
-  //   handler.close();
-  //   // window.removeEventListener('popstate', closeStripeOnExit);
-  // }
-  //
-  //
-  // window.addEventListener('popstate', closeStripeOnExit, {once: true});
-
-
-</script>
-
+<br>
+<h2>FIX ME</h2>
+<h3><%= Rails.configuration.stripe[:publishable_key] %></h3>
+<strong>Need to pass the stripe key properly instead of hardcoding into .js vue file</strong>

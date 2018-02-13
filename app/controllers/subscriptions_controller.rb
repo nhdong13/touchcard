@@ -39,7 +39,6 @@ class SubscriptionsController < BaseController
   end
 
   private
-
   def permited_params
     params.permit(:token, :quantity)
   end

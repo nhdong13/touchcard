@@ -9,7 +9,6 @@
   text-align: center;
 }
 
-
 ////.stripe-button .stripe-button-el {
 ////  //background: red !important;
 ////  display: none !important;
@@ -30,3 +29,7 @@
 ////  visibility: hidden;
 ////  //background: red !important;
 ////}
+
+[v-cloak] {
+  display: none;
+}
