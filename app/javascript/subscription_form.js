@@ -1,6 +1,8 @@
 /* global mdc */
 /* global StripeCheckout */
 
+// Todo: Use Stripe Checkout via NPM
+
 export default function(element, stripePubKey) {
   return {
     el: element,
