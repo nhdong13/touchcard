@@ -1,0 +1,11 @@
+<%= currently_at "Settings" %>
+
+<div class="panel">
+  <section>
+    <h3>Subscription</h3>
+    You are currently subscribed to <strong><%= @shop.current_subscription.quantity %></strong> postcards per month.
+    <%= link_to 'Edit', edit_subscription_path(@shop.current_subscription), class: "mdc-button mdc-button--raised" %>
+  </section>
+</div>
+
+

@@ -8,6 +8,9 @@
         <%= nav_tab 'Dashboard', dashboard_index_path, current: current_tab %>
         <%= nav_tab 'Automations', root_path, current: current_tab %>
         <%= nav_tab 'Help', faq_path, current: current_tab %>
+        <% if @current_shop.current_subscription %>
+          <%= nav_tab 'Settings', edit_shop_path(@current_shop), current: current_tab %>
+        <% end %>
         <span class="mdc-tab-bar__indicator"></span>
       </nav>
     </div>
@@ -15,12 +18,11 @@
   <div class="mdc-toolbar__section mdc-toolbar__section--shrink-to-fit mdc-toolbar__section--align-end">
     <span class="mdc-tab"></span>
   </div>
-  <div class="mdc-toolbar__section mdc-toolbar__section--shrink-to-fit mdc-toolbar__section--align-end">
-    <%= link_to 'Start Sending', new_subscription_path, class: "mdc-button mdc-button--raised secondary-filled-button start-checkout-button" %>
-  </div>
-
-
-
+      <div class="mdc-toolbar__section mdc-toolbar__section--shrink-to-fit mdc-toolbar__section--align-end">
+        <% if not @current_shop.current_subscription %>
+          <%= link_to 'Start Sending', new_subscription_path, class: "mdc-button mdc-button--raised secondary-filled-button start-checkout-button" %>
+        <% end %>
+      </div>
     </div>
   </header>
 <% end %>
