@@ -1,6 +1,6 @@
 <%= tag.div id: "stripe-pub-key", data: { stripe_pub_key: Rails.configuration.stripe[:publishable_key] } %>
 
-<div id="subscription-form" class="billing top-m-20 panel">
+<div id="new-subscription-form" class="billing top-m-20 panel">
   <br>
   <%= link_to root_path, class: "mdc-button mdc-button--stroked" do %>
     <!--<i class="material-icons mdc-button__icon">keyboard_backspace</i>-->
@@ -18,28 +18,11 @@
 
     <h3>How many customers do you want to reach this month?</h3>
 
-    <div><span v-cloak class="checkout-quantity-display f-s-400">{{ quantity || <%= selected_value(@current_shop) %> }}</span><span class="f-s-200">&nbsp</span></div>
+    <div><span v-cloak class="checkout-quantity-display f-s-400">{{ quantity || <%= checkout_quantity(@current_shop) %> }}</span><span class="f-s-200">&nbsp</span></div>
 
     Last Month: <%= @current_shop.last_month %>
 
-    <div class="checkout-slider-wrapper">
-      <div ref="quantitySlider" class="mdc-slider" tabindex="0" role="slider"
-           aria-valuemin="0" aria-valuemax="<%= slider_max %>" aria-valuenow="<%= slider_index(@current_shop) %>" data-step="1"
-           aria-label="Select Value">
-        <div class="mdc-slider__track-container">
-          <div class="mdc-slider__track"></div>
-        </div>
-        <div class="mdc-slider__thumb-container">
-          <!--<div class="mdc-slider__pin">-->
-          <!--<span class="mdc-slider__pin-value-marker">10</span>-->
-          <!--</div>-->
-          <svg class="mdc-slider__thumb" width="21" height="21">
-            <circle cx="10.5" cy="10.5" r="7.875"></circle>
-          </svg>
-          <div class="mdc-slider__focus-ring"></div>
-        </div>
-      </div>
-    </div>
+    <%= render 'slider', slider_index: checkout_quantity_index(@current_shop) %>
 
     <br><br>
 
@@ -50,7 +33,7 @@
     <br>
     <%= form_with(model: @subscription, local: true, id:'checkout-form') do |form| %>
       <%= form.select(:quantity, nil, {}, {class: 'hidden checkout-quantity-select', ref: 'quantitySelect', 'v-model':'quantity' }) do %>
-        <%= options_for_select(select_options, selected_value(@current_shop)) %>
+        <%= options_for_select(select_options, checkout_quantity(@current_shop)) %>
       <% end %>
       <%= hidden_field_tag(:stripeToken) %>
       <button id="checkout-purchase-button" class="mdc-button mdc-button--raised" @click="checkoutSubmit">Buy Now</button>

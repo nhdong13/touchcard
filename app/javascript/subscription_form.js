@@ -3,7 +3,7 @@
 
 // Todo: Use Stripe Checkout via NPM
 
-export default function(element, stripePubKey) {
+export default function(element, stripePubKey = '') {
   return {
     el: element,
     // props: {

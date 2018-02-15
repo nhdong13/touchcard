@@ -1,8 +1,49 @@
 <%= currently_at "Settings" %>
 
-subscriptions/edit.html.erb
-
-<br>
-Make sure updating works with existing Stripe details.
+<h3>TODO: Make sure canceling + res-subscribing works with existing Stripe details.</h3>
 <!-- %= render 'form', automation: @automation.becomes(CardOrder), url: automation_path(@automation) % -->
 <!-- %= render 'form', automation: @automation, aws_sign_endpoint: @aws_sign_endpoint, url: automation_path(@automation) % -->
+
+
+<%= tag.div id: "stripe-pub-key", data: { stripe_pub_key: Rails.configuration.stripe[:publishable_key] } %>
+
+<div id="edit-subscription-form" class="billing top-m-20 panel">
+  <br>
+
+  <%= link_to 'Back', 'javascript:history.back()', class: "mdc-button mdc-button--stroked" %>
+
+  <br>
+  <section class="text-center">
+
+    You're currently subscribed to <strong><%= @current_shop.current_subscription.quantity %></strong> cards per month. Change to:
+
+    <br>
+    <div><span v-cloak class="checkout-quantity-display f-s-300">{{ quantity || <%= update_quantity(@current_shop) %> }}</span><span class="f-s-200"> cards / month</span></div>
+
+    <%= render 'slider', slider_index: update_quantity_index(@current_shop) %>
+
+    <br><br>
+
+    <div>
+      <strong><span v-cloak class="checkout-display-price">$ {{ this.price.toFixed(2) }}</span></strong> per month
+    </div>
+    <br>
+    <%= form_with(model: @subscription, local: true, id:'checkout-form') do |form| %>
+      <%= form.select(:quantity, nil, {}, {class: 'hidden checkout-quantity-select', ref: 'quantitySelect', 'v-model':'quantity' }) do %>
+        <%= options_for_select(select_options, update_quantity(@current_shop) ) %>
+      <% end %>
+      <%= hidden_field_tag(:stripeToken) %>
+      <button class="mdc-button mdc-button--raised">Update</button>
+      <% if flash[:error].present? %>
+        <div id="error_explanation">
+          ERROR EXPLANATION:
+          <p><%= flash[:error] %></p>
+        </div>
+      <% end %>
+    <% end %>
+
+  </section>
+</div>
+
+
+

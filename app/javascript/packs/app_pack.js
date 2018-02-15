@@ -15,8 +15,10 @@ document.addEventListener('turbolinks:load', () => {
   axios.defaults.headers.common['X-CSRF-Token'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
   var automationElement = document.getElementById('automation-editor');
-  var subscriptionElement = document.getElementById('subscription-form');
-  
+  var newSubscriptionElement = document.getElementById('new-subscription-form');
+  var editSubscriptionElement = document.getElementById('edit-subscription-form');
+
+
   if (automationElement != null) {
 
     const automationVueApp = new Vue({
@@ -39,9 +41,15 @@ document.addEventListener('turbolinks:load', () => {
     window.VueAutomation = automationVueApp;
   }
 
-  if (subscriptionElement != null) {
+  if (newSubscriptionElement != null) {
     var stripeKeyElement = document.getElementById('stripe-pub-key');
-    const subscriptionVueApp = new Vue(SubscriptionForm(subscriptionElement, stripeKeyElement.dataset.stripePubKey));
-    window.VueSubscription = subscriptionVueApp;
+    const vueApp = new Vue(SubscriptionForm(newSubscriptionElement, stripeKeyElement.dataset.stripePubKey));
+    window.VueSubscriptionNew = vueApp;
   }
+
+  if (editSubscriptionElement != null) {
+    const vueApp = new Vue(SubscriptionForm(editSubscriptionElement));
+    window.VueSubscriptionEdit = vueApp;
+  }
+
 });
