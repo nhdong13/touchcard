@@ -1,11 +1,13 @@
 class SubscriptionsController < BaseController
+  before_action :set_subscription, only: [:show, :edit, :update, :destroy]
+
   def new
     @subscription = Subscription.new
   end
 
   def create
-    quantity = permitted_params[:subscription][:quantity]
-    @current_shop.create_stripe_customer(permitted_params[:stripeToken])
+    quantity = create_params[:subscription][:quantity]
+    @current_shop.create_stripe_customer(create_params[:stripeToken])
     @subscription = Subscription.create(shop: @current_shop, plan: Plan.first, quantity: quantity)
 
     respond_to do |format|
@@ -22,20 +24,47 @@ class SubscriptionsController < BaseController
     end
   end
 
+  def show
+  end
+
   def edit
   end
 
   def update
+    quantity = update_params[:quantity].to_i
+    if quantity && @subscription.change_quantity(quantity)
+      flash[:notice] = "Subscription successfully updated"
+      redirect_to edit_shop_path
+    else
+      flash[:error] = @subscription.errors.full_messages.join("\n") || "Error Updating Subscription"
+      render :edit
+    end
+  end
+
+  def destroy
+    if @subscription.change_quantity(0)
+      flash[:notice] = "Subscription stopped"
+      redirect_to edit_shop_path
+    else
+      flash[:error] = @subscription.errors.full_messages.join("\n") || "Error Updating Subscription"
+      render :edit
+    end
   end
 
   private
 
-  def permitted_params
+  def set_subscription
+    @subscription = @current_shop.current_subscription
+  end
+
+  def create_params
     params.permit(
         :stripeToken,
-        subscription: [:quantity],
+        subscription: [:quantity])
+  end
 
-        )
+  def update_params
+    params.require(:subscription).permit(:quantity)
   end
 
 end

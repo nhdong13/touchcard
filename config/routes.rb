@@ -60,7 +60,7 @@ Rails.application.routes.draw do
     patch 'cancel_postcard', on: :member
   end
 
-  resources :subscriptions, only: [:new, :create, :show, :edit, :update]
+  resources :subscriptions, only: [:new, :create, :show, :edit, :update, :destroy]
 
   resources :shops, only: [:edit, :update], path: 'settings'
 

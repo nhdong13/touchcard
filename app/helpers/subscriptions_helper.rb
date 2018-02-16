@@ -8,19 +8,19 @@ module SubscriptionsHelper
   end
 
   def checkout_quantity(current_shop)
-    QUANTITIES[checkout_quantity_index(current_shop)] || QUANTITIES[0]
+    QUANTITIES[checkout_index(current_shop)] || QUANTITIES[0]
   end
-  
-  def checkout_quantity_index(current_shop)
+
+  def checkout_index(current_shop)
     monthly_customers = current_shop.last_month || 0
     QUANTITIES.rindex{ |x| x < monthly_customers } || 0
   end
 
   def update_quantity(current_shop)
-    QUANTITIES[update_quantity_index(current_shop)] || QUANTITIES[0]
+    QUANTITIES[update_index(current_shop)] || QUANTITIES[0]
   end
 
-  def update_quantity_index(current_shop)
+  def update_index(current_shop)
     monthly_subscription = current_shop.current_subscription.quantity || 0
     QUANTITIES.index{ |x| x >= monthly_subscription } || 0
   end
