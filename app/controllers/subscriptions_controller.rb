@@ -34,7 +34,7 @@ class SubscriptionsController < BaseController
     quantity = update_params[:quantity].to_i
     if quantity && @subscription.change_quantity(quantity)
       flash[:notice] = "Subscription successfully updated"
-      redirect_to edit_shop_path
+      redirect_to edit_shops_path
     else
       flash[:error] = @subscription.errors.full_messages.join("\n") || "Error Updating Subscription"
       render :edit
@@ -44,7 +44,7 @@ class SubscriptionsController < BaseController
   def destroy
     if @subscription.change_quantity(0)
       flash[:notice] = "Subscription stopped"
-      redirect_to edit_shop_path
+      redirect_to edit_shops_path
     else
       flash[:error] = @subscription.errors.full_messages.join("\n") || "Error Updating Subscription"
       render :edit

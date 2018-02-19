@@ -60,9 +60,9 @@ Rails.application.routes.draw do
     patch 'cancel_postcard', on: :member
   end
 
-  resources :subscriptions, only: [:new, :create, :show, :edit, :update, :destroy]
+  resource :subscriptions, only: [:new, :create, :show, :edit, :update, :destroy]
 
-  resources :shops, only: [:edit, :update], path: 'settings'
+  resource :shops, only: [:edit, :update], path: 'settings'
 
   resources :automations, only: [:index, :show, :edit, :update] do
     # get 'select_type', :on => :collection

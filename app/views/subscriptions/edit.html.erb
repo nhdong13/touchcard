@@ -23,7 +23,7 @@
     </div>
     <br>
 
-    <%= form_with(model: @current_shop.current_subscription, local: true, id:'checkout-form') do |form| %>
+    <%= form_with(model: @subscription, url: subscriptions_path(@subscription), local: true, id:'checkout-form') do |form| %>
       <%= form.select(:quantity, nil, {}, {class: 'hidden checkout-quantity-select', ref: 'quantitySelect', 'v-model':'quantity' }) do %>
         <%= options_for_select(select_options, update_quantity(@current_shop) ) %>
       <% end %>
@@ -34,7 +34,7 @@
   </section>
 
   <% if (@subscription.quantity > 0) %>
-    <%= button_to "Unsubscribe", subscription_path, class: "mdc-button mdc-button--dense", method: :delete %>
+    <%= button_to "Unsubscribe", subscriptions_path, class: "mdc-button mdc-button--dense", method: :delete %>
   <% end %>
 
 </div>
