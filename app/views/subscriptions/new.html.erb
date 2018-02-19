@@ -46,7 +46,6 @@
         <%= form.submit value: "Submit", class: "mdc-button mdc-button--raised" %>
       <% else %>
         <%= hidden_field_tag(:stripeToken) %>
-        <h3>Card Already Registered</h3>
         <button class="mdc-button mdc-button--raised" @click="checkoutSubmit">Buy Now</button>
       <% end %>
     <% end %>
