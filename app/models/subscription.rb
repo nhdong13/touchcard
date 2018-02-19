@@ -2,6 +2,8 @@ class Subscription < ApplicationRecord
   belongs_to :plan
   belongs_to :shop
 
+  attr_accessor :coupon
+
   validates :plan, :shop, :quantity, :stripe_id,
     :current_period_start, :current_period_end, presence: true
   validate :only_one_subscription
@@ -59,7 +61,8 @@ class Subscription < ApplicationRecord
       return super(params) unless shop && plan
       subscription = shop.stripe_customer.subscriptions.create(
         plan: plan.id,
-        quantity: params[:quantity])
+        quantity: params[:quantity],
+        coupon: params[:coupon])
       instance = super(params.merge(
         stripe_id: subscription.id,
         current_period_start: Time.at(subscription.current_period_start),

@@ -35,13 +35,19 @@
       <%= form.select(:quantity, nil, {}, {class: 'hidden checkout-quantity-select', ref: 'quantitySelect', 'v-model':'quantity' }) do %>
         <%= options_for_select(select_options, checkout_quantity(@current_shop)) %>
       <% end %>
-      <%= hidden_field_tag(:stripeToken) %>
-      <button id="checkout-purchase-button" class="mdc-button mdc-button--raised" @click="checkoutSubmit">Buy Now</button>
-      <% if flash[:error].present? %>
-        <div id="error_explanation">
-          ERROR EXPLANATION:
-          <p><%= flash[:error] %></p>
-        </div>
+      <% if @subscription.coupon %>
+        <hr>
+        <%= label_tag "Discount Coupon" %>
+        <%= text_field(:subscription, :coupon) %>
+        <hr>
+      <% end %>
+
+      <% if @current_shop.is_card_registered %>
+        <%= form.submit value: "Submit", class: "mdc-button mdc-button--raised" %>
+      <% else %>
+        <%= hidden_field_tag(:stripeToken) %>
+        <h3>Card Already Registered</h3>
+        <button class="mdc-button mdc-button--raised" @click="checkoutSubmit">Buy Now</button>
       <% end %>
     <% end %>
 

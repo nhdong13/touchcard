@@ -3,24 +3,26 @@ class SubscriptionsController < BaseController
 
   def new
     @subscription = Subscription.new
+    @subscription.coupon = params[:coupon] if params[:coupon]
   end
 
   def create
-    quantity = create_params[:subscription][:quantity]
-    @current_shop.create_stripe_customer(create_params[:stripeToken])
-    @subscription = Subscription.create(shop: @current_shop, plan: Plan.first, quantity: quantity)
+    quantity = create_params[:subscription][:quantity] # TODO: Handle missing quantity
+    coupon = create_params[:subscription][:coupon]
 
-    respond_to do |format|
-      if @subscription.save
-        @subscription.shop.top_up
-        flash[:notice] = "Subscription successfully created"
-        format.html { render :create}
-        format.json { render json: @subscription }
-      else
-        flash[:error] = @subscription.errors.full_messages.join("\n")
-        format.html { render :new }
-        format.json { render json: subscription.errors, status: :unprocessable_entity }
-      end
+    stripe_params = {shop: @current_shop, plan: Plan.first, quantity: quantity}
+    stripe_params.merge!({coupon: coupon}) if !coupon.blank?
+
+    @current_shop.create_stripe_customer(create_params[:stripeToken]) unless @current_shop.is_card_registered
+    @subscription = Subscription.create(stripe_params)
+
+    if @subscription.save
+      @subscription.shop.top_up
+      flash[:notice] = "Subscription successfully created"
+      render :create
+    else
+      flash[:error] = @subscription.errors.full_messages.join("\n")
+      render :new
     end
   end
 
@@ -60,7 +62,7 @@ class SubscriptionsController < BaseController
   def create_params
     params.permit(
         :stripeToken,
-        subscription: [:quantity])
+        subscription: [:quantity, :coupon])
   end
 
   def update_params
