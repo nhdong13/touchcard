@@ -3,7 +3,7 @@
 
 <%= tag.div id: "stripe-pub-key", data: { stripe_pub_key: Rails.configuration.stripe[:publishable_key] } %>
 
-<div id="edit-subscription-form" class="billing top-m-20 panel">
+<div id="edit-subscription-form" class="billing panel">
   <br>
 
   <%= link_to 'Back', 'javascript:history.back()', class: "mdc-button mdc-button--stroked" %>

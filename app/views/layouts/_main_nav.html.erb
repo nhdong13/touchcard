@@ -17,7 +17,7 @@
       <div class="mdc-toolbar__section mdc-toolbar__section--shrink-to-fit mdc-toolbar__section--align-end">
         <span class="mdc-tab"></span>
       </div>
-      <div class="mdc-toolbar__section mdc-toolbar__section--shrink-to-fit mdc-toolbar__section--align-end">
+      <div id="right-toolbar-section" class="mdc-toolbar__section mdc-toolbar__section--shrink-to-fit mdc-toolbar__section--align-end">
         <% if not @current_shop.current_subscription %>
           <%= link_to 'Start Sending', new_subscriptions_path, class: "mdc-button mdc-button--raised secondary-filled-button start-checkout-button" %>
         <% end %>
