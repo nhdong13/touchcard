@@ -10,7 +10,6 @@
   // background: lightsalmon;
 }
 
-
 .automation-controls {
   // background: cyan;
 }
@@ -31,101 +30,57 @@
   padding: 1em;
 }
 
-
 .automation-data {
   // background: greenyellow;
 }
 
-
-
 .automation-row:hover {
   background-color: inherit !important;
+}
+
+.automation-row a:any-link {
+  text-decoration: none; // Flex in thumb below underlined button text for some reason. Undo this.
 }
 
 //td a {
 //  display: block;
 //}
 
-
-.automation-card-thumb {
+.automation-card-thumb-wrapper {
   width: 220px;
   height: 150px;
-  background: #b3d4fc;
+  //background: #b3d4fc;
   margin: 0;
 }
 
-//.automation-card-thumb:hover {
-//  background-blend-mode: ;
-//  background-color: orangered;
-//  color: green;
-//}
-
-.automation-card-thumb:hover {
+.automation-card-thumb-wrapper:hover {
   //color: #5b3e82;
   opacity: 0.7;
   transition: 0.5s;
-}
-//.automation-card-thumb:hover:before {
-//  content: 'EDIT';
-//  text-align: center;
-//  position: absolute;
-//  //top: 0;
-//  //left: 0;
-//  //width: 100%;
-//  //height: 100%;
-//  //background: rgba(255, 255, 255, 0.3);
-//}
 
-.automation-card-background {
-  width: inherit;
-  height: inherit;
+}
+
+.automation-card-thumb {
+  //width: inherit;
+  //height: inherit;
+  width: 95%;
+  height: 95%;
   margin: 0;
   padding: 0;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+
+  // Center contained button
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-
-//.automation-card-background:hover:after {
-//  width: inherit;
-//  height: 40%;
-//  top: 50%;
-//  position: absolute;
-//  //border-width: 1px 1px 0 0;
-//  content: 'EDIT';
-//  //background: #256f9e;
-//  background: black;
-//  display: block;
-//  //height: 30px;
-//  //width: 100%;
-//
-//
-//  z-index: 99;
-//}
-
-
-
-.automation-thumb-overlay {
-  position: relative;
-  width: 100%;
-  height: 20%;
-  top: 80%;
-  background-color: rgba(0, 0, 0, 0.5);
-
-}
-
-
-.automation-thumb-button {
+.automation-card-thumb button {
   background: white !important;
-  display: inline-block;
-  margin: auto;
-
-  //text-align: center;
-  //top: 40px;
 }
 
-.automation-thumb-button::before{
-  background: initial !important;
+.automation-card-thumb button::before {
+  background: initial !important; // Disable button hover effect
 }
-

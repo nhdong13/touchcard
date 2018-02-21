@@ -43,9 +43,9 @@
             <td>
               <%= link_to edit_automation_path(card),
                           class: 'mdl-button mdl-js-button mdl-button--raised' do %>
-                <div class="automation-card-thumb">
-                  <div class="automation-card-background" style="background-image: url('<%= card.front_json['background_url'] || 'none' %>');">
-                    <button class="automation-thumb-button mdc-button mdc-button--stroked">Configure</button>
+                <div class="automation-card-thumb-wrapper">
+                  <div class="automation-card-thumb" style="background-image: url('<%= card.front_json['background_url'] || 'none' %>');">
+                    <button class="mdc-button mdc-button--stroked mdc-button--dense">Configure</button>
                     <!--<div class="automation-thumb-overlay">EDIT</div>-->
                   </div>
                 </div>
