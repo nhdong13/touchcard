@@ -44,8 +44,8 @@
               <%= link_to edit_automation_path(card),
                           class: 'mdl-button mdl-js-button mdl-button--raised' do %>
                 <div class="automation-card-thumb-wrapper">
-                  <div class="automation-card-thumb" style="background-image: url('<%= card.front_json['background_url'] || 'none' %>');">
-                    <button class="mdc-button mdc-button--stroked mdc-button--dense">Configure</button>
+                  <div class="automation-card-thumb" <% if card.front_json['background_url'] %>style="background-image: url('<%= card.front_json['background_url'] %>');"<% end %>>
+                    <button class="mdc-button mdc-button--stroked mdc-button--dense">Edit</button>
                     <!--<div class="automation-thumb-overlay">EDIT</div>-->
                   </div>
                 </div>

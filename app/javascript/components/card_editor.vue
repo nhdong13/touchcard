@@ -14,7 +14,7 @@
         </card-side>
       </div>
       <div class="editor-menu editor-right-column">
-        <strong>Upload Background</strong>
+        <strong>Upload Design</strong>
         <input type="file" accept="image/png,image/jpeg"  @change="updateBackground($event, FRONT_TYPE)">
         <hr />
         <input type="checkbox" v-model="enableFrontDiscount"><strong>Include Expiring Discount</strong>
@@ -47,7 +47,7 @@
         </card-side>
       </div>
       <div class="editor-menu editor-right-column">
-        <strong>Upload Background</strong>
+        <strong>Upload Design</strong>
         <input type="file" accept="image/png,image/jpeg"  @change="updateBackground($event, BACK_TYPE)">
         <hr />
         <input type="checkbox" v-model="enableBackDiscount"><strong>Include Expiring Discount</strong>

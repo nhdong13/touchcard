@@ -71,6 +71,8 @@
   background-position: center;
   background-repeat: no-repeat;
 
+  background-image: image-url("/images/touchcard-hello-thumb.jpg");
+
   // Center contained button
   display: flex;
   align-items: center;
@@ -84,3 +86,11 @@
 .automation-card-thumb button::before {
   background: initial !important; // Disable button hover effect
 }
+
+// Override the Vue CSS here. Avoid doing so in Vue because we don't have access to URL
+// and we don't want it messing up during printing.
+
+.card-side-body {
+  background-image: image-url("/images/touchcard-hello-placeholder.jpg") !important;
+}
+
