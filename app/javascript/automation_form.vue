@@ -1,10 +1,12 @@
 <template>
   <div>
+    <a href="javascript:history.back()" class="mdc-button mdc-button--stroked">Cancel</a>
     <button v-on:click="requestSave" class="mdc-button mdc-button--raised">Save</button>
-
+    <hr>
     <!-- div v-cloak></div -->
     <h3>{{automation.type}}</h3>
-    <input type="checkbox" v-model="automation.international" ><strong>Send outside USA</strong>
+    <input id="automation-international-checkbox" type="checkbox" v-model="automation.international" />
+    <label for="automation-international-checkbox" class="noselect"><strong>Send outside USA</strong></label>
     <div class="international-note nested-toggle" v-if="automation.international">
           <span>
             <em>Note: International postcards cost two credits.</em>
@@ -12,20 +14,21 @@
     </div>
     <br v-if="!automation.international">
     <br>
-    <input type="checkbox" v-model="enableFiltering"><strong>Filter by Order Size</strong>
+    <input id="automation-filter-checkbox" type="checkbox" v-model="enableFiltering">
+    <label for="automation-filter-checkbox" class="noselect"><strong>Filter by Order Size</strong></label>
     <div class="filter-config nested-toggle" v-if="enableFiltering">
       <span>
-        Minimum: <input type="number" min="1" max="9999" v-model="automation.filters_attributes[automation.filters_attributes.length-1].filter_data.minimum">
+        Minimum $: <input type="number" min="1" max="9999" v-model="automation.filters_attributes[automation.filters_attributes.length-1].filter_data.minimum">
       </span>
     </div>
-
+    <hr>
     <card-editor
-        ref="cardEditor"
-        :discount_pct.sync="automation.discount_pct"
-        :discount_exp.sync="automation.discount_exp"
-        :front_attributes.sync="automation.front_json"
-        :back_attributes.sync="automation.back_json"
-        :aws_sign_endpoint="awsSignEndpoint"
+            ref="cardEditor"
+            :discount_pct.sync="automation.discount_pct"
+            :discount_exp.sync="automation.discount_exp"
+            :front_attributes.sync="automation.front_json"
+            :back_attributes.sync="automation.back_json"
+            :aws_sign_endpoint="awsSignEndpoint"
     ></card-editor>
   </div>
 </template>

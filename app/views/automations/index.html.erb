@@ -4,68 +4,71 @@
   <div class="text-center">
     <!-- %= link_to 'New Automation', new_automation_path, class: "mdc-button" % -->
   </div>
-  <% @card_orders.each do |card| %>
-      <div id="card-<%= card.id %>" class="panel automation-listing">
-        <div>
-          <h3 style="padding: 0;"><%= card.type %></h3>
-        </div>
-        <div class="automation-main">
-          <table>
-            <tr>
-              <td class="automation-controls">
-                <div class="automation-toggle tooltip" data-hover="On / Off">
-                  <div class="mdc-switch">
-                    <%= check_box_tag "card-#{card.id}",
-                                      card.enabled,
-                                      card.enabled,
-                                      id: "basic-switch",
-                                      class: 'mdc-switch__native-control',
-                                      onchange: "this.setAttribute('data-params', 'card_order[enabled]=' + this.checked)",
-                                      data: { remote: true,
-                                              url: automation_path(card),
-                                              method: :patch}
-                    %>
-                    <div class="mdc-switch__background">
-                      <div class="mdc-switch__knob"></div>
-                    </div>
+
+</div>
+
+<div class="mdc-layout-grid__inner scheduled-cards-container">
+  <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12">
+    <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
+      <thead>
+      <tr>
+        <th class="mdl-data-table__cell--non-numeric">Sending</th>
+        <th class="mdl-data-table__cell--non-numeric">Front</th>
+        <th class="mdl-data-table__cell--non-numeric">Discount</th>
+        <th class="mdl-data-table__cell--non-numeric">Cards Sent</th>
+        <th class="mdl-data-table__cell--non-numeric">Redemptions</th>
+        <th class="mdl-data-table__cell--non-numeric"></th>
+      </tr>
+      </thead>
+      <tbody>
+
+      <% @card_orders.each do |card| %>
+
+          <tr id="card-<%= card.id %>" class="automation-row">
+            <td class="automation-controls">
+              <div class="automation-toggle tooltip" data-hover="On / Off">
+                <div class="mdc-switch">
+                  <%= check_box_tag "card-#{card.id}",
+                                    card.enabled,
+                                    card.enabled,
+                                    id: "basic-switch",
+                                    class: 'mdc-switch__native-control',
+                                    onchange: "this.setAttribute('data-params', 'card_order[enabled]=' + this.checked)",
+                                    data: { remote: true,
+                                            url: automation_path(card),
+                                            method: :patch}
+                  %>
+                  <div class="mdc-switch__background">
+                    <div class="mdc-switch__knob"></div>
                   </div>
                 </div>
-                <br><br>
-                <div>
-                  <%= link_to edit_automation_path(card),
-                              data: { hover: "Edit"},
-                              class: 'mdl-button mdl-js-button mdl-button--raised tooltip' do %>
-                      <i class="material-icons">mode_edit</i>
+              </div>
+              <br><br>
+            </td>
+
+            <td>
+              <%= link_to edit_automation_path(card),
+                          class: 'mdl-button mdl-js-button mdl-button--raised' do %>
+                <div class="automation-card-background">
+                  <% if card.front_json['background_url'] %>
+                    <%= image_tag card.front_json['background_url'], style: "border: 1px solid black; max-height: 150px;" %>
                   <% end %>
                 </div>
-                <br>
-                <div class="automation-delete-button">
-                  <!-- %= link_to automation_path(card),
-                              remote: true,
-                              method: :delete,
-                              data: { confirm: "Are you sure you want to delete this automation? This can't be undone.",
-                                      hover: "Delete"},
-                              class: 'mdc-material-icons mdc-button__icon tooltip' do % -->
-                      <!--<i class="material-icons mdc-button__icon cancel-automation-button">delete</i>-->
-                  <!-- % end % -->
-                </div>
-              </td>
-              <td class="automation-image">
-                <% if card.front_json['background_url'] %>
-                  <%= image_tag card.front_json['background_url'] %>
-                <% end %>
-              </td>
-              <td class="automation-data">
-                <h4>Stats</h4>
-                <p>Discount: <%= (card.discount_pct).abs if card.discount_pct %></p>
-                <p>Cards Send:</p>
-                <p>Revenue:</p>
-              </td>
-            </tr>
-          </table>
+              <% end %>
+            </td>
+            <td>
+              <%= (card.discount_pct).abs if card.discount_pct %>
+            </td>
+            <td>241</td>
+            <td>12</td>
 
-        </div>
-      </div>
-  <% end %>
+          </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
 </div>
+
+
+
 
