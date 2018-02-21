@@ -5,6 +5,7 @@
       <div ref="editorLeftColumn" class="editor-left-column">
         <card-side
             ref="frontSide"
+            class="card-editor-front-side"
             :attributes.sync="front_attributes"
             :enableDiscount="enableFrontDiscount"
             :scaleFactor="cardScaleFactor"
@@ -37,7 +38,8 @@
     <div class="editor-columns-container">
       <div ref="editorLeftColumn" class="editor-left-column">
         <card-side
-                ref="frontSide"
+                ref="backSide"
+                class="card-editor-back-side"
                 :attributes.sync="back_attributes"
                 :enableDiscount="enableBackDiscount"
                 :scaleFactor="cardScaleFactor"

@@ -87,10 +87,14 @@
   background: initial !important; // Disable button hover effect
 }
 
-// Override the Vue CSS here. Avoid doing so in Vue because we don't have access to URL
-// and we don't want it messing up during printing.
-
-.card-side-body {
-  background-image: image-url("/images/touchcard-hello-placeholder.jpg") !important;
+.card-editor-front-side{
+  .card-side-body {
+    background-image: image-url("/images/touchcard-hello-front-placeholder.jpg");
+  }
 }
 
+.card-editor-back-side {
+  .card-side-body {
+    background-image: image-url("/images/touchcard-hello-back-placeholder.jpg");
+  }
+}
