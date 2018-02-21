@@ -32,7 +32,8 @@
                                     onchange: "this.setAttribute('data-params', 'card_order[enabled]=' + this.checked)",
                                     data: { remote: true,
                                             url: automation_path(card),
-                                            method: :patch}
+                                            method: :patch},
+                                    disabled: !(@current_shop.current_subscription || (@current_shop.credit > 0))
                   %>
                   <div class="mdc-switch__background">
                     <div class="mdc-switch__knob"></div>
