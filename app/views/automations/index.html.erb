@@ -1,25 +1,24 @@
 <%= currently_at "Automations" %>
-
 <div>
   <!-- %= link_to 'New Automation', new_automation_path, class: "mdc-button" % -->
+  <div class="mdc-layout-grid__inner">
+    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12">
+      <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
+        <thead>
+        <tr>
+          <th class="mdl-data-table__cell--non-numeric">Sending</th>
+          <th class="mdl-data-table__cell--non-numeric">Front</th>
+          <th class="mdl-data-table__cell--non-numeric">Discount (%)</th>
+          <th class="mdl-data-table__cell--non-numeric">Cards Sent</th>
+          <th class="mdl-data-table__cell--non-numeric">Redemptions</th>
+          <th class="mdl-data-table__cell--non-numeric">International</th>
+          <th class="mdl-data-table__cell--non-numeric">Delete</th>
 
-<div class="mdc-layout-grid__inner">
-  <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12">
-    <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
-      <thead>
-      <tr>
-        <th class="mdl-data-table__cell--non-numeric">Sending</th>
-        <th class="mdl-data-table__cell--non-numeric">Front</th>
-        <th class="mdl-data-table__cell--non-numeric">Discount</th>
-        <th class="mdl-data-table__cell--non-numeric">Cards Sent</th>
-        <th class="mdl-data-table__cell--non-numeric">Redemptions</th>
-        <th class="mdl-data-table__cell--non-numeric"></th>
-      </tr>
-      </thead>
-      <tbody>
-
-      <% @card_orders.each do |card| %>
-
+          <th class="mdl-data-table__cell--non-numeric"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <% @card_orders.each do |card| %>
           <tr id="card-<%= card.id %>" class="automation-row">
             <td class="automation-controls">
               <div class="automation-toggle tooltip" data-hover="On / Off">
@@ -41,7 +40,6 @@
               </div>
               <br><br>
             </td>
-
             <td>
               <%= link_to edit_automation_path(card),
                           class: 'mdl-button mdl-js-button mdl-button--raised' do %>
@@ -53,15 +51,17 @@
               <% end %>
             </td>
             <td>
-              <%= (card.discount_pct).abs if card.discount_pct %>
+              <%= has_active_discount(card) ? (card.discount_pct).abs : '-' %>
             </td>
-            <td>241</td>
-            <td>12</td>
-
+            <td>
+            </td>
+            <td>-</td>
+            <td><%= card.international ? 'yes' : 'no' %></td>
+            <td>-</td>
           </tr>
-      <% end %>
-      </tbody>
-    </table>
+        <% end %>
+        </tbody>
+      </table>
+    </div>
   </div>
-</div>
 </div>
