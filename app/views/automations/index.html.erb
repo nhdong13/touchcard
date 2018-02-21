@@ -43,11 +43,18 @@
             <td>
               <%= link_to edit_automation_path(card),
                           class: 'mdl-button mdl-js-button mdl-button--raised' do %>
-                <div class="automation-card-background">
-                  <% if card.front_json['background_url'] %>
-                    <%= image_tag card.front_json['background_url'], style: "border: 1px solid black; max-height: 150px;" %>
-                  <% end %>
+                <div class="automation-card-thumb">
+                  <div class="automation-card-background" style="background-image: url('<%= card.front_json['background_url'] || 'none' %>');">
+                    <button class="automation-thumb-button mdc-button mdc-button--stroked">Configure</button>
+                    <!--<div class="automation-thumb-overlay">EDIT</div>-->
+                  </div>
                 </div>
+
+                <!--% if card.front_json['background_url'] %-->
+                  <!--%= image_tag card.front_json['background_url'], style: "border: 1px solid black; max-height: 150px;" %-->
+                <!--% end %-->
+
+
               <% end %>
             </td>
             <td>
