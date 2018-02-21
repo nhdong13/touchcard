@@ -23,12 +23,12 @@
 
 .automation-image {
   // background: darkorange;
-  width: 300px;
+  width: 200px;
 }
 
 .automation-image img{
   //align: float;
-  width: 300px;
+  width: 200px;
   padding: 1em;
 }
 
@@ -36,4 +36,31 @@
 .automation-data {
   // background: greenyellow;
 }
+
+
+
+//.automation-row {
+//  cursor: pointer;
+//}
+
+//td a {
+//  display: block;
+//}
+
+
+.automation-card-background {
+  min-width: 220px;
+  min-height: 150px;
+  background: #b3d4fc;
+}
+
+.automation-card-background:hover {
+
+}
+
+
+//.automation-card-background::before {
+//  content: "EDIT";
+//  text-align: center;
+//}
 
