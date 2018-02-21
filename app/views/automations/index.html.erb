@@ -8,11 +8,12 @@
         <tr>
           <th class="mdl-data-table__cell--non-numeric">Sending</th>
           <th class="mdl-data-table__cell--non-numeric">Front</th>
-          <th class="mdl-data-table__cell--non-numeric">Discount (%)</th>
           <th class="mdl-data-table__cell--non-numeric">Cards Sent</th>
           <th class="mdl-data-table__cell--non-numeric">Redemptions</th>
+          <th class="mdl-data-table__cell--non-numeric">Discount (%)</th>
           <th class="mdl-data-table__cell--non-numeric">International</th>
-          <th class="mdl-data-table__cell--non-numeric">Delete</th>
+          <!--<th class="mdl-data-table__cell&#45;&#45;non-numeric">Delete</th>-->
+          
 
           <th class="mdl-data-table__cell--non-numeric"></th>
         </tr>
@@ -54,17 +55,19 @@
                   <!--%= image_tag card.front_json['background_url'], style: "border: 1px solid black; max-height: 150px;" %-->
                 <!--% end %-->
 
-
               <% end %>
+            </td>
+            <td>
+              <%= (card.cards_sent_total > 0) ? card.cards_sent_total : '-' %>
+            </td>
+            <td>
+              <%= (card.redemptions > 0) ? card.redemptions : '-' %>
             </td>
             <td>
               <%= has_active_discount(card) ? (card.discount_pct).abs : '-' %>
             </td>
-            <td>
-            </td>
-            <td>-</td>
             <td><%= card.international ? 'yes' : 'no' %></td>
-            <td>-</td>
+            <!--<td>-</td>-->
           </tr>
         <% end %>
         </tbody>

@@ -62,6 +62,10 @@ class CardOrder < ApplicationRecord
       .sum(:total_price)
   end
 
+  def redemptions
+    Order.joins(:postcards).where(postcards: { card_order_id: id }).size
+  end
+
   def ensure_defaults
     self.build_card_side_front(is_back: false) unless self.card_side_front
     self.build_card_side_back(is_back: true) unless self.card_side_back

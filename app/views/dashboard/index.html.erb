@@ -10,7 +10,7 @@
             </div>
             <section class="mdc-card__primary">
               <h2 class="mdc-card__subtitle">Sales</h2>
-              <h1 class="mdc-card__title mdc-card__title--large"><%= number_to_currency @current_shop.revenue %></h1>
+              <h1 class="mdc-card__title mdc-card__title--large"><%= number_to_currency (@current_shop.revenue / 100.0) %></h1>
             </section>
           </div>
         </div>
