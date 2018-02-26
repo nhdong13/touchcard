@@ -65,7 +65,7 @@
               <%= (card.redemptions > 0) ? card.redemptions : '-' %>
             </td>
             <td>
-              <%= has_active_discount(card) ? (card.discount_pct).abs : '-' %>
+              <%= card.has_discount? ? (card.discount_pct).abs : '-' %>
             </td>
             <td><%= card.international ? 'yes' : 'no' %></td>
             <!--<td>-</td>-->

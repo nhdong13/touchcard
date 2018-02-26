@@ -75,9 +75,27 @@ class CardOrder < ApplicationRecord
     # TODO: add defaults to schema that can be added
   end
 
-  def discount?
-    !discount_exp.nil? && !discount_pct.nil?
+  def has_discount?
+      has_front = front_json && front_json['discount_x'] && front_json['discount_y']
+      has_back = back_json && back_json['discount_x'] && back_json['discount_y']
+      has_values = discount_exp.present? && discount_pct.present?
+      raise "Expecting discount_exp and discount_pct" if (has_front || has_back) && !has_values
+      has_values && (has_front || has_back)
   end
+
+  # def discount?
+  #   !discount_exp.nil? && !discount_pct.nil?
+  # end
+
+  def discount_pct=(val)
+    write_attribute(:discount_pct, val.nil? ? nil : -(val.abs))
+  end
+
+  def discount_pct
+    val = self[:discount_pct]
+    val.nil? ? nil : val.abs
+  end
+
 
   def send_date
     return Date.today + send_delay.weeks

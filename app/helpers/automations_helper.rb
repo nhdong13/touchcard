@@ -7,9 +7,4 @@ module AutomationsHelper
       "Lifetime Purchase" => "LifetimePurchaseOrder"
     }
   end
-
-  def has_active_discount(card_order)
-    card_order&.front_json['discount_x'] && card_order&.front_json['discount_y']
-  end
-
 end

@@ -29,7 +29,7 @@ module CardUtil
     discount_code = nil
     expiry = nil
 
-    if card_order.discount?
+    if card_order.has_discount?
       discount_code = 'SAM-PLE-XXX'
       expiry = 4.weeks.from_now.midnight
     end

@@ -74,7 +74,7 @@ class Postcard < ApplicationRecord
     @lob ||= Lob::Client.new(api_key: ENV['LOB_API_KEY'])
     self.estimated_arrival = estimated_transit_days.business_days.from_now.end_of_day
 
-    if card_order.discount?
+    if card_order.has_discount?
       self.discount_pct = card_order.discount_pct
       self.discount_exp_at = estimated_arrival + card_order.discount_exp.weeks
       @discount_manager = DiscountManager.new(card_order.shop.shopify_api_path, discount_pct, discount_exp_at)

@@ -18,10 +18,20 @@
         <strong>Upload Design</strong>
         <input type="file" accept="image/png,image/jpeg"  @change="updateBackground($event, FRONT_TYPE)">
         <hr />
-        <input type="checkbox" v-model="enableFrontDiscount"><strong>Include Expiring Discount</strong>
+        <input id="editor-front-discount" type="checkbox" v-model="enableFrontDiscount">
+        <label for="editor-front-discount" class="noselect"><strong>Include Expiring Discount</strong></label>
+
+
         <div class="discount-config" v-if="enableFrontDiscount">
           <span>
-            <input type="number" min="0" max="100" :value="Math.abs(discount_pct)" @input="$emit('update:discount_pct', Number(-$event.target.value))">
+            <input type="number" min="0" max="100" :value="discount_pct" @input="$emit('update:discount_pct', Number($event.target.value))">
+
+            <!--
+            TODO: The Unprocessable Entity error on save looks to be a positive discount being saved when it should be negative
+            TODO: Could trace this via Vue debugger, OR simply display negative discount in input field above, but `.abs()` it
+            TODO: for the displayed ocupon. That would also avoid misleading validation errors.
+            -->
+
             <!--<input type="number" min="0" max="100" :value="automation.discount_pct" @input="$emit('update:automation', Object.assign(automation, {discount_pct: Number($event.target.value)}))">-->
             % off
           </span><br>
@@ -55,7 +65,7 @@
         <input type="checkbox" v-model="enableBackDiscount"><strong>Include Expiring Discount</strong>
         <div class="discount-config" v-if="enableBackDiscount">
           <span>
-            <input type="number" min="0" max="100" :value="Math.abs(discount_pct)" @input="$emit('update:discount_pct', Number(-$event.target.value))">
+            <input type="number" min="0" max="100" :value="discount_pct" @input="$emit('update:discount_pct', Number($event.target.value))">
             <!--<input type="number" min="0" max="100" :value="automation.discount_pct" @input="$emit('update:automation', Object.assign(automation, {discount_pct: Number($event.target.value)}))">-->
             % off
           </span><br>
@@ -101,8 +111,8 @@
     },
     data: function() {
       return {
-        enableFrontDiscount: this.discount_pct && this.discount_exp,
-        enableBackDiscount: this.discount_pct && this.discount_exp,
+        enableFrontDiscount: this.discount_pct && this.discount_exp && this.front_attributes.discount_x && this.front_attributes.discount_y,
+        enableBackDiscount: this.discount_pct && this.discount_exp && this.back_attributes.discount_x && this.back_attributes.discount_y,
         cardScaleFactor: 1.0,
         cachedDiscountPct: this.discount_pct || 20,
         cachedDiscountExp: this.discount_exp || 3,
