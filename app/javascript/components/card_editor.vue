@@ -26,12 +26,6 @@
           <span>
             <input type="number" min="0" max="100" :value="discount_pct" @input="$emit('update:discount_pct', Number($event.target.value))">
 
-            <!--
-            TODO: The Unprocessable Entity error on save looks to be a positive discount being saved when it should be negative
-            TODO: Could trace this via Vue debugger, OR simply display negative discount in input field above, but `.abs()` it
-            TODO: for the displayed ocupon. That would also avoid misleading validation errors.
-            -->
-
             <!--<input type="number" min="0" max="100" :value="automation.discount_pct" @input="$emit('update:automation', Object.assign(automation, {discount_pct: Number($event.target.value)}))">-->
             % off
           </span><br>
@@ -62,7 +56,8 @@
         <strong>Upload Design</strong>
         <input type="file" accept="image/png,image/jpeg"  @change="updateBackground($event, BACK_TYPE)">
         <hr />
-        <input type="checkbox" v-model="enableBackDiscount"><strong>Include Expiring Discount</strong>
+        <input id="editor-back-discount" type="checkbox" v-model="enableBackDiscount"><strong>Include Expiring Discount</strong>
+        <label for="editor-back-discount" class="noselect"><strong>Include Expiring Discount</strong></label>
         <div class="discount-config" v-if="enableBackDiscount">
           <span>
             <input type="number" min="0" max="100" :value="discount_pct" @input="$emit('update:discount_pct', Number($event.target.value))">
@@ -111,25 +106,18 @@
     },
     data: function() {
       return {
-        enableFrontDiscount: this.discount_pct && this.discount_exp && this.front_attributes.discount_x && this.front_attributes.discount_y,
-        enableBackDiscount: this.discount_pct && this.discount_exp && this.back_attributes.discount_x && this.back_attributes.discount_y,
+        enableFrontDiscount: (this.front_attributes.discount_x !== null) && (this.front_attributes.discount_y !== null),
+        enableBackDiscount: (this.back_attributes.discount_x !== null) && (this.back_attributes.discount_y !== null),
         cardScaleFactor: 1.0,
         cachedDiscountPct: this.discount_pct || 20,
         cachedDiscountExp: this.discount_exp || 3,
       }
     },
     watch: {
-      // TODO: For backwards-compatability's sake we would like to null out card_order.discount_pct and
-      // card_order.discount_exp if neither card side has a discount, but that may just complicate
-      // things without being absolutely necessary
-      enableFrontDiscount: function(val) {
-        this.$emit('update:discount_pct', (val || this.enableBackDiscount) ? this.cachedDiscountPct : null);
-        this.$emit('update:discount_exp', (val || this.enableBackDiscount) ? this.cachedDiscountExp : null);
-      },
-      enableBackDiscount: function(val) {
-        this.$emit('update:discount_pct', (val || this.enableFrontDiscount) ? this.cachedDiscountPct : null);
-        this.$emit('update:discount_exp', (val || this.enableFrontDiscount) ? this.cachedDiscountExp : null);
-      }
+      // For backwards-compatability's sake we  null out card_order.discount_pct
+      // and card_order.discount_exp if neither card side has a discount.
+      enableFrontDiscount: function() { this.emitDiscountValues(); },
+      enableBackDiscount: function() { this.emitDiscountValues(); }
     },
     mounted: function() {
       console.log('CardEditor Mounted')
@@ -151,6 +139,10 @@
       BACK_TYPE: function() { return 'BACK_TYPE' }
     },
     methods: {
+      emitDiscountValues: function() {
+        this.$emit('update:discount_pct', (this.enableFrontDiscount || this.enableBackDiscount) ? this.cachedDiscountPct : null);
+        this.$emit('update:discount_exp', (this.enableFrontDiscount|| this.enableBackDiscount) ? this.cachedDiscountExp : null);
+      },
       handleResize: function() {
         let leftColumnWidth = this.$refs.editorLeftColumn.offsetWidth;
         let cardWidth = this.$refs.frontSide.$el.offsetWidth // Expecting 6.25in * 96 px = 608
@@ -158,18 +150,18 @@
 
 
       },
-      requestSave: function() {
-        // // TODO: We should probably have a data structure to monitor parallel uploads + completion
-        // // And would be nice if uploads happened as soon as added + CardSide has loading icon + completion for not-yet-uploaded images
-        // let promises = [];
-        // if (this.front.newImage) {
-        //   promises.push(this.uploadNewBackground(this.front));
-        // }
-        // if (this.back.newImage) {
-        //   promises.push(this.uploadNewBackground(this.back));
-        // }
-        // return Promise.all(promises);
-      },
+      // prepareSave: function() {
+      //   // // TODO: We should probably have a data structure to monitor parallel uploads + completion
+      //   // // And would be nice if uploads happened as soon as added + CardSide has loading icon + completion for not-yet-uploaded images
+      //   // let promises = [];
+      //   // if (this.front.newImage) {
+      //   //   promises.push(this.uploadNewBackground(this.front));
+      //   // }
+      //   // if (this.back.newImage) {
+      //   //   promises.push(this.uploadNewBackground(this.back));
+      //   // }
+      //   // return Promise.all(promises);
+      // },
       updateBackground: function(e, side) {
         let files = e.target.files || e.dataTransfer.files;
         if (!files.length)

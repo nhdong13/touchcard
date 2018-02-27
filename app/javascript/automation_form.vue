@@ -122,6 +122,7 @@
       requestSave: function() {
 
         // TODO: Wait for uploads to complete in CardEditor
+        // this.$refs.cardEditor.prepareSave();
 
         this.postOrPutForm();
 

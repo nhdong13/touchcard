@@ -63,25 +63,13 @@
       this.$emit('update:discount_x', null);
       this.$emit('update:discount_y', null);
     },
-    // Convert from inches or keep pixels?
-    // computed: {
-    //   discountLeft: function() {
-    //     console.log('computed')
-    //     return (this.discount_x === null) ? 215 : this.discount_x;
-    //   },
-    //   discountTop: function() {
-    //     return (this.discount_y === null) ? 154 : this.discount_y;
-    //   },
-    // },
     // // First 'Mounted' happens before first 'Computed'
-    // mounted: function() {
-    //   // Make sure the intial centering is reflected in parent component
-    //   // console.log('mounted')
-    //   // this.emitDiscountCoords(this.discountLeft, this.discountTop);
-    // },
+    mounted: function() {
+      // Make sure initial centering is reflected in parent component
+      this.emitDiscountCoords();
+    },
     methods: {
-      emitDiscountCoords: function(left, top) {
-        // Convert Discount to % and Emit
+      emitDiscountCoords: function() {
         this.$emit('update:discount_x', this.$refs['discountRect'].left );
         this.$emit('update:discount_y', this.$refs['discountRect'].top );
       }
