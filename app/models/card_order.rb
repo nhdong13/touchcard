@@ -34,6 +34,12 @@ class CardOrder < ApplicationRecord
 
   scope :active, -> { where(archived: false) }
 
+  class << self
+    def num_enabled
+      CardOrder.where(enabled: true).count
+    end
+  end
+
   def send_postcard?(order)
     return true unless filters.count > 0
     spend = order.total_price / 100.0

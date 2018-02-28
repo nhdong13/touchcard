@@ -1,6 +1,13 @@
 <%= currently_at "Automations" %>
 <div>
   <!-- %= link_to 'New Automation', new_automation_path, class: "mdc-button" % -->
+
+  <% if @current_shop.current_subscription && @current_shop.current_subscription.quantity.to_i > 0 && CardOrder.num_enabled == 0  %>
+    <div class="attention-note text-center">
+      You are subscribed but not actively sending. Please enable an automation below to start sending.
+      <br><br>
+    </div>
+  <% end %>
   <div class="mdc-layout-grid__inner">
     <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12">
       <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
@@ -33,7 +40,7 @@
                                     data: { remote: true,
                                             url: automation_path(card),
                                             method: :patch},
-                                    disabled: !(@current_shop.current_subscription || (@current_shop.credit > 0))
+                                    disabled: !(@current_shop.current_subscription || (@current_shop.credit.to_i > 0))
                   %>
                   <div class="mdc-switch__background">
                     <div class="mdc-switch__knob"></div>

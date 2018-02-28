@@ -7,7 +7,7 @@
     <h3>{{automation.type}}</h3>
     <input id="automation-international-checkbox" type="checkbox" v-model="automation.international" />
     <label for="automation-international-checkbox" class="noselect"><strong>Send outside USA</strong></label>
-    <div class="international-note nested-toggle" v-if="automation.international">
+    <div class="attention-note nested-toggle" v-if="automation.international">
           <span>
             <em>Note: International postcards cost two credits.</em>
           </span>
@@ -172,7 +172,4 @@
     padding-left: 10px;
   }
 
-  .international-note {
-    color: orangered;
-  }
 </style>
