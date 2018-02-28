@@ -10,6 +10,12 @@ class AutomationsController < BaseController
       card_order.build_card_side_front(is_back: false)
       card_order.save
     end
+
+    # This flash works, but it's sort of annoying
+    # if @current_shop.current_subscription && @current_shop.current_subscription.quantity.to_i > 0 && CardOrder.num_enabled == 0
+    #   flash[:notice] = "You are subscribed but not sending. Enable an automation to start sending."
+    # end
+
     @card_orders = @current_shop.card_orders.active
   end
 
