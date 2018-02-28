@@ -19,19 +19,27 @@
         <input type="file" accept="image/png,image/jpeg"  @change="updateBackground($event, FRONT_TYPE)">
         <hr />
         <input id="editor-front-discount" type="checkbox" v-model="enableFrontDiscount">
-        <label for="editor-front-discount" class="noselect"><strong>Include Expiring Discount</strong></label>
-
+        <label for="editor-front-discount" class="noselect" >
+          <strong>Include Expiring Discount</strong>
+          <span class="tooltip" data-hover="Each postcard gets a unique coupon">
+            <i class="material-icons callout" >help_outline</i>
+          </span>
+        </label>
 
         <div class="discount-config" v-if="enableFrontDiscount">
-          <span>
             <input type="number" min="0" max="100" :value="discount_pct" @input="$emit('update:discount_pct', Number($event.target.value))">
-
             <!--<input type="number" min="0" max="100" :value="automation.discount_pct" @input="$emit('update:automation', Object.assign(automation, {discount_pct: Number($event.target.value)}))">-->
-            % off
-          </span><br>
+            <label>% off</label>
+            <span class="tooltip" v-bind:class="{'alert-color': (discount_pct < 15)}" data-hover="We recommend 15-25% for best results">
+              <i class="material-icons callout">help_outline</i>
+            </span>
+          <br>
           <span>
             <input type="number" min="1" max="52" :value="discount_exp" @input="$emit('update:discount_exp', Number($event.target.value))">
             weeks expiration
+            <span class="tooltip" data-hover="Calculated from estimated delivery date (1 week in US)">
+              <i class="material-icons callout" >help_outline</i>
+            </span>
           </span>
         </div>
       </div>
@@ -56,22 +64,32 @@
         <strong>Upload Design</strong>
         <input type="file" accept="image/png,image/jpeg"  @change="updateBackground($event, BACK_TYPE)">
         <hr />
-        <input id="editor-back-discount" type="checkbox" v-model="enableBackDiscount"><strong>Include Expiring Discount</strong>
-        <label for="editor-back-discount" class="noselect"><strong>Include Expiring Discount</strong></label>
+        <input id="editor-back-discount" type="checkbox" v-model="enableBackDiscount">
+        <label for="editor-back-discount" class="noselect" >
+          <strong>Include Expiring Discount</strong>
+          <span class="tooltip" data-hover="Each postcard gets a unique coupon">
+            <i class="material-icons callout" >help_outline</i>
+          </span>
+        </label>
+
         <div class="discount-config" v-if="enableBackDiscount">
-          <span>
-            <input type="number" min="0" max="100" :value="discount_pct" @input="$emit('update:discount_pct', Number($event.target.value))">
-            <!--<input type="number" min="0" max="100" :value="automation.discount_pct" @input="$emit('update:automation', Object.assign(automation, {discount_pct: Number($event.target.value)}))">-->
-            % off
-          </span><br>
+          <input type="number" min="0" max="100" :value="discount_pct" @input="$emit('update:discount_pct', Number($event.target.value))">
+          <!--<input type="number" min="0" max="100" :value="automation.discount_pct" @input="$emit('update:automation', Object.assign(automation, {discount_pct: Number($event.target.value)}))">-->
+          <label>% off</label>
+          <span class="tooltip" v-bind:class="{'alert-color': (discount_pct < 15)}" data-hover="We recommend 15-25% for best results">
+              <i class="material-icons callout">help_outline</i>
+            </span>
+          <br>
           <span>
             <input type="number" min="1" max="52" :value="discount_exp" @input="$emit('update:discount_exp', Number($event.target.value))">
             weeks expiration
+            <span class="tooltip" data-hover="Calculated from estimated delivery date (1 week in US)">
+              <i class="material-icons callout" >help_outline</i>
+            </span>
           </span>
         </div>
       </div>
     </div>
-
     <br>
   </div>
 </template>
@@ -242,6 +260,10 @@
   .discount-config {
     padding-top: 10px;
     padding-left: 10px;
+  }
+
+  .alert-color {
+    color: orangered;
   }
 
 </style>
