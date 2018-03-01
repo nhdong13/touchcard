@@ -16,6 +16,9 @@
       </div>
       <div class="editor-menu editor-right-column">
         <strong>Upload Design</strong>
+        <span class="tooltip" data-hover="PNG or JPG image, 1875 by 1275 px">
+            <i class="material-icons callout" >help_outline</i>
+        </span>
         <input type="file" accept="image/png,image/jpeg"  @change="updateBackground($event, FRONT_TYPE)">
         <hr />
         <input id="editor-front-discount" type="checkbox" v-model="enableFrontDiscount">
@@ -27,12 +30,14 @@
         </label>
 
         <div class="discount-config" v-if="enableFrontDiscount">
+          <span  v-bind:class="{'tooltip': (discount_pct < 15)}" data-hover="We recommend 15-25% for better conversions">
             <input type="number" min="0" max="100" :value="discount_pct" @input="$emit('update:discount_pct', Number($event.target.value))">
             <!--<input type="number" min="0" max="100" :value="automation.discount_pct" @input="$emit('update:automation', Object.assign(automation, {discount_pct: Number($event.target.value)}))">-->
             <label>% off</label>
-            <span class="tooltip" v-bind:class="{'alert-color': (discount_pct < 15)}" data-hover="We recommend 15-25% for best results">
+            <span v-bind:class="{'alert-color': (discount_pct < 15), 'tooltip': !(discount_pct < 15)}" data-hover="We recommend 15-25% for better conversions">
               <i class="material-icons callout">help_outline</i>
             </span>
+          </span>
           <br>
           <span>
             <input type="number" min="1" max="52" :value="discount_exp" @input="$emit('update:discount_exp', Number($event.target.value))">
@@ -62,6 +67,9 @@
       </div>
       <div class="editor-menu editor-right-column">
         <strong>Upload Design</strong>
+        <span class="tooltip" data-hover="PNG or JPG image, 1875 by 1275 px">
+            <i class="material-icons callout" >help_outline</i>
+        </span>
         <input type="file" accept="image/png,image/jpeg"  @change="updateBackground($event, BACK_TYPE)">
         <hr />
         <input id="editor-back-discount" type="checkbox" v-model="enableBackDiscount">
