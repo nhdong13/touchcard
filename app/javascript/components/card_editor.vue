@@ -34,7 +34,7 @@
             <input type="number" min="0" max="100" :value="discount_pct" @input="$emit('update:discount_pct', Number($event.target.value))">
             <!--<input type="number" min="0" max="100" :value="automation.discount_pct" @input="$emit('update:automation', Object.assign(automation, {discount_pct: Number($event.target.value)}))">-->
             <label>% off</label>
-            <span v-bind:class="{'alert-color': (discount_pct < 15), 'tooltip': !(discount_pct < 15)}" data-hover="We recommend 15-25% for better conversions">
+            <span v-bind:class="{'warning-color': (discount_pct < 15), 'tooltip': !(discount_pct < 15)}" data-hover="We recommend 15-25%">
               <i class="material-icons callout">help_outline</i>
             </span>
           </span>
@@ -84,7 +84,7 @@
           <input type="number" min="0" max="100" :value="discount_pct" @input="$emit('update:discount_pct', Number($event.target.value))">
           <!--<input type="number" min="0" max="100" :value="automation.discount_pct" @input="$emit('update:automation', Object.assign(automation, {discount_pct: Number($event.target.value)}))">-->
           <label>% off</label>
-          <span class="tooltip" v-bind:class="{'alert-color': (discount_pct < 15)}" data-hover="We recommend 15-25% for best results">
+          <span class="tooltip" v-bind:class="{'warning-color': (discount_pct < 15)}" data-hover="We recommend 15-25% for best results">
               <i class="material-icons callout">help_outline</i>
             </span>
           <br>
@@ -143,7 +143,7 @@
       // For backwards-compatability's sake we  null out card_order.discount_pct
       // and card_order.discount_exp if neither card side has a discount.
       enableFrontDiscount: function() { this.emitDiscountValues(); },
-      enableBackDiscount: function() { this.emitDiscountValues(); }
+      enableBackDiscount: function() { this.emitDiscountValues(); },
     },
     mounted: function() {
       console.log('CardEditor Mounted')
@@ -162,9 +162,18 @@
     },
     computed: {
       FRONT_TYPE: function() { return 'FRONT_TYPE' },
-      BACK_TYPE: function() { return 'BACK_TYPE' }
+      BACK_TYPE: function() { return 'BACK_TYPE' },
     },
     methods: {
+      alertNonOptimalImageDimensions: function(url) {
+        var offscreenImage = new Image();
+        offscreenImage.src = url; //this.front_attributes.background_url;
+        offscreenImage.onload = () => {
+          if (offscreenImage.width !== 1875 || offscreenImage.height != 1275){
+            alert("It looks like your uploaded image is not 1875 by 1275 pixels. \n\n Please make sure your postcard doesn't look too stretched or pixelated before sending.");
+          }
+        }
+      },
       emitDiscountValues: function() {
         this.$emit('update:discount_pct', (this.enableFrontDiscount || this.enableBackDiscount) ? this.cachedDiscountPct : null);
         this.$emit('update:discount_exp', (this.enableFrontDiscount|| this.enableBackDiscount) ? this.cachedDiscountExp : null);
@@ -192,11 +201,17 @@
         let files = e.target.files || e.dataTransfer.files;
         if (!files.length)
           return;
+        if ((files[0].size) > 1024 * 1024 * 10) {
+          alert('Please limit your file to 10 MB or less.');
+          return;
+        }
+        
         // TODO: Upload progress (perhaps embedded in dynamic Canvas img/object that doesn't save?)
         // TODO: Block Saving while files are uploading
         this.api.uploadFileToS3(files[0], (error, result) => {
           console.log(error ? error : result);
           if (result) {
+            this.alertNonOptimalImageDimensions(result);
             if (side === this.FRONT_TYPE) {
               this.$emit('update:front_attributes', Object.assign(this.front_attributes, {background_url: result}));
             } else if (side === this.BACK_TYPE) {
@@ -270,7 +285,7 @@
     padding-left: 10px;
   }
 
-  .alert-color {
+  .warning-color {
     color: orangered;
   }
 
