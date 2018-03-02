@@ -47,7 +47,7 @@ class AutomationsController < BaseController
         format.html { redirect_to action: 'index'}
         format.json { render json: @automation }
       else
-        flash[:error] = @automation.errors.full_messages.join("\n")
+        flash.now[:error] = @automation.errors.full_messages.join("\n")
         format.html { render :new }
         format.json { render json: @automation.errors, status: :unprocessable_entity }
       end
@@ -64,9 +64,9 @@ class AutomationsController < BaseController
         format.html { redirect_to automations_path }
         format.json { render json: { message: "updated"}, status: :ok }
       else
-        flash[:error] = @automation.errors.full_messages.join("\n")
+        # flash[:error] = @automation.errors.full_messages.join("\n")
         format.html { render :edit }
-        format.json { render json: @automation.errors, status: :unprocessable_entity }
+        format.json { render json: @automation.errors.full_messages.join("\n"), status: :unprocessable_entity }
       end
     end
   end

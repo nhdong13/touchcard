@@ -25,10 +25,16 @@ class CardOrder < ApplicationRecord
 
   validates :shop, :card_side_front, :card_side_back, presence: true
   validates :discount_pct, numericality: { greater_than_or_equal_to: -100,
-                                           less_than_or_equal_to: 0,
+                                           less_than: 0,
                                            only_integer: true,
-                                           allow_nil: true }
+                                           allow_nil: true,
+                                           message: "must be between 1 and 100"}  # Customer facing value is positive. See `def discount_pct=` below
 
+  validates :discount_exp, numericality: { greater_than_or_equal_to: 1,
+                                           less_than_or_equal_to: 52,
+                                           only_integer: true,
+                                           allow_nil: true,
+                                           message: "must be between 1 and 52 weeks"}
 
   delegate :current_subscription, to: :shop
 

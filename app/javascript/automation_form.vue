@@ -145,7 +145,7 @@
               console.log(response);
               Turbolinks.visit('/automations');
             }).catch(function (error) {
-            console.log(error);
+            ShopifyApp.flashError(error.request.responseText);
           });
         } else {
           // Create a new automation (POST)
@@ -154,7 +154,7 @@
               console.log(response);
               Turbolinks.visit('/automations');
             }).catch(function (error) {
-            console.log(error);
+            ShopifyApp.flashError(error.request.responseText);
           });
         }
       }
