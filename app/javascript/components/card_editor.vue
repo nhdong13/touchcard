@@ -4,13 +4,13 @@
     <div class="editor-columns-container">
       <div ref="editorLeftColumn" class="editor-left-column">
         <card-side
-            ref="frontSide"
-            class="card-editor-front-side"
-            :attributes.sync="front_attributes"
-            :enableDiscount="enableFrontDiscount"
-            :scaleFactor="cardScaleFactor"
-            :discount_pct="discount_pct"
-            :discount_exp="discount_exp"
+                ref="frontSide"
+                class="card-editor-front-side"
+                :attributes.sync="front_attributes"
+                :enableDiscount="enableFrontDiscount"
+                :scaleFactor="cardScaleFactor"
+                :discount_pct="discount_pct"
+                :discount_exp="discount_exp"
         >
         </card-side>
       </div>
@@ -19,6 +19,16 @@
         <span class="tooltip" data-hover="PNG or JPG image, 1875 by 1275 px">
             <i class="material-icons callout" >help_outline</i>
         </span>
+        <div role="progressbar" v-if="frontUploading" class="mdc-linear-progress mdc-linear-progress--indeterminate">
+          <div class="mdc-linear-progress__buffering-dots"></div>
+          <div class="mdc-linear-progress__buffer"></div>
+          <div class="mdc-linear-progress__bar mdc-linear-progress__primary-bar">
+            <span class="mdc-linear-progress__bar-inner"></span>
+          </div>
+          <div class="mdc-linear-progress__bar mdc-linear-progress__secondary-bar">
+            <span class="mdc-linear-progress__bar-inner"></span>
+          </div>
+        </div>
         <input type="file" accept="image/png,image/jpeg"  @change="updateBackground($event, FRONT_TYPE)">
         <hr />
         <input id="editor-front-discount" type="checkbox" v-model="enableFrontDiscount">
@@ -28,7 +38,6 @@
             <i class="material-icons callout" >help_outline</i>
           </span>
         </label>
-
         <div class="discount-config" v-if="enableFrontDiscount">
           <span  v-bind:class="{'tooltip': (discount_pct < 15)}" data-hover="We recommend 15-25% for better conversions">
             <input type="number" min="0" max="100" :value="discount_pct" @input="$emit('update:discount_pct', Number($event.target.value))">
@@ -70,6 +79,16 @@
         <span class="tooltip" data-hover="PNG or JPG image, 1875 by 1275 px">
             <i class="material-icons callout" >help_outline</i>
         </span>
+        <div role="progressbar" v-if="backUploading" class="mdc-linear-progress mdc-linear-progress--indeterminate">
+          <div class="mdc-linear-progress__buffering-dots"></div>
+          <div class="mdc-linear-progress__buffer"></div>
+          <div class="mdc-linear-progress__bar mdc-linear-progress__primary-bar">
+            <span class="mdc-linear-progress__bar-inner"></span>
+          </div>
+          <div class="mdc-linear-progress__bar mdc-linear-progress__secondary-bar">
+            <span class="mdc-linear-progress__bar-inner"></span>
+          </div>
+        </div>
         <input type="file" accept="image/png,image/jpeg"  @change="updateBackground($event, BACK_TYPE)">
         <hr />
         <input id="editor-back-discount" type="checkbox" v-model="enableBackDiscount">
@@ -79,14 +98,15 @@
             <i class="material-icons callout" >help_outline</i>
           </span>
         </label>
-
         <div class="discount-config" v-if="enableBackDiscount">
-          <input type="number" min="0" max="100" :value="discount_pct" @input="$emit('update:discount_pct', Number($event.target.value))">
-          <!--<input type="number" min="0" max="100" :value="automation.discount_pct" @input="$emit('update:automation', Object.assign(automation, {discount_pct: Number($event.target.value)}))">-->
-          <label>% off</label>
-          <span class="tooltip" v-bind:class="{'warning-color': (discount_pct < 15)}" data-hover="We recommend 15-25% for best results">
+          <span  v-bind:class="{'tooltip': (discount_pct < 15)}" data-hover="We recommend 15-25% for better conversions">
+            <input type="number" min="0" max="100" :value="discount_pct" @input="$emit('update:discount_pct', Number($event.target.value))">
+            <!--<input type="number" min="0" max="100" :value="automation.discount_pct" @input="$emit('update:automation', Object.assign(automation, {discount_pct: Number($event.target.value)}))">-->
+            <label>% off</label>
+            <span v-bind:class="{'warning-color': (discount_pct < 15), 'tooltip': !(discount_pct < 15)}" data-hover="We recommend 15-25%">
               <i class="material-icons callout">help_outline</i>
             </span>
+          </span>
           <br>
           <span>
             <input type="number" min="1" max="52" :value="discount_exp" @input="$emit('update:discount_exp', Number($event.target.value))">
@@ -97,8 +117,8 @@
           </span>
         </div>
       </div>
+      <br>
     </div>
-    <br>
   </div>
 </template>
 
@@ -137,6 +157,8 @@
         cardScaleFactor: 1.0,
         cachedDiscountPct: this.discount_pct || 20,
         cachedDiscountExp: this.discount_exp || 3,
+        frontUploading: false,
+        backUploading: false,
       }
     },
     watch: {
@@ -170,7 +192,8 @@
         offscreenImage.src = url; //this.front_attributes.background_url;
         offscreenImage.onload = () => {
           if (offscreenImage.width !== 1875 || offscreenImage.height != 1275){
-            alert("It looks like your uploaded image is not 1875 by 1275 pixels. \n\n Please make sure your postcard doesn't look too stretched or pixelated before sending.");
+            alert("Your uploaded image is not 1875 by 1275 pixels. \nPlease make sure your postcard doesn't look stretched or pixelated");
+            // ShopifyApp.flashNotice("Your uploaded image is not 1875 by 1275 pixels. \nPlease make sure your postcard doesn't look stretched or pixelated.");
           }
         }
       },
@@ -201,12 +224,19 @@
         let files = e.target.files || e.dataTransfer.files;
         if (!files.length)
           return;
+
         if ((files[0].size) > 1024 * 1024 * 10) {
           alert('Please limit your file to 10 MB or less.');
+          e.target.value = '';
           return;
         }
-        
-        // TODO: Upload progress (perhaps embedded in dynamic Canvas img/object that doesn't save?)
+
+        if (side === this.FRONT_TYPE) {
+          this.frontUploading = true;
+        } else if (side === this.BACK_TYPE) {
+          this.backUploading = true;
+        }
+
         // TODO: Block Saving while files are uploading
         this.api.uploadFileToS3(files[0], (error, result) => {
           console.log(error ? error : result);
@@ -214,8 +244,10 @@
             this.alertNonOptimalImageDimensions(result);
             if (side === this.FRONT_TYPE) {
               this.$emit('update:front_attributes', Object.assign(this.front_attributes, {background_url: result}));
+              this.frontUploading = false;
             } else if (side === this.BACK_TYPE) {
               this.$emit('update:back_attributes', Object.assign(this.back_attributes, {background_url: result}));
+              this.backUploading = false;
             }
           }
         });
@@ -228,7 +260,7 @@
 
   /* Transition delay not quite working */
   /*.editor-left-column {*/
-    /*transition: all 1s ease-out;*/
+  /*transition: all 1s ease-out;*/
   /*}*/
 
   /* Show Print Guidelines when hovering near card. This is here so it's decoupled from print rendering */
