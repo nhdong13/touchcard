@@ -85,9 +85,17 @@
       </div>
       <div class="editor-menu editor-right-column">
         <strong>Upload Design</strong>
-        <span class="tooltip" data-hover="PNG or JPG image, 1875 by 1275 px">
-            <i class="material-icons callout" >help_outline</i>
-        </span>
+        <!--<span class="tooltip" data-hover="PNG or JPG image, 1875 by 1275 px">-->
+        <!--<i class="material-icons callout" >help_outline</i>-->
+        <!--</span>-->
+        <br>
+        <div class="f-s-080 grey">
+          <ul>
+            <li>PNG or JPG (required)</li>
+            <li>1875 by 1275 pixels (recommended)</li>
+            <li><a href="/images/back-side-guide.jpg" target="_blank">guidelines</a>, <a href="/images/back-side-example.jpg" target="_blank">template</a></span></li>
+          </ul>
+        </div>
         <div role="progressbar" v-if="backUploading" class="mdc-linear-progress mdc-linear-progress--indeterminate">
           <div class="mdc-linear-progress__buffering-dots"></div>
           <div class="mdc-linear-progress__buffer"></div>
@@ -99,6 +107,7 @@
           </div>
         </div>
         <input type="file" accept="image/png,image/jpeg"  @change="updateBackground($event, BACK_TYPE)">
+        <br>
         <hr />
         <input id="editor-back-discount" type="checkbox" v-model="enableBackDiscount">
         <label for="editor-back-discount" class="noselect" >
@@ -126,7 +135,6 @@
           </span>
         </div>
       </div>
-      <br>
     </div>
   </div>
 </template>
