@@ -16,9 +16,17 @@
       </div>
       <div class="editor-menu editor-right-column">
         <strong>Upload Design</strong>
-        <span class="tooltip" data-hover="PNG or JPG image, 1875 by 1275 px">
-            <i class="material-icons callout" >help_outline</i>
-        </span>
+        <!--<span class="tooltip" data-hover="PNG or JPG image, 1875 by 1275 px">-->
+            <!--<i class="material-icons callout" >help_outline</i>-->
+        <!--</span>-->
+        <br>
+        <div class="f-s-080 grey">
+          <ul>
+            <li>PNG or JPG (required)</li>
+            <li>1875 by 1275 pixels (recommended)</li>
+            <li><a href="/images/front-side-guide.jpg" target="_blank">guidelines</a>, <a href="http://touchcard.co/templates/" target="_blank">templates</a></span></li>
+          </ul>
+        </div>
         <div role="progressbar" v-if="frontUploading" class="mdc-linear-progress mdc-linear-progress--indeterminate">
           <div class="mdc-linear-progress__buffering-dots"></div>
           <div class="mdc-linear-progress__buffer"></div>
@@ -30,6 +38,7 @@
           </div>
         </div>
         <input type="file" accept="image/png,image/jpeg"  @change="updateBackground($event, FRONT_TYPE)">
+        <br>
         <hr />
         <input id="editor-front-discount" type="checkbox" v-model="enableFrontDiscount">
         <label for="editor-front-discount" class="noselect" >
@@ -193,6 +202,7 @@
         offscreenImage.onload = () => {
           if (offscreenImage.width !== 1875 || offscreenImage.height != 1275){
             alert("Your uploaded image is not 1875 by 1275 pixels. \nPlease make sure your postcard doesn't look stretched or pixelated");
+            errors.push('Image must be 1875px by 1275px');
             // ShopifyApp.flashNotice("Your uploaded image is not 1875 by 1275 pixels. \nPlease make sure your postcard doesn't look stretched or pixelated.");
           }
         }
@@ -227,6 +237,12 @@
 
         if ((files[0].size) > 1024 * 1024 * 10) {
           alert('Please limit your file to 10 MB or less.');
+          e.target.value = '';
+          return;
+        }
+
+        if (!(files[0].type.match('image/'))) {
+          alert('Please upload a PNG or JPG image.');
           e.target.value = '';
           return;
         }
