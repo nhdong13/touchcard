@@ -1,122 +1,52 @@
 <template>
-  <div class="card-editor-container">
-    <h2>Front</h2>
-    <div class="editor-columns-container">
-      <div ref="editorLeftColumn" class="editor-left-column">
-        <card-side
-                ref="frontSide"
-                class="card-editor-front-side"
-                :attributes.sync="front_attributes"
-                :enableDiscount="enableFrontDiscount"
-                :scaleFactor="cardScaleFactor"
-                :discount_pct="discount_pct"
-                :discount_exp="discount_exp"
-        >
-        </card-side>
-      </div>
-      <div class="editor-menu editor-right-column">
-        <strong>Upload Design</strong>
-        <!--<span class="tooltip" data-hover="PNG or JPG image, 1875 by 1275 px">-->
-            <!--<i class="material-icons callout" >help_outline</i>-->
-        <!--</span>-->
-        <br>
-        <div class="f-s-080 grey">
-          <ul>
-            <li>PNG or JPG (required)</li>
-            <li>1875 by 1275 pixels (recommended)</li>
-            <li><a href="/images/front-side-guide.jpg" target="_blank">guidelines</a>, <a href="http://touchcard.co/templates/" target="_blank">templates</a></span></li>
-          </ul>
-        </div>
-        <div role="progressbar" v-if="frontUploading" class="mdc-linear-progress mdc-linear-progress--indeterminate">
-          <div class="mdc-linear-progress__buffering-dots"></div>
-          <div class="mdc-linear-progress__buffer"></div>
-          <div class="mdc-linear-progress__bar mdc-linear-progress__primary-bar">
-            <span class="mdc-linear-progress__bar-inner"></span>
-          </div>
-          <div class="mdc-linear-progress__bar mdc-linear-progress__secondary-bar">
-            <span class="mdc-linear-progress__bar-inner"></span>
-          </div>
-        </div>
-        <input type="file" accept="image/png,image/jpeg"  @change="updateBackground($event, FRONT_TYPE)">
-        <br>
-        <hr />
-        <input id="editor-front-discount" type="checkbox" v-model="enableFrontDiscount">
-        <label for="editor-front-discount" class="noselect" >
-          <strong>Include Expiring Discount</strong>
-          <span class="tooltip" data-hover="Each postcard gets a unique coupon">
-            <i class="material-icons callout" >help_outline</i>
-          </span>
-        </label>
-        <div class="discount-config" v-if="enableFrontDiscount">
-          <span  v-bind:class="{'tooltip': (discount_pct < 15)}" data-hover="We recommend 15-25% for better conversions">
-            <input type="number" min="0" max="100" :value="discount_pct" @input="$emit('update:discount_pct', Number($event.target.value))">
-            <!--<input type="number" min="0" max="100" :value="automation.discount_pct" @input="$emit('update:automation', Object.assign(automation, {discount_pct: Number($event.target.value)}))">-->
-            <label>% off</label>
-            <span v-bind:class="{'warning-color': (discount_pct < 15), 'tooltip': !(discount_pct < 15)}" data-hover="We recommend 15-25%">
-              <i class="material-icons callout">help_outline</i>
-            </span>
-          </span>
-          <br>
-          <span>
-            <input type="number" min="1" max="52" :value="discount_exp" @input="$emit('update:discount_exp', Number($event.target.value))">
-            weeks expiration
-            <span class="tooltip" data-hover="Calculated from estimated delivery date (1 week in US)">
-              <i class="material-icons callout" >help_outline</i>
-            </span>
-          </span>
-        </div>
-      </div>
+  <div class="editor-columns-container">
+    MEH
+    <div ref="editorLeftColumn" class="editor-left-column">
+      <card-side
+              ref="cardSide"
+              class="card-editor"
+              :attributes.sync="attributes"
+              :enableDiscount="enableDiscount"
+              :scaleFactor="cardScaleFactor"
+              :discount_pct="discount_pct"
+              :discount_exp="discount_exp"
+      >
+      </card-side>
     </div>
-    <br>
-    <hr />
-    <h2>Back</h2>
-    <div class="editor-columns-container">
-      <div ref="editorLeftColumn" class="editor-left-column">
-        <card-side
-                ref="backSide"
-                class="card-editor-back-side"
-                :attributes.sync="back_attributes"
-                :enableDiscount="enableBackDiscount"
-                :scaleFactor="cardScaleFactor"
-                :discount_pct="discount_pct"
-                :discount_exp="discount_exp"
-        >
-        </card-side>
+    <div class="editor-menu editor-right-column">
+      <strong>Upload Design</strong>
+      <!--<span class="tooltip" data-hover="PNG or JPG image, 1875 by 1275 px">-->
+      <!--<i class="material-icons callout" >help_outline</i>-->
+      <!--</span>-->
+      <br>
+      <div class="f-s-080 grey">
+        <ul>
+          <li>PNG or JPG (required)</li>
+          <li>1875 by 1275 pixels (recommended)</li>
+          <li><a href="/images/front-side-guide.jpg" target="_blank">guidelines</a>, <a href="http://touchcard.co/templates/" target="_blank">templates</a></span></li>
+        </ul>
       </div>
-      <div class="editor-menu editor-right-column">
-        <strong>Upload Design</strong>
-        <!--<span class="tooltip" data-hover="PNG or JPG image, 1875 by 1275 px">-->
-        <!--<i class="material-icons callout" >help_outline</i>-->
-        <!--</span>-->
-        <br>
-        <div class="f-s-080 grey">
-          <ul>
-            <li>PNG or JPG (required)</li>
-            <li>1875 by 1275 pixels (recommended)</li>
-            <li><a href="/images/back-side-guide.jpg" target="_blank">guidelines</a>, <a href="/images/back-side-example.jpg" target="_blank">template</a></span></li>
-          </ul>
+      <div role="progressbar" v-if="isUploading" class="mdc-linear-progress mdc-linear-progress--indeterminate">
+        <div class="mdc-linear-progress__buffering-dots"></div>
+        <div class="mdc-linear-progress__buffer"></div>
+        <div class="mdc-linear-progress__bar mdc-linear-progress__primary-bar">
+          <span class="mdc-linear-progress__bar-inner"></span>
         </div>
-        <div role="progressbar" v-if="backUploading" class="mdc-linear-progress mdc-linear-progress--indeterminate">
-          <div class="mdc-linear-progress__buffering-dots"></div>
-          <div class="mdc-linear-progress__buffer"></div>
-          <div class="mdc-linear-progress__bar mdc-linear-progress__primary-bar">
-            <span class="mdc-linear-progress__bar-inner"></span>
-          </div>
-          <div class="mdc-linear-progress__bar mdc-linear-progress__secondary-bar">
-            <span class="mdc-linear-progress__bar-inner"></span>
-          </div>
+        <div class="mdc-linear-progress__bar mdc-linear-progress__secondary-bar">
+          <span class="mdc-linear-progress__bar-inner"></span>
         </div>
-        <input type="file" accept="image/png,image/jpeg"  @change="updateBackground($event, BACK_TYPE)">
-        <br>
-        <hr />
-        <input id="editor-back-discount" type="checkbox" v-model="enableBackDiscount">
-        <label for="editor-back-discount" class="noselect" >
-          <strong>Include Expiring Discount</strong>
-          <span class="tooltip" data-hover="Each postcard gets a unique coupon">
+      </div>
+      <input type="file" accept="image/png,image/jpeg"  @change="updateBackground($event)">
+      <br>
+      <hr />
+      <input v-bind:id="'discount-toggle-' + _uid" type="checkbox" @change="emitDiscountEnabled($event.target.checked)">
+      <label v-bind:for="'discount-toggle-' + _uid" class="noselect" >
+        <strong>Include Expiring Discount</strong>
+        <span class="tooltip" data-hover="Each postcard gets a unique coupon">
             <i class="material-icons callout" >help_outline</i>
           </span>
-        </label>
-        <div class="discount-config" v-if="enableBackDiscount">
+      </label>
+      <div class="discount-config" v-if="enableDiscount">
           <span  v-bind:class="{'tooltip': (discount_pct < 15)}" data-hover="We recommend 15-25% for better conversions">
             <input type="number" min="0" max="100" :value="discount_pct" @input="$emit('update:discount_pct', Number($event.target.value))">
             <!--<input type="number" min="0" max="100" :value="automation.discount_pct" @input="$emit('update:automation', Object.assign(automation, {discount_pct: Number($event.target.value)}))">-->
@@ -125,15 +55,14 @@
               <i class="material-icons callout">help_outline</i>
             </span>
           </span>
-          <br>
-          <span>
+        <br>
+        <span>
             <input type="number" min="1" max="52" :value="discount_exp" @input="$emit('update:discount_exp', Number($event.target.value))">
             weeks expiration
             <span class="tooltip" data-hover="Calculated from estimated delivery date (1 week in US)">
               <i class="material-icons callout" >help_outline</i>
             </span>
           </span>
-        </div>
       </div>
     </div>
   </div>
@@ -151,11 +80,10 @@
       discount_exp: {
         type: Number
       },
-      front_attributes: {
-        type: Object,
-        required: true,
+      enableDiscount: {
+        type: Boolean
       },
-      back_attributes: {
+      attributes: {
         type: Object,
         required: true,
       },
@@ -169,20 +97,30 @@
     },
     data: function() {
       return {
-        enableFrontDiscount: (this.front_attributes.discount_x !== null) && (this.front_attributes.discount_y !== null),
-        enableBackDiscount: (this.back_attributes.discount_x !== null) && (this.back_attributes.discount_y !== null),
+        // enableDiscount: (this.attributes.discount_x !== null) && (this.attributes.discount_y !== null),
         cardScaleFactor: 1.0,
         cachedDiscountPct: this.discount_pct || 20,
         cachedDiscountExp: this.discount_exp || 3,
-        frontUploading: false,
-        backUploading: false,
+        isUploading: false,
       }
     },
     watch: {
       // For backwards-compatability's sake we  null out card_order.discount_pct
       // and card_order.discount_exp if neither card side has a discount.
-      enableFrontDiscount: function() { this.emitDiscountValues(); },
-      enableBackDiscount: function() { this.emitDiscountValues(); },
+      // enableDiscount: function(val) {
+      //   this.$emit('update:discount_pct', (this.enableFrontDiscount || this.enableBackDiscount) ? this.cachedDiscountPct : null);
+      //
+      //   this.emitDiscountValues();
+      //   },
+      // // TODO: Move up one
+      // // emitDiscountValues: function() {
+      // //   this.$emit('update:discount_pct', (this.enableFrontDiscount || this.enableBackDiscount) ? this.cachedDiscountPct : null);
+      // //   this.$emit('update:discount_exp', (this.enableFrontDiscount|| this.enableBackDiscount) ? this.cachedDiscountExp : null);
+      // // },
+
+      attributes: function(val) {
+        console.log('attributes changed ' + val);
+      }
     },
     mounted: function() {
       console.log('CardEditor Mounted')
@@ -192,6 +130,9 @@
       this.api = new Api(this.aws_sign_endpoint)
 
       this.handleResize();
+
+      this.emitDiscountEnabled(this.isDiscountEnabled());
+
       window.addEventListener('resize', this.handleResize);
       window.card_editor = this;
 
@@ -199,11 +140,15 @@
     beforeDestroy: function () {
       window.removeEventListener('resize', this.handleResize)
     },
-    computed: {
-      FRONT_TYPE: function() { return 'FRONT_TYPE' },
-      BACK_TYPE: function() { return 'BACK_TYPE' },
-    },
+    // computed: {
+    // },
     methods: {
+      isDiscountEnabled: function() {
+        return (this.attributes.discount_x !== null) && (this.attributes.discount_y !== null);
+      },
+      emitDiscountEnabled: function(val) {
+        this.$emit('toggleDiscount', val);
+      },
       alertNonOptimalImageDimensions: function(url) {
         var offscreenImage = new Image();
         offscreenImage.src = url; //this.front_attributes.background_url;
@@ -215,13 +160,9 @@
           }
         }
       },
-      emitDiscountValues: function() {
-        this.$emit('update:discount_pct', (this.enableFrontDiscount || this.enableBackDiscount) ? this.cachedDiscountPct : null);
-        this.$emit('update:discount_exp', (this.enableFrontDiscount|| this.enableBackDiscount) ? this.cachedDiscountExp : null);
-      },
       handleResize: function() {
         let leftColumnWidth = this.$refs.editorLeftColumn.offsetWidth;
-        let cardWidth = this.$refs.frontSide.$el.offsetWidth // Expecting 6.25in * 96 px = 608
+        let cardWidth = this.$refs.cardSide.$el.offsetWidth; // Expecting 6.25in * 96 px = 608
         this.cardScaleFactor = Math.max(0.1, Math.min(1.0, leftColumnWidth / cardWidth));
 
 
@@ -238,7 +179,7 @@
       //   // }
       //   // return Promise.all(promises);
       // },
-      updateBackground: function(e, side) {
+      updateBackground: function(e) {
         let files = e.target.files || e.dataTransfer.files;
         if (!files.length)
           return;
@@ -255,24 +196,17 @@
           return;
         }
 
-        if (side === this.FRONT_TYPE) {
-          this.frontUploading = true;
-        } else if (side === this.BACK_TYPE) {
-          this.backUploading = true;
-        }
+        this.isUploading = true;
 
         // TODO: Block Saving while files are uploading
         this.api.uploadFileToS3(files[0], (error, result) => {
           console.log(error ? error : result);
           if (result) {
             this.alertNonOptimalImageDimensions(result);
-            if (side === this.FRONT_TYPE) {
-              this.$emit('update:front_attributes', Object.assign(this.front_attributes, {background_url: result}));
-              this.frontUploading = false;
-            } else if (side === this.BACK_TYPE) {
-              this.$emit('update:back_attributes', Object.assign(this.back_attributes, {background_url: result}));
-              this.backUploading = false;
-            }
+
+              this.$emit('update:attributes', Object.assign(this.attributes, {background_url: result}));
+              this.isUploading = false;
+
           }
         });
       }

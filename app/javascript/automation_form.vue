@@ -12,7 +12,7 @@
             <em>Note: International postcards cost two credits.</em>
           </span>
     </div>
-    <br v-if="!automation.international">
+    <br v-if="!automation.international">c
     <br>
     <input id="automation-filter-checkbox" type="checkbox" v-model="enableFiltering">
     <label for="automation-filter-checkbox" class="noselect"><strong>Filter by Order Size</strong></label>
@@ -22,14 +22,21 @@
       </span>
     </div>
     <hr>
+
+    <h2>Front</h2>
     <card-editor
-            ref="cardEditor"
+            ref="frontEditor"
             :discount_pct.sync="automation.discount_pct"
             :discount_exp.sync="automation.discount_exp"
-            :front_attributes.sync="automation.front_json"
-            :back_attributes.sync="automation.back_json"
+            :attributes.sync="automation.front_json"
             :aws_sign_endpoint="awsSignEndpoint"
+            @toggleDiscount="toggleFrontDiscount"
     ></card-editor>
+    <br>
+    <hr />
+    <h2>Back</h2>
+    <!--<card-editor></card-editor>-->
+
   </div>
 </template>
 
@@ -83,7 +90,7 @@
     },
     data: function() {
       return {
-        enableFiltering: (this.automation.filters_attributes.length > 0)
+        enableFiltering: (this.automation.filters_attributes.length > 0),
       }
     },
     components: {
@@ -92,9 +99,26 @@
       //   component: import('./components/card_editor.vue')
       //   // loading: LoadingComp, error: ErrorComp, delay: 200, timeout: 3000
       // })
+      CardEditor,
       'card-editor': CardEditor
     },
     methods: {
+      toggleFrontDiscount: function(checked) {
+        // debugger;
+        console.log('\n\n\n-----\nFront discount toggled: ' + checked + '\n-----\n');
+        // alert('haro');
+
+
+        // this.$refs.frontSide.isDiscountEnabled;
+
+        // this.discount_pct = (this.enableFrontDiscount || this.enableBackDiscount) ? this.cachedDiscountPct : null;
+        // emitDiscountValues: function() {
+        //   this.$emit('update:discount_pct', (this.enableFrontDiscount || this.enableBackDiscount) ? this.cachedDiscountPct : null);
+        //   this.$emit('update:discount_exp', (this.enableFrontDiscount|| this.enableBackDiscount) ? this.cachedDiscountExp : null);
+        // },
+
+
+      },
       defaultAttributes: function() {
         return {
           'version': 0,
