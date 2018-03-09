@@ -37,6 +37,7 @@
   /* global Turbolinks */
   import axios from 'axios'
   import CardEditor from './components/card_editor.vue'
+  import { CardSide } from './card_side.js';
 
   export default {
     props: {
@@ -52,14 +53,14 @@
         required: true
       },
     },
+    data: function() {
+      return {
+        enableFiltering: (this.automation.filters_attributes.length > 0)
+      }
+    },
     beforeMount: function() {
-      if (!this.isValidAttributes(this.automation.front_json)) {
-        this.automation.front_json = this.defaultAttributes();
-      }
-
-      if (!this.isValidAttributes(this.automation.back_json)) {
-        this.automation.back_json = this.defaultAttributes();
-      }
+      this.automation.front_json = new CardSide(this.automation.front_json);
+      this.automation.back_json = new CardSide(this.automation.back_json);
     },
     watch: {
       enableFiltering: function(enable) {
@@ -81,11 +82,6 @@
         }
       }
     },
-    data: function() {
-      return {
-        enableFiltering: (this.automation.filters_attributes.length > 0)
-      }
-    },
     components: {
       // 'card-editor': () => ({
       //   // https://vuejs.org/v2/guide/components.html#Async-Components
@@ -95,30 +91,6 @@
       'card-editor': CardEditor
     },
     methods: {
-      defaultAttributes: function() {
-        return {
-          'version': 0,
-          'background_url': null,
-          'discount_x': null, // default?
-          'discount_y': null,
-          // 'objects' : []
-        };
-      },
-      isValidAttributes: function (attrs) {
-        if (attrs === null) {
-          return false;
-        }
-        let valid = true;
-        let data = this.defaultAttributes();
-        valid &= 'version' in attrs && attrs.version === data.version;
-        for (var key in data) {
-          // check if the property/key is defined in the object itself, not in parent
-          if (data.hasOwnProperty(key)) {
-            valid &= key in attrs;
-          }
-        }
-        return valid;
-      },
       requestSave: function() {
 
         // TODO: Wait for uploads to complete in CardEditor
