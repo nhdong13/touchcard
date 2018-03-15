@@ -291,9 +291,9 @@
   .card-side-body {
     clip-path: inset(12px 12px 12px 12px);
   }
-  .editor-left-column:not(:hover) {
-    filter: drop-shadow(1px 1px 3px rgba(0.2, 0.2, 0.2, 0.3));
-  }
+  /*.editor-left-column:not(:hover) {*/
+    /*filter: drop-shadow(1px 1px 3px rgba(0.2, 0.2, 0.2, 0.3));*/
+  /*}*/
 
   .editor-left-column:hover .card-side-body {
     clip-path: none;
