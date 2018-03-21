@@ -28,9 +28,8 @@
             ref="frontEditor"
             :discount_pct.sync="automation.discount_pct"
             :discount_exp.sync="automation.discount_exp"
-            :attributes.sync="automation.front_json"
+            :json="automation.front_json"
             :aws_sign_endpoint="awsSignEndpoint"
-            @toggleDiscount="toggleFrontDiscount"
     ></card-editor>
     <br>
     <hr />
@@ -59,15 +58,15 @@
         required: true
       },
     },
-    beforeMount: function() {
-      if (!this.isValidAttributes(this.automation.front_json)) {
-        this.automation.front_json = this.defaultAttributes();
-      }
-
-      if (!this.isValidAttributes(this.automation.back_json)) {
-        this.automation.back_json = this.defaultAttributes();
+    data: function() {
+      return {
+        enableFiltering: (this.automation.filters_attributes.length > 0)
       }
     },
+    // beforeMount: function() {
+    //   this.automation.front_json = new CardSide(this.automation.front_json);
+    //   this.automation.back_json = new CardSide(this.automation.back_json);
+    // },
     watch: {
       enableFiltering: function(enable) {
         console.log('enableFiltering: ' + enable);
@@ -88,11 +87,6 @@
         }
       }
     },
-    data: function() {
-      return {
-        enableFiltering: (this.automation.filters_attributes.length > 0),
-      }
-    },
     components: {
       // 'card-editor': () => ({
       //   // https://vuejs.org/v2/guide/components.html#Async-Components
@@ -103,60 +97,16 @@
       'card-editor': CardEditor
     },
     methods: {
-      toggleFrontDiscount: function(checked) {
-        // debugger;
-        console.log('\n\n\n-----\nFront discount toggled: ' + checked + '\n-----\n');
-        let attrs = this.automation.front_json;
-
-        attrs['discount_x'] = checked ? 100 : null;
-        attrs['discount_y'] = checked ? 100 : null;
-
-        // alert('haro');
-
-
-        // this.$refs.frontSide.isDiscountEnabled;
-
-        // this.discount_pct = (this.enableFrontDiscount || this.enableBackDiscount) ? this.cachedDiscountPct : null;
-        // emitDiscountValues: function() {
-        //   this.$emit('update:discount_pct', (this.enableFrontDiscount || this.enableBackDiscount) ? this.cachedDiscountPct : null);
-        //   this.$emit('update:discount_exp', (this.enableFrontDiscount|| this.enableBackDiscount) ? this.cachedDiscountExp : null);
-        // },
-
-
-      },
-      defaultAttributes: function() {
-        return {
-          'version': 0,
-          'background_url': null,
-          'discount_x': null, // default?
-          'discount_y': null,
-          // 'objects' : []
-        };
-      },
-      isValidAttributes: function (attrs) {
-        if (attrs === null) {
-          return false;
-        }
-        let valid = true;
-        let data = this.defaultAttributes();
-        valid &= 'version' in attrs && attrs.version === data.version;
-        for (var key in data) {
-          // check if the property/key is defined in the object itself, not in parent
-          if (data.hasOwnProperty(key)) {
-            valid &= key in attrs;
-          }
-        }
-        return valid;
-      },
       requestSave: function() {
 
         // TODO: Wait for uploads to complete in CardEditor
         // this.$refs.cardEditor.prepareSave();
 
+        this.automation.front_json = this.$refs.frontEditor.$data.attributes;
+        this.automation.back_json = this.$refs.frontEditor.$data.attributes;
         this.postOrPutForm();
 
-        // // Ask the CardEditor to finish its uploads and serialization (attributes are writt
-        // back via :props.sync)
+        // // Ask the CardEditor to finish its uploads, serialization, etc
         // this.$refs.cardEditor.requestSave()
         //   .then((results) => {
         //     console.log(results)

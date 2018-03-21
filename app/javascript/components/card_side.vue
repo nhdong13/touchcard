@@ -8,7 +8,7 @@
                           :discount_y.sync="attributes.discount_y"
                           :discount_pct="discount_pct"
                           :discount_exp="discount_exp"
-                          v-if="(attributes.discount_x && attributes.discount_y)"
+                          v-if="attributes.showsDiscount"
         >
         </discount-element>
 
@@ -34,7 +34,6 @@
         //   return false;
         // }
       },
-      enableDiscount: { Boolean },
       scaleFactor: { Number, default: 1.0 },
       discount_pct: { Number },
       discount_exp: { Number },

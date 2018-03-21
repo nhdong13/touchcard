@@ -5,7 +5,6 @@
               ref="cardSide"
               class="card-editor"
               :attributes.sync="attributes"
-              :enableDiscount="enableDiscount"
               :scaleFactor="cardScaleFactor"
               :discount_pct="discount_pct"
               :discount_exp="discount_exp"
@@ -38,14 +37,14 @@
       <input type="file" accept="image/png,image/jpeg"  @change="updateBackground($event)">
       <br>
       <hr />
-      <input v-bind:id="'discount-toggle-' + _uid" type="checkbox" @change="emitDiscountEnabled($event.target.checked)">
+      <input v-bind:id="'discount-toggle-' + _uid" type="checkbox" v-model="attributes.showsDiscount">
       <label v-bind:for="'discount-toggle-' + _uid" class="noselect" >
         <strong>Include Expiring Discount</strong>
         <span class="tooltip" data-hover="Each postcard gets a unique coupon">
             <i class="material-icons callout" >help_outline</i>
           </span>
       </label>
-      <div class="discount-config" v-if="enableDiscount">
+      <div class="discount-config" v-if="attributes.showsDiscount">
           <span  v-bind:class="{'tooltip': (discount_pct < 15)}" data-hover="We recommend 15-25% for better conversions">
             <input type="number" min="0" max="100" :value="discount_pct" @input="$emit('update:discount_pct', Number($event.target.value))">
             <!--<input type="number" min="0" max="100" :value="automation.discount_pct" @input="$emit('update:automation', Object.assign(automation, {discount_pct: Number($event.target.value)}))">-->
@@ -70,6 +69,7 @@
 <script>
   import { Api } from '../api';
   import CardSide from './card_side.vue';
+  import { CardAttributes } from './card_attributes';
 
   export default {
     props: {
@@ -79,10 +79,7 @@
       discount_exp: {
         type: Number
       },
-      enableDiscount: {
-        type: Boolean
-      },
-      attributes: {
+      json: {
         type: Object,
         required: true,
       },
@@ -96,7 +93,9 @@
     },
     data: function() {
       return {
-        // enableDiscount: (this.attributes.discount_x !== null) && (this.attributes.discount_y !== null),
+        // This component's CardAttributes should be the source of truth. Any modifications should be emitted
+        // up to here, but no further. It's left up to the containing form to pull data up before saving.
+        attributes: new CardAttributes(this.json),
         cardScaleFactor: 1.0,
         cachedDiscountPct: this.discount_pct || 20,
         cachedDiscountExp: this.discount_exp || 3,
@@ -106,17 +105,6 @@
     watch: {
       // For backwards-compatability's sake we  null out card_order.discount_pct
       // and card_order.discount_exp if neither card side has a discount.
-      // enableDiscount: function(val) {
-      //   this.$emit('update:discount_pct', (this.enableFrontDiscount || this.enableBackDiscount) ? this.cachedDiscountPct : null);
-      //
-      //   this.emitDiscountValues();
-      //   },
-      // // TODO: Move up one
-      // // emitDiscountValues: function() {
-      // //   this.$emit('update:discount_pct', (this.enableFrontDiscount || this.enableBackDiscount) ? this.cachedDiscountPct : null);
-      // //   this.$emit('update:discount_exp', (this.enableFrontDiscount|| this.enableBackDiscount) ? this.cachedDiscountExp : null);
-      // // },
-
       attributes: function(val) {
         console.log('attributes changed ' + val);
       }
@@ -129,25 +117,17 @@
       this.api = new Api(this.aws_sign_endpoint)
 
       this.handleResize();
-
-      this.emitDiscountEnabled(this.isDiscountEnabled());
-
       window.addEventListener('resize', this.handleResize);
       window.card_editor = this;
 
     },
     beforeDestroy: function () {
+      window.card_editor = null;
       window.removeEventListener('resize', this.handleResize)
     },
     // computed: {
     // },
     methods: {
-      isDiscountEnabled: function() {
-        return (this.attributes.discount_x !== null) && (this.attributes.discount_y !== null);
-      },
-      emitDiscountEnabled: function(val) {
-        this.$emit('toggleDiscount', val);
-      },
       alertNonOptimalImageDimensions: function(url) {
         var offscreenImage = new Image();
         offscreenImage.src = url; //this.front_attributes.background_url;
