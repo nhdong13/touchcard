@@ -12,7 +12,7 @@
             <em>Note: International postcards cost two credits.</em>
           </span>
     </div>
-    <br v-if="!automation.international">c
+    <br v-if="!automation.international">
     <br>
     <input id="automation-filter-checkbox" type="checkbox" v-model="enableFiltering">
     <label for="automation-filter-checkbox" class="noselect"><strong>Filter by Order Size</strong></label>
@@ -34,7 +34,7 @@
     ></card-editor>
     <br>
     <hr />
-    <h2>Back</h2>
+    <h2>Back: NOT YET IMPLEMENTED</h2>
     <!--<card-editor></card-editor>-->
 
   </div>
@@ -106,6 +106,11 @@
       toggleFrontDiscount: function(checked) {
         // debugger;
         console.log('\n\n\n-----\nFront discount toggled: ' + checked + '\n-----\n');
+        let attrs = this.automation.front_json;
+
+        attrs['discount_x'] = checked ? 100 : null;
+        attrs['discount_y'] = checked ? 100 : null;
+
         // alert('haro');
 
 

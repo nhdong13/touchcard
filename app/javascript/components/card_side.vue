@@ -8,7 +8,7 @@
                           :discount_y.sync="attributes.discount_y"
                           :discount_pct="discount_pct"
                           :discount_exp="discount_exp"
-                          v-if="enableDiscount"
+                          v-if="(attributes.discount_x && attributes.discount_y)"
         >
         </discount-element>
 
