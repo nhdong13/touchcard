@@ -1,6 +1,7 @@
 <template>
   <div class="card-side-body--wrapper" :style="this.scaleStyle">
     <div class="card-side-body"
+         v-bind:class="{'front-side-body': !isBack, 'back-side-body': isBack}"
          :style="Object.assign({}, this.backgroundStyle)">
 
       <div class="card-side-safe-area">
@@ -8,7 +9,7 @@
                           :discount_y.sync="attributes.discount_y"
                           :discount_pct="discount_pct"
                           :discount_exp="discount_exp"
-                          v-if="enableDiscount"
+                          v-if="attributes.showsDiscount"
         >
         </discount-element>
 
@@ -34,7 +35,10 @@
         //   return false;
         // }
       },
-      enableDiscount: { Boolean },
+      isBack: {
+        type: Boolean,
+        required: true,
+      },
       scaleFactor: { Number, default: 1.0 },
       discount_pct: { Number },
       discount_exp: { Number },

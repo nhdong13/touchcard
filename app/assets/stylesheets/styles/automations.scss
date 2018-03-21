@@ -87,14 +87,11 @@
   background: initial !important; // Disable button hover effect
 }
 
-.card-editor-front-side{
-  .card-side-body {
+.card-editor{
+  .front-side-body {
     background-image: image-url("/images/touchcard-hello-front-placeholder.jpg");
   }
-}
-
-.card-editor-back-side {
-  .card-side-body {
+  .back-side-body {
     background-image: image-url("/images/touchcard-hello-back-placeholder.jpg");
   }
 }

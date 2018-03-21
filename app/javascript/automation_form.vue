@@ -22,14 +22,28 @@
       </span>
     </div>
     <hr>
+
+    <h2>Front</h2>
     <card-editor
-            ref="cardEditor"
+            ref="frontEditor"
+            :isBack="false"
+            :json="automation.front_json"
             :discount_pct.sync="automation.discount_pct"
             :discount_exp.sync="automation.discount_exp"
-            :front_attributes.sync="automation.front_json"
-            :back_attributes.sync="automation.back_json"
             :aws_sign_endpoint="awsSignEndpoint"
     ></card-editor>
+    <br>
+    <hr />
+    <h2>Back</h2>
+    <card-editor
+            ref="backEditor"
+            :isBack="true"
+            :json="automation.back_json"
+            :discount_pct.sync="automation.discount_pct"
+            :discount_exp.sync="automation.discount_exp"
+            :aws_sign_endpoint="awsSignEndpoint"
+    ></card-editor>
+    <br>
   </div>
 </template>
 
@@ -52,13 +66,9 @@
         required: true
       },
     },
-    beforeMount: function() {
-      if (!this.isValidAttributes(this.automation.front_json)) {
-        this.automation.front_json = this.defaultAttributes();
-      }
-
-      if (!this.isValidAttributes(this.automation.back_json)) {
-        this.automation.back_json = this.defaultAttributes();
+    data: function() {
+      return {
+        enableFiltering: (this.automation.filters_attributes.length > 0)
       }
     },
     watch: {
@@ -81,53 +91,43 @@
         }
       }
     },
-    data: function() {
-      return {
-        enableFiltering: (this.automation.filters_attributes.length > 0)
-      }
-    },
     components: {
       // 'card-editor': () => ({
       //   // https://vuejs.org/v2/guide/components.html#Async-Components
       //   component: import('./components/card_editor.vue')
       //   // loading: LoadingComp, error: ErrorComp, delay: 200, timeout: 3000
       // })
+      CardEditor,
       'card-editor': CardEditor
     },
+    beforeMount: function() {
+      // Set defaults in case these props are passed as 'null'
+      this.automation.discount_pct = this.automation.discount_pct || 20;
+      this.automation.discount_exp = this.automation.discount_exp || 3;
+    },
     methods: {
-      defaultAttributes: function() {
-        return {
-          'version': 0,
-          'background_url': null,
-          'discount_x': null, // default?
-          'discount_y': null,
-          // 'objects' : []
-        };
-      },
-      isValidAttributes: function (attrs) {
-        if (attrs === null) {
-          return false;
-        }
-        let valid = true;
-        let data = this.defaultAttributes();
-        valid &= 'version' in attrs && attrs.version === data.version;
-        for (var key in data) {
-          // check if the property/key is defined in the object itself, not in parent
-          if (data.hasOwnProperty(key)) {
-            valid &= key in attrs;
-          }
-        }
-        return valid;
-      },
       requestSave: function() {
 
         // TODO: Wait for uploads to complete in CardEditor
         // this.$refs.cardEditor.prepareSave();
 
+        // Get card side data for saving
+        let frontAttrs = this.$refs.frontEditor.$data.attributes;
+        let backAttrs = this.$refs.backEditor.$data.attributes;
+
+        this.automation.front_json = frontAttrs;
+        this.automation.back_json = backAttrs;
+
+        // Null out discount_pct and discount_exp for backwards-compatability (might not be essential)
+        // Using `.showsDiscount` assumes card_editor.vue has created card_attributes objects from json
+        if (!frontAttrs.showsDiscount && !backAttrs.showsDiscount ) {
+          this.automation.discount_pct = null;
+          this.automation.discount_exp = null;
+        }
+
         this.postOrPutForm();
 
-        // // Ask the CardEditor to finish its uploads and serialization (attributes are writt
-        // back via :props.sync)
+        // // Ask the CardEditor to finish its uploads, serialization, etc
         // this.$refs.cardEditor.requestSave()
         //   .then((results) => {
         //     console.log(results)
