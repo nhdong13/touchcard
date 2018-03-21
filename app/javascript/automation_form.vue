@@ -100,14 +100,31 @@
       CardEditor,
       'card-editor': CardEditor
     },
+    beforeMount: function() {
+      // Set defaults in case these props are passed as 'null'
+      this.automation.discount_pct = this.automation.discount_pct || 20;
+      this.automation.discount_exp = this.automation.discount_exp || 3;
+    },
     methods: {
       requestSave: function() {
 
         // TODO: Wait for uploads to complete in CardEditor
         // this.$refs.cardEditor.prepareSave();
 
-        this.automation.front_json = this.$refs.frontEditor.$data.attributes;
-        this.automation.back_json = this.$refs.backEditor.$data.attributes;
+        // Get card side data for saving
+        let frontAttrs = this.$refs.frontEditor.$data.attributes;
+        let backAttrs = this.$refs.backEditor.$data.attributes;
+
+        this.automation.front_json = frontAttrs;
+        this.automation.back_json = backAttrs;
+
+        // Null out discount_pct and discount_exp for backwards-compatability (might not be essential)
+        // Using `.showsDiscount` assumes card_editor.vue has created card_attributes objects from json
+        if (!frontAttrs.showsDiscount && !backAttrs.showsDiscount ) {
+          this.automation.discount_pct = null;
+          this.automation.discount_exp = null;
+        }
+
         this.postOrPutForm();
 
         // // Ask the CardEditor to finish its uploads, serialization, etc

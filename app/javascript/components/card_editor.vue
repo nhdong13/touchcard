@@ -102,8 +102,6 @@
         // up to here, but no further. It's left up to the containing form to pull data up before saving.
         attributes: new CardAttributes(this.json),
         cardScaleFactor: 1.0,
-        cachedDiscountPct: this.discount_pct || 20,
-        cachedDiscountExp: this.discount_exp || 3,
         isUploading: false,
       }
     },
