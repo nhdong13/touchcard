@@ -34,7 +34,7 @@
     ></card-editor>
     <br>
     <hr />
-    <h2>Back: NOT YET IMPLEMENTED</h2>
+    <h2>Back</h2>
     <card-editor
             ref="backEditor"
             :isBack="true"
