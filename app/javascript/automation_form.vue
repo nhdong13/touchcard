@@ -26,16 +26,24 @@
     <h2>Front</h2>
     <card-editor
             ref="frontEditor"
+            :isBack="false"
+            :json="automation.front_json"
             :discount_pct.sync="automation.discount_pct"
             :discount_exp.sync="automation.discount_exp"
-            :json="automation.front_json"
             :aws_sign_endpoint="awsSignEndpoint"
     ></card-editor>
     <br>
     <hr />
     <h2>Back: NOT YET IMPLEMENTED</h2>
-    <!--<card-editor></card-editor>-->
-
+    <card-editor
+            ref="backEditor"
+            :isBack="true"
+            :json="automation.back_json"
+            :discount_pct.sync="automation.discount_pct"
+            :discount_exp.sync="automation.discount_exp"
+            :aws_sign_endpoint="awsSignEndpoint"
+    ></card-editor>
+    <br>
   </div>
 </template>
 
@@ -63,10 +71,6 @@
         enableFiltering: (this.automation.filters_attributes.length > 0)
       }
     },
-    // beforeMount: function() {
-    //   this.automation.front_json = new CardSide(this.automation.front_json);
-    //   this.automation.back_json = new CardSide(this.automation.back_json);
-    // },
     watch: {
       enableFiltering: function(enable) {
         console.log('enableFiltering: ' + enable);
@@ -103,7 +107,7 @@
         // this.$refs.cardEditor.prepareSave();
 
         this.automation.front_json = this.$refs.frontEditor.$data.attributes;
-        this.automation.back_json = this.$refs.frontEditor.$data.attributes;
+        this.automation.back_json = this.$refs.backEditor.$data.attributes;
         this.postOrPutForm();
 
         // // Ask the CardEditor to finish its uploads, serialization, etc

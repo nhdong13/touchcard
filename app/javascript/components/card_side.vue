@@ -1,6 +1,7 @@
 <template>
   <div class="card-side-body--wrapper" :style="this.scaleStyle">
     <div class="card-side-body"
+         v-bind:class="{'front-side-body': !isBack, 'back-side-body': isBack}"
          :style="Object.assign({}, this.backgroundStyle)">
 
       <div class="card-side-safe-area">
@@ -33,6 +34,10 @@
         // validator: function (value) {
         //   return false;
         // }
+      },
+      isBack: {
+        type: Boolean,
+        required: true,
       },
       scaleFactor: { Number, default: 1.0 },
       discount_pct: { Number },

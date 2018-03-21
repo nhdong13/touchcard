@@ -95,6 +95,10 @@ class CardOrder < ApplicationRecord
       has_values && (has_front || has_back)
   end
 
+  def front_background_url
+    front_json['background_url'] if front_json
+  end
+
   # def discount?
   #   !discount_exp.nil? && !discount_pct.nil?
   # end

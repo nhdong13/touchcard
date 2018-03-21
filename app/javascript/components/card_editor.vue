@@ -4,6 +4,7 @@
       <card-side
               ref="cardSide"
               class="card-editor"
+              :isBack="isBack"
               :attributes.sync="attributes"
               :scaleFactor="cardScaleFactor"
               :discount_pct="discount_pct"
@@ -73,15 +74,19 @@
 
   export default {
     props: {
+      json: {
+        type: Object,
+        required: true,
+      },
+      isBack: {
+        type: Boolean,
+        required: true,
+      },
       discount_pct: {
         type: Number
       },
       discount_exp: {
         type: Number
-      },
-      json: {
-        type: Object,
-        required: true,
       },
       aws_sign_endpoint: {
         type: String,

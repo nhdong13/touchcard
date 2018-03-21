@@ -16,6 +16,7 @@ export class CardAttributes {
     this.background_url = safeAccess(card_side_json, 'background_url') || null;
     this.discount_x = safeAccess(card_side_json, 'discount_x') || null;
     this.discount_y = safeAccess(card_side_json, 'discount_y') || null;
+    // this._last_discount_x // Won't get saved unless rails controller serializes it.
     // objects = []
   }
 
