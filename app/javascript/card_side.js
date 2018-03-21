@@ -20,6 +20,10 @@ export class CardSide {
   }
 
 
+  get showsDiscount() {
+    return (this.discount_x !== null) && (this.discount_y !== null);
+  }
+
   // set computed_property (arg) {
   //   console.log(`set computed_property: ${arg}`);
   // }
