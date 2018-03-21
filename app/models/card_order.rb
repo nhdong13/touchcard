@@ -91,7 +91,6 @@ class CardOrder < ApplicationRecord
       has_front = front_json && front_json['discount_x'] && front_json['discount_y']
       has_back = back_json && back_json['discount_x'] && back_json['discount_y']
       has_values = discount_exp.present? && discount_pct.present?
-      raise "Expecting discount_exp and discount_pct" if (has_front || has_back) && !has_values
       has_values && (has_front || has_back)
   end
 
