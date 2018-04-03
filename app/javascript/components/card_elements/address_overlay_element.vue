@@ -20,11 +20,6 @@
 </style>
 <style scoped>
 
-    /*.overlay {*/
-        /*background: lightsalmon;*/
-        /*user-select: none;*/
-    /*}*/
-
     .overlay {
         background: lightsalmon;
 
