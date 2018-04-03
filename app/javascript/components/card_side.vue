@@ -12,19 +12,21 @@
                           v-if="attributes.showsDiscount"
         >
         </discount-element>
-
         <!--<template v-for="object in model.objects">-->
         <!-- element switch -->
         <!-- <concrete-element v-if="object.type === 'concrete'"></concrete-element> -->
         <!-- <another-element v-if="object.type === 'another'"></another-element> -->
         <!--</template>-->
       </div>
+      <address-overlay-element v-if="isBack"></address-overlay-element>
+
     </div>
   </div>
 </template>
 <script>
 
   import DiscountElement from './card_elements/discount_element.vue';
+  import AddressOverlayElement from './card_elements/address_overlay_element.vue';
 
   export default {
     props: {
@@ -57,7 +59,7 @@
     //   }
     // },
     components:{
-      DiscountElement
+      DiscountElement, AddressOverlayElement
     },
   }
 </script>
