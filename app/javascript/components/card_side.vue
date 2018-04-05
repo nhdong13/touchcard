@@ -96,6 +96,8 @@
   }
 
   .card-side-safe-area {
+    /* TODO: These safe area guide positions don't end up properly aligned on the final card */
+    /* The dimensions are right, but the result isn't. Improperly centered? Use pixels intead of inches? */
     position: absolute;
     width: 5.875in;
     height: 3.875in;
