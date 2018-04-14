@@ -2,7 +2,7 @@ require 'rails_helper'
 require 'discount_manager'
 
 RSpec.describe DiscountManager do
-  let!(:card_order) { create(:card_order, { discount_pct: -15, discount_exp: 2.weeks.from_now }) }
+  let(:card_order) { create(:card_order, { discount_pct: -15, discount_exp: 2 }) }
   let(:path) { card_order.shop.shopify_api_path }
   let(:value) { card_order.discount_pct }
   let(:expire_at) { card_order.discount_exp }
