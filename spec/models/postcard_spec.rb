@@ -4,33 +4,41 @@ RSpec.describe Postcard, type: :model do
 
   # Disabled until we get chromedriver working on Gitlab
 
-  # describe "#send_card" do
-  #   let(:customer) { postcard.customer }
-  #   let!(:address) { create(:address, customer: customer) }
-  #   let(:postcard) { create(:postcard, sent: false, paid: true, card_order: card_order) }
-  #   let(:card_order) { create(:card_order, discount_pct: -10, discount_exp: 2) }
-  #   let(:shop) { card_order.shop }
-  #
-  #   # TODO: split out spec into seperate cases
-  #   # TODO: handle negative cases
-  #   it "works" do
-  #     price_rule_id = stub_shopify(:price_rules, :create)[:price_rule][:id]
-  #     stub_shopify(:discounts, :create, entity_uri: "price_rules/#{price_rule_id}/discount_codes")
-  #     stub_request(:post, "https://api.lob.com/v1/postcards")
-  #       .to_return(body: File.read("#{Rails.root}/spec/fixtures/lob/postcards/create/default.json"))
-  #         .with(basic_auth: ["#{ENV['LOB_API_KEY']}", ""])
-  #
-  #     ## TODO: Actually test the postcard output (PNG image data in form)
-  #     #
-  #     #
-  #     postcard.send_card
-  #     expect(postcard.sent).to eq true
-  #     expect(postcard.date_sent).to eq Date.today
-  #     # XXX: because comparison is to noon small probability of failure if run exactly at midnight
-  #     expect(postcard.estimated_arrival.noon).to eq 6.business_days.from_now.noon
-  #     expect(postcard.postcard_id).to eq "psc_14c1b66f31264c34"
-  #   end
-  # end
+  describe "#send_card" do
+    let(:customer) { postcard.customer }
+    let!(:address) { create(:address, customer: customer) }
+    let(:postcard) { create(:postcard, sent: false, paid: true, card_order: card_order) }
+
+
+    # back_json = '{"version":0,"background_url":"https://touchcard-data-dev.s3.amazonaws.com/uploads/90a2ff06-16b0-4fee-98cb-37965ccf59a0/_card1C_back_new.png","discount_x":238,"discount_y":17}'
+
+    let(:card_order) { create(:card_order,
+                              discount_pct: -10,
+                              discount_exp: 2,
+                              front_json: '{"version":0,"background_url":"https://touchcard-data-dev.s3.amazonaws.com/uploads/057bd388-3517-412b-839c-148da0b8f781/__card_02.jpg","discount_x":376,"discount_y":56}'
+                              ) }
+    let(:shop) { card_order.shop }
+
+    # TODO: split out spec into seperate cases
+    # TODO: handle negative cases
+    it "works" do
+      price_rule_id = stub_shopify(:price_rules, :create)[:price_rule][:id]
+      stub_shopify(:discounts, :create, entity_uri: "price_rules/#{price_rule_id}/discount_codes")
+      stub_request(:post, "https://api.lob.com/v1/postcards")
+        .to_return(body: File.read("#{Rails.root}/spec/fixtures/lob/postcards/create/default.json"))
+          .with(basic_auth: ["#{ENV['LOB_API_KEY']}", ""])
+
+      ## TODO: Actually test the postcard output (PNG image data in form)
+      #
+      #
+      postcard.send_card
+      expect(postcard.sent).to eq true
+      expect(postcard.date_sent).to eq Date.today
+      # XXX: because comparison is to noon small probability of failure if run exactly at midnight
+      expect(postcard.estimated_arrival.noon).to eq 6.business_days.from_now.noon
+      expect(postcard.postcard_id).to eq "psc_14c1b66f31264c34"
+    end
+  end
 
   describe ".ready_for_arrival_notification" do
     it "returns list of postcards where arrival_notification_sent is false" do

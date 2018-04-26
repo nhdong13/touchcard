@@ -44,6 +44,20 @@ module LobRenderUtil
   # end
 
 
+  # Process:
+  # #
+  # 1. Write file to local filesystem (careful - heroku ephemereal limitations / prefs ($HOME, /tmp) (latest stack can write anywhere, apparently).) Maybe use SecureRandom.uuid
+  #
+  # 2. Load it:
+  #     driver.navigate.to "file:///" + pwd + "/public/lob_render_test.html"
+  #
+  # 3. Get DOM via something like:
+  #     contents = driver.execute_script("return document.documentElement.innerHTML")
+  #
+  # 4. Send it to Lob
+
+
+
   def headless_render(html)
 
     # Write html to local path so Chrome can open it
@@ -59,6 +73,7 @@ module LobRenderUtil
     # Headless Chrome browsing via Selenium
     options = Selenium::WebDriver::Chrome::Options.new
     options.add_argument('--headless')
+    # options.add_argument('--enable-logging --v=1')
     chrome_bin = ENV.fetch('GOOGLE_CHROME_SHIM', nil)
     options.binary = chrome_bin if chrome_bin # custom binary path is only for heroku
     options.add_argument('--window-size=1875,1275')
@@ -74,32 +89,16 @@ module LobRenderUtil
     end
 
     # Pull out HTML after ()javascript has formatted it)
-    rendered_html = driver.execute_script("return document.documentElement.innerHTML")
+    rendered_html = driver.execute_script("return document.documentElement.innerHTML") # NOT USED
 
     png_data = driver.screenshot_as :base64
     png_path = "#{Rails.root}/tmp/lob_output_#{file_id}.png"
     File.open(png_path, 'wb') {|f| f.write(Base64.decode64(png_data)) }
-    File.open("#{Rails.root}/tmp/lob_output_#{file_id}.html", 'wb') {|f| f.write(rendered_html) }
+    File.open("#{Rails.root}/tmp/lob_output_#{file_id}.html", 'wb') {|f| f.write(rendered_html) } # NOT USED
 
     # rendered_html - also available as return value
     png_path
   end
-
-
-
-  # 1. Write file to local filesystem (careful - heroku ephemereal limitations / prefs ($HOME, /tmp) (latest stack can write anywhere, apparently).) Maybe use SecureRandom.uuid
-  #
-  # 2. Load it:
-  #     driver.navigate.to "file:///" + pwd + "/public/lob_render_test.html"
-  #
-  # 3. Get DOM via something like:
-  #     contents = driver.execute_script("return document.documentElement.innerHTML")
-  #
-  # 4. Send it to Lob
-  #
-  #
-  #
-
 
 end
 

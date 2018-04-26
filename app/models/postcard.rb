@@ -69,13 +69,14 @@ class Postcard < ApplicationRecord
 
   def send_card
     return logger.info "attempted sending postcard:#{id} that is not paid for" unless paid?
+    return logger.info "postcard:#{id} with lob_id:#{postcard_id} already sent" if postcard_id
     # TODO: all kinds of error handling
     # Test lob
     @lob ||= Lob::Client.new(api_key: ENV['LOB_API_KEY'])
     self.estimated_arrival = estimated_transit_days.business_days.from_now.end_of_day
 
     if card_order.has_discount?
-      self.discount_pct = card_order.discount_pct
+      self.discount_pct = -(card_order.discount_pct.abs)
       self.discount_exp_at = estimated_arrival + card_order.discount_exp.weeks
       @discount_manager = DiscountManager.new(card_order.shop.shopify_api_path, discount_pct, discount_exp_at)
       @discount_manager.generate_discount

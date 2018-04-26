@@ -79,22 +79,28 @@ RSpec.configure do |config|
   Kernel.srand config.seed
 =end
 
-  # Disable all Output in Rspec. We need to use some 'puts'
-  # for Delayed jobs, so this keeps test output clean.
-
-  puts "Test STDERR & STDOUT can be found in log/rspec_out.log"
-  original_stderr = $stderr
-  original_stdout = $stdout
 
   config.before(:all) do
     FactoryBot.reload
-    # Redirect stderr and stdout
-    $stderr = File.new(File.join(File.dirname(__FILE__), '..', 'log', 'rspec_out.log'), 'w')
-    $stdout = File.new(File.join(File.dirname(__FILE__), '..', 'log', 'rspec_out.log'), 'w')
   end
-  config.after(:all) do
-    $stderr = original_stderr
-    $stdout = original_stdout
-  end
+
+
+  # # Disable all Output in Rspec. We need to use some 'puts'
+  # # for Delayed jobs, so this keeps test output clean.
+  #
+  # puts "Test STDERR & STDOUT can be found in log/rspec_out.log"
+  # original_stderr = $stderr
+  # original_stdout = $stdout
+  #
+  # config.before(:all) do
+  #   FactoryBot.reload
+  #   # Redirect stderr and stdout
+  #   $stderr = File.new(File.join(File.dirname(__FILE__), '..', 'log', 'rspec_out.log'), 'w')
+  #   $stdout = File.new(File.join(File.dirname(__FILE__), '..', 'log', 'rspec_out.log'), 'w')
+  # end
+  # config.after(:all) do
+  #   $stderr = original_stderr
+  #   $stdout = original_stdout
+  # end
 
 end
