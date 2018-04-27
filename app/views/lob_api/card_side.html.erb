@@ -2,11 +2,7 @@
 
 <%= tag.div id: "lob-api-card-side",
             data: {
-                attributes: {
-                    image: @card_side.image,
-                    discount_x: @card_side.discount_x,
-                    discount_y: @card_side.discount_y
-                },
+                attributes: @attributes,
                 discount_pct: @postcard.card_order.discount_pct,
                 discount_exp: @postcard.card_order.discount_exp,
                 discount_code: @postcard.discount_code

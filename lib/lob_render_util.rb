@@ -85,7 +85,8 @@ module LobRenderUtil
       wait = Selenium::WebDriver::Wait.new(:timeout => 10)
       wait.until { element = driver.find_element(:css, 'div.render-complete')}
     rescue Selenium::WebDriver::Error::TimeOutError
-      raise "Unable to render Postcard for printing in Selenium"
+      progress_html = driver.execute_script("return document.documentElement.innerHTML") # NOT USED
+      raise "Unable to render Postcard for printing in Selenium\n\n\n #{progress_html}"
     end
 
     # Pull out HTML after ()javascript has formatted it)

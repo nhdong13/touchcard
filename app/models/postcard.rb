@@ -86,13 +86,13 @@ class Postcard < ApplicationRecord
     end
 
     front_png_path, back_png_path = [
-        card_order.card_side_front,
-        card_order.card_side_back
-    ].map do |card_side|
+        card_order.front_json,
+        card_order.back_json
+    ].map do |json_attributes|
       input_html = LobApiController.render(:card_side,
                               assigns: {
                                   postcard: self,
-                                  card_side: card_side,
+                                  attributes: json_attributes,
                                   lob_js_pack_path: LobRenderUtil.lob_js_pack_path,
                                   lob_css_pack_path: LobRenderUtil.lob_css_pack_path })
       LobRenderUtil.headless_render(input_html)

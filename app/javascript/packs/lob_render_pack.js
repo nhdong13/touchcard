@@ -1,5 +1,6 @@
 import Vue from 'vue/dist/vue.esm'
 import CardSide from '../components/card_side'
+import { CardAttributes } from '../components/card_attributes'
 
 console.log("Lob Render Pack: LOADING");
 
@@ -13,7 +14,7 @@ function loadCardSide(){
 
   var element = document.getElementById('lob-api-card-side');
   if (element != null) {
-    console.log("Lob Renderer Pack LOADING");
+    console.log("Lob Render Pack LOADING");
     const vueApp = new Vue({
       el: element,
       template: `
@@ -26,7 +27,7 @@ function loadCardSide(){
         </card-side>`,
       data: function() {
         return {
-          attributes: JSON.parse(element.dataset.attributes),
+          attributes: new CardAttributes(JSON.parse(element.dataset.attributes)),
           discount_pct: Number(element.dataset.discountPct),
           discount_exp: Number(element.dataset.discountExp),
           discount_code: element.dataset.discountCode
@@ -37,6 +38,8 @@ function loadCardSide(){
         let signalingDiv = document.createElement('div');
         signalingDiv.setAttribute('class', 'render-complete');
         document.head.appendChild(signalingDiv);
+        console.log("Lob Render Pack MOUNTED");
+
       },
       components:{
         'card-side': CardSide

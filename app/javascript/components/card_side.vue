@@ -39,7 +39,8 @@
       },
       isBack: {
         type: Boolean,
-        required: true,
+        required: false,
+        default: false,
       },
       scaleFactor: { Number, default: 1.0 },
       discount_pct: { Number },
