@@ -9,6 +9,7 @@
                           :discount_y.sync="attributes.discount_y"
                           :discount_pct="discount_pct"
                           :discount_exp="discount_exp"
+                          :discount_code="discount_code"
                           v-if="attributes.showsDiscount"
         >
         </discount-element>
@@ -44,7 +45,8 @@
       },
       scaleFactor: { Number, default: 1.0 },
       discount_pct: { Number },
-      discount_exp: { Number },
+      discount_exp: { String },
+      discount_code: { required: false, type: String, default: 'DIS-CNT-COD'}
     },
     computed: {
       scaleStyle: function () {
@@ -92,7 +94,7 @@
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    clip-path: inset(12px 12px 12px 12px);
+    /*clip-path: inset(12px 12px 12px 12px);*/
     /*pointer-events: auto;*/
   }
 

@@ -6,7 +6,8 @@ class LobApiController < ApplicationController
     @lob_css_pack_path = LobRenderUtil.lob_css_pack_path.sub(Rails.public_path.to_s, '')
     @lob_js_pack_path = LobRenderUtil.lob_js_pack_path.sub(Rails.public_path.to_s, '')
     @postcard = Postcard.last
-    @attributes = @postcard.card_order.back_json
+    @attributes = @postcard.card_order.front_json
+    # @attributes = @postcard.card_order.back_json  # Test other side
     render :card_side
   end
 

@@ -12,8 +12,8 @@
 
     >
         <div class="percent">{{discount_pct}}% OFF</div>
-        <div class="code">DIS-CNT-COD</div>
-        <div class="expiration">{{dateToday}}</div>
+        <div class="code">{{discount_code}}</div>
+        <div class="expiration">{{discount_exp}}</div>
     </base-element>
 </template>
 
@@ -44,14 +44,14 @@
       },
       discount_exp: {
         required: true,
-        type: Number
+        type: String
+      },
+      discount_code: {
+        required: true,
+        type: String,
       }
     },
     computed: {
-      dateToday: function() {
-        let today= new Date();
-        return `${today.getDate()}/${today.getMonth() + 1}/${today.getFullYear()}`;
-      },
       safe_discount_x: function() {
         return (typeof this.discount_x === 'number') ? this.discount_x : 215;
       },

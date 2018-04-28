@@ -104,6 +104,7 @@ group :test do
   gem "rspec-rails", "~> 3.7"
   gem "factory_bot", "~> 4.8"
   gem "webmock", "~> 3.2"
+  gem "timecop"
 end
 
 group :production do

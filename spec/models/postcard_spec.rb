@@ -2,8 +2,6 @@ require 'rails_helper'
 
 RSpec.describe Postcard, type: :model do
 
-  # Disabled until we get chromedriver working on Gitlab
-
   describe "#send_card" do
     let(:customer) { postcard.customer }
     let!(:address) { create(:address, customer: customer) }
@@ -12,12 +10,27 @@ RSpec.describe Postcard, type: :model do
 
     # back_json = '{"version":0,"background_url":"https://touchcard-data-dev.s3.amazonaws.com/uploads/90a2ff06-16b0-4fee-98cb-37965ccf59a0/_card1C_back_new.png","discount_x":238,"discount_y":17}'
 
+    LobRenderUtil.lob_css_pack_path
+
+    front_background_path = (Rails.root + 'spec/images/background_1.jpg').to_s
+    back_background_path = (Rails.root + 'spec/images/background_2.jpg').to_s
+
     let(:card_order) { create(:card_order,
-                              discount_pct: -10,
+                              discount_pct: -37,
                               discount_exp: 2,
-                              front_json: '{"version":0,"background_url":"https://touchcard-data-dev.s3.amazonaws.com/uploads/057bd388-3517-412b-839c-148da0b8f781/__card_02.jpg","discount_x":376,"discount_y":56}'
+                              front_json: '{"version":0,"background_url":"' + front_background_path + '","discount_x":376,"discount_y":56}',
+                              back_json: '{"version":0,"background_url":"' + back_background_path + '","discount_x":null,"discount_y":null}'
                               ) }
     let(:shop) { card_order.shop }
+
+    before do
+      Timecop.freeze(Time.local(1990))
+    end
+
+    after do
+      Timecop.return
+    end
+
 
     # TODO: split out spec into seperate cases
     # TODO: handle negative cases
@@ -29,8 +42,7 @@ RSpec.describe Postcard, type: :model do
           .with(basic_auth: ["#{ENV['LOB_API_KEY']}", ""])
 
       ## TODO: Actually test the postcard output (PNG image data in form)
-      #
-      #
+      
       postcard.send_card
       expect(postcard.sent).to eq true
       expect(postcard.date_sent).to eq Date.today

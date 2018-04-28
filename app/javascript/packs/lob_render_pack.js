@@ -22,6 +22,7 @@ function loadCardSide(){
             :attributes="attributes"
             :discount_pct="discount_pct"
             :discount_exp="discount_exp"
+            :discount_code="discount_code"
             :enableDiscount="discount_exp && discount_pct"
         >
         </card-side>`,
@@ -29,7 +30,7 @@ function loadCardSide(){
         return {
           attributes: new CardAttributes(JSON.parse(element.dataset.attributes)),
           discount_pct: Number(element.dataset.discountPct),
-          discount_exp: Number(element.dataset.discountExp),
+          discount_exp: element.dataset.discountExp,
           discount_code: element.dataset.discountCode
         }
       },

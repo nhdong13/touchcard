@@ -8,7 +8,7 @@
               :attributes.sync="attributes"
               :scaleFactor="cardScaleFactor"
               :discount_pct="discount_pct"
-              :discount_exp="discount_exp"
+              :discount_exp="discount_exp_string"
       >
       </card-side>
     </div>
@@ -128,8 +128,13 @@
       window.card_editor = null;
       window.removeEventListener('resize', this.handleResize)
     },
-    // computed: {
-    // },
+    computed: {
+      discount_exp_string: function() {
+        let exp = new Date();
+        exp.setDate(exp.getDate() + (7 * this.discount_exp));
+        return `${exp.getDate()}/${exp.getMonth() + 1}/${exp.getFullYear()}`;
+      },
+    },
     methods: {
       alertNonOptimalImageDimensions: function(url) {
         var offscreenImage = new Image();
