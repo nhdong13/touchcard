@@ -67,12 +67,21 @@ class Postcard < ApplicationRecord
     international? ? 2 : 1
   end
 
+
+  def render_side_png(json_attributes)
+    input_html = LobApiController.render(:card_side,
+                                         assigns: {
+                                             postcard: self,
+                                             attributes: json_attributes,
+                                             lob_js_pack_path: LobRenderUtil.lob_js_pack_path,
+                                             lob_css_pack_path: LobRenderUtil.lob_css_pack_path })
+    LobRenderUtil.headless_render(input_html)
+  end
+
   def send_card
     return logger.info "attempted sending postcard:#{id} that is not paid for" unless paid?
     return logger.info "postcard:#{id} with lob_id:#{postcard_id} already sent" if postcard_id
     # TODO: all kinds of error handling
-    # Test lob
-    @lob ||= Lob::Client.new(api_key: ENV['LOB_API_KEY'])
     self.estimated_arrival = estimated_transit_days.business_days.from_now.end_of_day
 
     if card_order.has_discount?
@@ -85,34 +94,10 @@ class Postcard < ApplicationRecord
       return unless @discount_manager.has_valid_code?
     end
 
-    front_png_path, back_png_path = [
-        card_order.front_json,
-        card_order.back_json
-    ].map do |json_attributes|
-      input_html = LobApiController.render(:card_side,
-                              assigns: {
-                                  postcard: self,
-                                  attributes: json_attributes,
-                                  lob_js_pack_path: LobRenderUtil.lob_js_pack_path,
-                                  lob_css_pack_path: LobRenderUtil.lob_css_pack_path })
-      LobRenderUtil.headless_render(input_html)
-    end
+    front_png_path = render_side_png(self.card_order.front_json)
+    back_png_path = render_side_png(self.card_order.back_json)
 
-    # front_html, back_html = [
-    #   card_order.card_side_front,
-    #   card_order.card_side_back
-    # ].map do |card_side|
-    #   CardHtml.generate(
-    #     background_image: card_side.image,
-    #     discount_x: card_side.discount_x,
-    #     discount_y: card_side.discount_y,
-    #     discount_pct: discount_pct ? discount_pct.abs : nil,
-    #     # Make customer think coupon expires a day early to avoid last minute disappoint for e.g. timezone issues
-    #     discount_exp: discount_exp_at ? (discount_exp_at - 1.day).strftime("%m/%d/%Y") : nil,
-    #     discount_code: card_side.show_discount? ? discount_code : nil
-    #   )
-    # end
-
+    @lob ||= Lob::Client.new(api_key: ENV['LOB_API_KEY'])
     sent_card = @lob.postcards.create(
       description: "A #{card_order.type} card sent by #{shop.domain}",
       to: to_address,

@@ -12,14 +12,17 @@ RSpec.describe Postcard, type: :model do
 
     LobRenderUtil.lob_css_pack_path
 
-    front_background_path = (Rails.root + 'spec/images/background_1.jpg').to_s
-    back_background_path = (Rails.root + 'spec/images/background_2.jpg').to_s
+    background1_path = (Rails.root + 'spec/images/background_1.jpg').to_s
+    background2_path = (Rails.root + 'spec/images/background_2.jpg').to_s
+
+    bad_png_path = (Rails.root + 'spec/images/bad_output_retina.png').to_s
+
 
     let(:card_order) { create(:card_order,
                               discount_pct: -37,
                               discount_exp: 2,
-                              front_json: '{"version":0,"background_url":"' + front_background_path + '","discount_x":376,"discount_y":56}',
-                              back_json: '{"version":0,"background_url":"' + back_background_path + '","discount_x":null,"discount_y":null}'
+                              front_json: '{"version":0,"background_url":"' + background1_path + '","discount_x":376,"discount_y":56}',
+                              back_json: '{"version":0,"background_url":"' + background2_path + '","discount_x":null,"discount_y":null}'
                               ) }
     let(:shop) { card_order.shop }
 
@@ -31,18 +34,41 @@ RSpec.describe Postcard, type: :model do
       Timecop.return
     end
 
+    it "renders_front_with_coupon" do
+      postcard.discount_exp_at = Time.now + 23.days
+      postcard.discount_code = "XXX-YYY-ZZZ"
+      postcard.discount_pct = 37
+      output_path = postcard.render_side_png(card_order.front_json)
+      expected_png_path = (Rails.root + 'spec/images/expected_front_coupon@2x.png').to_s
+      expect(FileUtils.compare_file(output_path, expected_png_path)).to be_truthy  # Compare with expected output
+      expect(FileUtils.compare_file(output_path, bad_png_path)).to be_falsey  # Compare with bad output (confirms test)
+    end
 
-    # TODO: split out spec into seperate cases
-    # TODO: handle negative cases
+    # TODO: Enable no coupon test
+
+    # it "renders_front_without_coupon" do
+    #   output_path = postcard.render_side_png(card_order.front_json)
+    #   byebug
+    # end
+
+
+    # TODO: Enable back render test
+    #
+    # it "renders_back" do
+    #   back_png_path = postcard.render_side_png(card_order.back_json)
+    #   expected_png_path = (Rails.root + 'spec/images/expected_output_back_retina.png').to_s
+    #   byebug
+    #   expect(FileUtils.compare_file(back_png_path, expected_png_path)).to be_truthy   # Compare with expected output
+    #   expect(FileUtils.compare_file(back_png_path, bad_png_path)).to be_falsey   # Compare with bad output (confirms test)
+    # end
+
+
     it "works" do
       price_rule_id = stub_shopify(:price_rules, :create)[:price_rule][:id]
       stub_shopify(:discounts, :create, entity_uri: "price_rules/#{price_rule_id}/discount_codes")
       stub_request(:post, "https://api.lob.com/v1/postcards")
         .to_return(body: File.read("#{Rails.root}/spec/fixtures/lob/postcards/create/default.json"))
           .with(basic_auth: ["#{ENV['LOB_API_KEY']}", ""])
-
-      ## TODO: Actually test the postcard output (PNG image data in form)
-      
       postcard.send_card
       expect(postcard.sent).to eq true
       expect(postcard.date_sent).to eq Date.today
