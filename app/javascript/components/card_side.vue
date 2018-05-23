@@ -10,7 +10,7 @@
                           :discount_pct="discount_pct"
                           :discount_exp="discount_exp"
                           :discount_code="discount_code"
-                          v-if="attributes.showsDiscount"
+                          v-if="this.attributes.showsDiscount"
         >
         </discount-element>
         <!--<template v-for="object in model.objects">-->
@@ -44,9 +44,14 @@
         default: false,
       },
       scaleFactor: { Number, default: 1.0 },
-      discount_pct: { Number },
-      discount_exp: { String },
+      discount_pct: { required: false, type: Number },
+      discount_exp: { required: false, type: String },
       discount_code: { required: false, type: String, default: 'DIS-CNT-COD'}
+    },
+    methods: {
+      requestSave: function () {
+
+      }
     },
     computed: {
       scaleStyle: function () {
@@ -57,10 +62,6 @@
         return { backgroundImage: this.attributes.background_url ? `url('${this.attributes.background_url}')` : null }
       }
     },
-    // data: function() {
-    //   return {
-    //   }
-    // },
     components:{
       DiscountElement, AddressOverlayElement
     },

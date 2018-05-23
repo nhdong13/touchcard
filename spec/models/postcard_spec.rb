@@ -10,19 +10,21 @@ RSpec.describe Postcard, type: :model do
 
     # back_json = '{"version":0,"background_url":"https://touchcard-data-dev.s3.amazonaws.com/uploads/90a2ff06-16b0-4fee-98cb-37965ccf59a0/_card1C_back_new.png","discount_x":238,"discount_y":17}'
 
+
     LobRenderUtil.lob_css_pack_path
 
     background1_path = (Rails.root + 'spec/images/background_1.jpg').to_s
     background2_path = (Rails.root + 'spec/images/background_2.jpg').to_s
-
     bad_png_path = (Rails.root + 'spec/images/bad_output_retina.png').to_s
 
+    json_with_coupon = '{"version":0,"background_url":"' + background1_path + '","discount_x":376,"discount_y":56}'
+    json_no_coupon = '{"version":0,"background_url":"' + background2_path + '","discount_x":null,"discount_y":null}'
 
     let(:card_order) { create(:card_order,
                               discount_pct: -37,
                               discount_exp: 2,
-                              front_json: '{"version":0,"background_url":"' + background1_path + '","discount_x":376,"discount_y":56}',
-                              back_json: '{"version":0,"background_url":"' + background2_path + '","discount_x":null,"discount_y":null}'
+                              front_json: json_with_coupon,
+                              back_json: json_no_coupon
                               ) }
     let(:shop) { card_order.shop }
 
@@ -44,23 +46,12 @@ RSpec.describe Postcard, type: :model do
       expect(FileUtils.compare_file(output_path, bad_png_path)).to be_falsey  # Compare with bad output (confirms test)
     end
 
-    # TODO: Enable no coupon test
-
-    # it "renders_front_without_coupon" do
-    #   output_path = postcard.render_side_png(card_order.front_json)
-    #   byebug
-    # end
-
-
-    # TODO: Enable back render test
-    #
-    # it "renders_back" do
-    #   back_png_path = postcard.render_side_png(card_order.back_json)
-    #   expected_png_path = (Rails.root + 'spec/images/expected_output_back_retina.png').to_s
-    #   byebug
-    #   expect(FileUtils.compare_file(back_png_path, expected_png_path)).to be_truthy   # Compare with expected output
-    #   expect(FileUtils.compare_file(back_png_path, bad_png_path)).to be_falsey   # Compare with bad output (confirms test)
-    # end
+    it "renders_back_no_coupon" do
+      output_path = postcard.render_side_png(card_order.back_json)
+      expected_png_path = (Rails.root + 'spec/images/expected_back_no_coupon@2x.png').to_s
+      expect(FileUtils.compare_file(output_path, expected_png_path)).to be_truthy  # Compare with expected output
+      expect(FileUtils.compare_file(output_path, bad_png_path)).to be_falsey  # Compare with bad output (confirms test)
+    end
 
 
     it "works" do
