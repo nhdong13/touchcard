@@ -87,11 +87,17 @@ class CardOrder < ApplicationRecord
     # TODO: add defaults to schema that can be added
   end
 
+  def shows_front_discount?
+    front_json && front_json['discount_x'] && front_json['discount_y']
+  end
+
+  def shows_back_discount?
+    back_json && back_json['discount_x'] && back_json['discount_y']
+  end
+
   def has_discount?
-      has_front = front_json && front_json['discount_x'] && front_json['discount_y']
-      has_back = back_json && back_json['discount_x'] && back_json['discount_y']
       has_values = discount_exp.present? && discount_pct.present?
-      has_values && (has_front || has_back)
+      has_values && (shows_front_discount? || shows_back_discount?)
   end
 
   def front_background_url

@@ -13,7 +13,7 @@
     >
         <div class="percent">{{discount_pct}}% OFF</div>
         <div class="code">{{discount_code}}</div>
-        <div class="expiration">{{discount_exp}}</div>
+        <div class="expiration">EXPIRES {{discount_exp}}</div>
     </base-element>
 </template>
 

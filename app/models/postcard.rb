@@ -67,23 +67,11 @@ class Postcard < ApplicationRecord
     international? ? 2 : 1
   end
 
-
-  def render_side_png(json_attributes)
-    input_html = LobApiController.render(:card_side,
-                                         assigns: {
-                                             postcard: self,
-                                             attributes: json_attributes,
-                                             lob_js_pack_path: LobRenderUtil.lob_js_pack_path,
-                                             lob_css_pack_path: LobRenderUtil.lob_css_pack_path })
-    LobRenderUtil.headless_render(input_html)
+  class DiscountCreationError < StandardError
   end
 
-  def send_card
-    return logger.info "attempted sending postcard:#{id} that is not paid for" unless paid?
-    return logger.info "postcard:#{id} with lob_id:#{postcard_id} already sent" if postcard_id
-    # TODO: all kinds of error handling
+  def prepare_card
     self.estimated_arrival = estimated_transit_days.business_days.from_now.end_of_day
-
     if card_order.has_discount?
       self.discount_pct = -(card_order.discount_pct.abs)
       self.discount_exp_at = estimated_arrival + card_order.discount_exp.weeks
@@ -91,11 +79,21 @@ class Postcard < ApplicationRecord
       @discount_manager.generate_discount
       self.price_rule_id = @discount_manager.price_rule_id
       self.discount_code = @discount_manager.discount_code
-      return unless @discount_manager.has_valid_code?
+      raise DiscountCreationError, "Error allocating discount code" unless @discount_manager.has_valid_code?
     end
+  end
 
-    front_png_path = render_side_png(self.card_order.front_json)
-    back_png_path = render_side_png(self.card_order.back_json)
+
+  def send_card
+    return logger.info "attempted sending postcard:#{id} that is not paid for" unless paid?
+    return logger.info "postcard:#{id} with lob_id:#{postcard_id} already sent" if postcard_id
+    # TODO: all kinds of error handling
+
+    prepare_card
+
+    front_png_path = LobRenderUtil.render_side_png(postcard: self, is_front: true)
+    back_png_path = LobRenderUtil.render_side_png(postcard: self, is_front: false)
+
 
     @lob ||= Lob::Client.new(api_key: ENV['LOB_API_KEY'])
     sent_card = @lob.postcards.create(

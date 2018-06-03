@@ -1,73 +1,58 @@
 module LobRenderUtil
   module_function
-  # def generate(options)
-  # end
 
-  # LobApiController.render :card_side, assigns: { postcard: Postcard.last, card_side: Postcard.last.card_order.card_side_front, lob_js_pack_path: LobApiController.lob_js_pack_path, lob_css_pack_path: LobApiController.lob_css_pack_path }
-  #  File.open('lob_render_test.html', 'w') {|f| f.write(LobApiController.render :card_side, assigns: { postcard: Postcard.last, card_side: Postcard.last.card_order.card_side_front, lob_js_pack_path: LobApiController.lob_js_pack_path, lob_css_pack_path: LobApiController.lob_css_pack_path })}
-
-
-  # def internal_lob_js_pack_path
-  #   "#{Rails.public_path}#{Webpacker.manifest.lookup("lob_render_pack.js")}"
-  # end
-
-
-
-  def lob_js_pack_path
-    root = Rails.public_path
+  def relative_lob_js_pack_path
     path = Webpacker.manifest.lookup("lob_render_pack.js")
-    raise "Can't resolve path for lob_render_pack.js" if root.blank? and path.blank?
-    "#{root}#{path}"
+    raise "Can't resolve path for lob_render_pack.js" unless path
+    path
   end
 
-  def lob_css_pack_path
-    root = Rails.public_path
+  def relative_lob_css_pack_path
     path = Webpacker.manifest.lookup("lob_render_pack.css")
-    raise "Error resolving path for lob_render_pack.css" if root.blank? and path.blank?
-    "#{root}#{path}"
+    raise "Can't resolve path for lob_render_pack.css" unless path
+    path
   end
 
 
+  def full_lob_js_pack_path
+    root = Rails.public_path
+    path = relative_lob_js_pack_path
+    raise "Can't resolve path for lob_render_pack.js" unless root && path
+    "#{root}#{path}"
+  end
 
-  # def public_lob_js_pack_path
-  #   app_root = ENV['APP_URL']
-  #   lob_js_path = Webpacker.manifest.lookup("lob_render_pack.js")
-  #   raise 'Unable to find Javascript for rendering Postcard to Lob API' unless (app_root and lob_js_path)
-  #   "#{app_root}#{lob_js_path}"
-  # end
-  #
-  # def public_lob_css_pack_path
-  #   app_root = ENV['APP_URL']
-  #   lob_css_path = Webpacker.manifest.lookup("lob_render_pack.css")
-  #   raise 'Unable to find CSS for rendering Postcard to Lob API' unless (app_root and lob_css_path)
-  #   "#{app_root}#{lob_css_path}"
-  # end
+  def full_lob_css_pack_path
+    root = Rails.public_path
+    path = relative_lob_css_pack_path
+    raise "Error resolving path for lob_render_pack.css" unless root && path
+    "#{root}#{path}"
+  end
 
 
   # Process:
-  # #
-  # 1. Write file to local filesystem (careful - heroku ephemereal limitations / prefs ($HOME, /tmp) (latest stack can write anywhere, apparently).) Maybe use SecureRandom.uuid
+  #
+  # 1. Write file to local filesystem. (Mind Heroku ephemereal filesystem limitations)
   #
   # 2. Load it:
-  #     driver.navigate.to "file:///" + pwd + "/public/lob_render_test.html"
+  #     driver.navigate.to file
   #
-  # 3. Get DOM via something like:
-  #     contents = driver.execute_script("return document.documentElement.innerHTML")
-  #
-  # 4. Send it to Lob
+  # 3. Get DOM via: driver.execute_script("return document.documentElement.innerHTML")
+
+
+  def render_side_png(postcard:, is_front:)
+    html = LobApiController.render_side(postcard: postcard, is_front: is_front)
+    LobRenderUtil.headless_render(html)
+  end
 
 
 
   def headless_render(html)
 
     # Write html to local path so Chrome can open it
-    FileUtils.mkdir_p "#{Rails.root}/public/lob/"
+    FileUtils.mkdir_p "#{Rails.root}/tmp/lob/"
     file_id = SecureRandom.uuid
 
-    # TODO: Stick into subdir?
-    #
-    #
-    file_path = "#{Rails.root}/tmp/lob_input_#{file_id}.html"
+    file_path = "#{Rails.root}/tmp/lob/#{file_id}_input.html"
     File.open(file_path, 'w') {|f| f.write(html) }
 
     # Headless Chrome browsing via Selenium
@@ -93,9 +78,9 @@ module LobRenderUtil
     rendered_html = driver.execute_script("return document.documentElement.innerHTML") # NOT USED
 
     png_data = driver.screenshot_as :base64
-    png_path = "#{Rails.root}/tmp/lob_output_#{file_id}.png"
+    png_path = "#{Rails.root}/tmp/lob/#{file_id}_output.png"
     File.open(png_path, 'wb') {|f| f.write(Base64.decode64(png_data)) }
-    File.open("#{Rails.root}/tmp/lob_output_#{file_id}.html", 'wb') {|f| f.write(rendered_html) } # NOT USED
+    File.open("#{Rails.root}/tmp/lob/#{file_id}_output.html", 'wb') {|f| f.write(rendered_html) } # NOT USED
 
     # rendered_html - also available as return value
     png_path

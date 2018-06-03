@@ -132,7 +132,7 @@
       discount_exp_string: function() {
         let exp = new Date();
         exp.setDate(exp.getDate() + (7 * this.discount_exp));
-        return `${exp.getDate()}/${exp.getMonth() + 1}/${exp.getFullYear()}`;
+        return `${exp.getMonth()+1}/${exp.getDate()}/${exp.getFullYear()}`;
       },
     },
     methods: {
