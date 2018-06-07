@@ -25,5 +25,24 @@ RUN wget -O /tmp/chromedriver.zip http://chromedriver.storage.googleapis.com/$CH
     && rm /tmp/chromedriver.zip \
     && chmod ugo+rx /usr/bin/chromedriver
 
+#RUN apt-get update -qq && apt-get install -y --no-install-recommends apt-utils\
+#    build-essential
+
+WORKDIR /tmp
+
+# Install Ruby Gems
+# Installing gems here ensures that the majority of gems are cached
+# Users of this container should still `bundle install`
+COPY Gemfile /tmp/Gemfile
+COPY Gemfile.lock /tmp/Gemfile.lock
+RUN bundle install
+
+# Install Node Packages via Yarn (caching optimization)
+# Users of this container should still `yarn`
+COPY package.json /tmp/package.json
+COPY yarn.lock /tmp/yarn.lock
+RUN yarn install --pure-lockfile
+#  - yarn install --pure-lockfile --cache-folder .yarn
+
 # ADD docker-entrypoint.sh /
 # ENTRYPOINT ["/docker-entrypoint.sh"]

@@ -4,7 +4,10 @@ Docker image that constitutes our base environment for testing & execution: Ruby
 
 ## build
 
-    docker build -t registry.gitlab.com/touchcard/api/environment .
+First - be sure to change directory to project root so docker command has access to Gemfile* & package.json / yarn.lock
+
+    docker build -t registry.gitlab.com/touchcard/api/environment -f docker/environment/Dockerfile .
+    
 
 ## make sure you're logged in
 
