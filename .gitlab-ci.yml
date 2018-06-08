@@ -10,6 +10,7 @@ variables:
 cache:
   paths:
     - vendor/ruby
+    - node_modules
 
 #before_script:
 #  - pwd
@@ -28,15 +29,9 @@ cache:
 rspec:
   artifacts:
     paths:
-    - package.json
-    - tmp*
-#    - tmp/lob/*
-#    - tmp/lob/*.png
-#    - spec/models/postcard_spec.rb
     - spec/images/expected_front_coupon@2x.png
-#    - /builds/project-0/*
-#    - /builds/touchcard/api/spec/images/expected_back_no_coupon@2x.png
-#    - /builds/touchcard/api/*
+    - tmp*
+    - tmp/lob/*.png
     expire_in: 1 week
   variables:
     DATABASE_URL: "postgresql://postgres:postgres@postgres:5432/$POSTGRES_DB"
@@ -58,6 +53,7 @@ rspec:
     SUBSCRIPTIONS_GOAL_STRING: 'DUMMY'
     SLACK_URL: 'https://hooks.slack.com/services/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'
   script:
-  - ls
+  - ls *
+  - pwd
 #  - RAILS_ENV=test bundle exec rspec  spec/models/postcard_spec.rb
 
