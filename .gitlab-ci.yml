@@ -28,11 +28,14 @@ before_script:
 rspec:
   artifacts:
     paths:
+    - *
     - package.json
-    - tmp
-    - tmp/lob
+    - tmp*
+    - tmp/lob/*
+    - tmp/lob/*.png
     - spec/models/postcard_spec.rb
     - spec/images/expected_front_coupon@2x.png
+    - /builds/project-0/*
     expire_in: 1 week
   variables:
     DATABASE_URL: "postgresql://postgres:postgres@postgres:5432/$POSTGRES_DB"
