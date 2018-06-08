@@ -51,4 +51,5 @@ rspec:
     paths:
     - tmp/lob
     - /builds/touchcard/api/tmp/lob/
+    - package.json
     expire_in: 1 week
