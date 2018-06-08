@@ -50,8 +50,8 @@ RSpec.describe Postcard, type: :model do
       output_path =  LobRenderUtil.render_side_png(postcard: postcard, is_front: true)
       expected_png_path = (Rails.root + 'spec/images/expected_front_coupon@2x.png').to_s
       puts "Comparing: \n#{output_path} \nwith: \n#{expected_png_path} "
-      # expect(FileUtils.compare_file(output_path, expected_png_path)).to be_truthy  # Compare with expected output
-      # expect(FileUtils.compare_file(output_path, bad_png_path)).to be_falsey  # Compare with bad output (confirms test)
+      expect(FileUtils.compare_file(output_path, expected_png_path)).to be_truthy  # Compare with expected output
+      expect(FileUtils.compare_file(output_path, bad_png_path)).to be_falsey  # Compare with bad output (confirms test)
     end
 
     it "renders_back_no_coupon" do
