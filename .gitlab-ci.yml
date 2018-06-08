@@ -29,7 +29,6 @@ rspec:
   artifacts:
     paths:
     - package.json
-    - *.json
     - tmp*
     - tmp/lob/*
     - tmp/lob/*.png
