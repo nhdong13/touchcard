@@ -12,18 +12,18 @@ cache:
     - vendor/ruby
     - node_modules
 
-#before_script:
-#  - pwd
-#  - yarn -v
-#  - yarn install --pure-lockfile
-#  - ruby -v
-##  - gem list
-##  - gem environment
-##  - gem install bundler  --no-ri --no-rdoc
-##  - bundle install -j $(nproc) --path vendor
-#  - bundle --version
-#  - bundle install -j $(nproc)
-#  - RAILS_ENV=test bundle exec rake db:create db:schema:load
+before_script:
+  - pwd
+  - yarn -v
+  - yarn install --pure-lockfile
+  - ruby -v
+#  - gem list
+#  - gem environment
+#  - gem install bundler  --no-ri --no-rdoc
+#  - bundle install -j $(nproc) --path vendor
+  - bundle --version
+  - bundle install -j $(nproc)
+  - RAILS_ENV=test bundle exec rake db:create db:schema:load
 
 
 rspec:
