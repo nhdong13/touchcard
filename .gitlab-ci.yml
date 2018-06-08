@@ -50,4 +50,5 @@ rspec:
   artifacts:
     paths:
     - tmp/lob
+    - /builds/touchcard/api/tmp/lob/
     expire_in: 1 week
