@@ -30,8 +30,7 @@ rspec:
   artifacts:
     paths:
     - spec/images/expected_front_coupon@2x.png
-    - tmp*
-    - tmp/lob/*.png
+    - tmp/lob/*
     expire_in: 1 week
   variables:
     DATABASE_URL: "postgresql://postgres:postgres@postgres:5432/$POSTGRES_DB"
