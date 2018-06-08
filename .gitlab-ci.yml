@@ -11,15 +11,6 @@ cache:
   paths:
     - vendor/ruby
 
-artifacts:
-  paths:
-  - package.json
-  - tmp
-  - tmp/lob
-  - spec/models/postcard_spec.rb
-  - spec/images/expected_front_coupon@2x.png
-  expire_in: 1 week
-
 before_script:
   - pwd
   - yarn -v
@@ -35,6 +26,14 @@ before_script:
 
 
 rspec:
+  artifacts:
+    paths:
+    - package.json
+    - tmp
+    - tmp/lob
+    - spec/models/postcard_spec.rb
+    - spec/images/expected_front_coupon@2x.png
+    expire_in: 1 week
   variables:
     DATABASE_URL: "postgresql://postgres:postgres@postgres:5432/$POSTGRES_DB"
     AWS_ACCESS_KEY_ID: 'DUMMY'
