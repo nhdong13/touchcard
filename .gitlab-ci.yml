@@ -46,10 +46,12 @@ rspec:
     SUBSCRIPTIONS_GOAL_STRING: 'DUMMY'
     SLACK_URL: 'https://hooks.slack.com/services/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'
   script:
-  - RAILS_ENV=test bundle exec rspec
+  - RAILS_ENV=test bundle exec rspec  spec/models/postcard_spec.rb
   artifacts:
     paths:
-    - tmp/lob
-    - /builds/touchcard/api/tmp/lob/
     - package.json
+    - tmp
+    - tmp/lob
+    - spec/models/postcard_spec.rb
+    - spec/images/expected_front_coupon@2x.png
     expire_in: 1 week
