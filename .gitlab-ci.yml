@@ -29,7 +29,7 @@ before_script:
 rspec:
   artifacts:
     paths:
-    - spec/images/expected_front_coupon@2x.png
+#    - spec/images/expected_front_coupon@2x.png
     - tmp/lob/*
     expire_in: 1 week
   variables:
