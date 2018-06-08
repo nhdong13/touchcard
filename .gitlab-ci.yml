@@ -11,18 +11,18 @@ cache:
   paths:
     - vendor/ruby
 
-before_script:
-  - pwd
-  - yarn -v
-  - yarn install --pure-lockfile
-  - ruby -v
-#  - gem list
-#  - gem environment
-#  - gem install bundler  --no-ri --no-rdoc
-#  - bundle install -j $(nproc) --path vendor
-  - bundle --version
-  - bundle install -j $(nproc)
-  - RAILS_ENV=test bundle exec rake db:create db:schema:load
+#before_script:
+#  - pwd
+#  - yarn -v
+#  - yarn install --pure-lockfile
+#  - ruby -v
+##  - gem list
+##  - gem environment
+##  - gem install bundler  --no-ri --no-rdoc
+##  - bundle install -j $(nproc) --path vendor
+#  - bundle --version
+#  - bundle install -j $(nproc)
+#  - RAILS_ENV=test bundle exec rake db:create db:schema:load
 
 
 rspec:
@@ -30,13 +30,13 @@ rspec:
     paths:
     - package.json
     - tmp*
-    - tmp/lob/*
-    - tmp/lob/*.png
-    - spec/models/postcard_spec.rb
+#    - tmp/lob/*
+#    - tmp/lob/*.png
+#    - spec/models/postcard_spec.rb
     - spec/images/expected_front_coupon@2x.png
-    - /builds/project-0/*
-    - /builds/touchcard/api/spec/images/expected_back_no_coupon@2x.png
-    - /builds/touchcard/api/*
+#    - /builds/project-0/*
+#    - /builds/touchcard/api/spec/images/expected_back_no_coupon@2x.png
+#    - /builds/touchcard/api/*
     expire_in: 1 week
   variables:
     DATABASE_URL: "postgresql://postgres:postgres@postgres:5432/$POSTGRES_DB"
