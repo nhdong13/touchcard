@@ -33,16 +33,15 @@ WORKDIR /tmp
 # Install Ruby Gems
 # Installing gems here ensures that the majority of gems are cached
 # Users of this container should still `bundle install`
-COPY Gemfile /tmp/Gemfile
-COPY Gemfile.lock /tmp/Gemfile.lock
+COPY Gemfile Gemfile.lock /tmp/
 RUN bundle install
+
 
 # Install Node Packages via Yarn (caching optimization)
 # Users of this container should still `yarn`
-COPY package.json /tmp/package.json
-COPY yarn.lock /tmp/yarn.lock
+COPY package.json yarn.lock /tmp/
 RUN yarn install --pure-lockfile
-#  - yarn install --pure-lockfile --cache-folder .yarn
+#RUN yarn install --pure-lockfile --modules-folder /usr/local/node_modules/
 
 # ADD docker-entrypoint.sh /
 # ENTRYPOINT ["/docker-entrypoint.sh"]

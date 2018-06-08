@@ -18,3 +18,6 @@ First - be sure to change directory to project root so docker command has access
     docker push registry.gitlab.com/touchcard/api/environment
     
 
+## debugging inside of container:
+
+    docker run -it registry.gitlab.com/touchcard/api/environment:latest /bin/bash
