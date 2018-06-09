@@ -14,6 +14,8 @@ cache:
   # We may be able to pre-cache them in `/builds/touchcard/api/` instead and re-enable the Gitlab CI cache.
   # Alternatively - if we skip the need for caching in local executions we can probably live with the CI cache alone.
   #   - vendor/ruby
+  # Node module caching, on the other hand, seems to be working in reverse. I don't think the CI runner picks up
+  # cached node modules in the Docker container
     - node_modules
 
 before_script:
