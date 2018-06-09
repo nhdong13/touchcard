@@ -42,24 +42,26 @@ RSpec.describe Postcard, type: :model do
       Timecop.return
     end
 
-    # TODO: Move these tests into LobRenderUtil...
+    # TODO: Move these tests into LobRenderUtil spec
     it "renders_front_with_coupon" do
       postcard.discount_exp_at = Time.now + 23.days
       postcard.discount_code = "XXX-YYY-ZZZ"
       postcard.discount_pct = 37
       output_path =  LobRenderUtil.render_side_png(postcard: postcard, is_front: true)
-      expected_png_path = (Rails.root + 'spec/images/expected_front_coupon@2x.png').to_s
-      puts "\nComparing: [#{output_path}] with: [#{expected_png_path}]"
-      # expect(FileUtils.compare_file(output_path, expected_png_path)).to be_truthy  # Compare with expected output
-      # expect(FileUtils.compare_file(output_path, bad_png_path)).to be_falsey  # Compare with bad output (confirms test)
+      puts "\nChecking: #{output_path}"
+      retina_compare = FileUtils.compare_file(output_path, (Rails.root + 'spec/images/expected_front_coupon@2x.png').to_s)
+      normal_compare = FileUtils.compare_file(output_path, (Rails.root + 'spec/images/expected_front_coupon.png').to_s)
+      expect(retina_compare || normal_compare).to be_truthy  # Compare with expected output
+      expect(FileUtils.compare_file(output_path, bad_png_path)).to be_falsey  # Compare with bad output (confirms test)
     end
 
     it "renders_back_no_coupon" do
       output_path =  LobRenderUtil.render_side_png(postcard: postcard, is_front: false)
-      expected_png_path = (Rails.root + 'spec/images/expected_back_no_coupon@2x.png').to_s
-      puts "\nComparing: [#{output_path}] with: [#{expected_png_path}]"
-      # expect(FileUtils.compare_file(output_path, expected_png_path)).to be_truthy  # Compare with expected output
-      # expect(FileUtils.compare_file(output_path, bad_png_path)).to be_falsey  # Compare with bad output (confirms test)
+      puts "\nChecking: #{output_path}"
+      retina_compare = FileUtils.compare_file(output_path, (Rails.root + 'spec/images/expected_back_no_coupon@2x.png').to_s)
+      normal_compare = FileUtils.compare_file(output_path, (Rails.root + 'spec/images/expected_back_no_coupon.png').to_s)
+      expect(retina_compare || normal_compare).to be_truthy  # Compare with expected output
+      expect(FileUtils.compare_file(output_path, bad_png_path)).to be_falsey  # Compare with bad output (confirms test)
     end
 
     it "raises_error_on_missing_data" do
