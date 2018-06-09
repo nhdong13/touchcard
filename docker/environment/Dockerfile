@@ -47,15 +47,11 @@ RUN yarn install --pure-lockfile
 # ENTRYPOINT ["/docker-entrypoint.sh"]
 
 
-
 # TODO: Move this above, before yarn / bundler stuff
-# Font installation borrowed from:
-# https://github.com/KyleAMathews/docker-xelatex/blob/master/Dockerfile
-# also: https://gist.github.com/laverick/91762fcea40531e04b4a2c6e6cd9296c
-RUN mkdir fonts
-COPY fonts /fonts/
-#RUN wget -P fonts/  https://github.com/google/fonts/raw/master/ofl/montserrat/Montserrat-Regular.ttf
+# Font installation borrowed from: https://github.com/laverick/docker-xelatex/blob/master/Dockerfile
+RUN git clone https://gitlab.com/touchcard/fonts/ fonts
 RUN mkdir -p /usr/share/fonts/truetype/google-fonts/
 RUN find $PWD/fonts/ -name "*.ttf" -exec install -m644 {} /usr/share/fonts/truetype/google-fonts/ \; || return 1
+RUN rm -rf fonts
 RUN fc-cache -f -v
 
