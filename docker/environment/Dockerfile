@@ -53,7 +53,9 @@ RUN yarn install --pure-lockfile
 # https://github.com/KyleAMathews/docker-xelatex/blob/master/Dockerfile
 # also: https://gist.github.com/laverick/91762fcea40531e04b4a2c6e6cd9296c
 RUN mkdir fonts
-RUN wget -P fonts/  https://github.com/google/fonts/raw/master/ofl/montserrat/Montserrat-Regular.ttf
+COPY fonts /fonts/
+#RUN wget -P fonts/  https://github.com/google/fonts/raw/master/ofl/montserrat/Montserrat-Regular.ttf
 RUN mkdir -p /usr/share/fonts/truetype/google-fonts/
 RUN find $PWD/fonts/ -name "*.ttf" -exec install -m644 {} /usr/share/fonts/truetype/google-fonts/ \; || return 1
 RUN fc-cache -f -v
+
