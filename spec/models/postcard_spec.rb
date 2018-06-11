@@ -35,7 +35,7 @@ RSpec.describe Postcard, type: :model do
     let(:shop) { card_order.shop }
 
     before do
-      Timecop.freeze(Time.local(1990))
+      Timecop.freeze(Time.utc(1990))
     end
 
     after do
