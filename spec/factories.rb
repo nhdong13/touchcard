@@ -113,6 +113,16 @@ FactoryBot.define do
     association :card_side_front, factory: :card_side
     shop
     association :card_side_back, factory: :card_side
+    discount_pct -37
+    discount_exp 2
+    front_json {{ "version":0,
+                  "background_url": (Rails.root + 'spec/images/background_1.jpg').to_s,
+                  "discount_x":376,
+                  "discount_y":56 }}
+    back_json {{ "version":0,
+                 "background_url": (Rails.root + 'spec/images/background_2.jpg').to_s,
+                 "discount_x": nil,
+                 "discount_y": nil }}
   end
 
   factory :postcard do

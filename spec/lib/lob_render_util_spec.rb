@@ -3,46 +3,20 @@ require 'rails_helper'
 RSpec.describe LobRenderUtil do
 
   describe "#render_postcard" do
-    let(:customer) { postcard.customer }
-    let!(:address) { create(:address, customer: customer) }
     let(:postcard) { create(:postcard, sent: false, paid: true, card_order: card_order) }
-
-
-    background1_path = (Rails.root + 'spec/images/background_1.jpg').to_s
-    background2_path = (Rails.root + 'spec/images/background_2.jpg').to_s
-    bad_png_path = (Rails.root + 'spec/images/bad_output_retina.png').to_s
-
-    json_with_coupon = {
-        "version":0,
-        "background_url":background1_path,
-        "discount_x":376,
-        "discount_y":56
-    }
-
-    json_no_coupon = {
-        "version":0,
-        "background_url": background2_path,
-        "discount_x": nil,
-        "discount_y": nil
-    }
-
-    let(:card_order) { create(:card_order,
-                              discount_pct: -37,
-                              discount_exp: 2,
-                              front_json: json_with_coupon,
-                              back_json: json_no_coupon
-    ) }
+    let(:card_order) { create(:card_order) }
     let(:shop) { card_order.shop }
 
+    bad_png_path = (Rails.root + 'spec/images/bad_output_retina.png').to_s
+
     before do
-      Timecop.freeze(Time.local(1990))
+      Timecop.freeze(Time.utc(1990))
     end
 
     after do
       Timecop.return
     end
 
-    # TODO: Move these tests into LobRenderUtil...
     it "renders_front_with_coupon" do
       postcard.discount_exp_at = Time.now + 23.days
       postcard.discount_code = "XXX-YYY-ZZZ"
