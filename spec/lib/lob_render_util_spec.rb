@@ -22,7 +22,7 @@ RSpec.describe LobRenderUtil do
       postcard.discount_code = "XXX-YYY-ZZZ"
       postcard.discount_pct = 37
       output_path =  LobRenderUtil.render_side_png(postcard: postcard, is_front: true)
-      puts "\nChecking: #{output_path}"
+      puts "\nFront render: #{output_path}"
       retina_compare = FileUtils.compare_file(output_path, (Rails.root + 'spec/images/expected_front_coupon@2x.png').to_s)
       normal_compare = FileUtils.compare_file(output_path, (Rails.root + 'spec/images/expected_front_coupon.png').to_s)
       expect(retina_compare || normal_compare).to be_truthy  # Compare with expected output
@@ -31,7 +31,7 @@ RSpec.describe LobRenderUtil do
 
     it "renders_back_no_coupon" do
       output_path =  LobRenderUtil.render_side_png(postcard: postcard, is_front: false)
-      puts "\nChecking: #{output_path}"
+      puts "\nBack render: #{output_path}"
       retina_compare = FileUtils.compare_file(output_path, (Rails.root + 'spec/images/expected_back_no_coupon@2x.png').to_s)
       normal_compare = FileUtils.compare_file(output_path, (Rails.root + 'spec/images/expected_back_no_coupon.png').to_s)
       expect(retina_compare || normal_compare).to be_truthy  # Compare with expected output
