@@ -13,6 +13,7 @@ RUN curl -s http://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
 RUN echo "deb http://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
 
 # Install dependencies & Chrome
+# Not sure we actually need `xvfb` and dependencies
 RUN apt-get update && apt-get -y --no-install-recommends install zlib1g-dev liblzma-dev wget xvfb unzip libgconf2-4 libnss3 nodejs yarn \
  && wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -  \
  && echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list \
@@ -30,6 +31,15 @@ RUN wget -O /tmp/chromedriver.zip http://chromedriver.storage.googleapis.com/$CH
 
 WORKDIR /tmp
 
+# Install fonts for rendering
+# see: https://github.com/laverick/docker-xelatex/blob/master/Dockerfile
+RUN git clone https://gitlab.com/touchcard/fonts/ fonts
+RUN mkdir -p /usr/share/fonts/truetype/google-fonts/
+RUN find $PWD/fonts/ -name "*.ttf" -exec install -m644 {} /usr/share/fonts/truetype/google-fonts/ \; || return 1
+RUN rm -rf fonts
+RUN fc-cache -f -v
+
+
 # Install Ruby Gems
 # Installing gems here ensures that the majority of gems are cached
 # Users of this container should still `bundle install`
@@ -43,15 +53,5 @@ COPY package.json yarn.lock /tmp/
 RUN yarn install --pure-lockfile
 #RUN yarn install --pure-lockfile --modules-folder /usr/local/node_modules/
 
-# ADD docker-entrypoint.sh /
-# ENTRYPOINT ["/docker-entrypoint.sh"]
 
-
-# TODO: Move this above, before yarn / bundler stuff
-# Font installation borrowed from: https://github.com/laverick/docker-xelatex/blob/master/Dockerfile
-RUN git clone https://gitlab.com/touchcard/fonts/ fonts
-RUN mkdir -p /usr/share/fonts/truetype/google-fonts/
-RUN find $PWD/fonts/ -name "*.ttf" -exec install -m644 {} /usr/share/fonts/truetype/google-fonts/ \; || return 1
-RUN rm -rf fonts
-RUN fc-cache -f -v
-
+# ENTRYPOINT: For example see https://github.com/nbulaj/ruby-chromedriver
