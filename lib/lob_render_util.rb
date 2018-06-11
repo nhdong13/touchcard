@@ -79,6 +79,7 @@ module LobRenderUtil
     rendered_html = driver.execute_script("return document.documentElement.innerHTML") # NOT USED
 
     png_data = driver.screenshot_as :base64
+    driver.quit
     png_path = "#{Rails.root}/tmp/lob/#{file_id}_output.png"
     File.open(png_path, 'wb') {|f| f.write(Base64.decode64(png_data)) }
     File.open("#{Rails.root}/tmp/lob/#{file_id}_output.html", 'wb') {|f| f.write(rendered_html) } # NOT USED
