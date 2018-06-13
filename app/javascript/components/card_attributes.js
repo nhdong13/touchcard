@@ -16,10 +16,10 @@ export class CardAttributes {
 
     let x = safeAccess(card_side_json, 'discount_x');
     let y = safeAccess(card_side_json, 'discount_y');
-    let valid_coords = typeof x == 'number' && typeof y == 'number';
+    let coords_valid = typeof x == 'number' && typeof y == 'number';
 
-    this.discount_x = valid_coords ? x : null;
-    this.discount_y = valid_coords ? y : null;
+    this.discount_x = coords_valid ? x : null;
+    this.discount_y = coords_valid ? y : null;
     // this._last_discount_x // Won't get saved unless rails controller serializes it.
     // objects = []
   }
