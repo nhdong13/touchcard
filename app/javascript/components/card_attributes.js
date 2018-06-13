@@ -8,14 +8,18 @@ function safeAccess(obj, key){
   }, obj);
 }
 
-
 export class CardAttributes {
 
   constructor(card_side_json) {
     this.version = safeAccess(card_side_json, 'version') || 0;
     this.background_url = safeAccess(card_side_json, 'background_url') || null;
-    this.discount_x = safeAccess(card_side_json, 'discount_x') || null;
-    this.discount_y = safeAccess(card_side_json, 'discount_y') || null;
+
+    let x = safeAccess(card_side_json, 'discount_x');
+    let y = safeAccess(card_side_json, 'discount_y');
+    let valid_coords = typeof x == 'number' && typeof y == 'number';
+
+    this.discount_x = valid_coords ? x : null;
+    this.discount_y = valid_coords ? y : null;
     // this._last_discount_x // Won't get saved unless rails controller serializes it.
     // objects = []
   }
