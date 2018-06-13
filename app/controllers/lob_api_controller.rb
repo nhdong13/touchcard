@@ -16,8 +16,8 @@ class LobApiController < ApplicationController
 
   def self.render_side (postcard:, is_front:)
     if (is_front && postcard.card_order.shows_front_discount?) || (!is_front && postcard.card_order.shows_back_discount?)
-      raise MissingPostcardDataError, "Expected discount information" unless postcard.discount_code.present?
-      raise MissingPostcardDataError, "Expected discount information" unless postcard.discount_pct.present?
+      raise MissingPostcardDataError, "Expected discount code during rendering" unless postcard.discount_code.present?
+      raise MissingPostcardDataError, "Expected discount percentage during rendering" unless postcard.discount_pct.present?
     end
 
     # TODO: Not sure we need the paths injected. May be easier to make them global instead of passing into template
