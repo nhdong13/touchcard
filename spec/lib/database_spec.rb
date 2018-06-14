@@ -2,14 +2,16 @@ require 'rails_helper'
 
 describe "rake cardsetup:card_side_to_json", type: :task do
 
+  before { skip("This is a manual comparison. The automated test does not have any error conditions.") }
+
   it "migrates_correctly" do
 
     old_formats = [
-        { shop_id: 75, discount_x: 67, discount_y: 68, discount_pct: -10, discount_exp: 4, image: "https://touchcard-data.s3.amazonaws.com/uploads/18a83a77-fe73-4441-a540-a2cabe598567/touchcard-welcome-new-clients-1_front-side.png" },
+        # { shop_id: 75, discount_x: 67, discount_y: 68, discount_pct: -10, discount_exp: 4, image: "https://touchcard-data.s3.amazonaws.com/uploads/18a83a77-fe73-4441-a540-a2cabe598567/touchcard-welcome-new-clients-1_front-side.png" },
     # { shop_id: 748, discount_x: 8, discount_y: 42, discount_pct: -15, discount_exp: 3, image: "https://touchcard-data.s3.amazonaws.com/uploads/dbdeb11b-e3ec-431b-ab8f-14655a2199c9/VE28_1875x1275_Touchcard_Reverse_2.jpg" },
     # { shop_id: 730, discount_x: 1, discount_y: 73, discount_pct: -20, discount_exp: 3, image: "https://touchcard-data.s3.amazonaws.com/uploads/ea70a2e4-ebaf-4256-8e9f-fd5bac514dca/fright_rags_front_1875x1275_brown.jpg" },
     # { shop_id: 39, discount_x: 8, discount_y: 73, discount_pct: -20, discount_exp: 3, image: "https://touchcard-data.s3.amazonaws.com/uploads/4e56a7b6-c930-48a3-bb17-c252dc4fe118/Postcard2BackBlankCoupon.jpg" },
-    # { shop_id: 858, discount_x: 2, discount_y: 64, discount_pct: -20, discount_exp: 4, image: "https://touchcard-data.s3.amazonaws.com/uploads/b36efa57-a455-4cf5-81f3-b8563678296d/SOURCEvapes_1875x1275_back_2.jpg" },
+    { shop_id: 858, discount_x: 2, discount_y: 64, discount_pct: -20, discount_exp: 4, image: "https://touchcard-data.s3.amazonaws.com/uploads/b36efa57-a455-4cf5-81f3-b8563678296d/SOURCEvapes_1875x1275_back_2.jpg" },
     # { shop_id: 508, discount_x: 3, discount_y: 68, discount_pct: -15, discount_exp: 3, image: "https://touchcard-data.s3.amazonaws.com/uploads/45cc53b2-7239-4f4d-9b72-61ceb52d99ea/Touchcard_BACK.jpg" },
     # { shop_id: 538, discount_x: 7, discount_y: 40, discount_pct: -20, discount_exp: 3, image: "https://touchcard-data.s3.amazonaws.com/uploads/00a0642c-f968-462c-8b63-0f15db18bfe3/THANK_YOU_CARDS__3_.png" },
     # { shop_id: 674, discount_x: 0, discount_y: 73, discount_pct: -15, discount_exp: 5, image: "https://touchcard-data.s3.amazonaws.com/uploads/9afee744-32b8-41b8-bfca-afcfd31511ed/campus_protein_back_1875x1275_emails.png" },
@@ -59,21 +61,20 @@ describe "rake cardsetup:card_side_to_json", type: :task do
     task.execute
 
     CardOrder.all.each do |co|
-      postcard = create(:postcard, card_order: co, sent: false, paid: true, discount_code: "ABC-DEF-GHI", discount_pct: 20)
+      postcard = create(
+          :postcard,
+          card_order: co,
+          sent: false,
+          paid: true,
+          discount_code: "ABC-DEF-GHI",
+          discount_pct: co.discount_pct,
+          discount_exp_at: co.discount_exp.weeks.from_now )
+
       output_path =  LobRenderUtil.render_side_png(postcard: postcard, is_front: true)
       puts output_path
     end
 
-
-    # TODO:
-    #   Get an input file with old data
-    #   -- How do we get these as renders for comparison?
-    #
-    #   Create new data
-    #   Render new cards
-    #
-    #   Compare cars (exact comparison may not work, may need to just visually compare)
-    #
+    # TODO: More testing of production data
 
   end
 end

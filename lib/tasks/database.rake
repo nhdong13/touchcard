@@ -37,11 +37,14 @@ namespace :cardsetup do
         card_order.front_json["background_url"] = card_order.card_side_front.image
         card_order.back_json["background_url"] = card_order.card_side_back.image
 
-        card_order.front_json["discount_x"] = (front_x.is_a? Numeric) ? front_x * (404/72) : nil
-        card_order.front_json["discount_y"] = (front_y.is_a? Numeric) ? front_y * (277/73) : nil
+        x_scalar = 5.565  # manually tweaked to these
+        y_scalar = 3.732
+        
+        card_order.front_json["discount_x"] = (front_x.is_a? Numeric) ? front_x * x_scalar : nil
+        card_order.front_json["discount_y"] = (front_y.is_a? Numeric) ? front_y * y_scalar : nil
 
-        card_order.back_json["discount_x"] = (back_x.is_a? Numeric) ? back_x * (404/72) : nil
-        card_order.back_json["discount_y"] = (back_y.is_a? Numeric) ? back_y * (277/73) : nil
+        card_order.back_json["discount_x"] = (back_x.is_a? Numeric) ? back_x * x_scalar : nil
+        card_order.back_json["discount_y"] = (back_y.is_a? Numeric) ? back_y * y_scalar : nil
 
         card_order.save!
         print "."
