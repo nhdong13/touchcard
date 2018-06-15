@@ -1,4 +1,8 @@
 # Changelog
+#
+
+## (unreleased)
+- Upgrade stack: `heroku stack`
 
 ## v1.2.9
 - Fix app re-install (make sure that all Shops have correct value for uninstalled_at)
