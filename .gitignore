@@ -33,3 +33,12 @@ coverage
 .byebug_history
 /public/packs
 /node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+/public/packs
+/public/packs-test
+/node_modules
+
+nohup.out
