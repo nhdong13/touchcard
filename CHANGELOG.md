@@ -1,5 +1,8 @@
 # Changelog
 
+## v1.2.10
+- Remove future send_date from Admin tool's sample postcard dispatcher. New API plans don't support it.
+
 ## v1.2.9
 - Fix app re-install (make sure that all Shops have correct value for uninstalled_at)
 
