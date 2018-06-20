@@ -54,9 +54,10 @@ module CardUtil
         to: lob_to_address,
         # from: "Sent by Touchcard\nhttp://Touchcard.co",  # Does not pass address verification
         front: front_html,
-        back: back_html,
+        back: back_html
         # Allow time for canceling if sample is messed up
-        send_date: 1.hour.from_now.iso8601
+        # Disable send_date as new API plan doesn't allow it
+        # send_date: 1.hour.from_now.iso8601
     )
   end
 end
