@@ -79,8 +79,13 @@ class CardOrder < ApplicationRecord
   end
 
   def ensure_defaults
+<<<<<<< HEAD
     self.build_card_side_front(is_back: false) unless self.card_side_front
     self.build_card_side_back(is_back: true) unless self.card_side_back
+=======
+    self.card_side_front ||= CardSide.create!(is_back: false)
+    self.card_side_back ||= CardSide.create!(is_back: true)
+>>>>>>> old-app-with-node-stub
     self.send_delay = 1 if send_delay.nil? && type == "PostSaleOrder"
     self.international = false if international.nil?
     self.enabled = false if enabled.nil?

@@ -12,6 +12,7 @@ RSpec.describe AppUninstalledJob, type: :job do
 
   def stub_slack_notify
     stub_request(:post, "https://hooks.slack.com/services/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").
+<<<<<<< HEAD
         with(body: "{\"text\":\"A shop has uninstalled Touchcard: testshop1.myshopify.com.\"}",
              headers: {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip, deflate', 'Content-Length'=>'69', 'Host'=>'hooks.slack.com'}).
         to_return(status: 200, body: "", headers: {})
@@ -20,6 +21,16 @@ RSpec.describe AppUninstalledJob, type: :job do
         with(body: "{\"text\":\"A shop has uninstalled Touchcard: testshop1.myshopify.com.\"}",
              headers: {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip, deflate', 'Content-Length'=>'69', 'Host'=>'hooks.slack.com'}).
         to_return(status: 200, body: "", headers: {})
+=======
+         with(:body => "{\"text\":\"A shop has uninstalled Touchcard: testshop1.myshopify.com.\"}",
+              :headers => {'Accept'=>'*/*; q=0.5, application/xml', 'Accept-Encoding'=>'gzip, deflate', 'Content-Length'=>'69', 'User-Agent'=>'Ruby'}).
+         to_return(:status => 200, :body => "", :headers => {})
+
+     stub_request(:post, "https://hooks.slack.com/services/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").
+         with(:body => "{\"text\":\"A shop has uninstalled Touchcard: testshop1.myshopify.com.\"}",
+              :headers => {'Accept'=>'*/*; q=0.5, application/xml', 'Accept-Encoding'=>'gzip, deflate', 'Content-Length'=>'69', 'User-Agent'=>'Ruby'}).
+         to_return(:status => 200, :body => "", :headers => {})
+>>>>>>> old-app-with-node-stub
 
     stub_request(:post, /#{ENV['AC_ENDPOINT']}/).
         with(:body => {"tags"=>"uninstalled"}).
@@ -28,7 +39,7 @@ RSpec.describe AppUninstalledJob, type: :job do
 
   it 'queues the job' do
     expect { job }
-      .to change(ActiveJob::Base.queue_adapter.enqueued_jobs, :size).by(1)
+      .to change(ApplicationJob.queue_adapter.enqueued_jobs, :size).by(1)
   end
 
   it 'is in default queue' do

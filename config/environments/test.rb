@@ -47,6 +47,9 @@ Rails.application.configure do
   HTTPI.log = false if Rails.env == "test"
   HTTPI.log_level = :info
 
+<<<<<<< HEAD
   config.fullscreen_debug = false
 
+=======
+>>>>>>> old-app-with-node-stub
 end

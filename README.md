@@ -1,5 +1,6 @@
 # Touchcard
 
+<<<<<<< HEAD
 ## Setting up local Development
 
 Our app runs inside of the Shopify Admin, so local development requires connectivity 
@@ -63,6 +64,9 @@ When you do that you should be able to load the application via `http://localhos
 
 
 ## Deployment Process
+=======
+#Deployment Process
+>>>>>>> old-app-with-node-stub
 
 1. Look up next tag version (v#.#.# format)
 2. Update Changelog with changes & latest tag #.

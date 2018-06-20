@@ -9,7 +9,11 @@ class AppUninstalledJob < ApplicationJob
       shop.subscriptions.each { |s| s.destroy }
       shop.update_attributes(credit: 0, uninstalled_at: Time.now)
       slack_msg = "A shop has uninstalled Touchcard: #{shop.domain}."
+<<<<<<< HEAD
       SlackNotify.message(slack_msg) unless Rails.env.development?
+=======
+      SlackNotify.message(slack_msg)
+>>>>>>> old-app-with-node-stub
 
       sync_params = {
           "email" => shop.email,
