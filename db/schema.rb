@@ -15,7 +15,6 @@ ActiveRecord::Schema.define(version: 20180105153625) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-<<<<<<< HEAD
   create_table "active_admin_comments", id: :serial, force: :cascade do |t|
     t.string "namespace"
     t.text "body"
@@ -23,15 +22,6 @@ ActiveRecord::Schema.define(version: 20180105153625) do
     t.string "resource_type", null: false
     t.string "author_type"
     t.integer "author_id"
-=======
-  create_table "active_admin_comments", force: :cascade do |t|
-    t.string   "namespace"
-    t.text     "body"
-    t.string   "resource_id",   null: false
-    t.string   "resource_type", null: false
-    t.string   "author_type"
-    t.integer  "author_id"
->>>>>>> old-app-with-node-stub
     t.datetime "created_at"
     t.datetime "updated_at"
     t.index ["author_type", "author_id"], name: "index_active_admin_comments_on_author_type_and_author_id"
@@ -82,7 +72,6 @@ ActiveRecord::Schema.define(version: 20180105153625) do
     t.index ["reset_password_token"], name: "index_admin_users_on_reset_password_token", unique: true
   end
 
-<<<<<<< HEAD
   create_table "card_orders", id: :serial, force: :cascade do |t|
     t.integer "shop_id"
     t.string "type"
@@ -146,101 +135,6 @@ ActiveRecord::Schema.define(version: 20180105153625) do
     t.index ["customer_id"], name: "index_checkouts_on_customer_id"
     t.index ["shop_id"], name: "index_checkouts_on_shop_id"
     t.index ["shopify_id"], name: "index_checkouts_on_shopify_id", unique: true
-=======
-  add_index "admin_users", ["email"], name: "index_admin_users_on_email", unique: true, using: :btree
-  add_index "admin_users", ["reset_password_token"], name: "index_admin_users_on_reset_password_token", unique: true, using: :btree
-
-  create_table "ar_internal_metadata", primary_key: "key", force: :cascade do |t|
-    t.string   "value"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "card_orders", force: :cascade do |t|
-    t.integer  "shop_id"
-    t.string   "type"
-    t.integer  "discount_pct"
-    t.integer  "discount_exp"
-    t.boolean  "enabled",                     default: false, null: false
-    t.boolean  "international",               default: false, null: false
-    t.integer  "send_delay",                  default: 0
-    t.datetime "arrive_by"
-    t.datetime "customers_before"
-    t.datetime "customers_after"
-    t.string   "status"
-    t.datetime "created_at",                                  null: false
-    t.datetime "updated_at",                                  null: false
-    t.integer  "winback_delay"
-    t.integer  "lifetime_purchase_threshold"
-    t.boolean  "archived",                    default: false
-    t.json     "front_json",                  default: {}
-    t.json     "back_json",                   default: {}
-  end
-
-  create_table "card_sides", force: :cascade do |t|
-    t.text     "image"
-    t.text     "preview"
-    t.boolean  "is_back",                 null: false
-    t.datetime "created_at",              null: false
-    t.datetime "updated_at",              null: false
-    t.integer  "discount_y"
-    t.integer  "discount_x"
-    t.integer  "card_order_id", limit: 8
-  end
-
-  add_index "card_sides", ["card_order_id"], name: "index_card_sides_on_card_order_id", using: :btree
-
-  create_table "charges", force: :cascade do |t|
-    t.integer  "shop_id",                                    null: false
-    t.integer  "card_order_id",                              null: false
-    t.integer  "shopify_id",       limit: 8
-    t.integer  "amount",                                     null: false
-    t.boolean  "recurring",                  default: false, null: false
-    t.text     "status",                     default: "new", null: false
-    t.string   "shopify_redirect"
-    t.text     "last_page",                                  null: false
-    t.datetime "created_at",                                 null: false
-    t.datetime "updated_at",                                 null: false
-    t.text     "token",                                      null: false
-  end
-
-  create_table "checkouts", force: :cascade do |t|
-    t.integer  "shopify_id",             limit: 8, null: false
-    t.integer  "shop_id"
-    t.integer  "customer_id"
-    t.string   "abandoned_checkout_url",           null: false
-    t.string   "cart_token",                       null: false
-    t.datetime "closed_at"
-    t.datetime "completed_at"
-    t.string   "token",                            null: false
-    t.decimal  "total_price",                      null: false
-    t.datetime "created_at",                       null: false
-    t.datetime "updated_at",                       null: false
-    t.integer  "total_line_items_price"
-  end
-
-  add_index "checkouts", ["customer_id"], name: "index_checkouts_on_customer_id", using: :btree
-  add_index "checkouts", ["shop_id"], name: "index_checkouts_on_shop_id", using: :btree
-  add_index "checkouts", ["shopify_id"], name: "index_checkouts_on_shopify_id", unique: true, using: :btree
-
-  create_table "customers", force: :cascade do |t|
-    t.integer  "shopify_id",        limit: 8, null: false
-    t.string   "first_name"
-    t.string   "last_name"
-    t.string   "email"
-    t.boolean  "verified_email"
-    t.integer  "total_spent"
-    t.boolean  "tax_exempt"
-    t.text     "tags"
-    t.string   "state"
-    t.integer  "orders_count"
-    t.text     "note"
-    t.text     "last_order_name"
-    t.string   "last_order_id"
-    t.boolean  "accepts_marketing"
-    t.datetime "created_at",                  null: false
-    t.datetime "updated_at",                  null: false
->>>>>>> old-app-with-node-stub
   end
 
   create_table "customers", id: :serial, force: :cascade do |t|
@@ -358,7 +252,6 @@ ActiveRecord::Schema.define(version: 20180105153625) do
     t.integer "card_order_id"
     t.string "discount_code"
     t.datetime "send_date"
-<<<<<<< HEAD
     t.boolean "sent", default: false, null: false
     t.datetime "date_sent"
     t.string "postcard_id"
@@ -378,25 +271,6 @@ ActiveRecord::Schema.define(version: 20180105153625) do
     t.boolean "canceled", default: false
     t.index ["customer_id"], name: "index_postcards_on_customer_id"
     t.index ["order_id"], name: "index_postcards_on_order_id"
-=======
-    t.boolean  "sent",                                   default: false, null: false
-    t.datetime "date_sent"
-    t.string   "postcard_id"
-    t.datetime "created_at",                                             null: false
-    t.datetime "updated_at",                                             null: false
-    t.integer  "customer_id"
-    t.integer  "order_id"
-    t.boolean  "paid",                                   default: false, null: false
-    t.datetime "estimated_arrival"
-    t.boolean  "arrival_notification_sent",              default: false, null: false
-    t.integer  "postcard_triggerable_id"
-    t.string   "postcard_triggerable_type"
-    t.boolean  "expiration_notification_sent",           default: false
-    t.integer  "discount_pct"
-    t.datetime "discount_exp_at"
-    t.integer  "price_rule_id",                limit: 8
-    t.boolean  "canceled",                               default: false
->>>>>>> old-app-with-node-stub
   end
 
   create_table "shops", id: :serial, force: :cascade do |t|
@@ -414,7 +288,6 @@ ActiveRecord::Schema.define(version: 20180105153625) do
     t.integer "last_month"
     t.boolean "send_next", default: true, null: false
     t.datetime "last_login"
-<<<<<<< HEAD
     t.string "stripe_customer_id"
     t.string "name"
     t.string "email"
@@ -424,17 +297,6 @@ ActiveRecord::Schema.define(version: 20180105153625) do
     t.datetime "shopify_created_at"
     t.datetime "shopify_updated_at"
     t.string "approval_state", default: "new", null: false
-=======
-    t.string   "stripe_customer_id"
-    t.string   "name"
-    t.string   "email"
-    t.string   "customer_email"
-    t.string   "plan_name"
-    t.string   "owner"
-    t.datetime "shopify_created_at"
-    t.datetime "shopify_updated_at"
-    t.string   "approval_state",               default: "new", null: false
->>>>>>> old-app-with-node-stub
     t.datetime "uninstalled_at"
     t.datetime "last_login_at"
     t.json "metadata", default: {}

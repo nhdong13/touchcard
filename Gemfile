@@ -22,10 +22,6 @@ gem "sdoc", "~> 0.4.0", group: :doc
 gem "devise", "~> 4.3.0"
 gem "activeadmin", "~> 1.0.0"
 gem "active_material", git: "https://github.com/laverick/active_material"
-<<<<<<< HEAD
-=======
-
->>>>>>> old-app-with-node-stub
 
 # API serializer
 gem "active_model_serializers", "~> 0.8.0"
@@ -74,7 +70,6 @@ gem "mailgunner", '~> 2.4'
 # ActiveCampaign ('bdad6c2' is last building version as of 2017-08-26)
 gem "active_campaign", git: "https://github.com/laverick/active_campaign", ref: "bdad6c2"
 
-<<<<<<< HEAD
 gem 'faker'
 
 # Javascript Pipeline
@@ -87,8 +82,6 @@ gem "thor", "~> 0.19.1"
 gem "pg"
 
 gem "selenium-webdriver"
-=======
->>>>>>> old-app-with-node-stub
 
 group :assets do
   gem "therubyracer", platforms: :ruby

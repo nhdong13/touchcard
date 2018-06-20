@@ -29,11 +29,7 @@ module CardUtil
     discount_code = nil
     expiry = nil
 
-<<<<<<< HEAD
     if card_order.has_discount?
-=======
-    if card_order.discount?
->>>>>>> old-app-with-node-stub
       discount_code = 'SAM-PLE-XXX'
       expiry = 4.weeks.from_now.midnight
     end

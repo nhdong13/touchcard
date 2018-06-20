@@ -5,7 +5,7 @@ Rails.application.routes.draw do
   root 'automations#index' # See comments in controller
 
   # API routes
-<<<<<<< HEAD
+
   # namespace :api, defaults: {format: 'json'} do
   #   namespace :v1 do
   #     get 'sign', to: 'aws#sign'
@@ -30,32 +30,7 @@ Rails.application.routes.draw do
   #     end
   #   end
   # end
-=======
-  namespace :api, defaults: {format: 'json'} do
-    namespace :v1 do
-      get 'sign', to: 'aws#sign'
-      resources :card_sides, only: [:show, :update]
-      resources :filters, only: [:show, :update, :destroy, :create]
-      resources :shops, only: [:show, :update] do
-        collection { get :current }
-      end
-      resources :card_orders, only: [:index, :show, :create, :update]
-      resources :postcards, only: [:index, :show, :create, :update] do
-        patch 'cancel', on: :member
-      end
-      resources :line_items, only: [:index, :show]
-      resources :subscriptions, only: [:show, :create, :update]
-      resources :plans, only: [:show, :index]
-      # Switched to stripe this is not used for now
-      # resources :charges, only: [:show, :create, :update] do
-      #   get 'activate', on: :collection
-      # end
-      resources :shopify_customers, only: [] do
-        collection { get :count }
-      end
-    end
-  end
->>>>>>> old-app-with-node-stub
+
   # Stripe wobhook routes
   post '/stripe/events', to: 'stripe_webhook#hook'
 
@@ -89,7 +64,6 @@ Rails.application.routes.draw do
 
   resource :subscriptions, only: [:new, :create, :show, :edit, :update, :destroy]
 
-<<<<<<< HEAD
   resource :shops, only: [:edit, :update], path: 'settings'
 
   resources :automations, only: [:index, :show, :edit, :update] do
@@ -103,11 +77,4 @@ Rails.application.routes.draw do
     get '/lob_debug' => 'lob_api#debug'
   end
 
-=======
-  # Shopify Engine
-  root :to => 'root#oauth_entry_point' # See comments in controller
-  mount ShopifyApp::Engine, at: '/'
-  get '/app' => 'root#app'
-  get '/app/*path' => 'root#app'
->>>>>>> old-app-with-node-stub
 end

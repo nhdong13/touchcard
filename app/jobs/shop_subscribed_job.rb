@@ -1,11 +1,7 @@
 require "slack_notify"
 require "active_campaign_logger"
 
-<<<<<<< HEAD
-class ShopSubscribedJob < ActiveJob::Base
-=======
 class ShopSubscribedJob < ApplicationJob
->>>>>>> old-app-with-node-stub
   queue_as :default
 
   def perform(shop)

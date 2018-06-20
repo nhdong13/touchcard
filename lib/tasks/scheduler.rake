@@ -8,20 +8,17 @@ task :daily_send_cards => :environment do
   puts "Notifying on #slack..."
   slack_msg = "#{cards_sent} postcards were sent today."
   SlackNotify.message(slack_msg)
-<<<<<<< HEAD
 end
 
-desc "Handle Winback Postcards"
-task :daily_send_winback_cards => :environment do
-  Shop.all.each do |shop|
-    next unless shop.has_customer_winback_enabled?
-    shop.customers.each do |customer|
-      CustomerWinbackHandler.new(customer, shop).call
-    end
-  end
-=======
->>>>>>> old-app-with-node-stub
-end
+# desc "Handle Winback Postcards"
+# task :daily_send_winback_cards => :environment do
+#   Shop.all.each do |shop|
+#     next unless shop.has_customer_winback_enabled?
+#     shop.customers.each do |customer|
+#       CustomerWinbackHandler.new(customer, shop).call
+#     end
+#   end
+# end
 
 desc "Update Shop metadata and last_month New Customers"
 task :update_shop_metadata => :environment do

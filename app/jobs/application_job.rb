@@ -1,6 +1,4 @@
 class ApplicationJob < ActiveJob::Base
-<<<<<<< HEAD
-=======
 
   def deserialize(job_data)
     sanitized_data = recursive_delete_gids(job_data)
@@ -23,5 +21,4 @@ class ApplicationJob < ActiveJob::Base
       end
     end
   end
->>>>>>> old-app-with-node-stub
 end

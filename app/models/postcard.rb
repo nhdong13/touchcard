@@ -67,17 +67,8 @@ class Postcard < ApplicationRecord
     international? ? 2 : 1
   end
 
-<<<<<<< HEAD
   class DiscountCreationError < StandardError
   end
-=======
-  def send_card
-    return logger.info "attempted sending postcard:#{id} that is not paid for" unless paid?
-    # TODO: all kinds of error handling
-    # Test lob
-    @lob = Lob.load
-    self.estimated_arrival = estimated_transit_days.business_days.from_now.end_of_day
->>>>>>> old-app-with-node-stub
 
   def prepare_card
     self.estimated_arrival = estimated_transit_days.business_days.from_now.end_of_day
@@ -118,7 +109,6 @@ class Postcard < ApplicationRecord
     self.save! # TODO: Add error handling here
   end
 
-<<<<<<< HEAD
   def one_active_postcard_per_customer
     postcards = Postcard.where.not(
       id: self.id
@@ -133,8 +123,6 @@ class Postcard < ApplicationRecord
     end
   end
 
-=======
->>>>>>> old-app-with-node-stub
   def cancel
     self.canceled = true
     self.transaction do
@@ -143,7 +131,6 @@ class Postcard < ApplicationRecord
     end
     self.save!
   end
-<<<<<<< HEAD
 
   def city
     address.city
@@ -156,6 +143,5 @@ class Postcard < ApplicationRecord
   def country
     address.country
   end
-=======
->>>>>>> old-app-with-node-stub
+
 end

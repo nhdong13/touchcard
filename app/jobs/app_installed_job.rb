@@ -1,11 +1,7 @@
 require "slack_notify"
 require "active_campaign_logger"
 
-<<<<<<< HEAD
-class AppInstalledJob < ActiveJob::Base
-=======
 class AppInstalledJob < ApplicationJob
->>>>>>> old-app-with-node-stub
   queue_as :default
 
   def perform(shop)
@@ -33,10 +29,6 @@ class AppInstalledJob < ApplicationJob
 
     slack_message = "A new shop has installed Touchcard: #{shop.domain}\n" +
         "email: #{shop.email}\nowner: #{shop.owner}\n# new customers: #{shop.last_month}"
-<<<<<<< HEAD
     SlackNotify.message(slack_message) unless Rails.env.development?
-=======
-    SlackNotify.message(slack_message)
->>>>>>> old-app-with-node-stub
   end
 end

@@ -1,5 +1,4 @@
 {
-<<<<<<< HEAD
   "license": "UNLICENSED",
   "dependencies": {
     "@rails/webpacker": "^3.0.2",
@@ -18,7 +17,4 @@
     "eslint-plugin-vue": "^2.1.0",
     "webpack-dev-server": "^2.9.4"
   }
-=======
-  "license": "UNLICENSED"
->>>>>>> old-app-with-node-stub
 }
