@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170905180325) do
+ActiveRecord::Schema.define(version: 20180105153625) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -21,8 +21,8 @@ ActiveRecord::Schema.define(version: 20170905180325) do
     t.text     "body"
     t.string   "resource_id",   null: false
     t.string   "resource_type", null: false
-    t.integer  "author_id"
     t.string   "author_type"
+    t.integer  "author_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -76,33 +76,45 @@ ActiveRecord::Schema.define(version: 20170905180325) do
   add_index "admin_users", ["email"], name: "index_admin_users_on_email", unique: true, using: :btree
   add_index "admin_users", ["reset_password_token"], name: "index_admin_users_on_reset_password_token", unique: true, using: :btree
 
+  create_table "ar_internal_metadata", primary_key: "key", force: :cascade do |t|
+    t.string   "value"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "card_orders", force: :cascade do |t|
     t.integer  "shop_id"
     t.string   "type"
     t.integer  "discount_pct"
     t.integer  "discount_exp"
-    t.boolean  "enabled",            default: false, null: false
-    t.boolean  "international",      default: false, null: false
-    t.integer  "send_delay"
+    t.boolean  "enabled",                     default: false, null: false
+    t.boolean  "international",               default: false, null: false
+    t.integer  "send_delay",                  default: 0
     t.datetime "arrive_by"
     t.datetime "customers_before"
     t.datetime "customers_after"
     t.string   "status"
-    t.datetime "created_at",                         null: false
-    t.datetime "updated_at",                         null: false
-    t.integer  "card_side_front_id",                 null: false
-    t.integer  "card_side_back_id",                  null: false
+    t.datetime "created_at",                                  null: false
+    t.datetime "updated_at",                                  null: false
+    t.integer  "winback_delay"
+    t.integer  "lifetime_purchase_threshold"
+    t.boolean  "archived",                    default: false
+    t.json     "front_json",                  default: {}
+    t.json     "back_json",                   default: {}
   end
 
   create_table "card_sides", force: :cascade do |t|
     t.text     "image"
     t.text     "preview"
-    t.boolean  "is_back",    null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.boolean  "is_back",                 null: false
+    t.datetime "created_at",              null: false
+    t.datetime "updated_at",              null: false
     t.integer  "discount_y"
     t.integer  "discount_x"
+    t.integer  "card_order_id", limit: 8
   end
+
+  add_index "card_sides", ["card_order_id"], name: "index_card_sides_on_card_order_id", using: :btree
 
   create_table "charges", force: :cascade do |t|
     t.integer  "shop_id",                                    null: false
@@ -117,6 +129,25 @@ ActiveRecord::Schema.define(version: 20170905180325) do
     t.datetime "updated_at",                                 null: false
     t.text     "token",                                      null: false
   end
+
+  create_table "checkouts", force: :cascade do |t|
+    t.integer  "shopify_id",             limit: 8, null: false
+    t.integer  "shop_id"
+    t.integer  "customer_id"
+    t.string   "abandoned_checkout_url",           null: false
+    t.string   "cart_token",                       null: false
+    t.datetime "closed_at"
+    t.datetime "completed_at"
+    t.string   "token",                            null: false
+    t.decimal  "total_price",                      null: false
+    t.datetime "created_at",                       null: false
+    t.datetime "updated_at",                       null: false
+    t.integer  "total_line_items_price"
+  end
+
+  add_index "checkouts", ["customer_id"], name: "index_checkouts_on_customer_id", using: :btree
+  add_index "checkouts", ["shop_id"], name: "index_checkouts_on_shop_id", using: :btree
+  add_index "checkouts", ["shopify_id"], name: "index_checkouts_on_shopify_id", unique: true, using: :btree
 
   create_table "customers", force: :cascade do |t|
     t.integer  "shopify_id",        limit: 8, null: false
@@ -248,11 +279,13 @@ ActiveRecord::Schema.define(version: 20170905180325) do
     t.boolean  "paid",                                   default: false, null: false
     t.datetime "estimated_arrival"
     t.boolean  "arrival_notification_sent",              default: false, null: false
+    t.integer  "postcard_triggerable_id"
+    t.string   "postcard_triggerable_type"
     t.boolean  "expiration_notification_sent",           default: false
     t.integer  "discount_pct"
     t.datetime "discount_exp_at"
-    t.boolean  "canceled",                               default: false
     t.integer  "price_rule_id",                limit: 8
+    t.boolean  "canceled",                               default: false
   end
 
   add_index "postcards", ["customer_id"], name: "index_postcards_on_customer_id", using: :btree
@@ -274,7 +307,6 @@ ActiveRecord::Schema.define(version: 20170905180325) do
     t.boolean  "send_next",                    default: true,  null: false
     t.datetime "last_login"
     t.string   "stripe_customer_id"
-    t.string   "approval_state",               default: "new", null: false
     t.string   "name"
     t.string   "email"
     t.string   "customer_email"
@@ -282,6 +314,7 @@ ActiveRecord::Schema.define(version: 20170905180325) do
     t.string   "owner"
     t.datetime "shopify_created_at"
     t.datetime "shopify_updated_at"
+    t.string   "approval_state",               default: "new", null: false
     t.datetime "uninstalled_at"
     t.datetime "last_login_at"
     t.json     "metadata",                     default: {}
@@ -312,11 +345,12 @@ ActiveRecord::Schema.define(version: 20170905180325) do
   add_index "subscriptions", ["shop_id"], name: "index_subscriptions_on_shop_id", using: :btree
 
   add_foreign_key "addresses", "customers"
-  add_foreign_key "card_orders", "card_sides", column: "card_side_back_id"
-  add_foreign_key "card_orders", "card_sides", column: "card_side_front_id"
   add_foreign_key "card_orders", "shops"
+  add_foreign_key "card_sides", "card_orders"
   add_foreign_key "charges", "card_orders"
   add_foreign_key "charges", "shops"
+  add_foreign_key "checkouts", "customers"
+  add_foreign_key "checkouts", "shops"
   add_foreign_key "filters", "card_orders"
   add_foreign_key "line_items", "orders"
   add_foreign_key "orders", "addresses", column: "billing_address_id"

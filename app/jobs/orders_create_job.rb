@@ -1,4 +1,4 @@
-class OrdersCreateJob < ActiveJob::Base
+class OrdersCreateJob < ApplicationJob
 
   def perform(shop_domain:, webhook:)
     shop = Shop.find_by(domain: shop_domain)
