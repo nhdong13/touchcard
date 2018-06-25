@@ -9,10 +9,9 @@ module DataImporter
       @shop = ::Shop.find(shop_id)
     end
 
-    def import_orders(before_time = Time.now, lookback_days = 1)
+    def import_orders(before_time, after_time)
       @shop.with_shopify_session do
         page_index = 1
-        after_time = before_time - lookback_days.days
         loop do
           Rails.logger.info "Fetching Orders from Shopify - page #{page_index}..."
           chunk = get_orders(page_index, after_time, before_time)
