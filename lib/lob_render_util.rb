@@ -63,6 +63,7 @@ module LobRenderUtil
     options.binary = chrome_bin if chrome_bin # custom binary path is only for heroku
     options.add_argument('--window-size=1875,1275')
     options.add_argument('--no-sandbox') if Rails.env.test?  # Disable sandbox when rendering w/ Docker
+    options.add_argument('--disable-dev-shm-usage') # Don't use shared memory partition
     driver = Selenium::WebDriver.for :chrome, options: options
     driver.navigate.to "file:///#{file_path}"
 
