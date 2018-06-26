@@ -28,3 +28,13 @@ First - be sure to change directory to project root so docker command has access
 ## debugging inside of container:
 
     docker run -it registry.gitlab.com/touchcard/api/environment:latest /bin/bash
+
+
+## Executing gitlab runner locally
+
+    gitlab-runner exec docker rspec 
+    
+# May need to include shared memory size option 
+ 
+    gitlab-runner exec docker --docker-shm-size=2000000000 rspec
+     
