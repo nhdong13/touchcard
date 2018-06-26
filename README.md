@@ -112,3 +112,14 @@ We use S3 in two unrelated ways:
 `touchcard-data (production)`
 `touchcard-data-staging`
 `touchcard-data-dev`
+
+
+## Buildpacks
+
+We use the following Heroku buildpacks:
+
+1. heroku/nodejs
+2. heroku/ruby
+3. https://github.com/heroku/heroku-buildpack-google-chrome.git
+4. https://github.com/heroku/heroku-buildpack-chromedriver.git
+5. https://gitlab.com/touchcard/heroku-buildpack-touchcard-fonts.git
