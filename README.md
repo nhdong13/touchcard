@@ -5,6 +5,7 @@
 Our app runs inside of the Shopify Admin, so local development requires connectivity 
 to the Shopify.
 
+
 ### Set up Partner Account + Development Shop
 Create a free Shopify Partner account at https://www.shopify.com/partners
 Set up a development app under 'Apps'. Under the App Info tab, make sure to set: 
