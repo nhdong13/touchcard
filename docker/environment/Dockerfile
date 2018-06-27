@@ -33,7 +33,7 @@ WORKDIR /tmp
 
 # Install fonts for rendering
 # see: https://github.com/laverick/docker-xelatex/blob/master/Dockerfile
-RUN git clone https://gitlab.com/touchcard/fonts/ fonts
+COPY .fonts fonts
 RUN mkdir -p /usr/share/fonts/truetype/google-fonts/
 RUN find $PWD/fonts/ -name "*.ttf" -exec install -m644 {} /usr/share/fonts/truetype/google-fonts/ \; || return 1
 RUN rm -rf fonts
