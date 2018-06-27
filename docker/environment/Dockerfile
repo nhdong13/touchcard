@@ -33,6 +33,7 @@ WORKDIR /tmp
 
 # Install fonts for rendering
 # see: https://github.com/laverick/docker-xelatex/blob/master/Dockerfile
+# TODO: Since fonts now live in our main repo, can probably do font installation in gitlab-ci.yml instead. Avoids recompile / mimics Heroku
 COPY .fonts fonts
 RUN mkdir -p /usr/share/fonts/truetype/google-fonts/
 RUN find $PWD/fonts/ -name "*.ttf" -exec install -m644 {} /usr/share/fonts/truetype/google-fonts/ \; || return 1
