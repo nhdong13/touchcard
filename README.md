@@ -123,4 +123,3 @@ We use the following Heroku buildpacks:
 2. heroku/ruby
 3. https://github.com/heroku/heroku-buildpack-google-chrome.git
 4. https://github.com/heroku/heroku-buildpack-chromedriver.git
-5. https://gitlab.com/touchcard/heroku-buildpack-touchcard-fonts.git

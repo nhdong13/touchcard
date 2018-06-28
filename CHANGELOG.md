@@ -2,53 +2,22 @@
 #
 
 ## (unreleased)
-- Upgrade stack: `heroku stack`
+- CHANGES:
+    - ...
+
+- RELEASE REQUIREMENTS
+
+    - Upgrade stack: `heroku-16`
+    - Upgrade Database to Pro
+    - ENV: removed AWS_BUCKET_NAME, only using S3_BUCKET_NAME
+    - ENV: add GTM_ENVIRONMENT_PARAMS (see gtm_helper.rb)
+        - DEV: '&gtm_auth=n553XLcYVrmY05MZ2RjQyA&gtm_preview=env-5&gtm_cookies_win=x' 
+        - LIVE: '&gtm_auth=Vu4BC2LBqiawRiIX2VOn4g&gtm_preview=env-2&gtm_cookies_win=x'    
+    - BUILDPACKS - see README for required buildpacks    
+     
 
 ## v1.2.9
 - Fix app re-install (make sure that all Shops have correct value for uninstalled_at)
-
-## v1.2.8
-- Hotfix 
-    - new last_month calculation was wrong because we were only counting open orders
-    - postcards/index api was sorting by updated_at. changed to created_at to be less confusing
-    - added missing include in uninstalled job
-
-## v1.2.7
-- Hotfix - New way of checking ShopifyAPI::Customer.default_address in orders/create webhook was broken. 
-
-
-## v1.2.6
-- Comprehensive Admin Tool Improvements: 
-    - Navigation 
-    - Edit: Subscription Quantity, Shop Credits, Card Order Sending Enable
-    - Send Sample Postcard
-    - Cancel Postcards
-    - Material Design Skin    
-- Add name and size tag to ActiveCampaign subscribers
-- Add subscribers to Customer list in ActiveCampaign
-- Background task install jobs (ActiveCampaign Subscribe + Slack Notify)
-- Bump default send_delay to 1 week
-- Add Data Importer Library (not yet hooked up)
-- Cap last_month value to # orders in case of import. (+remove synchronous call from install)
-
-
-
-## (in development)
-- ...
-- ENV
-    - Removed AWS_BUCKET_NAME, only using S3_BUCKET_NAME
-    - add GTM_ENVIRONMENT_PARAMS (see gtm_helper.rb)
-    
-- DEPLOYMENT    
-    heroku buildpacks:add https://github.com/heroku/heroku-buildpack-google-chrome.git
-    heroku buildpacks:add https://github.com/heroku/heroku-buildpack-chromedriver.git
-    
-    ### looks like nodejs buildpack is still required as well.
-    
-    
-    Chrome Buildpack
-    https://github.com/heroku/heroku-buildpack-google-chrome/issues/26
-     
 
 ## v1.2.8
 - Hotfix 
