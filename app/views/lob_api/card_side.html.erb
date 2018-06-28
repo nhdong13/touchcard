@@ -3,7 +3,7 @@
 <%= tag.div id: "lob-api-card-side",
             data: {
                 attributes: @json_attributes,
-                discount_pct: @postcard.discount_pct,
+                discount_pct: @postcard.discount_pct&.abs,
                 discount_exp: @postcard.discount_exp_at ? (@postcard.discount_exp_at - 1.day).strftime("%m/%d/%Y") : nil,
                 discount_code: @postcard.discount_code
             }

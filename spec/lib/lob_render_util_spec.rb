@@ -20,7 +20,7 @@ RSpec.describe LobRenderUtil do
     it "renders_front_with_coupon" do
       postcard.discount_exp_at = Time.now + 23.days
       postcard.discount_code = "XXX-YYY-ZZZ"
-      postcard.discount_pct = 37
+      postcard.discount_pct = -37
       output_path =  LobRenderUtil.render_side_png(postcard: postcard, is_front: true)
       puts "\nFront render: #{output_path}"
       retina_compare = FileUtils.compare_file(output_path, (Rails.root + 'spec/images/expected_front_coupon@2x.png').to_s)
@@ -42,7 +42,7 @@ RSpec.describe LobRenderUtil do
       postcard.discount_exp_at = Time.now + 23.days
       # Do NOT set discount code or percentage: should throw error
       # postcard.discount_code = "XXX-YYY-ZZZ"
-      # postcard.discount_pct = 37
+      # postcard.discount_pct = -37
       expect{ LobRenderUtil.render_side_png(postcard: postcard, is_front: true) }.to raise_error(LobApiController::MissingPostcardDataError)
     end
   end
