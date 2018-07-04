@@ -12,7 +12,8 @@
     - ENV: removed AWS_BUCKET_NAME, only using S3_BUCKET_NAME
     - ENV: add GTM_ENVIRONMENT_PARAMS (see gtm_helper.rb)
         - DEV: '&gtm_auth=n553XLcYVrmY05MZ2RjQyA&gtm_preview=env-5&gtm_cookies_win=x' 
-        - LIVE: '&gtm_auth=Vu4BC2LBqiawRiIX2VOn4g&gtm_preview=env-2&gtm_cookies_win=x'    
+        - LIVE: '&gtm_auth=Vu4BC2LBqiawRiIX2VOn4g&gtm_preview=env-2&gtm_cookies_win=x'
+    - ENV: REAMAZE_SSO_SECRET    
     - BUILDPACKS - see README for required buildpacks    
      
 
