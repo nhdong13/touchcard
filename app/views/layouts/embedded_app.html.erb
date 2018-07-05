@@ -11,13 +11,11 @@
   <%= csrf_meta_tags %>
   <%= gtm_head_tag %>
   <%= javascript_include_tag 'https://checkout.stripe.com/checkout.js' %>
-
-
 </head>
 
 <body>
 
-  <%= gtm_body_tag %>
+<%= gtm_body_tag %>
 
 <div class="app-wrapper">
   <div class="app-content">
@@ -35,62 +33,21 @@
 <script src="https://cdn.shopify.com/s/assets/external/app.js?<%= Time.now.strftime('%Y%m%d%H') %>"></script>
 
 <script type="text/javascript">
-    ShopifyApp.init({
-        apiKey: "<%= ShopifyApp.configuration.api_key %>",
-        shopOrigin: "<%= "https://#{ @shop_session.url }" if @shop_session %>",
-        debug: <%= Rails.env.development? ? 'true' : 'false' %>,
-        forceRedirect: <%= Rails.configuration.fullscreen_debug ? 'false' : 'true' %>
-    });
-</script>
-
-<% if content_for?(:javascript) %>
-    <div id="ContentForJavascript" data-turbolinks-temporary>
-      <%= yield :javascript %>
-    </div>
-<% end %>
-
-
-<script type="text/javascript" async src="https://cdn.reamaze.com/assets/reamaze.js"></script>
-<script type="text/javascript">
-  var _support = _support || { 'ui': {}, 'user': {} };
-  _support['account'] = 'touchcard';
-  _support['ui']['contactMode'] = 'anonymous';
-  _support['ui']['enableKb'] = 'true';
-  _support['ui']['styles'] = {
-    widgetColor: 'rgb(92, 64, 152)',
-  };
-  _support['ui']['widget'] = {
-    icon: 'chat',
-    label: {
-      text: 'Hey there 👋 Have questions or need a hand getting started? Let us know and we\'ll do our best to help.',
-      mode: "notification",
-      delay: 3,
-      duration: 20,
-      sound: true,
-    },
-    position: 'bottom-right',
-  };
-  _support['apps'] = {
-    faq: {"enabled":true},
-    recentConversations: {},
-    orders: {}
-  };
-</script>
-
-<script type="text/javascript">
-  _support['user'] = {
-    id: '<%= @current_shop.id || "" %>',
-    email: '<%= @current_shop.email || "" %>',
-    name: '<%= @current_shop.domain || "" %>',
-    authkey: '<%= OpenSSL::HMAC.hexdigest('sha256', ENV.fetch('REAMAZE_SSO_SECRET'), "#{@current_shop.id}:#{@current_shop.email}") %>',
-  }
-  document.addEventListener('turbolinks:load', function(event) {
-    if (typeof Reamaze !== 'undefined') {
-      Reamaze.reload();
-    }
+  ShopifyApp.init({
+    apiKey: "<%= ShopifyApp.configuration.api_key %>",
+    shopOrigin: "<%= "https://#{ @shop_session.url }" if @shop_session %>",
+    debug: <%= Rails.env.development? ? 'true' : 'false' %>,
+    forceRedirect: <%= Rails.configuration.fullscreen_debug ? 'false' : 'true' %>
   });
 </script>
 
+<%= render partial: 'layouts/reamaze', locals: { shop: @current_shop } %>
+
+<% if content_for?(:javascript) %>
+  <div id="ContentForJavascript" data-turbolinks-temporary>
+    <%= yield :javascript %>
+  </div>
+<% end %>
 
 </body>
 </html>
