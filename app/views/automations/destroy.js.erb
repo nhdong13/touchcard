@@ -1,0 +1,4 @@
+(function() {
+  cardDiv = document.getElementById('card-' + <%= @automation.id %>);
+  cardDiv.parentNode.removeChild(cardDiv);
+})();

@@ -1,4 +1,4 @@
-class AddArrivialNotificationSentToPostcard < ActiveRecord::Migration
+class AddArrivialNotificationSentToPostcard < ActiveRecord::Migration[4.2]
   def up
     add_column :postcards, :arrival_notification_sent, :boolean, null: false, default: false
     Postcard.all.each do |postcard|

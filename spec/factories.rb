@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
 	sequence :email do |n|
     "test#{n}@example.com"
 	end
@@ -58,6 +58,16 @@ FactoryGirl.define do
     shop
   end
 
+  factory :checkout do
+    sequence(:shopify_id)
+    abandoned_checkout_url "https://test/123"
+    token 12345
+    cart_token 54321
+    total_price 1
+    shop
+  end
+
+
   factory :customer do
     sequence(:shopify_id) { |n| "CustomerId#{n}" }
     first_name "MyString"
@@ -94,6 +104,7 @@ FactoryGirl.define do
   factory :shop do
     sequence(:domain) { |n| "testshop#{n}.myshopify.com" }
     sequence(:token) { |n| "shopif_token_#{n}" }
+    credit 5
   end
 
   factory :card_order do
@@ -102,6 +113,16 @@ FactoryGirl.define do
     association :card_side_front, factory: :card_side
     shop
     association :card_side_back, factory: :card_side
+    discount_pct -37
+    discount_exp 2
+    front_json {{ "version":0,
+                  "background_url": (Rails.root + 'spec/images/background_1.jpg').to_s,
+                  "discount_x":376,
+                  "discount_y":56 }}
+    back_json {{ "version":0,
+                 "background_url": (Rails.root + 'spec/images/background_2.jpg').to_s,
+                 "discount_x": nil,
+                 "discount_y": nil }}
   end
 
   factory :postcard do

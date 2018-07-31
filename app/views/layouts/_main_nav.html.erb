@@ -1,0 +1,28 @@
+<%= content_for :main_navigation do %>
+  <header class="mdc-toolbar main-nav">
+    <div class="mdc-toolbar__row">
+      <div class="mdc-toolbar__section mdc-toolbar__section--align-start mdc-toolbar__section--shrink-to-fit">
+        <div class="mdc-toolbar__section--table-style-wrapper">
+          <nav id="toolbar-tab-bar" class="mdc-tab-bar">
+            <%= nav_tab 'Dashboard', dashboard_index_path, current: current_tab %>
+            <%= nav_tab 'Automations', root_path, current: current_tab %>
+            <%= nav_tab 'Help', faq_path, current: current_tab %>
+            <% if @current_shop.current_subscription %>
+              <%= nav_tab 'Settings', edit_shops_path, current: current_tab %>
+            <% end %>
+            <span class="mdc-tab-bar__indicator"></span>
+          </nav>
+        </div>
+      </div>
+      <div class="mdc-toolbar__section mdc-toolbar__section--shrink-to-fit mdc-toolbar__section--align-end">
+        <span class="mdc-tab"></span>
+      </div>
+      <div id="right-toolbar-section" class="mdc-toolbar__section mdc-toolbar__section--shrink-to-fit mdc-toolbar__section--align-end">
+        <% if not @current_shop.current_subscription %>
+          <%= link_to 'Start Sending', new_subscriptions_path, class: "mdc-button mdc-button--raised secondary-filled-button start-checkout-button" %>
+        <% end %>
+      </div>
+    </div>
+  </header>
+<% end %>
+

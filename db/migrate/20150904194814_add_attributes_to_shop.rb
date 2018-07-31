@@ -1,4 +1,4 @@
-class AddAttributesToShop < ActiveRecord::Migration
+class AddAttributesToShop < ActiveRecord::Migration[4.2]
   def change
     add_column :shops, :shopify_id,     :bigint
     add_column :shops, :credit,         :int, default: 0

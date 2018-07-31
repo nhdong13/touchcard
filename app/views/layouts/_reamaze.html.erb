@@ -1,0 +1,56 @@
+<%
+  # raise "expecting shop object to set up reamaze" unless defined? shop
+  # return unless shop
+  if defined? shop
+    shop_id = shop.id || ""
+    shop_email = shop.email || ""
+    shop_name = shop.domain || ""
+    sso_key = ENV.fetch('REAMAZE_SSO_SECRET', nil)
+    auth_key = sso_key ? OpenSSL::HMAC.hexdigest('sha256', sso_key, "#{shop_id}:#{shop_email}") : nil
+  end
+
+%>
+
+
+<% content_for :javascript do %>
+  <script type="text/javascript" async src="https://cdn.reamaze.com/assets/reamaze.js"></script>
+  <script type="text/javascript">
+    var _support = _support || { 'ui': {}, 'user': {} };
+    _support['account'] = 'touchcard';
+    _support['ui']['contactMode'] = 'anonymous';
+    _support['ui']['enableKb'] = 'true';
+    _support['ui']['styles'] = {
+      widgetColor: 'rgb(92, 64, 152)',
+    };
+    _support['ui']['widget'] = {
+      icon: 'chat',
+      label: {
+        mode: "notification",
+        delay: 3,
+        duration: 30,
+        sound: true,
+      },
+      position: 'bottom-right',
+    };
+    _support['apps'] = {
+      faq: {"enabled":false},
+      recentConversations: {},
+      orders: {}
+    };
+  </script>
+  <script type="text/javascript">
+    _support['user'] = {
+      id: '<%= shop_id %>',
+      email: '<%= shop_email %>',
+      name: '<%= shop_name %>',
+      authkey: '<%= OpenSSL::HMAC.hexdigest('sha256', ENV.fetch('REAMAZE_SSO_SECRET', nil), "#{shop_id}:#{shop_email}") %>',
+    }
+    document.addEventListener('turbolinks:load', function(event) {
+      if (typeof Reamaze !== 'undefined') {
+        Reamaze.reload();
+      }
+    });
+  </script>
+<% end %>
+
+

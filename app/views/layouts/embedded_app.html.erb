@@ -4,18 +4,26 @@
   <meta charset="utf-8" />
   <% application_name = ShopifyApp.configuration.application_name %>
   <title><%= application_name %></title>
-  <%= stylesheet_link_tag 'application' %>
-  <%= javascript_include_tag 'application', "data-turbolinks-track" => true %>
+  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+  <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+  <%= stylesheet_pack_tag 'app_pack', 'data-turbolinks-track': 'reload' %>
+  <%= javascript_pack_tag 'app_pack', 'data-turbolinks-track': 'reload' %>
   <%= csrf_meta_tags %>
+  <%= gtm_head_tag %>
+  <%= javascript_include_tag 'https://checkout.stripe.com/checkout.js' %>
 </head>
 
 <body>
+
+<%= gtm_body_tag %>
+
 <div class="app-wrapper">
   <div class="app-content">
     <main role="main">
-      <div class="container">
+      <%= render 'layouts/navbar' %>
+      <div class="mdc-layout-grid mdc-layout-grid--align-left main-layout-grid">
         <%= yield %>
-      </div> <!-- /container -->
+      </div>
     </main>
   </div>
 </div>
@@ -25,18 +33,21 @@
 <script src="https://cdn.shopify.com/s/assets/external/app.js?<%= Time.now.strftime('%Y%m%d%H') %>"></script>
 
 <script type="text/javascript">
-    ShopifyApp.init({
-        apiKey: "<%= ShopifyApp.configuration.api_key %>",
-        shopOrigin: "<%= "https://#{ @shop_session.url }" if @shop_session %>",
-        debug: <%= Rails.env.development? ? 'true' : 'false' %>,
-        forceRedirect: true
-    });
+  ShopifyApp.init({
+    apiKey: "<%= ShopifyApp.configuration.api_key %>",
+    shopOrigin: "<%= "https://#{ @shop_session.url }" if @shop_session %>",
+    debug: <%= Rails.env.development? ? 'true' : 'false' %>,
+    forceRedirect: <%= Rails.configuration.fullscreen_debug ? 'false' : 'true' %>
+  });
 </script>
 
+<%= render partial: 'layouts/reamaze', locals: { shop: @current_shop } %>
+
 <% if content_for?(:javascript) %>
-    <div id="ContentForJavascript" data-turbolinks-temporary>
-      <%= yield :javascript %>
-    </div>
+  <div id="ContentForJavascript" data-turbolinks-temporary>
+    <%= yield :javascript %>
+  </div>
 <% end %>
+
 </body>
 </html>

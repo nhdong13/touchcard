@@ -1,4 +1,4 @@
-class RefactorPostcards < ActiveRecord::Migration
+class RefactorPostcards < ActiveRecord::Migration[4.2]
   def up
     change_table :postcards do |t|
       t.belongs_to :customer, index: true, foreign_key: true

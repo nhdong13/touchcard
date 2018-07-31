@@ -1,4 +1,4 @@
-class Plan < ActiveRecord::Base
+class Plan < ApplicationRecord
 
   validates :currency, :name, :interval, :interval_count, presence: true
   validates :interval, inclusion: { in: ["day", "week", "month", "year"] }

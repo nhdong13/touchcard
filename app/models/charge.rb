@@ -1,6 +1,6 @@
 require "customer_check"
 
-class Charge < ActiveRecord::Base
+class Charge < ApplicationRecord
   belongs_to :shop
   belongs_to :card_order
 

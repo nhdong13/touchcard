@@ -1,4 +1,4 @@
-class FillEstimatedArrivalForExistingPostcards < ActiveRecord::Migration
+class FillEstimatedArrivalForExistingPostcards < ActiveRecord::Migration[4.2]
   def up
     Postcard.where(sent: true).each do |postcard|
       eta = postcard.estimated_transit_days.business_days.after(postcard.send_date)

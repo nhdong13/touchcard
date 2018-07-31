@@ -1,4 +1,4 @@
-class ChangeStripeIdToStringOnSubscriptions < ActiveRecord::Migration
+class ChangeStripeIdToStringOnSubscriptions < ActiveRecord::Migration[4.2]
   def change
     change_table :subscriptions do |t|
       t.remove :stripe_id

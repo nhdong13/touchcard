@@ -1,0 +1,21 @@
+.cancel-postcard-button-icon {
+  color: grey;
+}
+
+
+.mdl-data-table {
+  td, th {
+    text-align: left;
+  }
+}
+.sales-realized-card {
+  @include white-bg();
+}
+
+.cards-sent-card {
+  @include white-bg();
+}
+
+.scheduled-cards-container {
+  margin-top: 20px;
+}

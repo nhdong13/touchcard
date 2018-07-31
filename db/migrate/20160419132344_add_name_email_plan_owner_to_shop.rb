@@ -1,4 +1,4 @@
-class AddNameEmailPlanOwnerToShop < ActiveRecord::Migration
+class AddNameEmailPlanOwnerToShop < ActiveRecord::Migration[4.2]
   def change
     add_column :shops, :name, :string
     add_column :shops, :email, :string

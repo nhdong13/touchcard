@@ -1,4 +1,4 @@
-class CreateCardTemplates < ActiveRecord::Migration
+class CreateCardTemplates < ActiveRecord::Migration[4.2]
   def change
     create_table(:card_templates) do |t|
       t.belongs_to  :shop

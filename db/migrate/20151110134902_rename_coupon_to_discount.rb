@@ -1,4 +1,4 @@
-class RenameCouponToDiscount < ActiveRecord::Migration
+class RenameCouponToDiscount < ActiveRecord::Migration[4.2]
   def change
     rename_column :card_templates, :coupon_pct, :discount_pct
     rename_column :card_templates, :coupon_loc, :discount_loc

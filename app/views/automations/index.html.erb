@@ -1,0 +1,72 @@
+<%= currently_at "Automations" %>
+<div>
+  <!-- %= link_to 'New Automation', new_automation_path, class: "mdc-button" % -->
+  <div class="mdc-layout-grid__inner">
+    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12">
+      <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
+        <thead>
+        <tr>
+          <th class="mdl-data-table__cell--non-numeric">Sending</th>
+          <th class="mdl-data-table__cell--non-numeric">Front</th>
+          <th class="mdl-data-table__cell--non-numeric">Cards Sent</th>
+          <th class="mdl-data-table__cell--non-numeric">Redemptions</th>
+          <th class="mdl-data-table__cell--non-numeric">Discount (%)</th>
+          <th class="mdl-data-table__cell--non-numeric">International</th>
+          <!--<th class="mdl-data-table__cell&#45;&#45;non-numeric">Delete</th>-->
+
+
+          <th class="mdl-data-table__cell--non-numeric"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <% @card_orders.each do |card| %>
+          <tr id="card-<%= card.id %>" class="automation-row">
+            <td class="automation-controls">
+              <div class="automation-toggle tooltip" data-hover="On / Off">
+                <div class="mdc-switch">
+                  <%= check_box_tag "card-#{card.id}",
+                                    card.enabled,
+                                    card.enabled,
+                                    id: "basic-switch",
+                                    class: 'mdc-switch__native-control',
+                                    onchange: "this.setAttribute('data-params', 'card_order[enabled]=' + this.checked)",
+                                    data: { remote: true,
+                                            url: automation_path(card),
+                                            method: :patch},
+                                    disabled: !(@current_shop.current_subscription || (@current_shop.credit.to_i > 0))
+                  %>
+                  <div class="mdc-switch__background">
+                    <div class="mdc-switch__knob"></div>
+                  </div>
+                </div>
+              </div>
+              <br><br>
+            </td>
+            <td>
+              <%= link_to edit_automation_path(card),
+                          class: 'mdl-button mdl-js-button mdl-button--raised' do %>
+                <div class="automation-card-thumb-wrapper">
+                  <div class="automation-card-thumb" <% if card.front_background_url %>style="background-image: url('<%= card.front_background_url %>');"<% end %>>
+                    <button class="mdc-button mdc-button--stroked mdc-button--dense">Edit</button>
+                  </div>
+                </div>
+              <% end %>
+            </td>
+            <td>
+              <%= (card.cards_sent_total > 0) ? card.cards_sent_total : '-' %>
+            </td>
+            <td>
+              <%= (card.redemptions > 0) ? card.redemptions : '-' %>
+            </td>
+            <td>
+              <%= card.has_discount? ? (card.discount_pct).abs : '-' %>
+            </td>
+            <td><%= card.international ? 'yes' : 'no' %></td>
+            <!--<td>-</td>-->
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

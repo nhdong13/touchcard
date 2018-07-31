@@ -10,9 +10,15 @@
 // Read Sprockets README (https://github.com/rails/sprockets#sprockets-directives) for details
 // about supported directives.
 //
-//= require jquery
-//= require jquery_ujs
-//= require jquery-ui
-//= require bootstrap-sprockets
+
+// Organization tips: http://brandonhilkert.com/blog/organizing-javascript-in-rails-application-with-turbolinks/
+
+// --- Libraries ---
+//= require rails-ujs
+//= require material-components-web
 //= require turbolinks
-//= require_tree .
+
+// --- Application ---
+// # Disabled so we can define load order: `require_tree .`
+// # also keeps activeadmin from loading, I think
+//= require init

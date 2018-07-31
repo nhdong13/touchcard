@@ -1,4 +1,4 @@
-image: "ruby:2.3.3"
+image: "registry.gitlab.com/touchcard/api/environment:latest"
 
 services:
   - postgres:latest
@@ -9,29 +9,41 @@ variables:
 # Cache gems in between builds
 cache:
   paths:
-    - vendor/ruby
+  # Gems caching on Gitlab CI is not currently working. Executing the runner locally didn't support the cache properly
+  # and it was taking too long, so instead we pre-cache global gems in the Dockerfile.
+  # We may be able to pre-cache them in `/builds/touchcard/api/` instead and re-enable the Gitlab CI cache.
+  # Alternatively - if we skip the need for caching in local executions we can probably live with the CI cache alone.
+  #   - vendor/ruby
+  # Node module caching, on the other hand, seems to be working in reverse. I don't think the CI runner picks up
+  # cached node modules in the Docker container
+    - node_modules
 
 before_script:
-  - apt-get update -qq && apt-get install -y -qq postgresql postgresql-contrib libpq-dev cmake
+  - pwd
+  - yarn -v
+  - yarn install --pure-lockfile
   - ruby -v
-  # Uncomment next line if your rails app needs a JS runtime:
-  # - apt-get update -q && apt-get install nodejs -yqq
-  - gem install bundler  --no-ri --no-rdoc
-  - RAILS_ENV=test bundle install -j $(nproc) --path vendor
+#  - gem install bundler  --no-ri --no-rdoc
+#  - bundle install -j $(nproc) --path vendor  # See note on caching above
+  - bundle --version
+  - bundle install -j $(nproc)
   - RAILS_ENV=test bundle exec rake db:create db:schema:load
 
+
 rspec:
+  artifacts:
+    paths:
+    - tmp/lob/*
+    expire_in: 1 week
   variables:
     DATABASE_URL: "postgresql://postgres:postgres@postgres:5432/$POSTGRES_DB"
     AWS_ACCESS_KEY_ID: 'DUMMY'
     AWS_SECRET_ACCESS_KEY: 'DUMMY'
-    AWS_BUCKET_NAME: 'DUMMY'
     AWS_REGION: 'DUMMY'
     LOB_API_KEY: 'DUMMY'
     SHOPIFY_CLIENT_API_KEY: '11111'
     SHOPIFY_CLIENT_API_SECRET: '11111'
     APP_URL: 'DUMMY'
-    SHOPIFY_REDIRECT_URI: 'DUMMY'
     REDISCLOUD_URL: 'DUMMY'
     MAIL_FROM: 'DUMMY'
     MAILGUN_API_KEY: 'DUMMY'
@@ -41,5 +53,6 @@ rspec:
     AC_INSTALLED_SHOP_LIST_ID: '1'
     AC_CUSTOMERS_LIST_ID: '9'
     SUBSCRIPTIONS_GOAL_STRING: 'DUMMY'
+    SLACK_URL: 'https://hooks.slack.com/services/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'
   script:
   - RAILS_ENV=test bundle exec rspec

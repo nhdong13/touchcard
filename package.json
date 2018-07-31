@@ -1,3 +1,20 @@
 {
-  "license": "UNLICENSED"
+  "license": "UNLICENSED",
+  "dependencies": {
+    "@rails/webpacker": "^3.0.2",
+    "axios": "^0.17.1",
+    "coffeescript": "1.12.7",
+    "vue": "^2.5.8",
+    "vue-draggable-resizable": "^1.5.4",
+    "vue-loader": "^13.5.0",
+    "vue-template-compiler": "^2.5.8",
+    "vue-turbolinks": "^2.0.0",
+    "webpack-merge": "^4.1.1"
+  },
+  "devDependencies": {
+    "babel-eslint": "^8.0.2",
+    "eslint": "^4.11.0",
+    "eslint-plugin-vue": "^2.1.0",
+    "webpack-dev-server": "^2.9.4"
+  }
 }

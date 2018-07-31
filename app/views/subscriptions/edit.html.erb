@@ -1,0 +1,40 @@
+<%= currently_at "Settings" %>
+
+
+<%= tag.div id: "stripe-pub-key", data: { stripe_pub_key: Rails.configuration.stripe[:publishable_key] } %>
+
+<div id="edit-subscription-form" class="billing panel">
+  <br>
+
+  <%= link_to 'Back', 'javascript:history.back()', class: "mdc-button mdc-button--stroked" %>
+  <section class="text-center">
+
+    You're currently subscribed to <strong><%= @current_shop.current_subscription.quantity %></strong> cards per month. Change to:
+
+    <br>
+    <div><span v-cloak class="checkout-quantity-display f-s-300">{{ quantity || <%= update_quantity(@current_shop) %> }}</span><span class="f-s-200"> cards / month</span></div>
+
+    <%= render 'slider', slider_index: update_index(@current_shop) %>
+
+    <br><br>
+
+    <div>
+      <strong><span v-cloak class="checkout-display-price">$ {{ this.price.toFixed(2) }}</span></strong> per month
+    </div>
+    <br>
+
+    <%= form_with(model: @subscription, url: subscriptions_path(@subscription), local: true, id:'checkout-form') do |form| %>
+      <%= form.select(:quantity, nil, {}, {class: 'hidden checkout-quantity-select', ref: 'quantitySelect', 'v-model':'quantity' }) do %>
+        <%= options_for_select(select_options, update_quantity(@current_shop) ) %>
+      <% end %>
+      <%= hidden_field_tag(:stripeToken) %>
+      <%= form.submit "Save", class: "mdc-button mdc-button--raised" %>
+      <br>
+    <% end %>
+  </section>
+
+  <% if (@subscription.quantity > 0) %>
+    <%= button_to "Unsubscribe", subscriptions_path, class: "mdc-button mdc-button--dense", method: :delete %>
+  <% end %>
+
+</div>

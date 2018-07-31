@@ -29,7 +29,7 @@ module CardUtil
     discount_code = nil
     expiry = nil
 
-    if card_order.discount?
+    if card_order.has_discount?
       discount_code = 'SAM-PLE-XXX'
       expiry = 4.weeks.from_now.midnight
     end
@@ -47,8 +47,9 @@ module CardUtil
           discount_code: card_side.show_discount? ? discount_code : nil
       )
     end
-
-    Lob.load.postcards.create(
+    
+    lob = Lob::Client.new(api_key: ENV['LOB_API_KEY'])
+    lob.postcards.create(
         description: "A Promo Sample of #{card_order.shop.domain}",
         metadata: {description: "Promo Sample for #{lob_to_address[:name]}"},
         to: lob_to_address,

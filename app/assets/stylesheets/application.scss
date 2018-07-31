@@ -1,13 +1,49 @@
-@import "bootstrap-sprockets";
-@import "bootstrap";
+// Organization tips, though we're not following all of them:
+// http://www.mattboldt.com/organizing-css-and-sass-rails/
 
-.scopes-msg {
-  padding: 10% 15%;
-  font-size: large;
-}
+// Material Components
+@import "@material/button/mdc-button";
+@import "@material/card/mdc-card";
+//@import "@material/checkbox/mdc-checkbox";
+//@import "@material/dialog/mdc-dialog";
+//@import "@material/drawer/mdc-drawer";
+@import "@material/elevation/mdc-elevation";
+//@import "@material/fab/mdc-fab";
+//@import "@material/form-field/mdc-form-field";
+//@import "@material/grid-list/mdc-grid-list";
+//@import "@material/icon-toggle/mdc-icon-toggle";
+@import "@material/layout-grid/mdc-layout-grid";
+@import "@material/linear-progress/mdc-linear-progress";
+@import "@material/list/mdc-list";
+//@import "@material/menu/mdc-menu";
+//@import "@material/radio/mdc-radio";
+//@import "@material/ripple/mdc-ripple";
+//@import "@material/select/mdc-select";
+@import "@material/slider/mdc-slider";
+//@import "@material/snackbar/mdc-snackbar";
+@import "@material/switch/mdc-switch";
+@import "@material/tabs/mdc-tabs";
+//@import "@material/textfield/mdc-textfield";
+//@import "@material/theme/mdc-theme";
+@import "@material/toolbar/mdc-toolbar";
+//@import "@material/typography/mdc-typography";
+@import "@material/fonts/material-icons";
+//@import "@material/fonts/roboto";
 
+// Material Design Lite - Using select components not yet supported by Material Components
+@import "mdl/data-table";
+@import "mdl/resets";
+@import "mdl/chip";
+@import "mdl/shadow";
 
-#mail_support_line {
-  font-style: italic;
-  font-size: small;
-}
+// Application
+@import "base/mixins";
+@import "base/normalize";
+@import "base/globals";
+@import "base/tooltip";
+@import "styles/dashboard";
+@import "styles/automations";
+@import "styles/faq";
+@import "styles/navbar";
+@import "styles/subscriptions";
+

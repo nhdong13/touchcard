@@ -24,7 +24,7 @@ RSpec.describe OrdersCreateJob, type: :job do
 
   it 'queues the job' do
     expect { job }
-      .to change(ActiveJob::Base.queue_adapter.enqueued_jobs, :size).by(1)
+      .to change(ApplicationJob.queue_adapter.enqueued_jobs, :size).by(1)
   end
 
   it 'is in default queue' do
@@ -55,7 +55,6 @@ RSpec.describe OrdersCreateJob, type: :job do
       end
 
       context "who is new" do
-
         context "valid card order" do
           it "creates postcard" do
             stub_order("everything")
@@ -103,7 +102,6 @@ RSpec.describe OrdersCreateJob, type: :job do
           it "doesn't create postcard" do
             stub_order("everything")
             perform_enqueued_jobs { job }
-
             expect(Postcard.count).to eq 0
           end
 
@@ -142,7 +140,7 @@ RSpec.describe OrdersCreateJob, type: :job do
 
           it "connects order to postcard" do
             perform_enqueued_jobs { job }
-            expect(Order.last.postcard.id).to eq(postcard.id)
+            expect(Order.last.postcards.first.id).to eq(postcard.id)
             expect(postcard.card_order.revenue).to eq 40994
             expect(postcard.shop.revenue).to eq 40994
           end
@@ -170,7 +168,7 @@ RSpec.describe OrdersCreateJob, type: :job do
           it "connects order to postcard" do
             perform_enqueued_jobs { job }
             new_order = Order.find_by(shopify_id: s_order[:id])
-            expect(new_order.postcard_id).to eq(postcard.id)
+            expect(new_order.postcards.first.id).to eq(postcard.id)
             expect(postcard.card_order.revenue).to eq 40994
             expect(postcard.shop.revenue).to eq 40994
           end

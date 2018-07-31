@@ -1,7 +1,66 @@
-#Touchcard
-Get better customer engagement with thank you postcards!
+# Touchcard
 
-#Deployment Process
+## Setting up local Development
+
+Our app runs inside of the Shopify Admin, so local development requires connectivity 
+to the Shopify.
+
+
+### Set up Partner Account + Development Shop
+Create a free Shopify Partner account at https://www.shopify.com/partners
+Set up a development app under 'Apps'. Under the App Info tab, make sure to set: 
+
+App Name = `https://YOUR_DEV_APP.ngrok.io/`
+Whitelisted redirection URL = `https://YOUR_DEV_APP.ngrok.io/auth/shopify/callback`
+
+Remember your domain `YOUR_DEV_SHOP.myshopify.com` for later.
+
+### Set up Rails, Gems, and NPM packages
+
+Make sure you have `rvm` installed and the latest ruby as denoted in `Gemfile`. 
+
+Also make sure you have a recent version of Postgres installed on your system. 
+For Mac the easiest way is to use [Postgres.app](https://postgresapp.com/documentation/gui-tools.html)
+
+`gem install bundler`
+
+`bundle install`
+
+If you have problems with rubyracer / libv8 on Os X, try  `gem install libv8 -v '3.16.14.3' -- --with-system-v8` 
+(make sure it's the right version) and / or `bundle update libv8`
+[More info](https://stackoverflow.com/questions/19673714/error-installing-libv8-error-failed-to-build-gem-native-extension)
+
+Install NPM packages 
+`yarn install`
+
+Set up the Database
+`bundle exec rake db:drop db:create db:migrate db:seed RAILS_ENV=development`
+
+Run the external proxy
+This tunnels your localhost port 3000 to YOUR_DEV_APP.ngrok.io
+`ngrok http -subdomain=YOUR_DEV_APP 3000`
+
+Set up your local configs so the server doesn't give any errors.
+Copy `local_env.yml.example` to `local_env.yml` Fill in any special credentials you have (`AWS_` keys, `APP_URL`, etc) 
+
+Run the server
+`bin/server`
+
+Open `YOUR_DEV_APP.ngrok.io` in browser. You should get a screen that asks for your shopify url (`YOUR_DEV_SHOP.myshopify.com`). 
+Enter that and click Ok, then it should ask you to install the app.
+
+Once you've installed your shop you can optionally run this command to generate some fake data to help with development (the refresh):
+`rake db:sample_data`
+
+
+If you want to run the shop without embedding into the Touchcard admin you can set the `FULLSCREEN_DEBUG` environment variable. 
+**This is experimental**, so I'd only recommend it if you're doing a lot of client reloading for javascript work, but not for testing, etc.
+When you do that you should be able to load the application via `http://localhost:3000/`, and in turn loading should be much snappier.
+
+`FULLSCREEN_DEBUG=true bin/server`
+
+
+## Deployment Process
 
 1. Look up next tag version (v#.#.# format)
 2. Update Changelog with changes & latest tag #.
@@ -56,11 +115,11 @@ We use S3 in two unrelated ways:
 `touchcard-data-dev`
 
 
-2) We use it to host our client Ember application, which is deployed via the ember cli lightning deploy method. The rails application is not directly aware of these. It only knows of the location via the attached redis instance. The ember client deploys directly to these buckets.
+## Buildpacks
 
-`touchcard-client (production)`
-`touchcard-client-staging`
-`touchcard-client-dev`
+We use the following Heroku buildpacks:
 
-
-
+1. heroku/nodejs
+2. heroku/ruby
+3. https://github.com/heroku/heroku-buildpack-google-chrome.git
+4. https://github.com/heroku/heroku-buildpack-chromedriver.git

@@ -1,9 +1,12 @@
 class Shop < ActiveRecord::Base
   has_many :card_orders, dependent: :destroy
+  has_many :post_sale_orders, dependent: :destroy
   has_many :postcards, through: :card_orders
   has_many :charges
   has_many :subscriptions
   has_many :orders
+  has_many :customers, through: :orders
+  has_many :checkouts
 
   VALID_APPROVAL_STATES = ["new", "approved", "denied"]
 
@@ -21,7 +24,7 @@ class Shop < ActiveRecord::Base
   end
 
   def revenue
-    Order.joins(postcard: :card_order)
+    Order.joins(postcards: :card_order)
       .where(card_orders: { shop_id: id })
       .sum(:total_price)
   end
@@ -196,7 +199,31 @@ class Shop < ActiveRecord::Base
       false
     end
   end
-  
+
+  def has_customer_winback_enabled?
+    card = card_orders.find_by(type: "CustomerWinbackOrder")
+    card ? card.enabled : false
+  end
+
+  def can_afford?(postcard)
+    @can_afford ||= credit >= postcard.cost
+  end
+
+  def pay(postcard)
+    if can_afford?(postcard) && !postcard.paid?
+      self.credit -= postcard.cost
+      self.save!
+    else
+      logger.info "not enough credits postcard:#{postcard.id}" if can_afford?(postcard)
+      logger.info "already paid for postcard:#{postcard.id}" if postcard.paid?
+      return false
+    end
+  end
+
+  def increment_credit
+    increment!(:credit)
+  end
+
   # necessary for the active admin
   def display_name
     self.domain.split('.myshopify.com').first

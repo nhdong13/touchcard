@@ -1,0 +1,97 @@
+@import "../base/mixins";
+
+.automation-listing {
+  //@include white-bg();
+  //min-width: 800px;
+  width: 640px;
+}
+
+.automation-main {
+  // background: lightsalmon;
+}
+
+.automation-controls {
+  // background: cyan;
+}
+
+.automation-controls > div {
+  text-align: center;
+  // background: cyan;
+}
+
+
+.automation-image {
+  // background: darkorange;
+  width: 200px;
+}
+
+.automation-image img{
+  width: 200px;
+  padding: 1em;
+}
+
+.automation-data {
+  // background: greenyellow;
+}
+
+.automation-row:hover {
+  background-color: inherit !important;
+}
+
+.automation-row a:any-link {
+  text-decoration: none; // Flex in thumb below underlined button text for some reason. Undo this.
+}
+
+//td a {
+//  display: block;
+//}
+
+.automation-card-thumb-wrapper {
+  width: 220px;
+  height: 150px;
+  //background: #b3d4fc;
+  margin: 0;
+}
+
+.automation-card-thumb-wrapper:hover {
+  //color: #5b3e82;
+  opacity: 0.7;
+  transition: 0.5s;
+
+}
+
+.automation-card-thumb {
+  //width: inherit;
+  //height: inherit;
+  width: 95%;
+  height: 95%;
+  margin: 0;
+  padding: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  background-image: image-url("/images/touchcard-hello-thumb.jpg");
+
+  // Center contained button
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.automation-card-thumb button {
+  background: white !important;
+}
+
+.automation-card-thumb button::before {
+  background: initial !important; // Disable button hover effect
+}
+
+.card-editor{
+  .front-side-body {
+    background-image: image-url("/images/touchcard-hello-front-placeholder.jpg");
+  }
+  .back-side-body {
+    background-image: image-url("/images/touchcard-hello-back-placeholder.jpg");
+  }
+}

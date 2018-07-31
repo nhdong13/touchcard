@@ -1,0 +1,2 @@
+class PostSaleOrdersController < AutomationsController
+end

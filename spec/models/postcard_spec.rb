@@ -1,21 +1,34 @@
 require 'rails_helper'
 
 RSpec.describe Postcard, type: :model do
+
   describe "#send_card" do
     let(:customer) { postcard.customer }
     let!(:address) { create(:address, customer: customer) }
     let(:postcard) { create(:postcard, sent: false, paid: true, card_order: card_order) }
-    let(:card_order) { create(:card_order, discount_pct: 10, discount_exp: 2) }
+    let(:card_order) { create(:card_order) }
     let(:shop) { card_order.shop }
 
-    # TODO: split out spec into seperate cases
-    # TODO: handle negative cases
-    it "works" do
+    it "prepares_card" do
       price_rule_id = stub_shopify(:price_rules, :create)[:price_rule][:id]
-      stub_shopify(:discounts, :create, for_discount: true, price_rule_id: price_rule_id, entity_uri: "discount_codes")
-      stub_request(:post, "https://#{ENV['LOB_API_KEY']}:@api.lob.com/v1/postcards")
-        .to_return(body: File.read("#{Rails.root}/spec/fixtures/lob/postcards/create/default.json"))
+      stub_shopify(:discounts, :create, entity_uri: "price_rules/#{price_rule_id}/discount_codes")
+      postcard.prepare_card
+      expect(postcard.discount_code).to eq "XXX-YYY-ZZZ"
+      expect(postcard.price_rule_id).to eq 3561328458
+    end
 
+    it "bad_discount_code_throws_error" do
+      price_rule_id = stub_shopify(:price_rules, :create)[:price_rule][:id]
+      stub_shopify(:discounts, :create, entity_uri: "price_rules/#{price_rule_id}/discount_codes", overrides: {discount_code: { code: "not the expected format" }})
+      expect{ postcard.prepare_card }.to raise_error(Postcard::DiscountCreationError)
+    end
+
+    it "sends_card" do
+      price_rule_id = stub_shopify(:price_rules, :create)[:price_rule][:id]
+      stub_shopify(:discounts, :create, entity_uri: "price_rules/#{price_rule_id}/discount_codes")
+      stub_request(:post, "https://api.lob.com/v1/postcards")
+        .to_return(body: File.read("#{Rails.root}/spec/fixtures/lob/postcards/create/default.json"))
+          .with(basic_auth: ["#{ENV['LOB_API_KEY']}", ""])
       postcard.send_card
       expect(postcard.sent).to eq true
       expect(postcard.date_sent).to eq Date.today

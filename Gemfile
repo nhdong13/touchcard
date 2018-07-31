@@ -1,67 +1,60 @@
 source "https://rubygems.org"
 
-#ruby=2.3.3
+#ruby=2.4.4
 #ruby-gemset=touchcard
 
-ruby "2.3.3"
+ruby "2.4.4"
 
-gem "rails", "4.2.6"
-gem "rake", "11.1.2"
+gem "rails", "5.1.4"
+gem "rake", "~> 12.3.0"
 gem "rb-readline", "~> 0.5.3"
 
-gem "bootstrap-sass"
+gem 'material_components_web-sass'
 
 gem "sass-rails", "~> 5.0", ">= 5.0.6"
 gem "uglifier", ">= 1.3.0"
-gem "coffee-rails", "~> 4.1.0"
 
-gem "jquery-rails"
-gem "momentjs-rails", ">= 2.8.1"
+
 gem "turbolinks"
-gem "jbuilder", "~> 2.0"
 gem "sdoc", "~> 0.4.0", group: :doc
 
 # Admin interface
-gem "devise", "~> 3.5"
+gem "devise", "~> 4.3.0"
 gem "activeadmin", "~> 1.0.0"
 gem "active_material", git: "https://github.com/laverick/active_material"
-
 
 # API serializer
 gem "active_model_serializers", "~> 0.8.0"
 
 # Shopify app
-gem "shopify_app", "~> 7.2.3"
+gem "shopify_app", "~> 7.3.0"
 
 # Stripe
-gem 'stripe', git: 'https://github.com/stripe/stripe-ruby'
+gem "stripe", "~> 3.9"
 
 # S3 connection
 gem "aws-sdk", "~> 2.1"
-
-# Card creator ui js
-gem "jquery-ui-rails", "~> 5.0"
 
 # Image Manipulation
 gem "rmagick", "~> 2.15"
 
 # Lob integration
-gem "lob", "~> 2.1"
+gem "lob", "~> 4.1"
 
 # Key Value store
 gem "redis", "~> 3.2"
 
 # Httparty for debug
-gem "httparty", "~> 0.13"
+gem "httparty", "~> 0.15"
 
 # Rest Client for Slack notifications
-gem "rest-client", "1.8"
+gem "rest-client", "~> 2.0"
 
 # Use Unicorn as the app server
 gem "unicorn", "~> 4.9"
 
 # Background tasks
-gem "delayed_job_active_record", "~> 4.1"
+gem "delayed_job_active_record", "~> 4.1.2"
 gem "daemons", "~> 1.2"
 
 # Better rails console
@@ -77,6 +70,18 @@ gem "mailgunner", '~> 2.4'
 # ActiveCampaign ('bdad6c2' is last building version as of 2017-08-26)
 gem "active_campaign", git: "https://github.com/laverick/active_campaign", ref: "bdad6c2"
 
+gem 'faker'
+
+# Javascript Pipeline
+gem "webpacker", "~> 3.0"
+
+# For running server processes in development
+gem "foreman", "~> 0.84"
+gem "thor", "~> 0.19.1"
+
+gem "pg"
+
+gem "selenium-webdriver"
 
 group :assets do
   gem "therubyracer", platforms: :ruby
@@ -84,7 +89,7 @@ end
 
 group :development do
   # Access an IRB console on exception pages or by using <%= console %> in views
-  gem "web-console", "~> 2.0"
+  gem "web-console"
   gem "thin"
   gem "spring"
 end
@@ -92,19 +97,16 @@ end
 group :development, :test do
   # Call "byebug" anywhere in the code to stop execution and get a debugger console
   gem "byebug"
-  gem "sqlite3"
-  gem "clipboard", "~> 1.0"
   gem 'simplecov', :require => false
 end
 
 group :test do
-  gem "rspec-rails", "~> 3.0"
-  gem "factory_girl_rails", "~> 4.5"
-  gem "webmock", "~> 1.22"
+  gem "rspec-rails", "~> 3.7"
+  gem "factory_bot", "~> 4.8"
+  gem "webmock", "~> 3.2"
+  gem "timecop"
 end
 
 group :production do
-  gem "pg"
-  gem "rails_12factor"
   gem "newrelic_rpm", "~> 3.15"
 end
