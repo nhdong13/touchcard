@@ -1,18 +1,52 @@
-class CardOrder < ActiveRecord::Base
+class CardOrder < ApplicationRecord
+  # TODO: Unused Automations Code
+  #
+  # TYPES = ['PostSaleOrder', 'CustomerWinbackOrder', 'LifetimePurchaseOrder', 'AbandonedCheckout']
+
   belongs_to :shop
-  belongs_to :card_side_front, class_name: "CardSide",
-              foreign_key: "card_side_front_id"
-  belongs_to :card_side_back, class_name: "CardSide",
-              foreign_key: "card_side_back_id"
-  has_many :filters
+  has_one :card_side_front,
+          -> { where(is_back: false) },
+          class_name: "CardSide",
+          dependent: :destroy
+
+  has_one :card_side_back,
+          -> { where(is_back: true) },
+          class_name: "CardSide",
+          dependent: :destroy
+
+  has_many :filters, dependent: :destroy
   has_many :postcards
 
-  validates :shop, :card_side_front, :card_side_back, presence: true
+  accepts_nested_attributes_for :card_side_front, update_only: true
+  # , reject_if: :invalid_image_size
+  accepts_nested_attributes_for :card_side_back, update_only: true
+  # , reject_if: :invalid_image_size
+  accepts_nested_attributes_for :filters,
+    allow_destroy: true,
+    reject_if: :all_blank
 
-  after_initialize :ensure_defaults
-  before_update :convert_discount_pct, if: :discount_pct_changed?
+  validates :shop, :card_side_front, :card_side_back, presence: true
+  validates :discount_pct, numericality: { greater_than_or_equal_to: -100,
+                                           less_than: 0,
+                                           only_integer: true,
+                                           allow_nil: true,
+                                           message: "must be between 1 and 100"}  # Customer facing value is positive. See `def discount_pct=` below
+
+  validates :discount_exp, numericality: { greater_than_or_equal_to: 1,
+                                           less_than_or_equal_to: 52,
+                                           only_integer: true,
+                                           allow_nil: true,
+                                           message: "must be between 1 and 52 weeks"}
 
   delegate :current_subscription, to: :shop
+
+  scope :active, -> { where(archived: false) }
+
+  class << self
+    def num_enabled
+      CardOrder.where(enabled: true).count
+    end
+  end
 
   def send_postcard?(order)
     return true unless filters.count > 0
@@ -38,31 +72,94 @@ class CardOrder < ActiveRecord::Base
   end
 
   def revenue
-    Order.joins(:postcard).where(postcards: { card_order_id: id })
+    Order.joins(:postcards).where(postcards: { card_order_id: id })
       .sum(:total_price)
   end
 
+  def redemptions
+    Order.joins(:postcards).where(postcards: { card_order_id: id }).size
+  end
+
+  # TODO: Remove defaults for card_side_front & card_side_back ?
   def ensure_defaults
-    self.card_side_front ||= CardSide.create!(is_back: false)
-    self.card_side_back ||= CardSide.create!(is_back: true)
+    self.build_card_side_front(is_back: false) unless self.card_side_front
+    self.build_card_side_back(is_back: true) unless self.card_side_back
     self.send_delay = 1 if send_delay.nil? && type == "PostSaleOrder"
     self.international = false if international.nil?
     self.enabled = false if enabled.nil?
     # TODO: add defaults to schema that can be added
   end
 
-  def discount?
-    !discount_exp.nil? && !discount_pct.nil?
+  def shows_front_discount?
+    front_json && front_json['discount_x'] && front_json['discount_y']
   end
+
+  def shows_back_discount?
+    back_json && back_json['discount_x'] && back_json['discount_y']
+  end
+
+  def has_discount?
+      has_values = discount_exp.present? && discount_pct.present?
+      has_values && (shows_front_discount? || shows_back_discount?)
+  end
+
+  def front_background_url
+    front_json['background_url'] if front_json
+  end
+
+  # def discount?
+  #   !discount_exp.nil? && !discount_pct.nil?
+  # end
+
+  def discount_pct=(val)
+    write_attribute(:discount_pct, val.nil? ? nil : -(val.abs))
+  end
+
+  def discount_pct
+    val = self[:discount_pct]
+    val.nil? ? nil : val.abs
+  end
+
 
   def send_date
-    return Date.today + send_delay.weeks if type == "PostSaleOrder"
+    return Date.today + send_delay.weeks
     # 4-6 business days delivery according to lob
-    # TODO handle international + 5 to 7 business days
-    send_date = arrive_by - 1.week
+    # TODO: handle international + 5 to 7 business days
+    #send_date = arrive_by - 1.week
   end
 
-  def convert_discount_pct
-    self.discount_pct = -discount_pct if discount_pct && discount_pct > 0
+  def prepare_for_sending(postcard_trigger)
+    # This method can get called from a delayed_job, which does not allow for standard logging
+    # We thus return a string and expect the caller to log
+    return "international customer not enabeled" if postcard_trigger.international && !international?
+    return "order filtered out" unless send_postcard?(postcard_trigger)
+
+    postcard = postcard_trigger.postcards.new(
+      card_order: self,
+      customer: postcard_trigger.customer,
+      send_date: self.send_date,
+      paid: false)
+    if shop.pay(postcard)
+      postcard.paid = true
+      postcard.save
+    else
+      return postcard.errors.full_messages.map{|msg| msg}.join("\n")
+    end
   end
+
+  def archive
+    self.enabled = false
+    self.archived = true
+    self.save!
+  end
+
+  def safe_destroy!
+    self.destroy! unless postcards.exists?
+  end
+
+  private
+
+  # def invalid_image_size(attributes)
+  #   # debugger
+  # end
 end

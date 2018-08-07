@@ -10,6 +10,8 @@ task :daily_send_cards => :environment do
   SlackNotify.message(slack_msg)
 end
 
+# TODO: Unused Automations Code
+#
 # desc "Handle Winback Postcards"
 # task :daily_send_winback_cards => :environment do
 #   Shop.all.each do |shop|
@@ -74,15 +76,17 @@ task :hourly_send_coupon_expiration_emails => :environment do
   end
 end
 
-namespace :shopify do
-  desc "Sync abandoned checkouts"
-  task :abandoned_checkouts => :environment do
-    shops = Shop.all
-    shops.each do |shop|
-      SyncCheckouts.new(shop).call
-    end
-  end
-end
+# TODO: Unused Automations Code
+#
+# namespace :shopify do
+#   desc "Sync abandoned checkouts"
+#   task :abandoned_checkouts => :environment do
+#     shops = Shop.all
+#     shops.each do |shop|
+#       SyncCheckouts.new(shop).call
+#     end
+#   end
+# end
 
 def send_card_arrival_mail(postcard)
   CustomerMailer.card_arrived_notification(postcard).deliver

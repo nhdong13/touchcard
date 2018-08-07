@@ -200,10 +200,12 @@ class Shop < ActiveRecord::Base
     end
   end
 
-  def has_customer_winback_enabled?
-    card = card_orders.find_by(type: "CustomerWinbackOrder")
-    card ? card.enabled : false
-  end
+  # TODO: Unused Automations Code
+  #
+  # def has_customer_winback_enabled?
+  #   card = card_orders.find_by(type: "CustomerWinbackOrder")
+  #   card ? card.enabled : false
+  # end
 
   def can_afford?(postcard)
     @can_afford ||= credit >= postcard.cost
