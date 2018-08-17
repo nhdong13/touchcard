@@ -39,7 +39,10 @@ namespace :cardsetup do
 
         x_scalar = 5.565  # manually tweaked to these
         y_scalar = 3.732
-        
+
+        # Make sure any out of range values are converted into something sensible
+        card_order.discount_exp = card_order.discount_exp.clamp(1, 52) if card_order.discount_exp
+
         card_order.front_json["discount_x"] = (front_x.is_a? Numeric) ? front_x * x_scalar : nil
         card_order.front_json["discount_y"] = (front_y.is_a? Numeric) ? front_y * y_scalar : nil
 
