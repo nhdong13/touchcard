@@ -63,14 +63,13 @@ task :purge_older_data => :environment do
   raise "WARNING: Code not intended for production use" unless Rails.env.development?
 
   old_orders_without_postcards = Order.where(
-       "id NOT IN (SELECT order_id FROM postcards WHERE order_id IS NOT null) AND created_at < ?",
-       Time.now.midnight - 6.months)
+      "id NOT IN (SELECT order_id FROM postcards WHERE order_id IS NOT null) AND created_at < ?",
+      Time.now.midnight - 6.months)
   old_orders_without_postcards.delete_all
 
   orders_for_non_subscribers = Order.where("shop_id IN (SELECT id FROM shops WHERE stripe_customer_id IS null)")
   orders_for_non_subscribers.delete_all
   LineItem.delete_all
-  end
 end
 
 
