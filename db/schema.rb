@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180105153625) do
+ActiveRecord::Schema.define(version: 20180815143954) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -259,7 +259,7 @@ ActiveRecord::Schema.define(version: 20180105153625) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "customer_id"
-    t.integer "order_id"
+    t.integer "postcard_triggerable_id"
     t.boolean "paid", default: false, null: false
     t.datetime "estimated_arrival"
     t.boolean "arrival_notification_sent", default: false, null: false
@@ -268,10 +268,9 @@ ActiveRecord::Schema.define(version: 20180105153625) do
     t.datetime "discount_exp_at"
     t.bigint "price_rule_id"
     t.boolean "canceled", default: false
-    t.integer "postcard_triggerable_id"
     t.string "postcard_triggerable_type"
     t.index ["customer_id"], name: "index_postcards_on_customer_id"
-    t.index ["order_id"], name: "index_postcards_on_order_id"
+    t.index ["postcard_triggerable_id"], name: "index_postcards_on_postcard_triggerable_id"
   end
 
   create_table "shops", id: :serial, force: :cascade do |t|
@@ -341,7 +340,7 @@ ActiveRecord::Schema.define(version: 20180105153625) do
   add_foreign_key "orders", "shops"
   add_foreign_key "postcards", "card_orders"
   add_foreign_key "postcards", "customers"
-  add_foreign_key "postcards", "orders"
+  add_foreign_key "postcards", "orders", column: "postcard_triggerable_id"
   add_foreign_key "subscriptions", "plans"
   add_foreign_key "subscriptions", "shops"
 end

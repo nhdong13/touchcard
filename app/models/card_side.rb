@@ -1,4 +1,7 @@
 class CardSide < ApplicationRecord
+
+  belongs_to :card_order
+
   validates :is_back, inclusion: { in: [true, false] }
 
   def show_discount?
