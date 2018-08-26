@@ -1,4 +1,4 @@
-class GdprWebhooksController < ActionController::Base # ApplicationController
+class GdprWebhooksController < ApplicationController
 
   def customers_data_request
     head :ok
