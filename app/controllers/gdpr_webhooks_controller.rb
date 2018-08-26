@@ -1,4 +1,5 @@
 class GdprWebhooksController < ApplicationController
+  skip_before_action :verify_authenticity_token
 
   def customers_data_request
     head :ok
