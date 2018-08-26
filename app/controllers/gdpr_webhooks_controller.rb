@@ -1,4 +1,18 @@
-class GdprWebhooksController < ApplicationController
+class GdprWebhooksController < ActionController::Base # ApplicationController
+
+  def customers_data_request
+    head :ok
+
+    redact_request = GdprCustomersDataRequest.new(
+        shop_shopify_id: params[:shop_id],
+        shop_domain: params[:shop_domain],
+        customer_shopify_id: params.dig(:customer, :id),
+        customer_email: params.dig(:customer, :email),
+        customer_phone: params.dig(:customer, :phone),
+        orders_requested: params[:orders_requested]
+    )
+    redact_request.save!
+  end
 
   def customers_redact
     head :ok # this is done up front to prevent timeouts

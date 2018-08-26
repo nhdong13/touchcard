@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180826115940) do
+ActiveRecord::Schema.define(version: 20180826121441) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -163,6 +163,17 @@ ActiveRecord::Schema.define(version: 20180826115940) do
   end
 
   add_index "filters", ["card_order_id"], name: "index_filters_on_card_order_id", using: :btree
+
+  create_table "gdpr_customers_data_requests", force: :cascade do |t|
+    t.integer  "shop_shopify_id",     limit: 8
+    t.string   "shop_domain"
+    t.integer  "customer_shopify_id", limit: 8
+    t.string   "customer_email"
+    t.string   "customer_phone"
+    t.integer  "orders_requested",    limit: 8, default: [],              array: true
+    t.datetime "created_at",                                 null: false
+    t.datetime "updated_at",                                 null: false
+  end
 
   create_table "gdpr_customers_redacts", force: :cascade do |t|
     t.integer  "shop_shopify_id",     limit: 8
