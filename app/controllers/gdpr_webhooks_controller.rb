@@ -1,4 +1,4 @@
-class GdprWebhooksController < ActionController::Base # ApplicationController
+class GdprWebhooksController < ApplicationController
 
   def customers_redact
     head :ok # this is done up front to prevent timeouts
