@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170905180325) do
+ActiveRecord::Schema.define(version: 20180825185626) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -164,6 +164,17 @@ ActiveRecord::Schema.define(version: 20170905180325) do
 
   add_index "filters", ["card_order_id"], name: "index_filters_on_card_order_id", using: :btree
 
+  create_table "gdpr_customers_redacts", force: :cascade do |t|
+    t.integer  "shop_shopify_id",     limit: 8
+    t.string   "shop_domain"
+    t.integer  "customer_shopify_id", limit: 8
+    t.string   "customer_email"
+    t.string   "customer_phone"
+    t.integer  "orders_to_redact",    limit: 8, default: [], array: true
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "line_items", force: :cascade do |t|
     t.integer  "order_id",                       null: false
     t.integer  "fulfillable_quantity"
@@ -251,8 +262,8 @@ ActiveRecord::Schema.define(version: 20170905180325) do
     t.boolean  "expiration_notification_sent",           default: false
     t.integer  "discount_pct"
     t.datetime "discount_exp_at"
-    t.boolean  "canceled",                               default: false
     t.integer  "price_rule_id",                limit: 8
+    t.boolean  "canceled",                               default: false
   end
 
   add_index "postcards", ["customer_id"], name: "index_postcards_on_customer_id", using: :btree
@@ -274,7 +285,6 @@ ActiveRecord::Schema.define(version: 20170905180325) do
     t.boolean  "send_next",                    default: true,  null: false
     t.datetime "last_login"
     t.string   "stripe_customer_id"
-    t.string   "approval_state",               default: "new", null: false
     t.string   "name"
     t.string   "email"
     t.string   "customer_email"
@@ -282,6 +292,7 @@ ActiveRecord::Schema.define(version: 20170905180325) do
     t.string   "owner"
     t.datetime "shopify_created_at"
     t.datetime "shopify_updated_at"
+    t.string   "approval_state",               default: "new", null: false
     t.datetime "uninstalled_at"
     t.datetime "last_login_at"
     t.json     "metadata",                     default: {}
