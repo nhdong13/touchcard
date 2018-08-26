@@ -33,6 +33,7 @@ Rails.application.routes.draw do
 
   # GDPR webhooks
   post 'gdpr/customers/redact', to: 'gdpr_webhooks#customers_redact'
+  post 'gdpr/shop/redact', to: 'gdpr_webhooks#shop_redact'
 
 
   # HTML Routes for Card Templates

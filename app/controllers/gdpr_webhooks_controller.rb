@@ -14,4 +14,14 @@ class GdprWebhooksController < ApplicationController
     redact_request.save!
   end
 
+  def shop_redact
+    head :ok
+
+    redact_request = GdprShopRedact.new(
+      shop_shopify_id: params[:shop_id],
+      shop_domain: params[:shop_domain]
+    )
+    redact_request.save!
+  end
+
 end
