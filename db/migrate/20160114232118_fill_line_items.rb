@@ -3,7 +3,7 @@ class FillLineItems < ActiveRecord::Migration
     ShopifyApp.configure do |config|
       config.api_key = ENV['SHOPIFY_CLIENT_API_KEY']
       config.secret = ENV['SHOPIFY_CLIENT_API_SECRET']
-      config.redirect_uri = ENV['SHOPIFY_REDIRECT_URI']
+      config.redirect_uri = ENV['SHOPIFY_REDIRECT_URI'] if config.respond_to?('redirect_uri')
       config.scope = "read_orders, write_orders, read_products, write_products, read_customers, write_customers, read_themes, write_themes, read_fulfillments, write_fulfillments"
       config.embedded_app = true
     end
