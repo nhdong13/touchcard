@@ -34,6 +34,25 @@ task :slack_subscriptions_status => :environment do
   SlackNotify.message(slack_msg)
 end
 
+desc "Slack Notify of Pending GDPR Requests"
+task :slack_pending_gdpr_requests => :environment do
+  puts "Notifying pending GDPR requests on #slack..."
+
+  #Todo: Change from `count` to actual outstanding amount once we process
+  num_customers_data_request = GdprCustomersRedact.count
+  num_customers_redact = GdprCustomersDataRequest.count
+  num_shop_redact = GdprShopRedact.count
+
+  slack_msg = <<~END_HEREDOC
+              *Outstanding GDPR requests:*
+                  `customers/data_request`: *#{num_customers_data_request}*
+                  `customers/redact`: *#{num_customers_redact}*
+                  `shop/redact`: *#{num_shop_redact}*
+  END_HEREDOC
+  SlackNotify.message(slack_msg)
+end
+
+
 desc "Notify customers about postcard arival"
 task :daily_send_card_arrival_emails => :environment do
   postcards = Postcard.ready_for_arrival_notification

@@ -1,4 +1,5 @@
 class GdprWebhooksController < ShopifyApp::WebhooksController
+  # skip_before_action :verify_request, unless: "Rails.env.production?"  # For testing webhooks locally
 
   def customers_data_request
     head :ok
