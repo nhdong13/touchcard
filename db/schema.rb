@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180815143954) do
+ActiveRecord::Schema.define(version: 20180826121441) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -20,8 +20,8 @@ ActiveRecord::Schema.define(version: 20180815143954) do
     t.text "body"
     t.string "resource_id", null: false
     t.string "resource_type", null: false
-    t.string "author_type"
     t.integer "author_id"
+    t.string "author_type"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.index ["author_type", "author_id"], name: "index_active_admin_comments_on_author_type_and_author_id"
@@ -180,6 +180,35 @@ ActiveRecord::Schema.define(version: 20180815143954) do
     t.index ["card_order_id"], name: "index_filters_on_card_order_id"
   end
 
+  create_table "gdpr_customers_data_requests", id: :serial, force: :cascade do |t|
+    t.bigint "shop_shopify_id"
+    t.string "shop_domain"
+    t.bigint "customer_shopify_id"
+    t.string "customer_email"
+    t.string "customer_phone"
+    t.bigint "orders_requested", default: [], array: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "gdpr_customers_redacts", id: :serial, force: :cascade do |t|
+    t.bigint "shop_shopify_id"
+    t.string "shop_domain"
+    t.bigint "customer_shopify_id"
+    t.string "customer_email"
+    t.string "customer_phone"
+    t.bigint "orders_to_redact", default: [], array: true
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "gdpr_shop_redacts", id: :serial, force: :cascade do |t|
+    t.bigint "shop_shopify_id"
+    t.string "shop_domain"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "line_items", id: :serial, force: :cascade do |t|
     t.integer "order_id", null: false
     t.integer "fulfillable_quantity"
@@ -262,12 +291,12 @@ ActiveRecord::Schema.define(version: 20180815143954) do
     t.boolean "paid", default: false, null: false
     t.datetime "estimated_arrival"
     t.boolean "arrival_notification_sent", default: false, null: false
-    t.string "postcard_triggerable_type"
     t.boolean "expiration_notification_sent", default: false
     t.integer "discount_pct"
     t.datetime "discount_exp_at"
     t.bigint "price_rule_id"
     t.boolean "canceled", default: false
+    t.string "postcard_triggerable_type"
     t.index ["customer_id"], name: "index_postcards_on_customer_id"
     t.index ["postcard_triggerable_id"], name: "index_postcards_on_postcard_triggerable_id"
   end

@@ -18,6 +18,9 @@
     - BUILDPACKS - see README for required buildpacks    
      
 
+## v1.2.11
+- Add GDPR webhooks & tables.
+
 ## v1.2.10
 - Remove future send_date from Admin tool's sample postcard dispatcher. New API plans don't support it.
 
