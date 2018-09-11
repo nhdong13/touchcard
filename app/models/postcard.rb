@@ -8,7 +8,7 @@ class Postcard < ApplicationRecord
   belongs_to :card_order
   belongs_to :order
   belongs_to :customer
-  belongs_to :postcard_triggerable, polymorphic: true
+  belongs_to :postcard_trigger, polymorphic: true
   has_one :shop, through: :card_order
   has_many :orders
 

@@ -80,7 +80,7 @@ ActiveAdmin.register Postcard do
         link_to(postcard.customer_id, admin_customer_path(postcard.customer)) if postcard.customer_id
       end
       row :order_id do |postcard|
-        # TODO: Should probably link to postcard.postcard_triggerable: _id / _type
+        # TODO: Should link to postcard.postcard_trigger: _id / _type
         link_to(postcard.order_id, admin_order_path(postcard.order)) if postcard.order_id
       end
       row :paid

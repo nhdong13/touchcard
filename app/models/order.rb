@@ -2,7 +2,7 @@ class Order < ApplicationRecord
   belongs_to :shop
   belongs_to :customer
   #belongs_to :postcard
-  has_many :postcards, as: :postcard_triggerable
+  has_many :postcards, as: :postcard_trigger
   validates :total_price, :total_tax, :shopify_id, :shop, presence: true
   validates :shopify_id, uniqueness: true
 
@@ -40,14 +40,15 @@ class Order < ApplicationRecord
   def connect_to_postcard
     postcard = find_postcard_by_discount
     if postcard
-      postcard.update_attributes!(postcard_triggerable: self)
+      postcard.update_attributes!(postcard_trigger: self)
       return postcard
     end
     postcard = Postcard.where("
       customer_id = ? AND
-      order_id != ? AND
+      postcard_trigger_id != ? AND
+      postcard_trigger_type = 'Order' AND
       sent = TRUE", customer_id, id).first
-    postcard.update_attributes!(postcard_triggerable: self) if postcard
+    postcard.update_attributes!(postcard_trigger: self) if postcard
     postcard
   end
 

@@ -127,7 +127,7 @@ FactoryBot.define do
 
   factory :postcard do
     card_order
-    order
+    association :postcard_trigger, factory: :order
     customer
     paid true
     sent true
