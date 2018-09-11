@@ -1,4 +1,4 @@
-class CreateGdprCustomersRedacts < ActiveRecord::Migration
+class CreateGdprCustomersRedacts < ActiveRecord::Migration[4.2]
   def change
     create_table :gdpr_customers_redacts do |t|
       t.bigint :shop_shopify_id
