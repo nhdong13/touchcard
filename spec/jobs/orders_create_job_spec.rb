@@ -163,7 +163,7 @@ RSpec.describe OrdersCreateJob, type: :job do
             create(:customer, shopify_id: s_order[:customer][:id])
           end
           let!(:postcard) { create(:postcard, discount_code: 'TENOFF',
-                                    order: order, customer: customer) }
+                                    postcard_trigger: order, customer: customer) }
           before(:each) { order.update_attributes!(customer: customer) }
           it "connects order to postcard" do
             perform_enqueued_jobs { job }
