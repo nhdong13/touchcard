@@ -1,2 +1,2 @@
-class GdprCustomersDataRequest < ActiveRecord::Base
+class GdprCustomersDataRequest < ApplicationRecord
 end

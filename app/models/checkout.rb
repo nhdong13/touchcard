@@ -1,4 +1,4 @@
-class Checkout < ActiveRecord::Base
+class Checkout < ApplicationRecord
   belongs_to :shop
   belongs_to :customer
   has_many :postcards, as: :postcard_trigger

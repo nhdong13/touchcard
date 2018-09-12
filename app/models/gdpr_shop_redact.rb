@@ -1,2 +1,2 @@
-class GdprShopRedact < ActiveRecord::Base
+class GdprShopRedact < ApplicationRecord
 end

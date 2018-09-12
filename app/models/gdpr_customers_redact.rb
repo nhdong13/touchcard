@@ -1,2 +1,2 @@
-class GdprCustomersRedact < ActiveRecord::Base
+class GdprCustomersRedact < ApplicationRecord
 end

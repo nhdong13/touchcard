@@ -1,4 +1,4 @@
-class Shop < ActiveRecord::Base
+class Shop < ApplicationRecord
   has_many :card_orders, dependent: :destroy
   has_many :post_sale_orders, dependent: :destroy
   has_many :postcards, through: :card_orders
