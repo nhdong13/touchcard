@@ -8,7 +8,7 @@
           <dt class="mdl-list__item">
             <strong><%= "#{ i + 1}) #{question[:question]}" %></strong>
           </dt>
-          <dd class="mdl-list__item-secondary-content"><%= question[:answer] %></dd>
+          <dd class="mdl-list__item-secondary-content"><%= question[:answer].html_safe %></dd>
           <br>
       <% end %>
     </dl>
@@ -16,6 +16,6 @@
 
   <section>
     <h3 class="uppercase">Support</h3>
-    For further questions email us <a href="mailto:info@touchcard.co">info@touchcard.co</a>
+    For further questions please contact us via the chat widget below or email us at <a href="mailto:support@touchcard.co" target="_blank">support@touchcard.co</a>
   </section>
 </div>
