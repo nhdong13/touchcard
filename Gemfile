@@ -23,9 +23,6 @@ gem "devise", "~> 4.3"
 gem "activeadmin", "~> 1.3"
 gem "active_material", git: "https://github.com/laverick/active_material"
 
-# API serializer
-gem "active_model_serializers", "~> 0.8.0"
-
 # Shopify app
 gem "shopify_app", "~> 7.3.0"
 
