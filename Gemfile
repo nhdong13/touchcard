@@ -19,8 +19,8 @@ gem "turbolinks"
 gem "sdoc", "~> 0.4.0", group: :doc
 
 # Admin interface
-gem "devise", "~> 4.3.0"
-gem "activeadmin", "~> 1.0.0"
+gem "devise", "~> 4.3"
+gem "activeadmin", "~> 1.3"
 gem "active_material", git: "https://github.com/laverick/active_material"
 
 # API serializer
