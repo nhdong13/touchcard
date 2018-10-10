@@ -41,7 +41,7 @@
   });
 </script>
 
-<%= render partial: 'layouts/reamaze', locals: { shop: @current_shop } %>
+<%= render partial: 'layouts/reamaze', locals: { shop: @current_shop } unless Rails.env.development? %>
 
 <% if content_for?(:javascript) %>
   <div id="ContentForJavascript" data-turbolinks-temporary>
