@@ -25,7 +25,7 @@ RSpec.describe LobRenderUtil do
       puts "\nFront render: #{output_path}"
       retina_compare = FileUtils.compare_file(output_path, (Rails.root + 'spec/images/expected_front_coupon@2x.png').to_s)
       normal_compare = FileUtils.compare_file(output_path, (Rails.root + 'spec/images/expected_front_coupon.png').to_s)
-      expect(retina_compare || normal_compare).to be_truthy  # Compare with expected output
+      expect(retina_compare || normal_compare).to be_truthy  # Compare with `expected_front_coupon[@2x].png`
       expect(FileUtils.compare_file(output_path, bad_png_path)).to be_falsey  # Compare with bad output (confirms test)
     end
 
@@ -34,7 +34,7 @@ RSpec.describe LobRenderUtil do
       puts "\nBack render: #{output_path}"
       retina_compare = FileUtils.compare_file(output_path, (Rails.root + 'spec/images/expected_back_no_coupon@2x.png').to_s)
       normal_compare = FileUtils.compare_file(output_path, (Rails.root + 'spec/images/expected_back_no_coupon.png').to_s)
-      expect(retina_compare || normal_compare).to be_truthy  # Compare with expected output
+      expect(retina_compare || normal_compare).to be_truthy  # Compare with `expected_back_no_coupon[@2x].png`
       expect(FileUtils.compare_file(output_path, bad_png_path)).to be_falsey  # Compare with bad output (confirms test)
     end
 

@@ -41,12 +41,26 @@ module LobRenderUtil
 
   def render_side_png(postcard:, is_front:)
     html = LobApiController.render_side(postcard: postcard, is_front: is_front)
-    LobRenderUtil.headless_render(html)
+    LobRenderUtil.puppeteer_render(html)
   end
 
 
+  def puppeteer_render(html)
 
-  def headless_render(html)
+    FileUtils.mkdir_p "#{Rails.root}/tmp/lob/"
+    file_name = "#{Time.now.strftime('%Y%m%d%H%M%S%L')}_#{SecureRandom.uuid}"
+    html_path = "#{Rails.root}/tmp/lob/#{file_name}_input.html"
+    png_path = "#{Rails.root}/tmp/lob/#{file_name}_output.png"
+    File.open(html_path, 'w') {|f| f.write(html) }    # Write html to local path so Chrome can open it
+
+    # file:///Users/dustin/code/javascript/puppeteer-test/input.html
+    # html_path = '/Users/dustin/code/javascript/puppeteer-test/input.html'
+
+    system("node lib/render/headless_render.js file:///#{Shellwords.escape(html_path)} #{Shellwords.escape(png_path)}")
+    png_path
+  end
+
+  def selenium_render(html)
 
     # Write html to local path so Chrome can open it
     FileUtils.mkdir_p "#{Rails.root}/tmp/lob/"

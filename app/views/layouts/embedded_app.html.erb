@@ -5,6 +5,7 @@
   <% application_name = ShopifyApp.configuration.application_name %>
   <title><%= application_name %></title>
   <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+  <%= render 'layouts/font_links' %>
   <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
   <%= stylesheet_pack_tag 'app_pack', 'data-turbolinks-track': 'reload' %>
   <%= javascript_pack_tag 'app_pack', 'data-turbolinks-track': 'reload' %>
