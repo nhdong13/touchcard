@@ -48,8 +48,8 @@ module LobRenderUtil
   def puppeteer_render(html)
 
     FileUtils.mkdir_p "#{Rails.root}/tmp/lob/"
-    file_name = "#{Time.now.strftime('%Y%m%d%H%M%S%L')}_#{SecureRandom.uuid}"
-    html_path = "#{Rails.root}/tmp/lob/#{file_name}_input.html"
+    file_name = "#{SecureRandom.uuid}"
+    html_path = "#{Rails.root}/tmp/lob/#{SecureRandom.uuid}_input.html"
     png_path = "#{Rails.root}/tmp/lob/#{file_name}_output.png"
     File.open(html_path, 'w') {|f| f.write(html) }    # Write html to local path so Chrome can open it
 
