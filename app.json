@@ -106,6 +106,35 @@
       "quantity": 1
     }
   },
+  "environments": {
+    "test": {
+      "env": {
+        "AC_CUSTOMERS_LIST_ID": "PLACEHOLDER",
+        "AC_ENDPOINT": "PLACEHOLDER",
+        "AC_INSTALLED_SHOP_LIST_ID": "PLACEHOLDER",
+        "APP_URL": "PLACEHOLDER",
+        "AWS_ACCESS_KEY_ID": "PLACEHOLDER",
+        "AWS_REGION": "PLACEHOLDER",
+        "AWS_SECRET_ACCESS_KEY": "PLACEHOLDER",
+        "GTM_ENVIRONMENT_PARAMS": "PLACEHOLDER",
+        "HEROKU_POSTGRESQL_COPPER_URL": "PLACEHOLDER",
+        "LANG": "PLACEHOLDER",
+        "LOB_API_KEY": "PLACEHOLDER",
+        "RACK_ENV": "PLACEHOLDER",
+        "RAILS_ENV": "PLACEHOLDER",
+        "RAILS_MAX_THREADS": "PLACEHOLDER",
+        "RAILS_SERVE_STATIC_FILES": "PLACEHOLDER",
+        "REAMAZE_SSO_SECRET": "PLACEHOLDER",
+        "S3_BUCKET_NAME": "PLACEHOLDER",
+        "SECRET_KEY_BASE": "PLACEHOLDER",
+        "SHOPIFY_CLIENT_API_KEY": 11111,
+        "SHOPIFY_CLIENT_API_SECRET": 11111,
+        "SLACK_URL": "PLACEHOLDER",
+        "STRIPE_KEY": "PLACEHOLDER",
+        "STRIPE_SECRET": "PLACEHOLDER"
+      }
+    }
+  },
   "name": "touchcard",
   "scripts": {
   },
