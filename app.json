@@ -107,6 +107,11 @@
       "addons":[
         "heroku-postgresql:in-dyno"
       ],
+      "buildpacks": [
+        {
+          "url": "heroku/ruby"
+        }
+      ],
       "env": {
         "AC_CUSTOMERS_LIST_ID": "PLACEHOLDER",
         "AC_ENDPOINT": "PLACEHOLDER",
