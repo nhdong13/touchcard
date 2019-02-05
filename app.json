@@ -138,7 +138,8 @@
         "STRIPE_SECRET": "PLACEHOLDER"
       },
       "scripts": {
-        "test-setup": "bundle env && ls . && pwd"
+        "test-setup": "bundle env && ls . && pwd",
+        "test": "RAILS_ENV=test bundle exec rspec"
       }
     }
   },
