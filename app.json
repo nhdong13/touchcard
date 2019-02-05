@@ -2,8 +2,13 @@
   "addons": [
     "mailgun",
     "papertrail",
-    "heroku-postgresql",
-    "scheduler"
+    "scheduler",
+    {
+      "plan": "heroku-postgresql",
+      "options": {
+        "version": "9.4"
+      }
+    }
   ],
   "buildpacks": [
     {
@@ -14,7 +19,6 @@
     }
   ],
   "env": {
-    "POSTGRESQL_VERSION": "9.4",
     "FULLSCREEN_DEBUG": "defined",
     "AC_API_KEY": "PLACEHOLDER",
     "AC_CUSTOMERS_LIST_ID": {
@@ -106,7 +110,12 @@
   "environments": {
     "test": {
       "addons":[
-        "heroku-postgresql:in-dyno"
+        {
+          "plan": "heroku-postgresql:in-dyno",
+          "options": {
+            "version": "9.4"
+          }
+        }
       ],
       "buildpacks": [
         {
@@ -114,7 +123,6 @@
         }
       ],
       "env": {
-        "POSTGRESQL_VERSION": "9.4",
         "AC_CUSTOMERS_LIST_ID": "PLACEHOLDER",
         "AC_ENDPOINT": "PLACEHOLDER",
         "AC_INSTALLED_SHOP_LIST_ID": "PLACEHOLDER",
