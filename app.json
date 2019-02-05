@@ -18,6 +18,7 @@
     }
   ],
   "env": {
+    "FULLSCREEN_DEBUG": true,
     "AC_API_KEY": "PLACEHOLDER",
     "AC_CUSTOMERS_LIST_ID": {
       "required": true
