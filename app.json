@@ -136,6 +136,9 @@
         "SLACK_URL": "PLACEHOLDER",
         "STRIPE_KEY": "PLACEHOLDER",
         "STRIPE_SECRET": "PLACEHOLDER"
+      },
+      "scripts": {
+        "test-setup": "bundle env && ls . && pwd"
       }
     }
   },
