@@ -107,7 +107,6 @@
   },
   "name": "touchcard",
   "scripts": {
-    "postdeploy": "bin/setup"
   },
   "stack": "heroku-18"
 }
