@@ -129,9 +129,10 @@
         "STRIPE_KEY": "PLACEHOLDER",
         "STRIPE_SECRET": "PLACEHOLDER"
       },
-      "scripts": {
-        "test": "bundle exec rspec"
-      }
+      "addons":[
+        "heroku-postgresql:in-dyno"
+      ]
+
     }
   },
   "name": "touchcard",
