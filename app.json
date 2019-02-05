@@ -136,9 +136,6 @@
         "SLACK_URL": "PLACEHOLDER",
         "STRIPE_KEY": "PLACEHOLDER",
         "STRIPE_SECRET": "PLACEHOLDER"
-      },
-      "scripts": {
-        "test": "bundle exec rspec"
       }
     }
   },
