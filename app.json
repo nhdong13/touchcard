@@ -104,6 +104,9 @@
   },
   "environments": {
     "test": {
+      "addons":[
+        "heroku-postgresql:in-dyno"
+      ],
       "env": {
         "AC_CUSTOMERS_LIST_ID": "PLACEHOLDER",
         "AC_ENDPOINT": "PLACEHOLDER",
@@ -129,10 +132,9 @@
         "STRIPE_KEY": "PLACEHOLDER",
         "STRIPE_SECRET": "PLACEHOLDER"
       },
-      "addons":[
-        "heroku-postgresql:in-dyno"
-      ]
-
+      "scripts": {
+        "test": "bundle exec rspec"
+      }
     }
   },
   "name": "touchcard",
