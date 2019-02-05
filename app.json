@@ -10,9 +10,6 @@
       "url": "heroku/nodejs"
     },
     {
-      "url": "jontewks/puppeteer"
-    },
-    {
       "url": "heroku/ruby"
     }
   ],
