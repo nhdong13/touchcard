@@ -130,7 +130,7 @@
         "STRIPE_SECRET": "PLACEHOLDER"
       },
       "scripts": {
-        "test": "rspec spec"
+        "test": "bundle exec rspec"
       }
     }
   },
