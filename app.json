@@ -3,7 +3,6 @@
     "mailgun",
     "papertrail",
     "heroku-postgresql",
-    "rediscloud",
     "scheduler"
   ],
   "buildpacks": [
@@ -132,6 +131,9 @@
         "SLACK_URL": "PLACEHOLDER",
         "STRIPE_KEY": "PLACEHOLDER",
         "STRIPE_SECRET": "PLACEHOLDER"
+      },
+      "scripts": {
+        "test": "rspec spec"
       }
     }
   },
