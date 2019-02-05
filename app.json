@@ -1,0 +1,113 @@
+{
+  "addons": [
+    "mailgun",
+    "papertrail",
+    "heroku-postgresql",
+    "rediscloud",
+    "scheduler"
+  ],
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    },
+    {
+      "url": "jontewks/puppeteer"
+    },
+    {
+      "url": "heroku/ruby"
+    }
+  ],
+  "env": {
+    "AC_API_KEY": "PLACEHOLDER",
+    "AC_CUSTOMERS_LIST_ID": {
+      "required": true
+    },
+    "AC_ENDPOINT": {
+      "required": true
+    },
+    "AC_INSTALLED_SHOP_LIST_ID": {
+      "required": true
+    },
+    "APP_URL": {
+      "required": true
+    },
+    "AWS_ACCESS_KEY_ID": {
+      "required": true
+    },
+    "AWS_REGION": {
+      "required": true
+    },
+    "AWS_SECRET_ACCESS_KEY": {
+      "required": true
+    },
+    "GTM_ENVIRONMENT_PARAMS": {
+      "required": true
+    },
+    "HEROKU_POSTGRESQL_COPPER_URL": {
+      "required": true
+    },
+    "INTERCOM_SECRET": "PLACEHOLDER",
+    "LANG": {
+      "required": true
+    },
+    "LOB_API_KEY": {
+      "required": true
+    },
+    "MAILGUN_API_KEY": "PLACEHOLDER",
+    "MAILGUN_DOMAIN": "PLACEHOLDER",
+    "MAILGUN_PUBLIC_KEY": "PLACEHOLDER",
+    "MAILGUN_SMTP_LOGIN": "PLACEHOLDER",
+    "MAILGUN_SMTP_PASSWORD": "PLACEHOLDER",
+    "MAILGUN_SMTP_PORT": "PLACEHOLDER",
+    "MAILGUN_SMTP_SERVER": "PLACEHOLDER",
+    "RACK_ENV": {
+      "required": true
+    },
+    "RAILS_ENV": {
+      "required": true
+    },
+    "RAILS_MAX_THREADS": {
+      "required": true
+    },
+    "RAILS_SERVE_STATIC_FILES": {
+      "required": true
+    },
+    "REAMAZE_SSO_SECRET": {
+      "required": true
+    },
+    "S3_BUCKET_NAME": {
+      "required": true
+    },
+    "SECRET_KEY_BASE": {
+      "required": true
+    },
+    "SHOPIFY_CLIENT_API_KEY": {
+      "required": true
+    },
+    "SHOPIFY_CLIENT_API_SECRET": {
+      "required": true
+    },
+    "SLACK_URL": {
+      "required": true
+    },
+    "STRIPE_KEY": {
+      "required": true
+    },
+    "STRIPE_SECRET": {
+      "required": true
+    }
+  },
+  "formation": {
+    "worker": {
+      "quantity": 1
+    },
+    "web": {
+      "quantity": 1
+    }
+  },
+  "name": "touchcard",
+  "scripts": {
+    "postdeploy": "bin/setup"
+  },
+  "stack": "heroku-18"
+}
