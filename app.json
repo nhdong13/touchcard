@@ -125,7 +125,7 @@
       ],
       "env": {
         "AC_CUSTOMERS_LIST_ID": "PLACEHOLDER",
-        "AC_ENDPOINT": "PLACEHOLDER",
+        "AC_ENDPOINT": "https://touchcard.api-us1.com/admin/api.php",
         "AC_INSTALLED_SHOP_LIST_ID": "PLACEHOLDER",
         "APP_URL": "PLACEHOLDER",
         "AWS_ACCESS_KEY_ID": "PLACEHOLDER",
