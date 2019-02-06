@@ -12,6 +12,9 @@
   ],
   "buildpacks": [
     {
+      "url": "jontewks/puppeteer"
+    },
+    {
       "url": "heroku/nodejs"
     },
     {
@@ -118,14 +121,6 @@
           "options": {
             "version": "9.4"
           }
-        }
-      ],
-      "buildpacks": [
-        {
-          "url": "heroku/nodejs"
-        },
-        {
-          "url": "heroku/ruby"
         }
       ],
       "env": {
