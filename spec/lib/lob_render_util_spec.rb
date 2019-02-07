@@ -23,19 +23,19 @@ RSpec.describe LobRenderUtil do
       postcard.discount_pct = -37
       output_path =  LobRenderUtil.render_side_png(postcard: postcard, is_front: true)
       puts "\nFront render: #{output_path}"
-      retina_compare = FileUtils.compare_file(output_path, (Rails.root + 'spec/images/expected_front_coupon@2x.png').to_s)
+      mac_compare = FileUtils.compare_file(output_path, (Rails.root + 'spec/images/expected_front_coupon_mac.png').to_s)
       heroku_compare = FileUtils.compare_file(output_path, (Rails.root + 'spec/images/expected_front_coupon_heroku.png').to_s)
       gitlab_compare = FileUtils.compare_file(output_path, (Rails.root + 'spec/images/expected_front_coupon_gitlab.png').to_s)
-      expect(retina_compare || heroku_compare || gitlab_compare).to be_truthy  # Compare with `expected_front_coupon[...].png`
+      expect(mac_compare || heroku_compare || gitlab_compare).to be_truthy  # Compare with `expected_front_coupon[...].png`
       expect(FileUtils.compare_file(output_path, bad_png_path)).to be_falsey  # Compare with bad output (confirms test)
     end
 
     it "renders_back_no_coupon" do
       output_path =  LobRenderUtil.render_side_png(postcard: postcard, is_front: false)
       puts "\nBack render: #{output_path}"
-      retina_compare = FileUtils.compare_file(output_path, (Rails.root + 'spec/images/expected_back_no_coupon@2x.png').to_s)
+      mac_compare = FileUtils.compare_file(output_path, (Rails.root + 'spec/images/expected_back_no_coupon_mac.png').to_s)
       normal_compare = FileUtils.compare_file(output_path, (Rails.root + 'spec/images/expected_back_no_coupon.png').to_s)
-      expect(retina_compare || normal_compare).to be_truthy  # Compare with `expected_back_no_coupon[...].png`
+      expect(mac_compare || normal_compare).to be_truthy  # Compare with `expected_back_no_coupon[...].png`
       expect(FileUtils.compare_file(output_path, bad_png_path)).to be_falsey  # Compare with bad output (confirms test)
     end
 
