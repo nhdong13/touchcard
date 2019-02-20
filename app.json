@@ -48,6 +48,9 @@
     "GTM_ENVIRONMENT_PARAMS": {
       "required": true
     },
+    "HEROKU_APP_NAME": {
+      "required": true
+    },
     "HEROKU_POSTGRESQL_COPPER_URL": {
       "required": true
     },
