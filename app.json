@@ -71,7 +71,9 @@
     "RACK_ENV": {
       "required": true
     },
-    "RAILS_ENV": "development",
+    "RAILS_ENV": {
+      "required": true
+    },
     "RAILS_MAX_THREADS": {
       "required": true
     },
@@ -135,6 +137,7 @@
         "LOB_API_KEY": "PLACEHOLDER",
         "MAIL_FROM": "noreply@mail.gettouchcard.co",
         "RACK_ENV": "PLACEHOLDER",
+        "RAILS_ENV": "test",
         "RAILS_MAX_THREADS": "PLACEHOLDER",
         "RAILS_SERVE_STATIC_FILES": "PLACEHOLDER",
         "REAMAZE_SSO_SECRET": "PLACEHOLDER",
