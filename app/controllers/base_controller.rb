@@ -3,7 +3,7 @@ class BaseController < ShopifyApp::AuthenticatedController
   skip_around_action :shopify_session if Rails.configuration.fullscreen_debug
 
   def require_auth
-    return @current_shop ||= Shop.last if Rails.configuration.fullscreen_debug
+    return @current_shop ||= Shop.where(domain:"SAMPLE_DATA").first if Rails.configuration.fullscreen_debug
     if session[:shopify].nil?
       render_authorization_error
     else
