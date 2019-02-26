@@ -5,7 +5,7 @@ namespace :db do
   task :sample_data => :environment do
     puts "Populating Database..."
 
-    shop = Shop.last ||= Shop.create!(
+    shop = Shop.last || Shop.create!(
       domain: "SAMPLE_DATA",
       token: "SAMPLE_DATA"
 
