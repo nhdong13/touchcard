@@ -5,9 +5,10 @@ namespace :db do
   task :sample_data => :environment do
     puts "Populating Database..."
 
-    shop = Shop.last || Shop.create!(
+    shop = Shop.where(domain:"SAMPLE_DATA").last || Shop.create!(
       domain: "SAMPLE_DATA",
-      token: "SAMPLE_DATA"
+      token: "SAMPLE_DATA",
+      email: "dustin+sample_data@touchcard.co"
 
     )
     raise 'To add Sample Data please create a Shop record by logging in via Shopify with at least one shop' if shop == nil
@@ -16,7 +17,7 @@ namespace :db do
     end
 
     create_card_order_and_sides shop if shop.card_orders.count == 0
-    populate_data shop # if shop.orders.count == 0
+    populate_data shop if shop.orders.count == 0
   end
 
   def create_card_order_and_sides (shop)
