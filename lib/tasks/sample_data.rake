@@ -4,7 +4,12 @@ namespace :db do
   desc "Fill database with sample data"
   task :sample_data => :environment do
     puts "Populating Database..."
-    shop = Shop.last
+
+    shop = Shop.last ||= Shop.create!(
+      domain: "SAMPLE_DATA",
+      token: "SAMPLE_DATA"
+
+    )
     raise 'To add Sample Data please create a Shop record by logging in via Shopify with at least one shop' if shop == nil
     if Rails.env.production? && shop.email.split('@').last != "touchcard.co"
       raise 'WARNING: In production mode shops require @touchcard.co owner email'
