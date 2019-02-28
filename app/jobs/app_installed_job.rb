@@ -12,7 +12,8 @@ class AppInstalledJob < ApplicationJob
                  when 0...100 then "S"
                  when 100...500 then "M"
                  when 500...1500 then "L"
-                 else "XL"
+                 when 1500...3000 then "XL"
+                 else "XXL"
                end
     sync_params = {
         "email" => shop.email,

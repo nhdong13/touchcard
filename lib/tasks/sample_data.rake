@@ -4,14 +4,20 @@ namespace :db do
   desc "Fill database with sample data"
   task :sample_data => :environment do
     puts "Populating Database..."
-    shop = Shop.last
+
+    shop = Shop.where(domain:"SAMPLE_DATA").last || Shop.create!(
+      domain: "SAMPLE_DATA",
+      token: "SAMPLE_DATA",
+      email: "dustin+sample_data@touchcard.co"
+
+    )
     raise 'To add Sample Data please create a Shop record by logging in via Shopify with at least one shop' if shop == nil
     if Rails.env.production? && shop.email.split('@').last != "touchcard.co"
       raise 'WARNING: In production mode shops require @touchcard.co owner email'
     end
 
     create_card_order_and_sides shop if shop.card_orders.count == 0
-    populate_data shop # if shop.orders.count == 0
+    populate_data shop if shop.orders.count == 0
   end
 
   def create_card_order_and_sides (shop)
@@ -101,7 +107,8 @@ namespace :db do
         date_sent: date_sent,
         sent: sent,
         postcard_id: sent ? "psc_xyz" : nil,
-        order_id: order.id,
+        postcard_trigger_id: order.id,
+        postcard_trigger_type: 'Order',
         paid: true,
         estimated_arrival: Time.now + 2.weeks,
         arrival_notification_sent: false,

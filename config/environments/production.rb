@@ -104,6 +104,11 @@ Rails.application.configure do
     config.logger = ActiveSupport::TaggedLogging.new(logger)
   end
 
-  config.fullscreen_debug = false
+  heroku_app_name = ENV.fetch("HEROKU_APP_NAME", "")
+  if heroku_app_name.include?("touchcard-dev-pr-") or heroku_app_name.include?("touchcard-staging-pr-")
+    config.fullscreen_debug = true
+  else
+    config.fullscreen_debug = false
+  end
 
 end

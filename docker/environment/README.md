@@ -33,6 +33,11 @@ First - be sure to change directory to project root so docker command has access
 ## Executing gitlab runner locally
 
     gitlab-runner exec docker rspec 
+
+## To run locally (without uploading)    
+    
+    gitlab-runner exec docker --docker-pull-policy=never rspec
+    gitlab-runner exec docker --docker-pull-policy=if-not-present rspec
     
 # May need to include shared memory size option 
  

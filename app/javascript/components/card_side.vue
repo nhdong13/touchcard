@@ -73,9 +73,6 @@
     outline: 1px dotted black;
   }
 
-  /* Required for Discount */
-  @import url('https://fonts.googleapis.com/css?family=Montserrat');
-
   p {
     font-size: 2em;
     text-align: center;

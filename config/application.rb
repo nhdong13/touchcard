@@ -30,5 +30,9 @@ module Touchcard
     # TODO Check why this throws error for Rails 5.1.x
     # config.active_record.raise_in_transactional_callbacks = true
     # config.force_ssl = true
+
+    # Gzip pages by default, see: https://www.schneems.com/2017/11/08/80-smaller-rails-footprint-with-rack-deflate/
+    config.middleware.insert_after ActionDispatch::Static, Rack::Deflater
+
   end
 end

@@ -2,22 +2,27 @@
   "addons": [
     "mailgun",
     "papertrail",
-    "heroku-postgresql",
-    "rediscloud",
-    "scheduler"
+    "scheduler",
+    {
+      "plan": "heroku-postgresql",
+      "options": {
+        "version": "9.4"
+      }
+    }
   ],
   "buildpacks": [
     {
-      "url": "heroku/nodejs"
+      "url": "jontewks/puppeteer"
     },
     {
-      "url": "jontewks/puppeteer"
+      "url": "heroku/nodejs"
     },
     {
       "url": "heroku/ruby"
     }
   ],
   "env": {
+    "FULLSCREEN_DEBUG": "defined",
     "AC_API_KEY": "PLACEHOLDER",
     "AC_CUSTOMERS_LIST_ID": {
       "required": true
@@ -43,7 +48,7 @@
     "GTM_ENVIRONMENT_PARAMS": {
       "required": true
     },
-    "HEROKU_POSTGRESQL_COPPER_URL": {
+    "HEROKU_APP_NAME": {
       "required": true
     },
     "INTERCOM_SECRET": "PLACEHOLDER",
@@ -51,6 +56,9 @@
       "required": true
     },
     "LOB_API_KEY": {
+      "required": true
+    },
+    "MAIL_FROM": {
       "required": true
     },
     "MAILGUN_API_KEY": "PLACEHOLDER",
@@ -105,9 +113,50 @@
       "quantity": 1
     }
   },
+  "environments": {
+    "test": {
+      "addons":[
+        {
+          "plan": "heroku-postgresql:in-dyno",
+          "options": {
+            "version": "9.4"
+          }
+        }
+      ],
+      "env": {
+        "AC_CUSTOMERS_LIST_ID": "PLACEHOLDER",
+        "AC_ENDPOINT": "https://touchcard.api-us1.com/admin/api.php",
+        "AC_INSTALLED_SHOP_LIST_ID": "PLACEHOLDER",
+        "APP_URL": "PLACEHOLDER",
+        "AWS_ACCESS_KEY_ID": "PLACEHOLDER",
+        "AWS_REGION": "PLACEHOLDER",
+        "AWS_SECRET_ACCESS_KEY": "PLACEHOLDER",
+        "GTM_ENVIRONMENT_PARAMS": "PLACEHOLDER",
+        "LANG": "PLACEHOLDER",
+        "LOB_API_KEY": "PLACEHOLDER",
+        "MAIL_FROM": "noreply@mail.gettouchcard.co",
+        "RACK_ENV": "PLACEHOLDER",
+        "RAILS_ENV": "test",
+        "RAILS_MAX_THREADS": "PLACEHOLDER",
+        "RAILS_SERVE_STATIC_FILES": "PLACEHOLDER",
+        "REAMAZE_SSO_SECRET": "PLACEHOLDER",
+        "S3_BUCKET_NAME": "PLACEHOLDER",
+        "SECRET_KEY_BASE": "PLACEHOLDER",
+        "SHOPIFY_CLIENT_API_KEY": 11111,
+        "SHOPIFY_CLIENT_API_SECRET": 11111,
+        "SLACK_URL": "https://hooks.slack.com/services/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",
+        "STRIPE_KEY": "PLACEHOLDER",
+        "STRIPE_SECRET": "PLACEHOLDER"
+      },
+      "scripts": {
+        "test-setup": "bundle env && ls -lart && pwd",
+        "test": "RAILS_ENV=test bundle exec rspec"
+      }
+    }
+  },
   "name": "touchcard",
   "scripts": {
-    "postdeploy": "bin/setup"
+    "postdeploy": "bundle exec rails db:schema:load db:seed db:sample_data"
   },
   "stack": "heroku-18"
 }
