@@ -39,6 +39,18 @@ RSpec.describe LobRenderUtil do
       expect(FileUtils.compare_file(output_path, bad_png_path)).to be_falsey  # Compare with bad output (confirms test)
     end
 
+    it "renders_card_order_front_with_coupon" do
+      # TODO: Render postcard from card_order that failed in database_spec.rb
+      #     { shop_id: 858, discount_x: 2, discount_y: 64, discount_pct: -20, discount_exp: 4, image: "https://touchcard-data.s3.amazonaws.com/uploads/b36efa57-a455-4cf5-81f3-b8563678296d/SOURCEvapes_1875x1275_back_2.jpg" },
+      #
+      # TODO: If this uses card_order this might not be the appropriate place to test it
+      # TODO: So we should isolate the issue and test it where appropriate
+      #  Expected behaviour with render.js:
+      #   networkidle2 - fail
+      #   networkidle0 - pass
+      fail "Important test - missing implementation"
+    end
+
     it "raises_error_on_missing_data" do
       postcard.discount_exp_at = Time.now + 23.days
       # Do NOT set discount code or percentage: should throw error
