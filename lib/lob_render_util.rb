@@ -52,7 +52,8 @@ module LobRenderUtil
     end
   end
 
-  def headless_render(html)
+  def headless_render(html, debug_network_throttle=false)
+    debug_network_throttle &= !Rails.env.production?  # never throttle in production
 
     FileUtils.mkdir_p "#{Rails.root}/tmp/lob/"
     file_name = "#{SecureRandom.uuid}"
@@ -60,7 +61,7 @@ module LobRenderUtil
     png_path = "#{Rails.root}/tmp/lob/#{file_name}_output.png"
 
     File.open(html_path, 'w') {|f| f.write(html) }    # Write html to local path so Chrome can open it
-    success = system("node lib/headless/render.js file:///#{Shellwords.escape(html_path)} #{Shellwords.escape(png_path)}")
+    success = system("node lib/headless/render.js #{'--debug_network_throttle' if debug_network_throttle} file:///#{Shellwords.escape(html_path)} #{Shellwords.escape(png_path)}")
 
     raise PostcardRenderError unless success and File.exists?(png_path) && File.size(png_path) > 0
 
