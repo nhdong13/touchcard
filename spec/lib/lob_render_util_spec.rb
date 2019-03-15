@@ -60,7 +60,7 @@ RSpec.describe LobRenderUtil do
       unthrottled_output_path = LobRenderUtil.headless_render(@sample_html, false)
       puts "\nUnthrottled html render:\n#{unthrottled_output_path}"
       mac_compare = FileUtils.compare_file(unthrottled_output_path, (Rails.root + 'spec/images/expected_front_test_grid_mac.png').to_s)
-      heroku_compare = FileUtils.compare_file(unthrottled_output_path, (Rails.root + 'spec/images/expected_front_coupon_heroku.png').to_s)
+      heroku_compare = FileUtils.compare_file(unthrottled_output_path, (Rails.root + 'spec/images/expected_front_test_grid_heroku.png').to_s)
       expect(mac_compare || heroku_compare).to be_truthy
     end
 
@@ -69,7 +69,7 @@ RSpec.describe LobRenderUtil do
       throttled_output_path = LobRenderUtil.headless_render(@sample_html, true)
       puts "\nThrottled html render:\n#{throttled_output_path}"
       mac_compare = FileUtils.compare_file(throttled_output_path, (Rails.root + 'spec/images/expected_front_test_grid_mac.png').to_s)
-      heroku_compare = FileUtils.compare_file(throttled_output_path, (Rails.root + 'spec/images/expected_front_coupon_heroku.png').to_s)
+      heroku_compare = FileUtils.compare_file(throttled_output_path, (Rails.root + 'spec/images/expected_front_test_grid_heroku.png').to_s)
       expect(mac_compare || heroku_compare).to be_truthy
     end
 
