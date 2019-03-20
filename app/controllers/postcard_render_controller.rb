@@ -1,4 +1,4 @@
-class LobApiController < ApplicationController
+class PostcardRenderController < ApplicationController
   # This controller is used for rendering a card side to the Lob API, not via routes but ApplicationController::render
 
   class MissingPostcardDataError < StandardError
@@ -24,7 +24,7 @@ class LobApiController < ApplicationController
     render :card_side, assigns: {
         postcard: postcard,
         json_attributes: is_front ? postcard.card_order.front_json : postcard.card_order.back_json,
-        lob_js_pack_path: LobRenderUtil.full_lob_js_pack_path,
-        lob_css_pack_path: LobRenderUtil.full_lob_css_pack_path }
+        lob_js_pack_path: PostcardRenderUtil.full_postcard_render_js_pack_path,
+        lob_css_pack_path: PostcardRenderUtil.full_postcard_render_css_pack_path }
   end
 end

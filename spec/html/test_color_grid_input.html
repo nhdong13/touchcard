@@ -1,0 +1,42 @@
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Touchcard 4x6 Postcard Template</title>
+  <link rel="stylesheet" type="text/css" href="__CSS_PATH__">
+  <link rel="stylesheet" media="screen" href="https://fonts.googleapis.com/css?family=Montserrat:400,700" />
+
+  <style>
+
+    *, *:before, *:after {
+      -webkit-box-sizing: border-box;
+      -moz-box-sizing: border-box;
+      box-sizing: border-box;
+    }
+
+    body {
+      width: 6.25in;
+      height: 4.25in;
+      margin: 0;
+      padding: 0;
+      background-color: darkturquoise;
+    }
+
+    .card-side-body {
+      transform-origin: left top !important;
+      transform: scale(3.125) !important; /* 600 * 3.125 pixels = 1875 */
+    }
+
+  </style>
+  <script src="__JS_PATH__"></script>
+</head>
+<body>
+
+<!-- For Lob API rendering -->
+
+<div id="postcard-render-card-side" data-attributes="{&quot;version&quot;:0,&quot;background_url&quot;:&quot;__IMAGE_PATH__&quot;,&quot;discount_x&quot;:376,&quot;discount_y&quot;:56}" data-discount-pct="20" data-discount-exp="01/23/1990" data-discount-code="XXX-YYY-ZZZ"></div>
+
+
+
+
+</body>
+</html>

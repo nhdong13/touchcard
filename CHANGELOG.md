@@ -7,13 +7,12 @@
     - Add abandoned_checkouts rake task. (Can be set up as scheduled task, but will save this for now.)
 
 - RELEASE REQUIREMENTS
-
     - Upgrade stack: `heroku-18`
-    - Upgrade Database to Pro
     - ENV: removed AWS_BUCKET_NAME, only using S3_BUCKET_NAME
-    - BUILDPACKS - see README for required buildpacks
+    - BUILDPACKS - see README for required buildpacks (now in app.json)
 
     - DONE
+        - Upgrade Database to Pro
         - ENV: REAMAZE_SSO_SECRET               
         - ENV: add GTM_ENVIRONMENT_PARAMS (see gtm_helper.rb)
             - DEV: '&gtm_auth=n553XLcYVrmY05MZ2RjQyA&gtm_preview=env-5&gtm_cookies_win=x' 

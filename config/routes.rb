@@ -53,7 +53,7 @@ Rails.application.routes.draw do
   get '/aws/sign', to: 'aws#sign'
 
   if Rails.env.development?
-    get '/lob_debug' => 'lob_api#debug'
+    get '/lob_debug' => 'postcard_render#debug'
   end
 
 end

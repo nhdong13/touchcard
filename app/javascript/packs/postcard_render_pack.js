@@ -2,7 +2,7 @@ import Vue from 'vue/dist/vue.esm'
 import CardSide from '../components/card_side'
 import { CardAttributes } from '../components/card_attributes'
 
-console.log("Lob Render Pack: LOADING");
+console.log("Postcard Render Pack: LOADING");
 
 if (document.readyState == 'loading') {
   document.addEventListener('DOMContentLoaded', loadCardSide);
@@ -12,9 +12,9 @@ if (document.readyState == 'loading') {
 
 function loadCardSide(){
 
-  var element = document.getElementById('lob-api-card-side');
+  var element = document.getElementById('postcard-render-card-side');
   if (element != null) {
-    console.log("Lob Render Pack LOADING");
+    console.log("Postcard Render Pack LOADING");
     const vueApp = new Vue({
       el: element,
       template: `
@@ -39,7 +39,7 @@ function loadCardSide(){
         let signalingDiv = document.createElement('div');
         signalingDiv.setAttribute('class', 'render-complete');
         document.head.appendChild(signalingDiv);
-        console.log("Lob Render Pack MOUNTED");
+        console.log("Postcard Render Pack MOUNTED");
 
       },
       components:{
