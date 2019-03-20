@@ -2,7 +2,7 @@ require "aws_utils"
 require "card_html"
 require "newrelic_rpm"
 require "discount_manager"
-require "lob_render_util"
+require "postcard_render_util"
 
 class Postcard < ApplicationRecord
   belongs_to :card_order
@@ -93,8 +93,8 @@ class Postcard < ApplicationRecord
 
     prepare_card
 
-    front_png_path = LobRenderUtil.render_side_png(postcard: self, is_front: true)
-    back_png_path = LobRenderUtil.render_side_png(postcard: self, is_front: false)
+    front_png_path = PostcardRenderUtil.render_side_png(postcard: self, is_front: true)
+    back_png_path = PostcardRenderUtil.render_side_png(postcard: self, is_front: false)
 
 
     @lob ||= Lob::Client.new(api_key: ENV['LOB_API_KEY'])

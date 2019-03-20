@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe LobRenderUtil do
+RSpec.describe PostcardRenderUtil do
 
   describe "#render_postcard" do
     let(:postcard) { create(:postcard, sent: false, paid: true, card_order: card_order) }
@@ -14,8 +14,8 @@ RSpec.describe LobRenderUtil do
 
       @sample_html = File.read(Rails.root + 'spec/html/test_color_grid_input.html')
       @sample_html.gsub! '__IMAGE_PATH__', (Rails.root + 'spec/images/test_color_grid.png').to_s
-      @sample_html.gsub! '__JS_PATH__', LobRenderUtil.full_lob_js_pack_path
-      @sample_html.gsub! '__CSS_PATH__', LobRenderUtil.full_lob_css_pack_path
+      @sample_html.gsub! '__JS_PATH__', PostcardRenderUtil.full_postcard_render_js_pack_path
+      @sample_html.gsub! '__CSS_PATH__', PostcardRenderUtil.full_postcard_render_css_pack_path
     end
 
     after do
@@ -28,16 +28,16 @@ RSpec.describe LobRenderUtil do
     #
     # heroku run bash -a touchcard-dev-..
     # bin/rails console
-    # output_path =  LobRenderUtil.render_side_png(is_front: true, postcard: Postcard.create(card_order: CardOrder.create(discount_pct: -37, discount_exp: 2, front_json: { "version":0, "background_url": "https://touchcard-static.s3.amazonaws.com/postcards/test/background_1.jpg", "discount_x":376, "discount_y":56 }), discount_pct: -37, discount_code: "XXX-YYY-ZZZ"))
+    # output_path =  PostcardRenderUtil.render_side_png(is_front: true, postcard: Postcard.create(card_order: CardOrder.create(discount_pct: -37, discount_exp: 2, front_json: { "version":0, "background_url": "https://touchcard-static.s3.amazonaws.com/postcards/test/background_1.jpg", "discount_x":376, "discount_y":56 }), discount_pct: -37, discount_code: "XXX-YYY-ZZZ"))
     #
-    # cat /app/tmp/lob/570edc23-2290-499f-98e8-e27ed9a9d993_output.png | curl -X PUT -T "-" https://transfer.sh/debug_sample_card_print.png
+    # cat /app/tmp/render/570edc23-2290-499f-98e8-e27ed9a9d993_output.png | curl -X PUT -T "-" https://transfer.sh/debug_sample_card_print.png
 
 
     it "renders_front_with_coupon" do
       postcard.discount_exp_at = Time.now + 23.days
       postcard.discount_code = "XXX-YYY-ZZZ"
       postcard.discount_pct = -37
-      output_path =  LobRenderUtil.render_side_png(postcard: postcard, is_front: true)
+      output_path =  PostcardRenderUtil.render_side_png(postcard: postcard, is_front: true)
       puts "\nFront render postcard object:\n#{output_path}"
       mac_compare = FileUtils.compare_file(output_path, (Rails.root + 'spec/images/expected_front_coupon_mac.png').to_s)
       heroku_compare = FileUtils.compare_file(output_path, (Rails.root + 'spec/images/expected_front_coupon_heroku.png').to_s)
@@ -47,7 +47,7 @@ RSpec.describe LobRenderUtil do
     end
 
     it "renders_back_no_coupon" do
-      output_path =  LobRenderUtil.render_side_png(postcard: postcard, is_front: false)
+      output_path =  PostcardRenderUtil.render_side_png(postcard: postcard, is_front: false)
       puts "\nBack render postcard object:\n#{output_path}"
       mac_compare = FileUtils.compare_file(output_path, (Rails.root + 'spec/images/expected_back_no_coupon_mac.png').to_s)
       normal_compare = FileUtils.compare_file(output_path, (Rails.root + 'spec/images/expected_back_no_coupon.png').to_s)
@@ -57,7 +57,7 @@ RSpec.describe LobRenderUtil do
 
 
     it "renders_html" do
-      unthrottled_output_path = LobRenderUtil.headless_render(@sample_html, false)
+      unthrottled_output_path = PostcardRenderUtil.headless_render(@sample_html, false)
       puts "\nUnthrottled html render:\n#{unthrottled_output_path}"
       mac_compare = FileUtils.compare_file(unthrottled_output_path, (Rails.root + 'spec/images/expected_front_test_grid_mac.png').to_s)
       heroku_compare = FileUtils.compare_file(unthrottled_output_path, (Rails.root + 'spec/images/expected_front_test_grid_heroku.png').to_s)
@@ -66,7 +66,7 @@ RSpec.describe LobRenderUtil do
 
 
     it "renders_throttled_html" do
-      throttled_output_path = LobRenderUtil.headless_render(@sample_html, true)
+      throttled_output_path = PostcardRenderUtil.headless_render(@sample_html, true)
       puts "\nThrottled html render:\n#{throttled_output_path}"
       mac_compare = FileUtils.compare_file(throttled_output_path, (Rails.root + 'spec/images/expected_front_test_grid_mac.png').to_s)
       heroku_compare = FileUtils.compare_file(throttled_output_path, (Rails.root + 'spec/images/expected_front_test_grid_heroku.png').to_s)
@@ -78,7 +78,7 @@ RSpec.describe LobRenderUtil do
       # Do NOT set discount code or percentage: should throw error
       # postcard.discount_code = "XXX-YYY-ZZZ"
       # postcard.discount_pct = -37
-      expect{ LobRenderUtil.render_side_png(postcard: postcard, is_front: true) }.to raise_error(LobApiController::MissingPostcardDataError)
+      expect{ PostcardRenderUtil.render_side_png(postcard: postcard, is_front: true) }.to raise_error(PostcardRenderController::MissingPostcardDataError)
     end
   end
 end
