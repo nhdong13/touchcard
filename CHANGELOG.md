@@ -10,6 +10,7 @@
     - Upgrade stack: `heroku-18`
     - ENV: removed AWS_BUCKET_NAME, only using S3_BUCKET_NAME
     - BUILDPACKS - see README for required buildpacks (now in app.json)
+    - Migrate card side: `heroku run rake cardsetup:card_side_to_json`
 
     - DONE
         - Upgrade Database to Pro
