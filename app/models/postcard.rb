@@ -77,6 +77,10 @@ class Postcard < ApplicationRecord
     if card_order.has_discount?
       self.discount_pct = -(card_order.discount_pct.abs)
       self.discount_exp_at = estimated_arrival + card_order.discount_exp.weeks
+      if (ENV['APP_URL'] == "https://touchcard-staging.herokuapp.com/") and (card_order.shop.domain != "stagecard.myshopify.com")
+        self.discount_code = "SAM-PLE-XXX"
+        return
+      end
       @discount_manager = DiscountManager.new(card_order.shop.shopify_api_path, discount_pct, discount_exp_at)
       @discount_manager.generate_discount
       self.price_rule_id = @discount_manager.price_rule_id
