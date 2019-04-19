@@ -49,6 +49,9 @@ Rails.application.routes.draw do
     # get 'select_type', :on => :collection
   end
 
+  # Redirect `/app` (legacy) to `/` to avoid upgrade issues
+  get '/app', to: redirect('/')
+
   # Routes for AWS Controller (to sign S3 uploads)
   get '/aws/sign', to: 'aws#sign'
 
