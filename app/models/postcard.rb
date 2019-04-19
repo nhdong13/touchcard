@@ -103,7 +103,7 @@ class Postcard < ApplicationRecord
 
     @lob ||= Lob::Client.new(api_key: ENV['LOB_API_KEY'])
     sent_card = @lob.postcards.create(
-      description: "A #{card_order.type} card sent by #{shop.domain}",
+      description: "#{card_order.type} #{shop.domain}",
       to: to_address,
       # from: shop_address, # Return address for Shop
       front:  File.new(front_png_path),

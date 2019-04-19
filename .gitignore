@@ -42,3 +42,4 @@ yarn-error.log*
 /node_modules
 
 nohup.out
+DevNotes.md
