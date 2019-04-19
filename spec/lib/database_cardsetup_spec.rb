@@ -2,7 +2,7 @@ require 'rails_helper'
 
 describe "rake cardsetup:card_side_to_json", type: :task do
 
-  before { skip("This is a manual comparison. The automated test does not have any error conditions.") }
+  # before { skip("This is a manual comparison. The automated test does not have any error conditions.") }
 
   it "migrates_correctly" do
 
