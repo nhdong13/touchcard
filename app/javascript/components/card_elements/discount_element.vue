@@ -101,18 +101,18 @@
 
 
     .percent {
-        font-size: 0.30in;
+        font-size: 32px;
         font-weight: 800;
-        margin: 0.06in 0 0;
+        margin: 6px 0 0;
     }
 
     .code {
-        font-size: 0.17in;
+        font-size: 18px;
     }
 
     .expiration {
-        margin-top: 0.11in;
-        font-size: 0.09in;
+        margin-top: 7px;
+        font-size: 11px;
     }
 
 
