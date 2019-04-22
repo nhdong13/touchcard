@@ -11,7 +11,7 @@
             @dragstop="emitDiscountCoords"
 
     >
-        <div class="percent">{{discount_pct}}% OFF</div>
+        <div class="amount">{{discount_pct}}% OFF</div>
         <div class="code">{{discount_code}}</div>
         <div class="expiration">EXPIRES {{discount_exp}}</div>
     </base-element>
@@ -100,10 +100,10 @@
     }
 
 
-    .percent {
+    .amount {
         font-size: 32px;
         font-weight: 800;
-        margin: 6px 0 0;
+        margin: 5px 0 0;
     }
 
     .code {
@@ -111,7 +111,7 @@
     }
 
     .expiration {
-        margin-top: 7px;
+        margin-top: 6px;
         font-size: 11px;
     }
 

@@ -37,8 +37,8 @@ namespace :cardsetup do
         card_order.front_json["background_url"] = card_order.card_side_front.image
         card_order.back_json["background_url"] = card_order.card_side_back.image
 
-        x_scalar = 5.565  # manually tweaked to these
-        y_scalar = 3.732
+        x_scalar = 5.8  # manually tweaked to these
+        y_scalar = 3.75
 
         # Make sure any out of range values are converted into something sensible
         card_order.discount_exp = card_order.discount_exp.clamp(1, 52) if card_order.discount_exp
