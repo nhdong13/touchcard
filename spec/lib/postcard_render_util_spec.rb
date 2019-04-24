@@ -41,6 +41,8 @@ RSpec.describe PostcardRenderUtil do
       puts "\nFront render postcard object:\n#{output_path}"
       mac_compare = FileUtils.compare_file(output_path, (Rails.root + 'spec/images/expected_front_coupon_mac.png').to_s)
       heroku_compare = FileUtils.compare_file(output_path, (Rails.root + 'spec/images/expected_front_coupon_heroku.png').to_s)
+
+      temp_s3_upload(File.basename(output_path), output_path) if ENV['ci'] and not (mac_compare || heroku_compare)
       expect(mac_compare || heroku_compare ).to be_truthy  # Compare with `expected_front_coupon[...].png`
       expect(FileUtils.compare_file(output_path, bad_png_path)).to be_falsey  # Compare with bad output (confirms test)
     end
@@ -60,6 +62,7 @@ RSpec.describe PostcardRenderUtil do
       puts "\nUnthrottled html render:\n#{unthrottled_output_path}"
       mac_compare = FileUtils.compare_file(unthrottled_output_path, (Rails.root + 'spec/images/expected_front_test_grid_mac.png').to_s)
       heroku_compare = FileUtils.compare_file(unthrottled_output_path, (Rails.root + 'spec/images/expected_front_test_grid_heroku.png').to_s)
+      temp_s3_upload(File.basename(unthrottled_output_path), unthrottled_output_path) if ENV['ci'] and not (mac_compare || heroku_compare)
       expect(mac_compare || heroku_compare).to be_truthy
     end
 
@@ -69,6 +72,7 @@ RSpec.describe PostcardRenderUtil do
       puts "\nThrottled html render:\n#{throttled_output_path}"
       mac_compare = FileUtils.compare_file(throttled_output_path, (Rails.root + 'spec/images/expected_front_test_grid_mac.png').to_s)
       heroku_compare = FileUtils.compare_file(throttled_output_path, (Rails.root + 'spec/images/expected_front_test_grid_heroku.png').to_s)
+      temp_s3_upload(File.basename(throttled_output_path), throttled_output_path) if ENV['ci'] and not (mac_compare || heroku_compare)
       expect(mac_compare || heroku_compare).to be_truthy
     end
 
