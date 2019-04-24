@@ -101,9 +101,9 @@
 
 
     .amount {
-        font-size: 32px;
+        font-size: 30px;
         font-weight: 800;
-        margin: 5px 0 0;
+        margin: 6px 0 0;
     }
 
     .code {
@@ -111,8 +111,8 @@
     }
 
     .expiration {
-        margin-top: 6px;
-        font-size: 11px;
+        margin-top: 5px;
+        font-size: 10px;
     }
 
 
