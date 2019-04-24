@@ -45,6 +45,8 @@ RSpec.configure do |config|
   # loaded or loaded everywhere
   config.include ShopifyHelper
 
+  config.include S3TestHelper
+
   config.include TaskExampleGroup
 
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
