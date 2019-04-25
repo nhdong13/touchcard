@@ -2,7 +2,7 @@ require 'webmock/rspec'
 require 'fileutils'
 
 # disable external requests
-WebMock.disable_net_connect!(allow_localhost: true)
+WebMock.disable_net_connect!(allow_localhost: true, allow: 'touchcard-ci-temp.s3.amazonaws.com')
 
 RSpec.configure do |config|
 

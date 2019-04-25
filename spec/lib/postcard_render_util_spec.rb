@@ -41,13 +41,8 @@ RSpec.describe PostcardRenderUtil do
       puts "\nFront render postcard object:\n#{output_path}"
       mac_compare = FileUtils.compare_file(output_path, (Rails.root + 'spec/images/expected_front_coupon_mac.png').to_s)
       heroku_compare = FileUtils.compare_file(output_path, (Rails.root + 'spec/images/expected_front_coupon_heroku.png').to_s)
-
-
-      puts "ENV['CI']: #{ENV['CI']}"
-      puts "ENV['HEROKU_TEST_RUN_ID']: #{ENV['HEROKU_TEST_RUN_ID']}"
       result = temp_s3_upload(File.basename(output_path), output_path) if ENV['HEROKU_TEST_RUN_ID'] and not (mac_compare || heroku_compare)
-      puts "S3 result: #{result}"
-
+      puts "S3 upload result: #{result}"
       expect(mac_compare || heroku_compare ).to be_truthy  # Compare with `expected_front_coupon[...].png`
       expect(FileUtils.compare_file(output_path, bad_png_path)).to be_falsey  # Compare with bad output (confirms test)
     end
@@ -68,6 +63,7 @@ RSpec.describe PostcardRenderUtil do
       mac_compare = FileUtils.compare_file(unthrottled_output_path, (Rails.root + 'spec/images/expected_front_test_grid_mac.png').to_s)
       heroku_compare = FileUtils.compare_file(unthrottled_output_path, (Rails.root + 'spec/images/expected_front_test_grid_heroku.png').to_s)
       temp_s3_upload(File.basename(unthrottled_output_path), unthrottled_output_path) if ENV['HEROKU_TEST_RUN_ID'] and not (mac_compare || heroku_compare)
+      puts "S3 upload result: #{result}"
       expect(mac_compare || heroku_compare).to be_truthy
     end
 
@@ -78,6 +74,7 @@ RSpec.describe PostcardRenderUtil do
       mac_compare = FileUtils.compare_file(throttled_output_path, (Rails.root + 'spec/images/expected_front_test_grid_mac.png').to_s)
       heroku_compare = FileUtils.compare_file(throttled_output_path, (Rails.root + 'spec/images/expected_front_test_grid_heroku.png').to_s)
       temp_s3_upload(File.basename(throttled_output_path), throttled_output_path) if ENV['HEROKU_TEST_RUN_ID'] and not (mac_compare || heroku_compare)
+      puts "S3 upload result: #{result}"
       expect(mac_compare || heroku_compare).to be_truthy
     end
 
