@@ -25,15 +25,14 @@ RSpec.describe PostcardRenderUtil do
       puts "S3 upload result: #{upload_result}"
     end
 
-    # TODO: On heroku upload result to S3 so we can test it (like gitlab artifacts)
+
+    # To manually access files in Heroku:
     #
-    # In the meantime, to manually test things on Heroku:
+    #   heroku run bash -a touchcard-dev-..
+    #   bin/rails console
+    #   output_path =  PostcardRenderUtil.render_side_png(is_front: true, postcard: Postcard.create(card_order: CardOrder.create(discount_pct: -37, discount_exp: 2, front_json: { "version":0, "background_url": "https://touchcard-static.s3.amazonaws.com/postcards/test/background_1.jpg", "discount_x":376, "discount_y":56 }), discount_pct: -37, discount_code: "XXX-YYY-ZZZ"))
     #
-    # heroku run bash -a touchcard-dev-..
-    # bin/rails console
-    # output_path =  PostcardRenderUtil.render_side_png(is_front: true, postcard: Postcard.create(card_order: CardOrder.create(discount_pct: -37, discount_exp: 2, front_json: { "version":0, "background_url": "https://touchcard-static.s3.amazonaws.com/postcards/test/background_1.jpg", "discount_x":376, "discount_y":56 }), discount_pct: -37, discount_code: "XXX-YYY-ZZZ"))
-    #
-    # cat /app/tmp/render/570edc23-2290-499f-98e8-e27ed9a9d993_output.png | curl -X PUT -T "-" https://transfer.sh/debug_sample_card_print.png
+    #   cat /app/tmp/render/570edc23-2290-499f-98e8-e27ed9a9d993_output.png | curl -X PUT -T "-" https://transfer.sh/debug_sample_card_print.png
 
 
     it "renders_front_with_coupon" do
