@@ -10,8 +10,6 @@ RSpec.describe PostcardRenderUtil do
     bad_png_path = (Rails.root + 'spec/images/bad_output_retina.png').to_s
 
     before do
-      Timecop.freeze(Time.utc(1990))
-
       @sample_html = File.read(Rails.root + 'spec/html/test_color_grid_input.html')
       @sample_html.gsub! '__IMAGE_PATH__', (Rails.root + 'spec/images/test_color_grid.png').to_s
       @sample_html.gsub! '__JS_PATH__', PostcardRenderUtil.full_postcard_render_js_pack_path
@@ -19,7 +17,6 @@ RSpec.describe PostcardRenderUtil do
     end
 
     after do
-      Timecop.return
     end
 
     # TODO: On heroku upload result to S3 so we can test it (like gitlab artifacts)
@@ -34,15 +31,15 @@ RSpec.describe PostcardRenderUtil do
 
 
     it "renders_front_with_coupon" do
-      postcard.discount_exp_at = Time.now + 23.days
+      postcard.discount_exp_at = Time.utc(1990) + 23.days
       postcard.discount_code = "XXX-YYY-ZZZ"
       postcard.discount_pct = -37
       output_path =  PostcardRenderUtil.render_side_png(postcard: postcard, is_front: true)
       puts "\nFront render postcard object:\n#{output_path}"
       mac_compare = FileUtils.compare_file(output_path, (Rails.root + 'spec/images/expected_front_coupon_mac.png').to_s)
       heroku_compare = FileUtils.compare_file(output_path, (Rails.root + 'spec/images/expected_front_coupon_heroku.png').to_s)
-      result = temp_s3_upload(File.basename(output_path), output_path) if ENV['HEROKU_TEST_RUN_ID'] and not (mac_compare || heroku_compare)
-      puts "S3 upload result: #{result}"
+      upload_result = temp_s3_upload(File.basename(output_path), output_path) if ENV['HEROKU_TEST_RUN_ID'] and not (mac_compare || heroku_compare)
+      puts "S3 upload result: #{upload_result}"
       expect(mac_compare || heroku_compare ).to be_truthy  # Compare with `expected_front_coupon[...].png`
       expect(FileUtils.compare_file(output_path, bad_png_path)).to be_falsey  # Compare with bad output (confirms test)
     end
@@ -62,8 +59,8 @@ RSpec.describe PostcardRenderUtil do
       puts "\nUnthrottled html render:\n#{unthrottled_output_path}"
       mac_compare = FileUtils.compare_file(unthrottled_output_path, (Rails.root + 'spec/images/expected_front_test_grid_mac.png').to_s)
       heroku_compare = FileUtils.compare_file(unthrottled_output_path, (Rails.root + 'spec/images/expected_front_test_grid_heroku.png').to_s)
-      temp_s3_upload(File.basename(unthrottled_output_path), unthrottled_output_path) if ENV['HEROKU_TEST_RUN_ID'] and not (mac_compare || heroku_compare)
-      puts "S3 upload result: #{result}"
+      upload_result = temp_s3_upload(File.basename(unthrottled_output_path), unthrottled_output_path) if ENV['HEROKU_TEST_RUN_ID'] and not (mac_compare || heroku_compare)
+      puts "S3 upload result: #{upload_result}"
       expect(mac_compare || heroku_compare).to be_truthy
     end
 
@@ -73,13 +70,13 @@ RSpec.describe PostcardRenderUtil do
       puts "\nThrottled html render:\n#{throttled_output_path}"
       mac_compare = FileUtils.compare_file(throttled_output_path, (Rails.root + 'spec/images/expected_front_test_grid_mac.png').to_s)
       heroku_compare = FileUtils.compare_file(throttled_output_path, (Rails.root + 'spec/images/expected_front_test_grid_heroku.png').to_s)
-      temp_s3_upload(File.basename(throttled_output_path), throttled_output_path) if ENV['HEROKU_TEST_RUN_ID'] and not (mac_compare || heroku_compare)
-      puts "S3 upload result: #{result}"
+      upload_result = temp_s3_upload(File.basename(throttled_output_path), throttled_output_path) if ENV['HEROKU_TEST_RUN_ID'] and not (mac_compare || heroku_compare)
+      puts "S3 upload result: #{upload_result}"
       expect(mac_compare || heroku_compare).to be_truthy
     end
 
     it "raises_error_on_missing_data" do
-      postcard.discount_exp_at = Time.now + 23.days
+      postcard.discount_exp_at = Time.utc(1990) + 23.days
       # Do NOT set discount code or percentage: should throw error
       # postcard.discount_code = "XXX-YYY-ZZZ"
       # postcard.discount_pct = -37
