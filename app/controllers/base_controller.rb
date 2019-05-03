@@ -1,4 +1,6 @@
-class BaseController < ShopifyApp::AuthenticatedController
+class BaseController < ApplicationController
+  include ShopifyApp::Authenticated
+
   before_action :require_auth
   skip_around_action :shopify_session if Rails.configuration.fullscreen_debug
 
