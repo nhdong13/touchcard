@@ -100,7 +100,6 @@ class Postcard < ApplicationRecord
     front_png_path = PostcardRenderUtil.render_side_png(postcard: self, is_front: true)
     back_png_path = PostcardRenderUtil.render_side_png(postcard: self, is_front: false)
 
-
     @lob ||= Lob::Client.new(api_key: ENV['LOB_API_KEY'])
     sent_card = @lob.postcards.create(
       description: "#{card_order.type} #{shop.domain}",
@@ -113,6 +112,10 @@ class Postcard < ApplicationRecord
     self.date_sent = Date.today
     self.postcard_id = sent_card["id"]
     self.save! # TODO: Add error handling here
+
+    # Note: If `send_card` throws an exception (which it definitely can), this doesn't get cleaned up.
+    # I don't want to mess with exception handling here because it affects the core sending logic.
+    # It shouldn't be a common enough issue to make us run out of disk space (since it's run in scheduler anyway)
 
     File.delete(front_png_path) if File.exist?(front_png_path)
     File.delete(back_png_path) if File.exist?(back_png_path)

@@ -44,9 +44,10 @@ module PostcardRenderUtil
 
 
   def render_side_png(postcard:, is_front:)
+    # This renders a file to the local disk and returns the path. It's up to the caller to clean it up.
     begin
       html = PostcardRenderController.render_side(postcard: postcard, is_front: is_front)
-      PostcardRenderUtil.headless_render(html)
+      headless_render(html)
     rescue PostcardRenderError
       raise "Failed to render postcard - id: #{postcard.id}"
     end
@@ -62,9 +63,8 @@ module PostcardRenderUtil
 
     File.open(html_path, 'w') {|f| f.write(html) }    # Write html to local path so Chrome can open it
     success = system("node lib/headless/render.js #{'--debug_network_throttle' if debug_network_throttle} file:///#{Shellwords.escape(html_path)} #{Shellwords.escape(png_path)}")
-
+    File.delete(html_path) if File.exist?(html_path)
     raise PostcardRenderError unless success and File.exists?(png_path) && File.size(png_path) > 0
-
     png_path
   end
 
