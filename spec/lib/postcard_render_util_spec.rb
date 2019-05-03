@@ -19,12 +19,26 @@ RSpec.describe PostcardRenderUtil do
     after do
     end
 
-
-    def archive_test_file(file_path)
-      upload_result = temp_s3_upload(File.basename(file_path), file_path)
-      puts "S3 upload result: #{upload_result}"
+    def host_extension
+      case RbConfig::CONFIG['host_os']
+      when /linux/
+        "heroku"
+      when /darwin/
+        "mac"
+      else
+        raise "Only heroku and mac are supported in rendering tests" unless front_x.class == front_y.class
+        # To support other operating systems please render the test images, manually compare, and add another option to tests
+      end
     end
 
+    def archive_test_file(file_path)
+        upload_result = temp_s3_upload(File.basename(file_path), file_path)
+        puts "S3 upload result: #{upload_result}"
+    end
+
+    def delete_if_exists(file_path)
+      File.delete(file_path) if File.exist?(file_path)
+    end
 
     # To manually access files in Heroku:
     #
@@ -41,40 +55,40 @@ RSpec.describe PostcardRenderUtil do
       postcard.discount_pct = -37
       output_path =  PostcardRenderUtil.render_side_png(postcard: postcard, is_front: true)
       puts "\nFront render postcard object:\n#{output_path}"
-      mac_compare = FileUtils.compare_file(output_path, (Rails.root + 'spec/images/expected_front_coupon_mac.png').to_s)
-      heroku_compare = FileUtils.compare_file(output_path, (Rails.root + 'spec/images/expected_front_coupon_heroku.png').to_s)
-      archive_test_file(output_path) if ENV['HEROKU_TEST_RUN_ID'] and not (heroku_compare)
-      expect(mac_compare || heroku_compare ).to be_truthy  # Compare with `expected_front_coupon[...].png`
+      render_matches = FileUtils.compare_file(output_path, (Rails.root + "spec/images/expected_front_coupon_#{host_extension}.png").to_s)
+      archive_test_file(output_path) if ENV['HEROKU_TEST_RUN_ID'] and not render_matches
+      expect(render_matches).to be_truthy  # Compare with `expected_front_coupon[...].png`
       expect(FileUtils.compare_file(output_path, bad_png_path)).to be_falsey  # Compare with bad output (confirms test)
+      delete_if_exists(output_path) if render_matches
     end
 
     it "renders_back_no_coupon" do
       output_path =  PostcardRenderUtil.render_side_png(postcard: postcard, is_front: false)
       puts "\nBack render postcard object:\n#{output_path}"
-      mac_compare = FileUtils.compare_file(output_path, (Rails.root + 'spec/images/expected_back_no_coupon_mac.png').to_s)
-      normal_compare = FileUtils.compare_file(output_path, (Rails.root + 'spec/images/expected_back_no_coupon.png').to_s)
-      expect(mac_compare || normal_compare).to be_truthy  # Compare with `expected_back_no_coupon[...].png`
+      render_matches = FileUtils.compare_file(output_path, (Rails.root + "spec/images/expected_back_no_coupon_#{host_extension}.png").to_s)
+      expect(render_matches).to be_truthy  # Compare with `expected_back_no_coupon[...].png`
       expect(FileUtils.compare_file(output_path, bad_png_path)).to be_falsey  # Compare with bad output (confirms test)
+      delete_if_exists(output_path) if render_matches
     end
 
 
     it "renders_html" do
-      unthrottled_output_path = PostcardRenderUtil.headless_render(@sample_html, false)
-      puts "\nUnthrottled html render:\n#{unthrottled_output_path}"
-      mac_compare = FileUtils.compare_file(unthrottled_output_path, (Rails.root + 'spec/images/expected_front_test_grid_mac.png').to_s)
-      heroku_compare = FileUtils.compare_file(unthrottled_output_path, (Rails.root + 'spec/images/expected_front_test_grid_heroku.png').to_s)
-      archive_test_file(unthrottled_output_path) if ENV['HEROKU_TEST_RUN_ID'] and not (heroku_compare)
-      expect(mac_compare || heroku_compare).to be_truthy
+      output_path = PostcardRenderUtil.headless_render(@sample_html, false)
+      puts "\nUnthrottled html render:\n#{output_path}"
+      render_matches = FileUtils.compare_file(output_path, (Rails.root + "spec/images/expected_front_test_grid_#{host_extension}.png").to_s)
+      archive_test_file(output_path) if ENV['HEROKU_TEST_RUN_ID'] and not render_matches
+      expect(render_matches).to be_truthy
+      delete_if_exists(output_path) if render_matches
     end
 
 
     it "renders_throttled_html" do
-      throttled_output_path = PostcardRenderUtil.headless_render(@sample_html, true)
-      puts "\nThrottled html render:\n#{throttled_output_path}"
-      mac_compare = FileUtils.compare_file(throttled_output_path, (Rails.root + 'spec/images/expected_front_test_grid_mac.png').to_s)
-      heroku_compare = FileUtils.compare_file(throttled_output_path, (Rails.root + 'spec/images/expected_front_test_grid_heroku.png').to_s)
-      archive_test_file(throttled_output_path) if ENV['HEROKU_TEST_RUN_ID'] and not (heroku_compare)
-      expect(mac_compare || heroku_compare).to be_truthy
+      output_path = PostcardRenderUtil.headless_render(@sample_html, true)
+      puts "\nThrottled html render:\n#{output_path}"
+      render_matches = FileUtils.compare_file(output_path, (Rails.root + "spec/images/expected_front_test_grid_#{host_extension}.png").to_s)
+      archive_test_file(output_path) if ENV['HEROKU_TEST_RUN_ID'] and not render_matches
+      expect(render_matches).to be_truthy
+      delete_if_exists(output_path) if render_matches
     end
 
     it "raises_error_on_missing_data" do

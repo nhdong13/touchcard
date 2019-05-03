@@ -113,6 +113,9 @@ class Postcard < ApplicationRecord
     self.date_sent = Date.today
     self.postcard_id = sent_card["id"]
     self.save! # TODO: Add error handling here
+
+    File.delete(front_png_path) if File.exist?(front_png_path)
+    File.delete(back_png_path) if File.exist?(back_png_path)
   end
 
   # TODO: Unused Automations Code
