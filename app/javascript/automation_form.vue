@@ -1,6 +1,6 @@
 <template>
   <div>
-    <a href="javascript:history.back()" class="mdc-button mdc-button--stroked">Cancel</a>
+    <a :href="backUrl"  class="mdc-button mdc-button--stroked">Cancel</a>
     <button v-on:click="requestSave" class="mdc-button mdc-button--raised">Save</button>
     <hr>
     <!-- div v-cloak></div -->
@@ -65,6 +65,10 @@
         type: String,
         required: true
       },
+      backUrl: {
+        type: String,
+        required: true
+      }
     },
     data: function() {
       return {

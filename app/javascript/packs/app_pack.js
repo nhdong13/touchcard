@@ -31,9 +31,10 @@ document.addEventListener('turbolinks:load', () => {
           id: automationElement.dataset.id,
           automation: tmp_automation,
           awsSignEndpoint: automationElement.dataset.awsSignEndpoint,
+          backUrl: automationElement.dataset.backUrl
         }
       },
-      template: '<automation-form :id="id" :automation="automation" :aws-sign-endpoint="awsSignEndpoint"></automation-form>',
+      template: '<automation-form :id="id" :automation="automation" :aws-sign-endpoint="awsSignEndpoint" :back-url="backUrl"></automation-form>',
       components: {
         'automation-form': AutomationForm
       }
