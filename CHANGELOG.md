@@ -7,12 +7,17 @@
     - Add abandoned_checkouts rake task. (Can be set up as scheduled task, but will save this for now.)
 
 - RELEASE REQUIREMENTS
-    - Upgrade stack: `heroku-18`
-    - ENV: removed AWS_BUCKET_NAME, only using S3_BUCKET_NAME
-    - BUILDPACKS - see README for required buildpacks (now in app.json)
-    - Migrate card side: `heroku run rake cardsetup:card_side_to_json`
+    
     - Rake migrate db
-
+    - Migrate card side: `heroku run rake cardsetup:card_side_to_json`
+   
+    - Later
+        - ENV: removed AWS_BUCKET_NAME, only using S3_BUCKET_NAME
+    
+    - AUTO?
+        - Upgrade stack: `heroku-18`
+        - BUILDPACKS - see README for required buildpacks (now in app.json)
+        
     - DONE
         - Upgrade Database to Pro
         - ENV: REAMAZE_SSO_SECRET               
