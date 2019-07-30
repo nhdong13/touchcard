@@ -18,6 +18,13 @@ class Subscription < ApplicationRecord
   end
 
   def change_quantity(new_quantity)
+
+    # TODO: Make sure payment is current + upgrade quantity charge succeeded before adding
+    # https://stripe.com/docs/billing/invoices/subscription#generating-invoices
+    # or
+    # https://stripe.com/docs/billing/invoices/one-off
+    # TODO: At a minimum - make sure `stripe_customer.delinquent` is false
+
     return true if new_quantity == quantity
     delta_quantity = new_quantity - quantity
     old_quantity = quantity
