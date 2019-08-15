@@ -13,6 +13,7 @@
    
     - Later
         - ENV: removed AWS_BUCKET_NAME, only using S3_BUCKET_NAME
+        - ENV: removed STRIPE_KEY, only using STRIPE_PUB (& STRIPE_SECRET)
     
     - AUTO?
         - Upgrade stack: `heroku-18`
