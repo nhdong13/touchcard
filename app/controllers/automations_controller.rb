@@ -4,12 +4,7 @@ class AutomationsController < BaseController
 
   def index
     # Create default automation if there isn't one already
-    if @current_shop.card_orders.count == 0
-      card_order = @current_shop.card_orders.new
-      card_order.build_card_side_back(is_back: true)
-      card_order.build_card_side_front(is_back: false)
-      card_order.save
-    end
+    @current_shop.post_sale_orders.create if @current_shop.card_orders.empty?
 
     # This flash works, but it's sort of annoying
     if @current_shop.current_subscription && @current_shop.current_subscription.quantity.to_i > 0 && CardOrder.num_enabled == 0
@@ -29,6 +24,8 @@ class AutomationsController < BaseController
   #
   # def new
   #   @automation = @current_shop.card_orders.new
+  #
+  #   NOTE: Don't think we actually need these now, since we're using json in card_orders instead
   #   @automation.build_card_side_back(is_back: true)
   #   @automation.build_card_side_front(is_back: false)
   # end
