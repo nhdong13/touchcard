@@ -87,33 +87,26 @@ ActiveAdmin.register CardOrder do
       row :send_delay
       row :created_at
       row :updated_at
+
+      row :front_json do |card_order|
+        JSON.pretty_generate(card_order.front_json) if card_order.front_json
+      end
+      row "front background_url", :front_json do |card_order|
+        json = card_order.front_json
+        link_to json['background_url'], json['background_url'] if json['background_url']
+      end
+
+      row :back_json
+      row "back background_url", :back_json do |card_order|
+        json = card_order.back_json
+        link_to json['background_url'], json['background_url'] if json['background_url']
+      end
+
+      row "Old Card Side Front", :card_side_front
+      row "Old Card Side Back", :card_side_back
+
       row :sample do |card_order|
           link_to "Send a sample", send_sample_admin_card_order_path(card_order, method: :get)
-      end
-    end
-
-    panel "Card Sides" do
-      table_for card_order.card_side_front do
-        column :id do |side|
-          link_to side.id, controller: "card_sides", action: "show", id: side.id
-        end
-        column :image do |card_side|
-          link_to card_side.image, card_side.image if card_side.image
-        end
-        column :is_back
-        column :discount_y
-        column :discount_x
-      end
-      table_for card_order.card_side_back do
-        column :id do |side|
-          link_to side.id, controller: "card_sides", action: "show", id: side.id
-        end
-        column :image do |card_side|
-          link_to card_side.image, card_side.image if card_side.image
-        end
-        column :is_back
-        column :discount_y
-        column :discount_x
       end
     end
 
