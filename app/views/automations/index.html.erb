@@ -22,7 +22,7 @@
         <% @card_orders.each do |card| %>
           <tr id="card-<%= card.id %>" class="automation-row">
             <td class="automation-controls">
-              <div class="automation-toggle tooltip" data-hover="On / Off">
+              <div class="automation-toggle tooltip" data-hover="Off / On">
                 <div class="mdc-switch">
                   <%= check_box_tag "card-#{card.id}",
                                     card.enabled,
