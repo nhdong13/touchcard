@@ -1,6 +1,6 @@
 require "rest_client"
 
-class SendToSlackJob < ApplicationJob
+class SendToSlackJob < ActiveJob::Base
   queue_as :default
 
   def perform(payload)

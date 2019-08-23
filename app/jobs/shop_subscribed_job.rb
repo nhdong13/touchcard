@@ -1,7 +1,7 @@
 require "slack_notify"
 require "active_campaign_logger"
 
-class ShopSubscribedJob < ApplicationJob
+class ShopSubscribedJob < ActiveJob::Base
   queue_as :default
 
   def perform(shop)

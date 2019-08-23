@@ -14,15 +14,14 @@ ActiveRecord::Schema.define(version: 20180911105555) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-  enable_extension "pg_stat_statements"
 
   create_table "active_admin_comments", id: :serial, force: :cascade do |t|
     t.string "namespace"
     t.text "body"
     t.string "resource_id", null: false
     t.string "resource_type", null: false
-    t.integer "author_id"
     t.string "author_type"
+    t.integer "author_id"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.index ["author_type", "author_id"], name: "index_active_admin_comments_on_author_type_and_author_id"
@@ -292,12 +291,12 @@ ActiveRecord::Schema.define(version: 20180911105555) do
     t.boolean "paid", default: false, null: false
     t.datetime "estimated_arrival"
     t.boolean "arrival_notification_sent", default: false, null: false
+    t.string "postcard_trigger_type"
     t.boolean "expiration_notification_sent", default: false
     t.integer "discount_pct"
     t.datetime "discount_exp_at"
     t.bigint "price_rule_id"
     t.boolean "canceled", default: false
-    t.string "postcard_trigger_type"
     t.index ["customer_id"], name: "index_postcards_on_customer_id"
     t.index ["postcard_trigger_id"], name: "index_postcards_on_postcard_trigger_id"
   end
@@ -318,7 +317,6 @@ ActiveRecord::Schema.define(version: 20180911105555) do
     t.boolean "send_next", default: true, null: false
     t.datetime "last_login"
     t.string "stripe_customer_id"
-    t.string "approval_state", default: "new", null: false
     t.string "name"
     t.string "email"
     t.string "customer_email"
@@ -326,6 +324,7 @@ ActiveRecord::Schema.define(version: 20180911105555) do
     t.string "owner"
     t.datetime "shopify_created_at"
     t.datetime "shopify_updated_at"
+    t.string "approval_state", default: "new", null: false
     t.datetime "uninstalled_at"
     t.datetime "last_login_at"
     t.json "metadata", default: {}

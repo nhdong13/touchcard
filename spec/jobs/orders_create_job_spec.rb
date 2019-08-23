@@ -24,7 +24,7 @@ RSpec.describe OrdersCreateJob, type: :job do
 
   it 'queues the job' do
     expect { job }
-      .to change(ApplicationJob.queue_adapter.enqueued_jobs, :size).by(1)
+      .to change(ActiveJob::Base.queue_adapter.enqueued_jobs, :size).by(1)
   end
 
   it 'is in default queue' do
