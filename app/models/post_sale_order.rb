@@ -2,7 +2,7 @@ class PostSaleOrder < CardOrder
   after_initialize :ensure_defaults
 
   def ensure_defaults
-    self.send_delay = 2 unless self.send_delay > 0 # it starts initialized to 0
+    self.send_delay = 2 unless self.send_delay && self.send_delay > 0 # it starts initialized to 0
     super
   end
 
