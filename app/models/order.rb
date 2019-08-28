@@ -39,19 +39,10 @@ class Order < ApplicationRecord
 
   def connect_to_postcard
     postcard = find_postcard_by_discount
-    if postcard
-      postcard.update_attributes!(postcard_trigger: self)
-      return postcard
-    end
-    postcard = Postcard.where("
-      customer_id = ? AND
-      postcard_trigger_id != ? AND
-      postcard_trigger_type = 'Order' AND
-      sent = TRUE", customer_id, id).first
-    postcard.update_attributes!(postcard_trigger: self) if postcard
+    update_attributes!(postcard: postcard) if postcard
     postcard
   end
-
+  
   def find_postcard_by_discount
     return if discount_codes.blank?
     codes = discount_codes.map { |dc| dc["code"].upcase }
