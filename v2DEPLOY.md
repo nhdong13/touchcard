@@ -21,4 +21,7 @@ heroku run rake db:migrate
 
 
 
+heroku run rake db:cardsetup -a touchcard-staging
+
+
 Change path in Shopify from `/app` to `/`
