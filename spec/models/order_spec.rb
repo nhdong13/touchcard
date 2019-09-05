@@ -32,6 +32,6 @@ RSpec.describe Order, type: :model do
 end
 
 def is_order_connected_to_postcard?
-  new_postcard = order.connect_to_postcard
-  expect(new_postcard).to eq postcard
+  postcard_with_redeemed_discount = order.connect_to_postcard
+  expect(postcard_with_redeemed_discount.id).to eq order.postcard_id
 end
