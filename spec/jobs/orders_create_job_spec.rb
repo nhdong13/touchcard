@@ -140,9 +140,10 @@ RSpec.describe OrdersCreateJob, type: :job do
 
           it "connects order to postcard" do
             perform_enqueued_jobs { job }
-            expect(Order.last.postcards.first.id).to eq(postcard.id)
-            expect(postcard.card_order.revenue).to eq 40994
-            expect(postcard.shop.revenue).to eq 40994
+            order = Order.last
+            expect(order.postcard.id).to eq(postcard.id)
+            expect(order.shop.card_orders.last.revenue).to eq 40994
+            expect(order.shop.revenue).to eq 40994
           end
         end
 
@@ -168,9 +169,9 @@ RSpec.describe OrdersCreateJob, type: :job do
           it "connects order to postcard" do
             perform_enqueued_jobs { job }
             new_order = Order.find_by(shopify_id: s_order[:id])
-            expect(new_order.postcards.first.id).to eq(postcard.id)
-            expect(postcard.card_order.revenue).to eq 40994
-            expect(postcard.shop.revenue).to eq 40994
+            expect(new_order.postcard.id).to eq(postcard.id)
+            expect(new_order.shop.revenue).to eq 40994
+            expect(new_order.shop.card_orders.last.revenue).to eq 40994
           end
         end
       end
