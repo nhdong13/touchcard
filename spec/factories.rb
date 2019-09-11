@@ -1,7 +1,7 @@
 FactoryBot.define do
-	sequence :email do |n|
+  sequence :email do |n|
     "test#{n}@example.com"
-	end
+  end
 
   factory :line_item do
     order
@@ -50,7 +50,7 @@ FactoryBot.define do
     referring_site "MyText"
     total_discounts 1
     total_line_items_price 1
-    total_price 1
+    total_price 12300
     total_tax 1
     processing_method "MyString"
     processed_at "2015-12-02 16:49:13"

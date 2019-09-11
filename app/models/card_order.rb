@@ -72,8 +72,7 @@ class CardOrder < ApplicationRecord
   end
 
   def revenue
-    Order.joins(:postcards).where(postcards: { card_order_id: id })
-      .sum(:total_price)
+    postcards.joins(:orders).sum(:total_price)
   end
 
   def redemptions

@@ -130,20 +130,39 @@ RSpec.describe OrdersCreateJob, type: :job do
 
       context "who is not new" do
         # TODO change this to using a customer with 2 orders
-        let(:s_order) { stub_order("everything") }
+        let!(:s_order) { stub_order("with_discount") }  # Make sure that we've stubbed the HTTP call for `job` webhook
 
         context "and discount code exists on postcard"  do
-          let!(:postcard) do
-            create(:postcard,
-              discount_code: s_order[:discount_codes].first[:code])
-          end
+
+          # We already have a card_order and postcard from above
+          # here we create a second set, so we can test multiple card_orders
+          let!(:redemption_card_order) { create(:card_order, shop: shop) }
+          let!(:redemption_postcard) { create(:postcard, discount_code: 'TENOFF', card_order: redemption_card_order) }
 
           it "connects order to postcard" do
             perform_enqueued_jobs { job }
-            order = Order.last
-            expect(order.postcard.id).to eq(postcard.id)
-            expect(order.shop.card_orders.last.revenue).to eq 40994
-            expect(order.shop.revenue).to eq 40994
+
+            # This job should create a new order
+            redemption_order = Order.last
+
+            # It should also link this order's postcard_id to the `redemption_postcard` above because 'TENOFF' matches the discount
+            expect(redemption_order.postcard.id).to eq(redemption_postcard.id)
+
+            # The card_order factory from above isn't involved here, so it shouldn't have revenue
+            expect(card_order.revenue).to eq 0
+
+            # The redemption_card_order should have the proper revenue from the newly placed order
+            expect(redemption_card_order.revenue).to eq 40994
+
+            # The shop should also reflect is
+            expect(redemption_order.shop.revenue).to eq 40994
+
+            # This should add 8800 to shop.revenue and original factory card_order, but leave the redemption_card_order unaffected
+            another_redemption_order = create(:order, shop: shop, postcard_id: Postcard.last.id, total_price: 8800)
+            expect(card_order.revenue).to eq 8800
+            expect(redemption_card_order.revenue).to eq 40994
+            expect(shop.revenue).to eq 49794
+
           end
         end
 

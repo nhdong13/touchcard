@@ -24,9 +24,7 @@ class Shop < ApplicationRecord
   end
 
   def revenue
-    Order.joins(postcards: :card_order)
-      .where(card_orders: { shop_id: id })
-      .sum(:total_price)
+    card_orders.joins(postcards: :orders).sum(:total_price)
   end
 
   class << self
