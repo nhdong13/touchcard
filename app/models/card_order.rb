@@ -76,7 +76,7 @@ class CardOrder < ApplicationRecord
   end
 
   def redemptions
-    Order.joins(:postcards).where(postcards: { card_order_id: id }).size
+    postcards.joins(:orders).size
   end
 
   # TODO: Remove defaults for card_side_front & card_side_back ?

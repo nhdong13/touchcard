@@ -142,6 +142,27 @@ RSpec.describe CardOrder, type: :model do
     end
   end
 
+  describe "#redemptions" do
+    it "counts redemptions correctly" do
+      card_order = setup_card_order
+
+      expect(card_order.redemptions).to eq 0
+
+      first_customer = create(:customer, shopify_id: "1")
+      second_customer = create(:customer, shopify_id: "2")
+      first_card = create(:postcard, card_order: card_order, sent: true, created_at: 5.days.ago, customer: first_customer)
+      second_card = create(:postcard, card_order: card_order, sent: true, created_at: 3.days.ago, customer: second_customer)
+
+      expect(card_order.redemptions).to eq 0
+
+      first_order = create(:order, postcard_id: first_card.id)
+      expect(card_order.redemptions).to eq 1
+
+      second_order = create(:order, postcard_id: second_card.id)
+      expect(card_order.redemptions).to eq 2
+    end
+  end
+
   # TODO: Unused Automations Code
   #
   # describe "#prepare_for_sending" do
