@@ -89,11 +89,11 @@ class CardOrder < ApplicationRecord
   end
 
   def shows_front_discount?
-    front_json && front_json['discount_x'] && front_json['discount_y']
+    front_json && front_json['discount_x'].present? && front_json['discount_y'].present?
   end
 
   def shows_back_discount?
-    back_json && back_json['discount_x'] && back_json['discount_y']
+    back_json && back_json['discount_x'].present? && back_json['discount_y'].present?
   end
 
   def has_discount?

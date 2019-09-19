@@ -15,9 +15,11 @@ class PostcardRenderController < ApplicationController
   # end
 
   def self.render_side (postcard:, is_front:)
-    if (is_front && postcard.card_order.shows_front_discount?) || (!is_front && postcard.card_order.shows_back_discount?)
-      raise MissingPostcardDataError, "Expected discount code during rendering" unless postcard.discount_code.present?
-      raise MissingPostcardDataError, "Expected discount percentage during rendering" unless postcard.discount_pct.present?
+    if postcard.card_order.has_discount?
+      if (is_front && postcard.card_order.shows_front_discount?) || (!is_front && postcard.card_order.shows_back_discount?)
+        raise MissingPostcardDataError, "Expected discount code during rendering - is_front: #{is_front} postcard_id: #{postcard.id}" unless postcard.discount_code.present?
+        raise MissingPostcardDataError, "Expected discount percentage during rendering - is_front: #{is_front} postcard_id: #{postcard.id}" unless postcard.discount_pct.present?
+      end
     end
 
     # TODO: Not sure we need the paths injected. May be easier to make them global instead of passing into template
