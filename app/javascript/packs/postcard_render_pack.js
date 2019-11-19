@@ -27,8 +27,10 @@ function loadCardSide(){
         >
         </card-side>`,
       data: function() {
+        let attrs = new CardAttributes(JSON.parse(element.dataset.attributes));
+        attrs.showsDiscount = (element.dataset.discountExp && element.dataset.discountCode);
         return {
-          attributes: new CardAttributes(JSON.parse(element.dataset.attributes)),
+          attributes: attrs,
           discount_pct: Number(element.dataset.discountPct),
           discount_exp: element.dataset.discountExp,
           discount_code: element.dataset.discountCode

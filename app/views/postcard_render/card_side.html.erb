@@ -3,10 +3,8 @@
 <%= tag.div id: "postcard-render-card-side",
             data: {
                 attributes: @json_attributes,
-                discount_pct: @postcard.discount_pct&.abs,
-                discount_exp: @postcard.discount_exp_at ? (@postcard.discount_exp_at - 1.day).strftime("%m/%d/%Y") : nil,
+                discount_pct: @postcard.card_order.has_discount? ? @postcard.discount_pct&.abs : nil,
+                discount_exp: (@postcard.card_order.has_discount? && @postcard.discount_exp_at) ? (@postcard.discount_exp_at - 1.day).strftime("%m/%d/%Y") : nil,
                 discount_code: @postcard.discount_code
             }
 %>
-
-

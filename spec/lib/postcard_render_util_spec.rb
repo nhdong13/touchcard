@@ -9,15 +9,6 @@ RSpec.describe PostcardRenderUtil do
 
     bad_png_path = (Rails.root + 'spec/images/bad_output_retina.png').to_s
 
-    before do
-      @sample_html = File.read(Rails.root + 'spec/html/test_color_grid_input.html')
-      @sample_html.gsub! '__IMAGE_PATH__', (Rails.root + 'spec/images/test_color_grid.png').to_s
-      @sample_html.gsub! '__JS_PATH__', PostcardRenderUtil.full_postcard_render_js_pack_path
-      @sample_html.gsub! '__CSS_PATH__', PostcardRenderUtil.full_postcard_render_css_pack_path
-    end
-
-    after do
-    end
 
     def host_extension
       case RbConfig::CONFIG['host_os']
@@ -89,14 +80,6 @@ RSpec.describe PostcardRenderUtil do
       archive_test_file(output_path) if ENV['HEROKU_TEST_RUN_ID'] and not render_matches
       expect(render_matches).to be_truthy
       delete_if_exists(output_path) if render_matches
-    end
-
-    it "raises_error_on_missing_data" do
-      postcard.discount_exp_at = Time.utc(1990) + 23.days
-      # Do NOT set discount code or percentage: should throw error
-      # postcard.discount_code = "XXX-YYY-ZZZ"
-      # postcard.discount_pct = -37
-      expect{ PostcardRenderUtil.render_side_png(postcard: postcard, is_front: true) }.to raise_error(PostcardRenderController::MissingPostcardDataError)
     end
   end
 end

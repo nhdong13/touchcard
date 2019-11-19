@@ -22,8 +22,8 @@ class CardOrder < ApplicationRecord
   accepts_nested_attributes_for :card_side_back, update_only: true
   # , reject_if: :invalid_image_size
   accepts_nested_attributes_for :filters,
-    allow_destroy: true,
-    reject_if: :all_blank
+                                allow_destroy: true,
+                                reject_if: :all_blank
 
   validates :shop, :card_side_front, :card_side_back, presence: true
   validates :discount_pct, numericality: { greater_than_or_equal_to: -100,
@@ -62,13 +62,13 @@ class CardOrder < ApplicationRecord
   def cards_sent
     return 0 unless current_subscription
     postcards
-      .where("created_at > ?", current_subscription.current_period_start)
-      .count
+        .where("created_at > ?", current_subscription.current_period_start)
+        .count
   end
 
   # total number of postcards sent
   def cards_sent_total
-     postcards.where(sent: true).size
+    postcards.where(sent: true).size
   end
 
   def revenue
@@ -88,17 +88,9 @@ class CardOrder < ApplicationRecord
     # TODO: add defaults to schema that can be added
   end
 
-  def shows_front_discount?
-    front_json && front_json['discount_x'].present? && front_json['discount_y'].present?
-  end
-
-  def shows_back_discount?
-    back_json && back_json['discount_x'].present? && back_json['discount_y'].present?
-  end
-
   def has_discount?
-      has_values = discount_exp.present? && discount_pct.present?
-      has_values && (shows_front_discount? || shows_back_discount?)
+    has_values = discount_exp.present? && discount_pct.present?
+    has_values && (shows_front_discount? || shows_back_discount?)
   end
 
   def front_background_url
@@ -133,10 +125,10 @@ class CardOrder < ApplicationRecord
     return "order filtered out" unless send_postcard?(postcard_trigger)
 
     postcard = postcard_trigger.postcards.new(
-      card_order: self,
-      customer: postcard_trigger.customer,
-      send_date: self.send_date,
-      paid: false)
+        card_order: self,
+        customer: postcard_trigger.customer,
+        send_date: self.send_date,
+        paid: false)
     if shop.pay(postcard)
       postcard.paid = true
       postcard.save
@@ -156,6 +148,14 @@ class CardOrder < ApplicationRecord
   end
 
   private
+
+  def shows_front_discount?
+    front_json && front_json['discount_x'].present? && front_json['discount_y'].present?
+  end
+
+  def shows_back_discount?
+    back_json && back_json['discount_x'].present? && back_json['discount_y'].present?
+  end
 
   # def invalid_image_size(attributes)
   #   # debugger
