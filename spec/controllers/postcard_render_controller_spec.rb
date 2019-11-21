@@ -7,6 +7,10 @@ RSpec.describe PostcardRenderController, type: :feature do  # with :controller h
 
   describe "#render_side" do
 
+    before do
+      FileUtils.mkdir_p "#{Rails.root}/tmp/test/"
+    end
+
     it "renders with discount coupon when discount_code, discount_pct, and coupon placement are there" do
       card_side_div = %(<div id="postcard-render-card-side" data-attributes="{&quot;version&quot;:0,&quot;background_url&quot;:&quot;#{(Rails.root + 'spec/images/background_1.jpg').to_s}&quot;,&quot;discount_x&quot;:376,&quot;discount_y&quot;:56}" data-discount-pct="33" data-discount-exp="01/14/2020" data-discount-code="TEST-ING-YO"></div>)
       expected_html = PostcardRenderSpecHelper.postcard_html(card_side_div: card_side_div)
