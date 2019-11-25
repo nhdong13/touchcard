@@ -9,6 +9,13 @@ RSpec.describe PostcardRenderUtil do
 
     bad_png_path = (Rails.root + 'spec/images/bad_output_retina.png').to_s
 
+    before do
+      card_side_div = %(<div id="postcard-render-card-side" data-attributes="{&quot;version&quot;:0,&quot;background_url&quot;:&quot;#{(Rails.root + 'spec/images/test_color_grid.png').to_s}&quot;,&quot;discount_x&quot;:376,&quot;discount_y&quot;:56}" data-discount-pct="20" data-discount-exp="01/23/1990" data-discount-code="XXX-YYY-ZZZ"></div>)
+      @sample_html = PostcardRenderSpecHelper.postcard_html(card_side_div: card_side_div)
+    end
+
+    after do
+    end
 
     def host_extension
       case RbConfig::CONFIG['host_os']
