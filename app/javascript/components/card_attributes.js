@@ -26,8 +26,13 @@ export class CardAttributes {
 
   // Getters / Setters for computed properties
   set showsDiscount(doesShow) {
-    this.discount_x = doesShow ? 40 : null;
-    this.discount_y = doesShow ? 60 : null;
+    if (doesShow) {
+      this.discount_x = this.discount_x ? this.discount_x : 40;
+      this.discount_y = this.discount_y ? this.discount_y : 60;
+    } else {
+      this.discount_x = null;
+      this.discount_y = null;
+    }
   }
 
   get showsDiscount() {

@@ -23,7 +23,6 @@ function loadCardSide(){
             :discount_pct="discount_pct"
             :discount_exp="discount_exp"
             :discount_code="discount_code"
-            :enableDiscount="discount_exp && discount_pct"
         >
         </card-side>`,
       data: function() {
