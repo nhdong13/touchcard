@@ -25,7 +25,8 @@
     "FULLSCREEN_DEBUG": "defined",
     "AC_API_KEY": "PLACEHOLDER",
     "AC_CUSTOMERS_LIST_ID": {
-      "required": true
+      "required": true,
+      "generator": "secret"
     },
     "AC_ENDPOINT": {
       "required": true
