@@ -6,7 +6,7 @@
     {
       "plan": "heroku-postgresql",
       "options": {
-        "version": "9.4"
+        "version": "11"
       }
     }
   ],
@@ -119,7 +119,7 @@
         {
           "plan": "heroku-postgresql:in-dyno",
           "options": {
-            "version": "9.4"
+            "version": "11"
           }
         }
       ],
