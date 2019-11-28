@@ -25,8 +25,7 @@
     "FULLSCREEN_DEBUG": "defined",
     "AC_API_KEY": "PLACEHOLDER",
     "AC_CUSTOMERS_LIST_ID": {
-      "required": true,
-      "generator": "secret"
+      "required": true
     },
     "AC_ENDPOINT": {
       "required": true
@@ -152,6 +151,33 @@
       "scripts": {
         "test-setup": "bundle env && ls -lart && pwd",
         "test": "RAILS_ENV=test bundle exec rspec"
+      }
+    },
+    "review": {
+      "env": {
+        "AC_CUSTOMERS_LIST_ID": "PLACEHOLDER",
+        "AC_ENDPOINT": "https://touchcard.api-us1.com/admin/api.php",
+        "AC_INSTALLED_SHOP_LIST_ID": "PLACEHOLDER",
+        "APP_URL": "PLACEHOLDER",
+        "AWS_ACCESS_KEY_ID": "AKIAJ6XLKLQSBRW3K7DQ",
+        "AWS_REGION": "us-east-1",
+        "AWS_SECRET_ACCESS_KEY": "FuOt7+yLT3XIWNWrJTTnyNY/8F40tWkjffSHoD9l",
+        "GTM_ENVIRONMENT_PARAMS": "PLACEHOLDER",
+        "LANG": "PLACEHOLDER",
+        "LOB_API_KEY": "PLACEHOLDER",
+        "MAIL_FROM": "noreply@mail.gettouchcard.co",
+        "RACK_ENV": "PLACEHOLDER",
+        "RAILS_ENV": "test",
+        "RAILS_MAX_THREADS": "PLACEHOLDER",
+        "RAILS_SERVE_STATIC_FILES": "PLACEHOLDER",
+        "REAMAZE_SSO_SECRET": "PLACEHOLDER",
+        "S3_BUCKET_NAME": "PLACEHOLDER",
+        "SECRET_KEY_BASE": "PLACEHOLDER",
+        "SHOPIFY_CLIENT_API_KEY": 11111,
+        "SHOPIFY_CLIENT_API_SECRET": 11111,
+        "SLACK_URL": "https://hooks.slack.com/services/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",
+        "STRIPE_PUB": "PLACEHOLDER",
+        "STRIPE_SECRET": "PLACEHOLDER"
       }
     }
   },
