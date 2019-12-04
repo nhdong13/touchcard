@@ -38,6 +38,8 @@ class CardOrder < ApplicationRecord
                                            allow_nil: true,
                                            message: "must be between 1 and 52 weeks"}
 
+  after_initialize :ensure_defaults, if: :new_record?
+
   delegate :current_subscription, to: :shop
 
   scope :active, -> { where(archived: false) }
