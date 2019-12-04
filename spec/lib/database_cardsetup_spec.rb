@@ -5,7 +5,23 @@ describe "rake cardsetup:card_side_to_json", type: :task do
   # before { skip("This is a manual comparison. The automated test does not have any error conditions.") }
 
   it "migrates_correctly" do
+    image_path = (Rails.root + 'spec/images/background_1.jpg').to_s
+    front_side = create(:card_side, {image: image_path, discount_x: 5, discount_y: 64})
+    back_side = create(:card_side, {image: nil, is_back: true})
+    co = create(:card_order, {card_side_front: front_side, card_side_back: back_side, front_json: {}, back_json: {}, discount_pct: -15, discount_exp: 4 })
+    task.execute
+    expected = {
+        "background_url" => image_path,
+        "discount_x" => 29.0,
+        "discount_y" => 240.0
+    }
+    expect(CardOrder.all.first.front_json).to eq expected
+  end
 
+  it "migrates_correctly_manual_check" do
+    exit 1
+    #TODO: Remove this for manually testing the migration
+    
     old_formats = [
     { shop_id: 1024, discount_x: 5, discount_y: 64, discount_pct: -15, discount_exp: 4, image: "https://touchcard-data.s3.amazonaws.com/uploads/ce5c578d-66ed-481d-be4a-1db815a7631f/2.jpg" },
         # { shop_id: 75, discount_x: 67, discount_y: 68, discount_pct: -10, discount_exp: 4, image: "https://touchcard-data.s3.amazonaws.com/uploads/18a83a77-fe73-4441-a540-a2cabe598567/touchcard-welcome-new-clients-1_front-side.png" },
@@ -56,7 +72,8 @@ describe "rake cardsetup:card_side_to_json", type: :task do
 
     old_formats.each do |f|
       front_side = create(:card_side, {image: f[:image], discount_x: f[:discount_x], discount_y: f[:discount_y]})
-      co = create(:card_order, {card_side_front: front_side, front_json: {}, back_json: {}, discount_pct: f[:discount_pct], discount_exp: f[:discount_exp] })
+      back_side = create(:card_side, {image: nil, is_back: true})
+      co = create(:card_order, {card_side_front: front_side, card_side_back: back_side, front_json: {}, back_json: {}, discount_pct: f[:discount_pct], discount_exp: f[:discount_exp] })
     end
 
     task.execute
@@ -74,8 +91,6 @@ describe "rake cardsetup:card_side_to_json", type: :task do
       output_path =  PostcardRenderUtil.render_side_png(postcard: postcard, is_front: true)
       puts output_path
     end
-
-    # TODO: More testing of production data
 
   end
 end

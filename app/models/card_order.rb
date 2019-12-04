@@ -81,10 +81,7 @@ class CardOrder < ApplicationRecord
     postcards.joins(:orders).size
   end
 
-  # TODO: Remove defaults for card_side_front & card_side_back ?
   def ensure_defaults
-    self.build_card_side_front(is_back: false) unless self.card_side_front
-    self.build_card_side_back(is_back: true) unless self.card_side_back
     self.international = false if international.nil?
     self.enabled = false if enabled.nil?
     # TODO: add defaults to schema that can be added
