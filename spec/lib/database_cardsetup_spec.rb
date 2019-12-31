@@ -18,8 +18,7 @@ describe "rake cardsetup:card_side_to_json", type: :task do
     expect(CardOrder.all.first.front_json).to eq expected
   end
 
-  it "migrates_correctly_manual_check" do
-    exit 1
+  it "migrates_correctly_manual_check", skip: "Manual Test - Not for running with full suite" do
     #TODO: Remove this for manually testing the migration
     
     old_formats = [
