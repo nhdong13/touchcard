@@ -5,7 +5,7 @@ source "https://rubygems.org"
 
 ruby "2.4.4"
 
-gem "rails", "5.1.4"
+gem "rails", "5.2.2"
 gem "rake", "~> 12.3.0"
 gem "rb-readline", "~> 0.5.3"
 
@@ -19,8 +19,8 @@ gem "turbolinks"
 gem "sdoc", "~> 0.4.0", group: :doc
 
 # Admin interface
-gem "devise", "~> 4.3"
-gem "activeadmin", "~> 1.3"
+gem "devise", "~> 4.7"
+gem "activeadmin", "~> 1.4"
 gem "active_material", git: "https://github.com/laverick/active_material"
 
 # Shopify app
@@ -51,7 +51,7 @@ gem "rest-client", "~> 2.0"
 gem "unicorn", "~> 4.9"
 
 # Background tasks
-gem "delayed_job_active_record", "~> 4.1.2"
+gem "delayed_job_active_record", "~> 4.1.4"
 gem "daemons", "~> 1.2"
 
 # Better rails console
