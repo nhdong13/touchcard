@@ -8,8 +8,12 @@ RSpec.describe OrdersCreateJob, type: :job do
       "#{Rails.root}/spec/fixtures/shopify/orders/show/#{key}.json")
     order_obj = JSON.parse(order_text).with_indifferent_access
     order_obj.merge!(overrides)
-    stub_request(:get, "https://#{shop.domain}/admin/orders/#{order_obj[:order][:id]}.json")
-      .to_return(body: order_obj[:order].to_json)
+    #stub_request(:get, "https://#{shop.domain}/admin/orders/#{order_obj[:order][:id]}.json")
+    # .to_return(body: order_obj[:order].to_json)
+    api_version = ShopifyAPI::ApiVersion.find_version(ShopifyApp.configuration.api_version)
+    order_path = api_version.construct_api_path("orders/#{order_obj[:order][:id]}.json")
+    stub_request(:get, "https://#{shop.domain}#{order_path}")
+        .to_return(body: order_obj[:order].to_json)
     order_obj[:order]
   end
 

@@ -1,6 +1,6 @@
 Rails.application.configure do
   $stdout.sync = true
-
+  config.hosts = (config.hosts rescue []) << /\h+.ngrok.io/
   config.web_console.whiny_requests = false
 
   # Settings specified here will take precedence over those in config/application.rb.

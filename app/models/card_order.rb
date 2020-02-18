@@ -4,6 +4,8 @@ class CardOrder < ApplicationRecord
   # TYPES = ['PostSaleOrder', 'CustomerWinbackOrder', 'LifetimePurchaseOrder', 'AbandonedCheckout']
 
   belongs_to :shop
+
+  # TODO: can remove card_side relation as card side data now lives in front_json and back_json
   has_one :card_side_front,
           -> { where(is_back: false) },
           class_name: "CardSide",
@@ -82,6 +84,8 @@ class CardOrder < ApplicationRecord
   end
 
   def ensure_defaults
+    self.build_card_side_front(is_back: false) unless self.card_side_front
+    self.build_card_side_back(is_back: true) unless self.card_side_back
     self.international = false if international.nil?
     self.enabled = false if enabled.nil?
     # TODO: add defaults to schema that can be added

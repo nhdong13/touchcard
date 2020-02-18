@@ -10,10 +10,7 @@ function stopShopifyLoadingBar() {
 //   stopShopifyLoadingBar();
 //
 // // ShopifyApp.ready(function(){
-// //   ShopifyApp.Bar.initialize({
-// //     title: "Dashboard",
-// //     icon: "<%= asset_path('favicon.png') %>"
-// //   });
+// //   ShopifyApp.Bar.initialize({ title: "Dashboard" });
 // // });
 //
 // };
