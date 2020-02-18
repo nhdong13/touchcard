@@ -16,7 +16,10 @@
 #
 #   def activate_session
 #     begin
-#       session = ShopifyAPI::Session.new(shop.domain, shop.token)
+#       session = ShopifyAPI::Session.new(
+#         domain: shop.domain,
+#         token: shop.token,
+#         api_version: shop.api_version)
 #       ShopifyAPI::Base.activate_session(session)
 #     rescue
 #       ShopifyAPI::Base.clear_session
