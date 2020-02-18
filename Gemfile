@@ -24,7 +24,7 @@ gem "activeadmin", "~> 1.4"
 gem "active_material", git: "https://github.com/laverick/active_material"
 
 # Shopify app
-gem "shopify_app", "~> 8.6"
+gem "shopify_app", "~> 9.0.4"
 
 # Stripe
 gem "stripe", "~> 3.9"

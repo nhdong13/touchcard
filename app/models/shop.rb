@@ -1,4 +1,11 @@
 class Shop < ApplicationRecord
+  # TODO: / And now do this - understand what's changed with SessionStorage,
+  # whether we should include this file or use our own (different) implementation belo
+  #
+  # including it throws the "no shopify_domain" error
+  # not including it loads the app, but does not redirect...
+  #
+
   has_many :card_orders, dependent: :destroy
   has_many :post_sale_orders, dependent: :destroy
   has_many :postcards, through: :card_orders
@@ -14,6 +21,17 @@ class Shop < ApplicationRecord
   validates :approval_state, inclusion: { in: VALID_APPROVAL_STATES }
   validates :approval_state, presence: true
 
+  validates :domain, presence: true, uniqueness: { case_sensitive: false }
+  validates :token, presence: true
+  validates :api_version, presence: true
+
+  def api_version
+    ShopifyApp.configuration.api_version
+  end
+
+  def shopify_domain
+    domain
+  end
 
   def current_subscription
     subscriptions.last
@@ -43,7 +61,7 @@ class Shop < ApplicationRecord
         shop.uninstalled_at = nil
         shop.save!
         shop.get_shopify_id
-        ShopifyAPI::Session.new(shop.domain, shop.token)
+        ShopifyAPI::Session.new(domain: shop.domain, token: shop.token, api_version: shop.api_version)
       end
       shop.id
     end
@@ -53,7 +71,11 @@ class Shop < ApplicationRecord
       if shop = find_by(id: id)
         # If shop was uninstalled, we need a new session. Otherwise reinstall breaks.
         return if shop.uninstalled_at.present?
-        ShopifyAPI::Session.new(shop.domain, shop.token)
+        ShopifyAPI::Session.new(
+            domain: shop.domain,
+            token: shop.token,
+            api_version: shop.api_version
+        )
       end
     end
   end
@@ -172,7 +194,12 @@ class Shop < ApplicationRecord
   end
 
   def with_shopify_session(&block)
-    ShopifyAPI::Session.temp(domain, token, &block)
+    ShopifyAPI::Session.temp(
+        domain: domain,
+        token: token,
+        api_version: ShopifyApp.configuration.api_version,
+        &block
+    )
   end
 
   def update_scopes(scopes)

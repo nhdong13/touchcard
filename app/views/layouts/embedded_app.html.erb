@@ -33,14 +33,11 @@
 
 <script src="https://cdn.shopify.com/s/assets/external/app.js?<%= Time.now.strftime('%Y%m%d%H') %>"></script>
 
-<script type="text/javascript">
-  ShopifyApp.init({
-    apiKey: "<%= ShopifyApp.configuration.api_key %>",
-    shopOrigin: "<%= "https://#{ @shop_session.url }" if @shop_session %>",
-    debug: <%= Rails.env.development? ? 'true' : 'false' %>,
-    forceRedirect: <%= Rails.configuration.fullscreen_debug ? 'false' : 'true' %>
-  });
-</script>
+    <%= content_tag(:div, nil, id: 'shopify-app-init', data: {
+      api_key: ShopifyApp.configuration.api_key,
+      shop_origin: ("https://#{ @shop_session.url }" if @shop_session),
+      debug: Rails.env.development?
+    } ) %>
 
 <%= render partial: 'layouts/reamaze', locals: { shop: @current_shop } unless Rails.env.development? %>
 
