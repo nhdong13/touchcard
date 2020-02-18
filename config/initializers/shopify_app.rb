@@ -8,7 +8,7 @@ ShopifyApp.configure do |config|
   # config.embedded_app = Rails.configuration.fullscreen_debug ? false : true
   config.embedded_app = true
   config.after_authenticate_job = false
-  config.api_version = ""
+  config.api_version = "2020-01"
   config.session_repository = Shop
   config.webhooks = [
     { topic: "orders/create", format: "json", fields: %w(id customer), address: "#{ENV['APP_URL']}/new_order" },
