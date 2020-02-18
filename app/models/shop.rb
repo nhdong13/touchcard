@@ -29,10 +29,6 @@ class Shop < ApplicationRecord
     ShopifyApp.configuration.api_version
   end
 
-  def shopify_domain
-    domain
-  end
-
   def current_subscription
     subscriptions.last
   end
@@ -47,11 +43,11 @@ class Shop < ApplicationRecord
 
   class << self
     # Session store
-    def store(session)
-      shop = Shop.find_by(domain: session.url)
+    def store(session, *args)
+      shop = Shop.find_by(domain: session.domain)
       if shop.nil?
         granted_scopes = ShopifyApp.configuration.scope
-        shop = new(domain: session.url, token: session.token, oauth_scopes: granted_scopes)
+        shop = new(domain: session.domain, token: session.token, oauth_scopes: granted_scopes)
         shop.save!
         shop.get_shopify_id
         shop.sync_shopify_metadata
