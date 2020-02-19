@@ -36,7 +36,7 @@ gem "aws-sdk", "~> 2.1"
 gem "rmagick", "~> 2.15"
 
 # Lob integration
-gem "lob", "~> 4.1"
+gem "lob", "~> 5.0"
 
 # Key Value store
 gem "redis", "~> 3.2"
@@ -64,8 +64,7 @@ gem "business_time", "~> 0.7"
 # send mails using mailgun
 gem "mailgunner", '~> 2.4'
 
-# ActiveCampaign ('bdad6c2' is last building version as of 2017-08-26)
-gem "active_campaign", git: "https://github.com/laverick/active_campaign", ref: "bdad6c2"
+gem "active_campaign", "0.1.16"
 
 gem 'faker'
 

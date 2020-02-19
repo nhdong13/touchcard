@@ -13,12 +13,12 @@ RSpec.describe AppUninstalledJob, type: :job do
   def stub_slack_notify
     stub_request(:post, "https://hooks.slack.com/services/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").
         with(body: "{\"text\":\"A shop has uninstalled Touchcard: testshop1.myshopify.com.\"}",
-             headers: {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip, deflate', 'Content-Length'=>'69', 'Host'=>'hooks.slack.com'}).
+             headers: {'Accept'=>'*/*', 'Accept-Encoding'=>/.*/, 'Content-Length'=>'69', 'Host'=>'hooks.slack.com', 'User-Agent'=>/.*/}).
         to_return(status: 200, body: "", headers: {})
 
     stub_request(:post, "https://hooks.slack.com/services/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").
         with(body: "{\"text\":\"A shop has uninstalled Touchcard: testshop1.myshopify.com.\"}",
-             headers: {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip, deflate', 'Content-Length'=>'69', 'Host'=>'hooks.slack.com'}).
+             headers: {'Accept'=>'*/*', 'Accept-Encoding'=>/.*/, 'Content-Length'=>'69', 'Host'=>'hooks.slack.com', 'User-Agent'=>/.*/}).
         to_return(status: 200, body: "", headers: {})
 
     stub_request(:post, /#{ENV['AC_ENDPOINT']}/).
