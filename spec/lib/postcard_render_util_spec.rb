@@ -46,18 +46,33 @@ RSpec.describe PostcardRenderUtil do
     #
     #   cat /app/tmp/render/570edc23-2290-499f-98e8-e27ed9a9d993_output.png | curl -X PUT -T "-" https://transfer.sh/debug_sample_card_print.png
 
+    context "postcard_has_discount" do
+      let(:postcard) { create(:postcard,
+                              sent: false,
+                              paid: true,
+                              card_order: card_order,
+                              discount_exp_at: Time.utc(1990) + 23.days,
+                              discount_code: "XXX-YYY-ZZZ",
+                              discount_pct: -37) }
 
-    it "renders_front_with_coupon" do
-      postcard.discount_exp_at = Time.utc(1990) + 23.days
-      postcard.discount_code = "XXX-YYY-ZZZ"
-      postcard.discount_pct = -37
-      output_path =  PostcardRenderUtil.render_side_png(postcard: postcard, is_front: true)
-      puts "\nFront render postcard object:\n#{output_path}"
-      render_matches = FileUtils.compare_file(output_path, (Rails.root + "spec/images/expected_front_coupon_#{host_extension}.png").to_s)
-      archive_test_file(output_path) if ENV['HEROKU_TEST_RUN_ID'] and not render_matches
-      expect(render_matches).to be_truthy  # Compare with `expected_front_coupon[...].png`
-      expect(FileUtils.compare_file(output_path, bad_png_path)).to be_falsey  # Compare with bad output (confirms test)
-      delete_if_exists(output_path) if render_matches
+      it "renders_front_with_coupon" do
+        output_path =  PostcardRenderUtil.render_side_png(postcard: postcard, is_front: true)
+        puts "\nFront render postcard object:\n#{output_path}"
+        render_matches = FileUtils.compare_file(output_path, (Rails.root + "spec/images/expected_front_coupon_#{host_extension}.png").to_s)
+        archive_test_file(output_path) if ENV['HEROKU_TEST_RUN_ID'] and not render_matches
+        expect(render_matches).to be_truthy  # Compare with `expected_front_coupon[...].png`
+        expect(FileUtils.compare_file(output_path, bad_png_path)).to be_falsey  # Compare with bad output (confirms test)
+        delete_if_exists(output_path) if render_matches
+      end
+
+      it "renders_back_no_coupon_when_postcard_has_discount_and_front_has_coupon" do
+        output_path =  PostcardRenderUtil.render_side_png(postcard: postcard, is_front: false)
+        puts "\nBack render postcard object:\n#{output_path}"
+        render_matches = FileUtils.compare_file(output_path, (Rails.root + "spec/images/expected_back_no_coupon_#{host_extension}.png").to_s)
+        expect(render_matches).to be_truthy  # Compare with `expected_back_no_coupon[...].png`
+        expect(FileUtils.compare_file(output_path, bad_png_path)).to be_falsey  # Compare with bad output (confirms test)
+        delete_if_exists(output_path) if render_matches
+      end
     end
 
     it "renders_back_no_coupon" do
