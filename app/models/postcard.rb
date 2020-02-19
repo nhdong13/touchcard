@@ -51,7 +51,7 @@ class Postcard < ApplicationRecord
     num_failed = 0
     todays_cards = Postcard.joins(:shop)
       .where("paid = TRUE AND sent = FALSE AND canceled = FALSE AND send_date <= ?
-              AND shops.approval_state != ?", Time.now, "denied")
+              AND send_date >= ? AND shops.approval_state != ?", Time.now, Time.now - 2.weeks, "denied")
     todays_cards.each do |card|
       begin
         card.send_card
@@ -100,7 +100,7 @@ class Postcard < ApplicationRecord
     front_png_path = PostcardRenderUtil.render_side_png(postcard: self, is_front: true)
     back_png_path = PostcardRenderUtil.render_side_png(postcard: self, is_front: false)
 
-    @lob ||= Lob::Client.new(api_key: ENV['LOB_API_KEY'])
+    @lob ||= Lob::Client.new(api_key: ENV['LOB_API_KEY'], api_version: "2018-06-05")
     sent_card = @lob.postcards.create(
       description: "#{card_order.type} #{shop.domain}",
       to: to_address,

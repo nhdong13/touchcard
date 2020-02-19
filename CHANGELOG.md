@@ -26,6 +26,14 @@
             - DEV: '&gtm_auth=n553XLcYVrmY05MZ2RjQyA&gtm_preview=env-5&gtm_cookies_win=x' 
             - LIVE: '&gtm_auth=Vu4BC2LBqiawRiIX2VOn4g&gtm_preview=env-2&gtm_cookies_win=x'     
 
+- Upgrade ActiveCampaign Gem
+
+## v1.2.13
+- Force Lob API version. Allows us to test new version before upgrading Lob account.
+
+## v1.2.12
+- Update Lob Gem to 5.0 and API to latest
+
 ## v1.2.11
 - Add GDPR webhooks & tables.
 
