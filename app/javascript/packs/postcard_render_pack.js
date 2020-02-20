@@ -28,7 +28,7 @@ function loadCardSide(){
       data: function() {
         let attrs = new CardAttributes(JSON.parse(element.dataset.attributes));
         let postcardHasDiscountEnabled = (element.dataset.discountExp && element.dataset.discountCode);
-        let cardSideShowsDiscount = (attrs.discount_x != null && attrs.discount_y != null);
+        let cardSideShowsDiscount = (attrs.discount_x !== null && attrs.discount_y !== null);
         attrs.showsDiscount = postcardHasDiscountEnabled && cardSideShowsDiscount;
         return {
           attributes: attrs,
