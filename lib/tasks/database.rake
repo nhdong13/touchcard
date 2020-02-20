@@ -19,8 +19,8 @@ namespace :cardsetup do
     card_orders = CardOrder.all
     puts card_orders
     puts "Updating #{card_orders.count} card_orders"
-    ActiveRecord::Base.transaction do
-      card_orders.each do |card_order|
+    card_orders.each do |card_order|
+      ActiveRecord::Base.transaction do
         puts  "Shop: #{card_order.shop.name}"
         raise "Expecting empty target JSON, found background_url" if card_order.front_json["background_url"].present? || card_order.back_json["background_url"].present?
         raise "Expecting empty target JSON, found front discount coords" if card_order.front_json["discount_x"].present? || card_order.front_json["discount_y"].present?
