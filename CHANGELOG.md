@@ -1,13 +1,8 @@
 # Changelog
 #
 
-## (unreleased)
-- CHANGES:
-    - ...
-    - Add abandoned_checkouts rake task. (Can be set up as scheduled task, but will save this for now.)
-
-- RELEASE REQUIREMENTS
-    
+## v2
+- RELEASE REQUIREMENTS    
     - Rake migrate db
     - Migrate card side: `heroku run rake cardsetup:card_side_to_json`
    
