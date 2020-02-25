@@ -21,4 +21,5 @@
 // --- Application ---
 // # Disabled so we can define load order: `require_tree .`
 // # also keeps activeadmin from loading, I think
-//= require init
+//= require_tree .
+//= stub active_admin
