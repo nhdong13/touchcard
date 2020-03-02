@@ -79,6 +79,7 @@ RSpec.describe PostcardRenderUtil do
         output_path =  PostcardRenderUtil.render_side_png(postcard: postcard, is_front: true)
         puts "\nFront render postcard object:\n#{output_path}"
         render_matches = FileUtils.compare_file(output_path, (Rails.root + "spec/images/expected_front_no_coupon_#{host_extension}.png").to_s)
+        archive_test_file(output_path) if ENV['HEROKU_TEST_RUN_ID'] and not render_matches
         expect(render_matches).to be_truthy  # Compare with `expected_front_no_coupon[...].png`
         expect(FileUtils.compare_file(output_path, bad_png_path)).to be_falsey  # Compare with bad output (confirms test)
         delete_if_exists(output_path) if render_matches
