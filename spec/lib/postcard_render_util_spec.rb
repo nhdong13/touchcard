@@ -74,6 +74,16 @@ RSpec.describe PostcardRenderUtil do
         delete_if_exists(output_path) if render_matches
       end
 
+      it "renders_front_without_coupon_when_postcard_is_missing_discount_pct" do
+        postcard.discount_pct = nil
+        output_path =  PostcardRenderUtil.render_side_png(postcard: postcard, is_front: true)
+        puts "\nFront render postcard object:\n#{output_path}"
+        render_matches = FileUtils.compare_file(output_path, (Rails.root + "spec/images/expected_front_no_coupon_#{host_extension}.png").to_s)
+        expect(render_matches).to be_truthy  # Compare with `expected_front_no_coupon[...].png`
+        expect(FileUtils.compare_file(output_path, bad_png_path)).to be_falsey  # Compare with bad output (confirms test)
+        delete_if_exists(output_path) if render_matches
+      end
+
       it "renders_back_with_coupon_at_x0_y0" do
         card_order.back_json = { "version": 0,
                                  "background_url": (Rails.root + 'spec/images/background_2.jpg').to_s,
