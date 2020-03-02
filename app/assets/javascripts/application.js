@@ -21,5 +21,6 @@
 // --- Application ---
 // # Disabled so we can define load order: `require_tree .`
 // # also keeps activeadmin from loading, I think
-//= require_tree .
-//= stub active_admin
+//= require init
+//= require shopify_app
+//= require flash_messages

@@ -1,10 +1,10 @@
 /* global ShopifyApp */
 
 
-function stopShopifyLoadingBar() {
-  console.log('ShopifyApp.Bar.loadingOff()');
-  ShopifyApp.Bar.loadingOff();
-}
+// function stopShopifyLoadingBar() {
+//   console.log('ShopifyApp.Bar.loadingOff()');
+//   ShopifyApp.Bar.loadingOff();
+// }
 
 // window.onload = function() {
 //   stopShopifyLoadingBar();
