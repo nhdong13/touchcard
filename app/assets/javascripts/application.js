@@ -23,3 +23,4 @@
 // # also keeps activeadmin from loading, I think
 //= require init
 //= require flash_messages
+//= require shopify_app

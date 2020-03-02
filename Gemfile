@@ -12,7 +12,7 @@ gem "rb-readline", "~> 0.5.3"
 gem 'material_components_web-sass'
 
 gem "sass-rails", "~> 5.0", ">= 5.0.6"
-gem "uglifier", ">= 1.3.0"
+gem "uglifier", "~> 4.2"
 
 
 gem "turbolinks"
