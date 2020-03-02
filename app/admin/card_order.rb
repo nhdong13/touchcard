@@ -22,7 +22,13 @@ ActiveAdmin.register CardOrder do
       @shop = @card_order.shop
     elsif request.post?
       card_order = CardOrder.find(params[:id])
-      lob_sample_address = params[:lob_sample_address]
+      permitted_params = params[:lob_sample_address].permit(:name,
+                                                            :address_line1,
+                                                            :address_city,
+                                                            :address_state,
+                                                            :address_zip,
+                                                            :address_country)
+      lob_sample_address = permitted_params.to_hash
       begin
         lob_response = CardUtil.send_promo_card(card_order, lob_sample_address)
         puts lob_response

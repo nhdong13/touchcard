@@ -26,39 +26,28 @@ module CardUtil
 
   def send_promo_card(card_order, lob_to_address)
 
-    discount_code = nil
-    expiry = nil
-
+    # Create a temporary postcard to call render methods
+    temp_postcard = Postcard.new(card_order: card_order)
     if card_order.has_discount?
-      discount_code = 'SAM-PLE-XXX'
-      expiry = 4.weeks.from_now.midnight
+      temp_postcard.discount_code = 'SAM-PLE-XXX'
+      temp_postcard.discount_exp_at = 4.weeks.from_now.midnight
+      temp_postcard.discount_pct = card_order.discount_pct
     end
 
-    front_html, back_html = [
-        card_order.card_side_front,
-        card_order.card_side_back
-    ].map do |card_side|
-      CardHtml.generate(
-          background_image: card_side.image,
-          discount_x: card_side.discount_x,
-          discount_y: card_side.discount_y,
-          discount_pct: card_order.discount_pct ? card_order.discount_pct.abs : nil,
-          discount_exp: expiry ? expiry.strftime("%m/%d/%Y") : nil,
-          discount_code: card_side.show_discount? ? discount_code : nil
-      )
-    end
+    front_png_path = PostcardRenderUtil.render_side_png(postcard: temp_postcard, is_front: true)
+    back_png_path = PostcardRenderUtil.render_side_png(postcard: temp_postcard, is_front: false)
 
-    @lob = Lob::Client.new(api_key: ENV['LOB_API_KEY'], api_version: "2018-06-05")
-    @lob.postcards.create(
-        description: "A Promo Sample of #{card_order.shop.domain}",
-        metadata: {description: "Promo Sample for #{lob_to_address[:name]}"},
+    @lob ||= Lob::Client.new(api_key: ENV['LOB_API_KEY'], api_version: "2018-06-05")
+    sent_postcard = @lob.postcards.create(
+        description: "A Promo Sample of #{card_order.shop.domain if card_order&.shop&.domain}",
+        metadata: {description: "Promo Sample for #{lob_to_address["name"] if lob_to_address && lob_to_address["name"]}"},
         to: lob_to_address,
-        # from: "Sent by Touchcard\nhttp://Touchcard.co",  # Does not pass address verification
-        front: front_html,
-        back: back_html
-        # Allow time for canceling if sample is messed up
-        # Disable send_date as new API plan doesn't allow it
-        # send_date: 1.hour.from_now.iso8601
+        # from: shop_address, # Return address for Shop
+        front:  File.new(front_png_path),
+        back: File.new(back_png_path)
     )
+    File.delete(front_png_path) if File.exist?(front_png_path)
+    File.delete(back_png_path) if File.exist?(back_png_path)
+    sent_postcard
   end
 end
