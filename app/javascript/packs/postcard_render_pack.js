@@ -29,8 +29,9 @@ function loadCardSide(){
         let attrs = new CardAttributes(JSON.parse(element.dataset.attributes));
         // CardAttributes sets showsDiscount based on presence of x / y coords on the card side.
         // For printing purposes (outside of the full editor) we also need to make sure the postcard
-        // itself is set up to show a discount, otherwise we may print an unintended discount
-        attrs.showsDiscount = attrs.showsDiscount && (element.dataset.discountExp && element.dataset.discountCode);
+        // itself is set up to show a discount, otherwise we may print an unintended discount (e.g. "NaN % OFF")
+        let allDiscountDataPresent = element.dataset.discountExp && element.dataset.discountCode && element.dataset.discountPct;
+        attrs.showsDiscount = attrs.showsDiscount && allDiscountDataPresent;
         return {
           attributes: attrs,
           discount_pct: Number(element.dataset.discountPct),
