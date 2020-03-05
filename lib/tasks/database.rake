@@ -73,7 +73,24 @@ task :purge_older_data => :environment do
 end
 
 
-
+desc "list one of each sent card type in slack so we can manually review rendering"
+task :list_sent_card_example_renders, [:lookback_days] => :environment do |task, args|
+  lookback_days = args[:lookback_days] || 1
+  sql = "select distinct on (card_order_id) domain, postcard_id, updated_at "\
+          "from (select p.card_order_id, p.postcard_id, co.updated_at, s.domain "\
+          "      from postcards p, card_orders co, shops s "\
+          "      where p.card_order_id = co.id and s.id = co.shop_id and p.date_sent > current_date - interval '#{lookback_days} days' "\
+          "      order by co.updated_at desc) as subtable"
+  result = ActiveRecord::Base.connection.execute(sql)
+  puts "Renders for sent cards in the last #{lookback_days} day(s)"
+  SlackNotify.message("Renders for sent cards in the last #{lookback_days} day(s)")
+  result.values.each do |entry|
+    shop_domain = entry[0]
+    lob_postcard_id = entry[1]
+    puts "#{shop_domain}  https://dashboard.lob.com/#/postcards/#{lob_postcard_id}"
+    SlackNotify.message("#{shop_domain}  https://dashboard.lob.com/#/postcards/#{lob_postcard_id}")
+  end
+end
 # namespace :price_rules do
 #   desc "Convert positive discount values to negative for all CardOrders with positive discounts associated"
 #   task :make_discounts_negative => :environment do
