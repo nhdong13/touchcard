@@ -102,7 +102,10 @@ ActiveAdmin.register CardOrder do
         link_to json['background_url'], json['background_url'] if json['background_url']
       end
 
-      row :back_json
+      row :back_json do |card_order|
+        JSON.pretty_generate(card_order.back_json) if card_order.back_json
+      end
+
       row "back background_url", :back_json do |card_order|
         json = card_order.back_json
         link_to json['background_url'], json['background_url'] if json['background_url']
