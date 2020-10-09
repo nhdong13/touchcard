@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_02_21_155702) do
+ActiveRecord::Schema.define(version: 2020_10_07_142716) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -91,6 +91,7 @@ ActiveRecord::Schema.define(version: 2020_02_21_155702) do
     t.boolean "archived", default: false
     t.json "front_json", default: {}
     t.json "back_json", default: {}
+    t.json "price_rules", default: {}
   end
 
   create_table "card_sides", id: :serial, force: :cascade do |t|

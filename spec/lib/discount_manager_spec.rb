@@ -23,6 +23,21 @@ RSpec.describe DiscountManager do
     expect(discount_manager.has_valid_code?).to be_truthy
   end
 
+  # it "generates custom discount when rules values are passed" do
+  #   price_rule_id = stub_shopify(:price_rules, :create, {example: :custom_collection})[:price_rule][:id]
+  #   stub_shopify(:discounts, :create, entity_uri: "price_rules/#{price_rule_id}/discount_codes")
+  #
+  #   rules = { target_selection: "entitled",
+  #             entitled_collection_ids: [157410590831] }
+  #
+  #   discount_manager = DiscountManager.new(path, value, expire_at, rules)
+  #   discount_manager.generate_discount
+  #
+  #   # Note: Price rule contents aren't accessible, so we're not actually testing for anything meaningful here.
+  #   expect(discount_manager.price_rule_id).to eq(price_rule_id)
+  #   expect(discount_manager.has_valid_code?).to be_truthy
+  # end
+
   it "raises error when discount value is missing" do
     expect{ DiscountManager.new(path, nil, card_order.discount_exp) }.to raise_error(RuntimeError)
   end

@@ -4,12 +4,13 @@ class DiscountManager
 
   VALID_CODE_FORMAT = /[A-Z]{3}-[A-Z]{3}-[A-Z]{3}/
 
-  def initialize(path, value, expire_at)
+  def initialize(path, value, expire_at, extra_rules= {})
     raise "Missing required values for creating price rule" unless value and expire_at
     @discount_code = generate_code
     @path = path
     @value = value
     @expire_at = expire_at
+    @extra_rules = extra_rules
   end
 
   def generate_discount
@@ -28,21 +29,25 @@ class DiscountManager
   end
 
   def create_price_rule
+
+    price_rule_data =  {
+        title: "#{discount_code}",
+        target_type: "line_item",
+        target_selection: "all",
+        allocation_method: "across",
+        value_type: "percentage",
+        value: value,
+        once_per_customer: false,
+        usage_limit: 1,
+        customer_selection: "all",
+        starts_at: Time.now,
+        ends_at: expire_at
+    }
+    price_rule_data.merge!(@extra_rules)
+
     response = HTTParty.post(price_rule_url,
       body: {
-        price_rule: {
-          title: "#{discount_code}",
-          target_type: "line_item",
-          target_selection: "all",
-          allocation_method: "across",
-          value_type: "percentage",
-          value: value,
-          once_per_customer: false,
-          usage_limit: 1,
-          customer_selection: "all",
-          starts_at: Time.now,
-          ends_at: expire_at
-        }
+        price_rule: price_rule_data
       })
     handle_price_rule_response(response)
   end

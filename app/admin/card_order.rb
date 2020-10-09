@@ -94,6 +94,8 @@ ActiveAdmin.register CardOrder do
       row :created_at
       row :updated_at
 
+      row :price_rules
+
       row :front_json do |card_order|
         JSON.pretty_generate(card_order.front_json) if card_order.front_json
       end
