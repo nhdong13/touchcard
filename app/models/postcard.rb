@@ -81,7 +81,7 @@ class Postcard < ApplicationRecord
         self.discount_code = "SAM-PLE-XXX"
         return
       end
-      @discount_manager = DiscountManager.new(card_order.shop.shopify_api_path, discount_pct, discount_exp_at)
+      @discount_manager = DiscountManager.new(card_order.shop.shopify_api_path, discount_pct, discount_exp_at, card_order.price_rules)
       @discount_manager.generate_discount
       self.price_rule_id = @discount_manager.price_rule_id
       self.discount_code = @discount_manager.discount_code
