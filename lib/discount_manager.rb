@@ -10,7 +10,7 @@ class DiscountManager
     @path = path
     @value = value
     @expire_at = expire_at
-    @extra_rules = extra_rules
+    @extra_rules = extra_rules || {}
   end
 
   def generate_discount
@@ -43,7 +43,7 @@ class DiscountManager
         starts_at: Time.now,
         ends_at: expire_at
     }
-    price_rule_data.merge!(@extra_rules)
+    price_rule_data.merge!(@extra_rules) if @extra_rules
 
     response = HTTParty.post(price_rule_url,
       body: {
