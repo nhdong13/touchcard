@@ -3,7 +3,7 @@ class FaqController < BaseController
     @questions = [
       {
         question: 'Can I send to existing customers or manually select which customers get a postcard?',
-        answer: 'Yes, we can send postcards to any customer segment you like using our one-off campaigns. To get started with a one-off or learn how they work, please contact support below.'
+        answer: 'Yes, we can send postcards to any customer segment you like using our one-off campaigns. To get started with a one-off or learn how they work, please contact support.'
       },{
         question: 'How can I improve the ROI on my Touchcard campaign?',
         answer: 'There are a number of ways you can improve your Touchcard ROI. See our free guide on how to optimize your campaign for maximum ROI <a href="http://touchcard.co/optimize" target="_blank">on our website</a>.'
