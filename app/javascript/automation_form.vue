@@ -7,8 +7,8 @@
     <h3>{{automation.type}}</h3>
     <strong>Send card <input type="number" min="0" max="52" v-model="automation.send_delay"> weeks after purchase</strong>
     <br>
-    <br>
     <!--
+      <br>
       <input id="automation-international-checkbox" type="checkbox" v-model="automation.international" />
       <label for="automation-international-checkbox" class="noselect"><strong>Send outside USA</strong></label>
       <div class="attention-note nested-toggle" v-if="automation.international">
