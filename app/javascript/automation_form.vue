@@ -7,15 +7,17 @@
     <h3>{{automation.type}}</h3>
     <strong>Send card <input type="number" min="0" max="52" v-model="automation.send_delay"> weeks after purchase</strong>
     <br>
-    <br>
-    <input id="automation-international-checkbox" type="checkbox" v-model="automation.international" />
-    <label for="automation-international-checkbox" class="noselect"><strong>Send outside USA</strong></label>
-    <div class="attention-note nested-toggle" v-if="automation.international">
-          <span>
-            <em>Note: International postcards cost two credits.</em>
-          </span>
-    </div>
-    <br v-if="!automation.international">
+    <!--
+      <br>
+      <input id="automation-international-checkbox" type="checkbox" v-model="automation.international" />
+      <label for="automation-international-checkbox" class="noselect"><strong>Send outside USA</strong></label>
+      <div class="attention-note nested-toggle" v-if="automation.international">
+            <span>
+              <em>Note: International postcards cost two credits.</em>
+            </span>
+      </div>
+      <br v-if="!automation.international">
+    -->
     <br>
     <input id="automation-filter-checkbox" type="checkbox" v-model="enableFiltering">
     <label for="automation-filter-checkbox" class="noselect"><strong>Filter by Order Size</strong></label>
