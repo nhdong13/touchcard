@@ -14,3 +14,88 @@ td.col.col-type {
   word-break: normal;
   min-width: 1px;
 }
+
+#preview_front_design, #preview_back_design{
+  width: 450px;
+  display: none;
+}
+
+.import-csv-message, .general-message{
+  display: none;
+}
+.form-content{
+  padding: 20px
+}
+
+.message{
+  border-radius: 5px;
+  padding: 5px;
+  margin: 2px 0;
+  &.error{
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+  }
+}
+
+label.error{
+  border-radius: 5px;
+  padding: 5px;
+  margin: 2px 0;
+  display: block;
+  color: #721c24;
+  background-color: #f8d7da;
+  border-color: #f5c6cb;
+}
+
+.row {
+  display: flex;
+  margin-bottom: 10px;
+  input[type='text']{
+    height: 30px;
+    width: 100%;
+  }
+
+  div[class^="col-"]{
+    padding: 0 15px;
+  }
+
+  &.center-items{
+    align-items: center
+  }
+
+  &.center{
+    justify-content: center;
+  }
+
+}
+
+.number-records{
+  font-size: 20px
+}
+
+.button-submit{
+  input{
+    margin: 0 !important;
+  }
+}
+
+.address-label{
+  text-align: right;
+}
+
+.col-6 {
+  width: 50%
+}
+
+.col-8 {
+  width: 75%
+}
+
+.col-2 {
+  width: 25%
+}
+
+.import-csv-btn{
+  display: none !important;
+}

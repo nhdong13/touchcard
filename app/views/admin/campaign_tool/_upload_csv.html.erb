@@ -1,0 +1,262 @@
+<script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js"></script>
+<div class='panel'>
+  <div class="form-content">
+    <%= form_tag admin_campaign_tool_import_csv_path, multipart: true, remote: true, :authenticity_token => true do %>
+      <div class="row">
+        <div class="col-6">
+          <div class="row">
+            <div class="col-2">
+              <h3> <strong>Campaign ID</strong></h3>
+            </div>
+            <div class="col-6">
+              <%= text_field_tag 'campaign_id', nil, required: true %>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-6">
+          <div class="row">
+            <div class="col-2">
+              <h3> <strong>CSV File</strong></h3>
+            </div>
+            <div class="col-6">
+              <%= file_field_tag 'csv_file', accept: 'text/csv' %>
+              <h4 class="message error import-csv-message"></h4>
+            </div>
+          </div>
+        </div>
+      </div>
+      <%= submit_tag 'import', class: "import-csv-btn" %>
+    <% end %>
+
+    <%= form_tag admin_campaign_tool_create_test_post_card_path, multipart: true, :authenticity_token => true , class: "create_test_post_card" do %>
+      <%= hidden_field_tag 'test_campaign_id' %>
+      <div class="row">
+        <div class="col-6">
+          <div class="row">
+            <div class="col-2">
+              <h3><strong>Front Design</strong></h3>
+            </div>
+            <div class="col-6">
+              <div class="image-input-field">
+                <%= file_field_tag 'front_design_file', id: "front_design" %>
+              </div>
+              <img id="preview_front_design" src="" />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-6">
+          <div class="row">
+            <div class="col-2">
+              <h3><strong>Back Design</strong></h3>
+            </div>
+            <div class="col-6">
+              <div class="image-input-field">
+                <%= file_field_tag 'back_design_file', id: "back_design" %>
+              </div>
+              <img id="preview_back_design" src="" />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-6">
+          <div class="row">
+            <div class="col-2">
+              <h3><strong>Return Address</strong></h3>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-6">
+          <div class="row center-items">
+            <div class="col-2 address-label">
+              <h3>Name:</h3>
+            </div>
+            <div class="col-6">
+              <div>
+                <%= text_field_tag 'from[name]', nil, required: true %>
+              </div>
+            </div>
+          </div>
+          <div class="row center-items">
+            <div class="col-2 address-label">
+              <h3>Address line 1:</h3>
+            </div>
+            <div class="col-6">
+              <div>
+                <%= text_field_tag 'from[address_line1]', nil, required: true %>
+              </div>
+            </div>
+          </div>
+          <div class="row center-items">
+            <div class="col-2 address-label">
+              <h3>Address line 2:</h3>
+            </div>
+            <div class="col-6">
+              <div>
+                <%= text_field_tag 'from[address_line2]', nil, required: true  %>
+              </div>
+            </div>
+          </div>
+          <div class="row center-items">
+            <div class="col-2 address-label">
+              <h3>City:</h3>
+            </div>
+            <div class="col-6">
+              <div>
+                <%= text_field_tag 'from[city]', nil, required: true  %>
+              </div>
+            </div>
+          </div>
+          <div class="row center-items">
+            <div class="col-2 address-label">
+              <h3>State:</h3>
+            </div>
+            <div class="col-6">
+              <div>
+                <%= text_field_tag 'from[state]', nil, required: true  %>
+              </div>
+            </div>
+          </div>
+          <div class="row center-items">
+            <div class="col-2 address-label">
+              <h3>Zip:</h3>
+            </div>
+            <div class="col-6">
+              <div>
+                <%= text_field_tag 'from[zip]', nil, required: true  %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-6">
+          <div class="row center-items">
+            <div class="col-2">
+              <h3><strong>Send Date</strong></h3>
+            </div>
+            <div class="col-6">
+              <%= text_field_tag 'send_date', nil, class: "datepicker" %>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-6">
+          <div class="row">
+            <div class="col-2">
+            </div>
+            <div class="col-6">
+              <h4 class="message error general-message"></h4>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-6">
+          <div class="row">
+            <div class="col-2">
+            </div>
+            <div class="col-6">
+              <div class="button-submit">
+                <%= submit_tag 'Upload' %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<script type="text/javascript">
+  $('.datepicker').datepicker().datepicker("setDate", new Date());
+  function readURL(input) {
+    if (input.files && input.files[0]) {
+      var reader = new FileReader();
+
+      reader.onload = function(e) {
+        $(`#preview_${input.id}`).attr('src', e.target.result).css("display", "block");
+      }
+
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
+
+  $("#front_design, #back_design").change(function() {
+    readURL(this);
+  });
+
+  $("#csv_file").change(function() {
+    _this = this
+    $(".import-csv-message").css("display", "none")
+    form_data = new FormData($("#csv_file").parents('form')[0])
+    if(_this.files[0].type == "text/csv"){
+      $.ajax({
+        url: '/admin/campaign_tool/import_csv',
+        type: "POST",
+        dataType: "JSON",
+        data: form_data,
+        processData: false,
+        contentType: false,
+      }).done(function(response) {
+        if(!response.status){
+          $(".import-csv-message").text(`${response.message}`).css("display", "block")
+          $(_this).val("");
+        }
+      }).fail(function(error) {});
+    } else {
+      $(".import-csv-message").text("File types support: CSV").css("display", "block")
+    }
+  });
+
+  $("#campaign_id").change(function() {
+    $("#test_campaign_id").val($(this).val())
+  });
+
+  $('.create_test_post_card').validate({
+    rules: {
+      "back_design_file": true,
+      'from[name]': true,
+      'from[address_line1]': true,
+      'from[address_line2]': true,
+      'from[city]': true,
+      'from[state]': true,
+      'from[zip]': true,
+    }
+  });
+
+  $(".button-submit input").click(function(e) {
+    e.preventDefault()
+    front_design = $("#front_design").val();
+    back_design = $("#back_design").val();
+
+    form_data = new FormData($('form.create_test_post_card')[0])
+    if($(".create_test_post_card").valid()){
+      if(front_design.length && back_design.length){
+        $.ajax({
+          url: '/admin/campaign_tool/create_test_post_card',
+          type: "POST",
+          dataType: "JSON",
+          data: form_data,
+          processData: false,
+          contentType: false,
+        }).done(function(response) {
+          if(!response.success){
+            $(".general-message").text(`${response.message}`).css("display", "block")
+          } else {
+            window.location = response.redirect_path
+          }
+        }).fail(function(error) {});
+      } else {
+        $(".general-message").text("Missing front design or back design!").css("display", "block")
+      }
+    }
+  });
+</script>

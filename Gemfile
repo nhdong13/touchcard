@@ -78,7 +78,7 @@ gem "thor", "~> 0.19.1"
 gem "pg"
 
 gem "selenium-webdriver"
-
+gem 'bootstrap-datepicker-rails', '~> 1.9', '>= 1.9.0.1'
 group :assets do
   gem "therubyracer", platforms: :ruby
 end
