@@ -1,7 +1,7 @@
 ActiveAdmin.register_page "Campaign Tool" do
   menu priority: 16
   LOB_API_KEY = 'test_aa438bb1735c587df0bb27c8ecf0c82e8a6'
-  BASE_CAMPAIGN_TOOL_URL = 'https://touchcard-dev.herokuapp.com/'
+  BASE_CAMPAIGN_TOOL_URL = 'https://campaign-tool-dev.herokuapp.com/'
   TEST_ADDRESS_TO = "adr_8769d8839f5c16c4"
 
   content do
