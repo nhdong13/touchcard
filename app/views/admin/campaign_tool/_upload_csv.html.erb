@@ -22,7 +22,7 @@
             </div>
             <div class="col-6">
               <%= file_field_tag 'csv_file', accept: 'text/csv' %>
-              <h4 class="message error import-csv-message"></h4>
+              <h4 class="message import-csv-message"></h4>
             </div>
           </div>
         </div>
@@ -176,72 +176,31 @@
 </div>
 
 <script type="text/javascript">
-  $('.datepicker').datepicker().datepicker("setDate", new Date());
-  function readURL(input) {
-    if (input.files && input.files[0]) {
-      var reader = new FileReader();
+  $(document).ready(function() {
+    $("#campaign_id").focus();
+    function readURL(input) {
+      if (input.files && input.files[0]) {
+        var reader = new FileReader();
 
-      reader.onload = function(e) {
-        $(`#preview_${input.id}`).attr('src', e.target.result).css("display", "block");
-      }
-
-      reader.readAsDataURL(input.files[0]);
-    }
-  }
-
-  $("#front_design, #back_design").change(function() {
-    readURL(this);
-  });
-
-  $("#csv_file").change(function() {
-    _this = this
-    $(".import-csv-message").css("display", "none")
-    form_data = new FormData($("#csv_file").parents('form')[0])
-    if(_this.files[0].type == "text/csv"){
-      $.ajax({
-        url: '/admin/campaign_tool/import_csv',
-        type: "POST",
-        dataType: "JSON",
-        data: form_data,
-        processData: false,
-        contentType: false,
-      }).done(function(response) {
-        if(!response.status){
-          $(".import-csv-message").text(`${response.message}`).css("display", "block")
-          $(_this).val("");
+        reader.onload = function(e) {
+          $(`#preview_${input.id}`).attr('src', e.target.result).css("display", "block");
         }
-      }).fail(function(error) {});
-    } else {
-      $(".import-csv-message").text("File types support: CSV").css("display", "block")
+
+        reader.readAsDataURL(input.files[0]);
+      }
     }
-  });
 
-  $("#campaign_id").change(function() {
-    $("#test_campaign_id").val($(this).val())
-  });
+    $("#front_design, #back_design").change(function() {
+      readURL(this);
+    });
 
-  $('.create_test_post_card').validate({
-    rules: {
-      "back_design_file": true,
-      'from[name]': true,
-      'from[address_line1]': true,
-      'from[address_line2]': true,
-      'from[city]': true,
-      'from[state]': true,
-      'from[zip]': true,
-    }
-  });
-
-  $(".button-submit input").click(function(e) {
-    e.preventDefault()
-    front_design = $("#front_design").val();
-    back_design = $("#back_design").val();
-
-    form_data = new FormData($('form.create_test_post_card')[0])
-    if($(".create_test_post_card").valid()){
-      if(front_design.length && back_design.length){
+    $("#csv_file").change(function() {
+      _this = this
+      $(".import-csv-message").css("display", "none")
+      form_data = new FormData($("#csv_file").parents('form')[0])
+      if(_this.files[0].type == "text/csv"){
         $.ajax({
-          url: '/admin/campaign_tool/create_test_post_card',
+          url: '/admin/campaign_tool/import_csv',
           type: "POST",
           dataType: "JSON",
           data: form_data,
@@ -249,14 +208,64 @@
           contentType: false,
         }).done(function(response) {
           if(!response.success){
-            $(".general-message").text(`${response.message}`).css("display", "block")
+            $(".import-csv-message").removeClass("success");
+            $(".import-csv-message").addClass("error").text(`${response.message}`).css("display", "block")
+            $(_this).val("");
           } else {
-            window.location = response.redirect_path
+            $(".import-csv-message").removeClass("error");
+            $(".import-csv-message").addClass("success").text(`${response.message}`).css("display", "block")
           }
         }).fail(function(error) {});
       } else {
-        $(".general-message").text("Missing front design or back design!").css("display", "block")
+        $(".import-csv-message").text("File types support: CSV").css("display", "block")
       }
-    }
+    });
+
+    $("#campaign_id").change(function() {
+      $("#test_campaign_id").val($(this).val())
+    });
+
+    $('.create_test_post_card').validate({
+      rules: {
+        "back_design_file": true,
+        'from[name]': true,
+        'from[address_line1]': true,
+        'from[address_line2]': true,
+        'from[city]': true,
+        'from[state]': true,
+        'from[zip]': true,
+      }
+    });
+
+    $(".button-submit input").click(function(e) {
+      e.preventDefault()
+      front_design = $("#front_design").val();
+      back_design = $("#back_design").val();
+
+      form_data = new FormData($('form.create_test_post_card')[0])
+      if($(".create_test_post_card").valid()){
+        if(front_design.length && back_design.length){
+          $.ajax({
+            url: '/admin/campaign_tool/create_test_post_card',
+            type: "POST",
+            dataType: "JSON",
+            data: form_data,
+            processData: false,
+            contentType: false,
+          }).done(function(response) {
+            if(!response.success){
+              $(".general-message").text(`${response.message}`).css("display", "block")
+            } else {
+              window.location = response.redirect_path
+            }
+          }).fail(function(error) {});
+        } else {
+          $(".general-message").text("Missing front design or back design!").css("display", "block")
+        }
+      }
+    });
+    $(".datepicker").datepicker();
+    $(".datepicker").datepicker('setDate', '+0');
+    $("#ui-datepicker-div").hide();
   });
 </script>

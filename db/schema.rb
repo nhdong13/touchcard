@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_10_07_142716) do
+ActiveRecord::Schema.define(version: 2021_03_12_075122) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -275,6 +275,14 @@ ActiveRecord::Schema.define(version: 2020_10_07_142716) do
     t.boolean "on_stripe", default: false, null: false
     t.integer "trial_period_days"
     t.text "statement_descriptor"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "post_card_infos", force: :cascade do |t|
+    t.string "campaign_id"
+    t.string "front_design"
+    t.string "back_design"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

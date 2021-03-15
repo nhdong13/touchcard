@@ -11,8 +11,29 @@
       </div>
       </div>
       <div class="row center">
-        <input type="submit" value="Send">
+        <span class="message hide"></span>
+      </div>
+      <div class="row center">
+        <input type="submit" value="Send" class="send-postcard-to-lob">
       </div>
     </div>
   </div>
 </div>
+
+<script type="text/javascript">
+  $(document).ready(function() {
+    var post_card_id = "<%= params[:postcard_id] %>";
+    $(".send-postcard-to-lob").click(function(){
+      $.ajax({
+        url: '/admin/campaign_tool/send_post_cards_to_lob',
+        type: "POST",
+        dataType: "JSON",
+        data: {post_card_id: post_card_id},
+      }).done(function(response) {
+        if(response.success){
+          $(".message").addClass("success").text(`${response.message}`).css("display", "block")
+        }
+      }).fail(function(error) {});
+    })
+  });
+</script>

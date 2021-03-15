@@ -79,6 +79,8 @@ gem "pg"
 
 gem "selenium-webdriver"
 gem 'bootstrap-datepicker-rails', '~> 1.9', '>= 1.9.0.1'
+gem 'carrierwave', '~> 2.2'
+gem "fog-aws"
 group :assets do
   gem "therubyracer", platforms: :ruby
 end
@@ -99,7 +101,7 @@ end
 group :test do
   gem "rspec-rails", "~> 3.7"
   gem "factory_bot", "~> 4.8"
-  gem "webmock", "~> 3.2"
+  # gem "webmock", "~> 3.2"
   gem "timecop"
 end
 

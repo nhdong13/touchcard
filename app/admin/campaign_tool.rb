@@ -1,7 +1,7 @@
 ActiveAdmin.register_page "Campaign Tool" do
   menu priority: 16
   LOB_API_KEY = 'test_aa438bb1735c587df0bb27c8ecf0c82e8a6'
-  BASE_CAMPAIGN_TOOL_URL = 'http://localhost:3001'
+  BASE_CAMPAIGN_TOOL_URL = 'https://touchcard-dev.herokuapp.com/'
   TEST_ADDRESS_TO = "adr_8769d8839f5c16c4"
 
   content do
@@ -18,8 +18,15 @@ ActiveAdmin.register_page "Campaign Tool" do
   page_action :upload_csv do
   end
 
-  page_action :upload_post_card_design, method: :post do
-
+  page_action :send_post_cards_to_lob, method: :post do
+    post_card_id = params[:post_card_id]
+    url = "#{BASE_CAMPAIGN_TOOL_URL}/api/v1/post_cards/send_post_cards_to_lob"
+    resp = Faraday.post(url, {post_card_id: post_card_id}, {'Accept' => 'application/json'})
+    if resp.status == 200
+      respond_to do |format|
+        format.json { render json: { message: "Successfully!", success: true } }
+      end && return
+    end
   end
 
   page_action :create_test_post_card, method: :post do
@@ -29,19 +36,35 @@ ActiveAdmin.register_page "Campaign Tool" do
     } unless params[:test_campaign_id].present?
     @@lob ||= Lob::Client.new(api_key: LOB_API_KEY)
     begin
+      @post_card_info = PostCardInfo.create(
+        campaign_id: params[:test_campaign_id],
+        front_design: params[:front_design_file],
+        back_design: params[:back_design_file]
+      )
+      front_url = @post_card_info.front_design.url
+      back_url = @post_card_info.back_design.url
       sent_card = @@lob.postcards.create(
         {
           description: params[:test_campaign_id],
-          metadata: {campaign_id: params[:test_campaign_id]},
+          metadata: {
+            campaign_id: params[:test_campaign_id],
+            front_url: front_url,
+            back_url: back_url
+          },
           to: TEST_ADDRESS_TO,
           from: from_address(params[:from]),
-          front: File.new(params[:front_design_file].path),
-          back: File.new(params[:back_design_file].path),
+          front: front_url,
+          back: back_url,
         })
       @postcard = @@lob.postcards.find(sent_card["id"])
       @post_card_url =  @postcard["url"]
       respond_to do |format|
-        format.json { render json: { redirect_path: admin_campaign_tool_preview_post_card_path(postcard_id: sent_card["id"]), success: true } }
+        format.json {
+          render json: {
+            redirect_path: admin_campaign_tool_preview_post_card_path(postcard_id: sent_card["id"]),
+            success: true
+          }
+        }
       end && return
     rescue Lob::InvalidRequestError => e
       flash[:error] = e
@@ -89,9 +112,9 @@ ActiveAdmin.register_page "Campaign Tool" do
     url = "#{BASE_CAMPAIGN_TOOL_URL}/api/v1/post_cards/add_post_cards"
     resp = Faraday.post(url, {campaign_id: params[:campaign_id], data: arrayVal.to_json}, {'Accept' => 'application/json'})
     body = JSON.parse resp.body
-    @message = body["message"] && body["message"][0]
+    @message = body["message"] && body["message"]
     respond_to do |format|
-      format.json { render json: { message: @message, success: true } }
+      format.json { render json: { message: @message, success: resp.status == 200 } }
     end
   end
 
