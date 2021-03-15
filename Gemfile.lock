@@ -116,6 +116,8 @@ GEM
       execjs
     coffee-script-source (1.12.2)
     concurrent-ruby (1.1.6)
+    crack (0.4.5)
+      rexml
     crass (1.0.6)
     daemons (1.2.5)
     delayed_job (4.1.8)
@@ -175,6 +177,7 @@ GEM
     has_scope (0.7.2)
       actionpack (>= 4.1)
       activesupport (>= 4.1)
+    hashdiff (1.0.1)
     hashie (3.6.0)
     hirb (0.7.3)
     http-accept (1.7.0)
@@ -319,6 +322,7 @@ GEM
       http-cookie (>= 1.0.2, < 2.0)
       mime-types (>= 1.16, < 4.0)
       netrc (~> 0.8)
+    rexml (3.2.4)
     rmagick (2.15.4)
     rspec-core (3.7.1)
       rspec-support (~> 3.7.0)
@@ -416,6 +420,10 @@ GEM
       activemodel (>= 5.0)
       bindex (>= 0.4.0)
       railties (>= 5.0)
+    webmock (3.12.1)
+      addressable (>= 2.3.6)
+      crack (>= 0.3.2)
+      hashdiff (>= 0.4.0, < 2.0.0)
     webpacker (3.5.5)
       activesupport (>= 4.2)
       rack-proxy (>= 0.6.1)
@@ -473,6 +481,7 @@ DEPENDENCIES
   uglifier (~> 4.2)
   unicorn (~> 4.9)
   web-console
+  webmock
   webpacker (~> 3.0)
   wirble (~> 0.1)
 
