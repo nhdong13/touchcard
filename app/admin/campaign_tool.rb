@@ -1,7 +1,8 @@
 ActiveAdmin.register_page "Campaign Tool" do
   menu priority: 16
   LOB_API_KEY = 'test_aa438bb1735c587df0bb27c8ecf0c82e8a6'
-  BASE_CAMPAIGN_TOOL_URL = 'https://campaign-tool-dev.herokuapp.com/'
+  # BASE_CAMPAIGN_TOOL_URL = 'https://campaign-tool-dev.herokuapp.com'
+  BASE_CAMPAIGN_TOOL_URL = 'http://localhost:3001/'
   TEST_ADDRESS_TO = "adr_8769d8839f5c16c4"
 
   content do
@@ -13,9 +14,6 @@ ActiveAdmin.register_page "Campaign Tool" do
 
   page_action :upload_csv, method: :post do
     link_to 'Upload CSV', :action => 'upload_csv'
-  end
-
-  page_action :upload_csv do
   end
 
   page_action :send_post_cards_to_lob, method: :post do
@@ -110,7 +108,11 @@ ActiveAdmin.register_page "Campaign Tool" do
       })
     end
     url = "#{BASE_CAMPAIGN_TOOL_URL}/api/v1/post_cards/add_post_cards"
-    resp = Faraday.post(url, {campaign_id: params[:campaign_id], data: arrayVal.to_json}, {'Accept' => 'application/json'})
+    resp = Faraday.post(
+      url,
+      {campaign_id: params[:campaign_id], data: arrayVal.to_json},
+      {'Accept' => 'application/json', 'Authorization': "Bearer #{@auth_token}"}
+    )
     body = JSON.parse resp.body
     @message = body["message"] && body["message"]
     respond_to do |format|
@@ -119,6 +121,20 @@ ActiveAdmin.register_page "Campaign Tool" do
   end
 
   controller do
+    before_action :get_auth_token, only: [:import_csv, :send_post_cards_to_lob]
+
+    def get_auth_token
+      url = "#{BASE_CAMPAIGN_TOOL_URL}/authenticate"
+      user = {email: "nusnick@yopmail.com", password: "12345678"}
+      resp = Faraday.post(url, user, {'Accept' => 'application/json'})
+      @auth_token = nil
+      if resp.status == 200
+        body = JSON.parse resp.body
+        @auth_token = body["auth_token"]
+      end
+      @auth_token
+    end
+
     def from_address address_attrs
       {
         name: address_attrs[:name],
