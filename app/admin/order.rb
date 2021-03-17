@@ -11,6 +11,7 @@ ActiveAdmin.register Order do
   filter :processed_at
   filter :postcard_id
 
+  includes :customer
 
   index do
     div class: 'top_pagination' do
