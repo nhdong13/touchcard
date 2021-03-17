@@ -14,7 +14,12 @@
         <span class="message hide"></span>
       </div>
       <div class="row center">
-        <input type="submit" value="Send" class="send-postcard-to-lob">
+        <div class="cancel-preview-postcard">
+          <button >Cancel</button>
+        </div>
+        <div>
+          <input type="submit" value="Send" class="send-postcard-to-lob">
+        </div>
       </div>
     </div>
   </div>
@@ -32,8 +37,13 @@
       }).done(function(response) {
         if(response.success){
           $(".message").addClass("success").text(`${response.message}`).css("display", "block")
+          $(".send-postcard-to-lob").hide();
         }
       }).fail(function(error) {});
+    });
+
+    $(".cancel-preview-postcard button").click(function(){
+      window.location = "/admin/campaign_tool"
     })
   });
 </script>

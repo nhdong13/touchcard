@@ -1,7 +1,8 @@
 ActiveAdmin.register_page "Campaign Tool" do
   menu priority: 16
   LOB_API_KEY = 'test_aa438bb1735c587df0bb27c8ecf0c82e8a6'
-  BASE_CAMPAIGN_TOOL_URL = 'https://campaign-tool-dev.herokuapp.com/'
+  BASE_CAMPAIGN_TOOL_URL = 'https://campaign-tool-dev.herokuapp.com'
+  # BASE_CAMPAIGN_TOOL_URL = 'http://localhost:3001/'
   TEST_ADDRESS_TO = "adr_8769d8839f5c16c4"
 
   content do
@@ -15,13 +16,10 @@ ActiveAdmin.register_page "Campaign Tool" do
     link_to 'Upload CSV', :action => 'upload_csv'
   end
 
-  page_action :upload_csv do
-  end
-
   page_action :send_post_cards_to_lob, method: :post do
     post_card_id = params[:post_card_id]
     url = "#{BASE_CAMPAIGN_TOOL_URL}/api/v1/post_cards/send_post_cards_to_lob"
-    resp = Faraday.post(url, {post_card_id: post_card_id}, {'Accept' => 'application/json'})
+    resp = Faraday.post(url, {post_card_id: post_card_id}, {'Accept' => 'application/json', 'Authorization': "Bearer #{@auth_token}"})
     if resp.status == 200
       respond_to do |format|
         format.json { render json: { message: "Successfully!", success: true } }
@@ -43,6 +41,7 @@ ActiveAdmin.register_page "Campaign Tool" do
       )
       front_url = @post_card_info.front_design.url
       back_url = @post_card_info.back_design.url
+
       sent_card = @@lob.postcards.create(
         {
           description: params[:test_campaign_id],
@@ -110,7 +109,11 @@ ActiveAdmin.register_page "Campaign Tool" do
       })
     end
     url = "#{BASE_CAMPAIGN_TOOL_URL}/api/v1/post_cards/add_post_cards"
-    resp = Faraday.post(url, {campaign_id: params[:campaign_id], data: arrayVal.to_json}, {'Accept' => 'application/json'})
+    resp = Faraday.post(
+      url,
+      {campaign_id: params[:campaign_id], data: arrayVal.to_json},
+      {'Accept' => 'application/json', 'Authorization': "Bearer #{@auth_token}"}
+    )
     body = JSON.parse resp.body
     @message = body["message"] && body["message"]
     respond_to do |format|
@@ -119,15 +122,33 @@ ActiveAdmin.register_page "Campaign Tool" do
   end
 
   controller do
+    before_action :get_auth_token, only: [:import_csv, :send_post_cards_to_lob]
+
+    def get_auth_token
+      url = "#{BASE_CAMPAIGN_TOOL_URL}/authenticate"
+      user = {email: "nusnick@yopmail.com", password: "12345678"}
+      resp = Faraday.post(url, user, {'Accept' => 'application/json'})
+      @auth_token = nil
+      if resp.status == 200
+        body = JSON.parse resp.body
+        @auth_token = body["auth_token"]
+      end
+      @auth_token
+    end
+
     def from_address address_attrs
-      {
-        name: address_attrs[:name],
-        address_line1: address_attrs[:address_line1],
-        address_line2: address_attrs[:address_line1],
-        address_city: address_attrs[:city],
-        address_state: address_attrs[:state],
-        address_zip: address_attrs[:zip]
-      }
+      if params[:name].present?
+        {
+          name: address_attrs[:name],
+          address_line1: address_attrs[:address_line1],
+          address_line2: address_attrs[:address_line2 ],
+          address_city: address_attrs[:city],
+          address_state: address_attrs[:state],
+          address_zip: address_attrs[:zip]
+        }
+      else
+        {}
+      end
     end
   end
 end
