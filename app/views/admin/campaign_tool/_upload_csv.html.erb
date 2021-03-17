@@ -23,6 +23,9 @@
             <div class="col-6">
               <%= file_field_tag 'csv_file', accept: 'text/csv' %>
               <h4 class="message import-csv-message"></h4>
+              <div>
+                <%= link_to "Download CSV Template", download_csv_template_path %>
+              </div>
             </div>
           </div>
         </div>
@@ -281,7 +284,7 @@
         }
       }
     });
-    $(".datepicker").datepicker();
+    $(".datepicker").datepicker({ dateFormat: 'yy-mm-dd'});
     $(".datepicker").datepicker('setDate', '+0');
     $("#ui-datepicker-div").hide();
   });

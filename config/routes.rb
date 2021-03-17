@@ -16,6 +16,8 @@ Rails.application.routes.draw do
   post 'gdpr/customers/redact', to: 'gdpr_webhooks#customers_redact'
   post 'gdpr/shop/redact', to: 'gdpr_webhooks#shop_redact'
 
+  get "/download_csv_template", to: 'application#download_csv_template'
+
 
   # HTML Routes for Card Templates
   resources :card_orders, only: [:update, :create, :destroy]

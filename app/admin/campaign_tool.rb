@@ -41,7 +41,6 @@ ActiveAdmin.register_page "Campaign Tool" do
       )
       front_url = @post_card_info.front_design.url
       back_url = @post_card_info.back_design.url
-
       sent_card = @@lob.postcards.create(
         {
           description: params[:test_campaign_id],
@@ -54,6 +53,7 @@ ActiveAdmin.register_page "Campaign Tool" do
           from: from_address(params[:from]),
           front: front_url,
           back: back_url,
+          send_date: params[:send_date].to_date.today? ? "" : params[:send_date]
         })
       @postcard = @@lob.postcards.find(sent_card["id"])
       @post_card_url =  @postcard["url"]
@@ -78,7 +78,16 @@ ActiveAdmin.register_page "Campaign Tool" do
   page_action :preview_post_card, method: :get do
     @@lob ||= Lob::Client.new(api_key: LOB_API_KEY)
     @postcard = @@lob.postcards.find(params[:postcard_id])
+    campaign_id = @postcard["description"]
     @post_card_url =  @postcard["url"]
+    url = "#{BASE_CAMPAIGN_TOOL_URL}/api/v1/post_cards/get_number_postcards"
+    resp = Faraday.get(
+      url,
+      {campaign_id: campaign_id},
+      {'Accept' => 'application/json', 'Authorization': "Bearer #{@auth_token}"}
+    )
+    body = JSON.parse resp.body
+    @count = body["count"]
   end
 
   page_action :import_csv, :method => :post do
@@ -122,7 +131,7 @@ ActiveAdmin.register_page "Campaign Tool" do
   end
 
   controller do
-    before_action :get_auth_token, only: [:import_csv, :send_post_cards_to_lob]
+    before_action :get_auth_token, only: [:import_csv, :send_post_cards_to_lob, :preview_post_card]
 
     def get_auth_token
       url = "#{BASE_CAMPAIGN_TOOL_URL}/authenticate"
