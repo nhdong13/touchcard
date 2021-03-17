@@ -79,7 +79,7 @@
             </div>
             <div class="col-6">
               <div>
-                <%= text_field_tag 'from[name]', nil, required: true %>
+                <%= text_field_tag 'from[name]', nil %>
               </div>
             </div>
           </div>
@@ -89,7 +89,7 @@
             </div>
             <div class="col-6">
               <div>
-                <%= text_field_tag 'from[address_line1]', nil, required: true %>
+                <%= text_field_tag 'from[address_line1]', nil %>
               </div>
             </div>
           </div>
@@ -99,7 +99,7 @@
             </div>
             <div class="col-6">
               <div>
-                <%= text_field_tag 'from[address_line2]', nil, required: true  %>
+                <%= text_field_tag 'from[address_line2]', nil %>
               </div>
             </div>
           </div>
@@ -109,7 +109,7 @@
             </div>
             <div class="col-6">
               <div>
-                <%= text_field_tag 'from[city]', nil, required: true  %>
+                <%= text_field_tag 'from[city]', nil %>
               </div>
             </div>
           </div>
@@ -119,7 +119,7 @@
             </div>
             <div class="col-6">
               <div>
-                <%= text_field_tag 'from[state]', nil, required: true  %>
+                <%= text_field_tag 'from[state]', nil %>
               </div>
             </div>
           </div>
@@ -129,7 +129,7 @@
             </div>
             <div class="col-6">
               <div>
-                <%= text_field_tag 'from[zip]', nil, required: true  %>
+                <%= text_field_tag 'from[zip]', nil %>
               </div>
             </div>
           </div>
@@ -227,15 +227,32 @@
 
     $('.create_test_post_card').validate({
       rules: {
-        "back_design_file": true,
-        'from[name]': true,
-        'from[address_line1]': true,
-        'from[address_line2]': true,
-        'from[city]': true,
-        'from[state]': true,
-        'from[zip]': true,
+        'from[name]': false,
+        'from[address_line1]': false,
+        'from[address_line2]': false,
+        'from[city]': false,
+        'from[state]': false,
+        'from[zip]': false,
       }
     });
+
+    $("#from_name, #from_address_line1, #from_city, #from_state, #from_zip").change(function(){
+      if(!$("#from_name").val() &&
+          !$("#from_address_line1").val() &&
+          !$("#from_city").val() &&
+          !$("#from_state").val() &&
+          !$("#from_zip").val()
+        ){
+        $('#from_name, #from_address_line1, #from_city, #from_state, #from_zip').each(function() {
+          $(this).rules('remove', 'required');
+          $("label.error").hide();
+        });
+      } else {
+        $('#from_name, #from_address_line1, #from_city, #from_state, #from_zip').each(function() {
+          $(this).rules('add', 'required');
+        });
+      }
+    })
 
     $(".button-submit input").click(function(e) {
       e.preventDefault()

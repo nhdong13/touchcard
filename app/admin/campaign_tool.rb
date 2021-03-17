@@ -1,8 +1,8 @@
 ActiveAdmin.register_page "Campaign Tool" do
   menu priority: 16
   LOB_API_KEY = 'test_aa438bb1735c587df0bb27c8ecf0c82e8a6'
-  # BASE_CAMPAIGN_TOOL_URL = 'https://campaign-tool-dev.herokuapp.com'
-  BASE_CAMPAIGN_TOOL_URL = 'http://localhost:3001/'
+  BASE_CAMPAIGN_TOOL_URL = 'https://campaign-tool-dev.herokuapp.com'
+  # BASE_CAMPAIGN_TOOL_URL = 'http://localhost:3001/'
   TEST_ADDRESS_TO = "adr_8769d8839f5c16c4"
 
   content do
@@ -19,7 +19,7 @@ ActiveAdmin.register_page "Campaign Tool" do
   page_action :send_post_cards_to_lob, method: :post do
     post_card_id = params[:post_card_id]
     url = "#{BASE_CAMPAIGN_TOOL_URL}/api/v1/post_cards/send_post_cards_to_lob"
-    resp = Faraday.post(url, {post_card_id: post_card_id}, {'Accept' => 'application/json'})
+    resp = Faraday.post(url, {post_card_id: post_card_id}, {'Accept' => 'application/json', 'Authorization': "Bearer #{@auth_token}"})
     if resp.status == 200
       respond_to do |format|
         format.json { render json: { message: "Successfully!", success: true } }
@@ -41,6 +41,7 @@ ActiveAdmin.register_page "Campaign Tool" do
       )
       front_url = @post_card_info.front_design.url
       back_url = @post_card_info.back_design.url
+
       sent_card = @@lob.postcards.create(
         {
           description: params[:test_campaign_id],
@@ -136,14 +137,18 @@ ActiveAdmin.register_page "Campaign Tool" do
     end
 
     def from_address address_attrs
-      {
-        name: address_attrs[:name],
-        address_line1: address_attrs[:address_line1],
-        address_line2: address_attrs[:address_line1],
-        address_city: address_attrs[:city],
-        address_state: address_attrs[:state],
-        address_zip: address_attrs[:zip]
-      }
+      if params[:name].present?
+        {
+          name: address_attrs[:name],
+          address_line1: address_attrs[:address_line1],
+          address_line2: address_attrs[:address_line2 ],
+          address_city: address_attrs[:city],
+          address_state: address_attrs[:state],
+          address_zip: address_attrs[:zip]
+        }
+      else
+        {}
+      end
     end
   end
 end
