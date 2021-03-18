@@ -29,6 +29,7 @@
   $(document).ready(function() {
     var post_card_id = "<%= params[:postcard_id] %>";
     $(".send-postcard-to-lob").click(function(){
+      $(this).val("Sending...")
       $.ajax({
         url: '/admin/campaign_tool/send_post_cards_to_lob',
         type: "POST",
