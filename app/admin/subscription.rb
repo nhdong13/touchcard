@@ -26,6 +26,8 @@ ActiveAdmin.register Subscription do
   filter :updated_at
   filter :stripe_id
 
+  includes :shop
+
   index do
     # actions
     column :id do |subscription|
