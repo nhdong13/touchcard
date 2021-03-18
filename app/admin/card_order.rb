@@ -51,7 +51,7 @@ ActiveAdmin.register CardOrder do
   end
 
 
-  filter :shop , as: :select, collection: ->{Shop.all.sort_by {|s| s.domain}}
+  filter :shop , as: :select, collection: ->{Shop.select(:domain, :id).order(:domain)}
   filter :discount_pct
   filter :discount_exp
   filter :enabled
