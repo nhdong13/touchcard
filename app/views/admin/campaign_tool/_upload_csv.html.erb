@@ -271,7 +271,7 @@
       form_data = new FormData($('form.create_test_post_card')[0])
       if($(".create_test_post_card").valid()){
         if(front_design.length && back_design.length){
-          $(_this).val('Uploading..')
+          $(_this).val('Uploading...')
           $.ajax({
             url: '/admin/campaign_tool/create_test_post_card',
             type: "POST",
