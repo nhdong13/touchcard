@@ -13,10 +13,7 @@ ActiveAdmin.register Order do
 
   includes :customer
 
-  index do
-    div class: 'top_pagination' do
-      paginated_collection(collection, download_links: false)
-    end
+  index pagination_total: false do
 
     # actions
     column :id do |order|
