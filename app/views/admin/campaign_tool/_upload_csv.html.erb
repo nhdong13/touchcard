@@ -203,7 +203,7 @@
       form_data = new FormData($("#csv_file").parents('form')[0])
       file = $("#csv_file")[0]
       if($("#csv_file").val()){
-        if(file.files[0].name.split(".").pop() == "csv"){
+        if(file.files[0].name.split(".").pop().toLowerCase() == "csv"){
           $.ajax({
             url: '/admin/campaign_tool/import_csv',
             type: "POST",
