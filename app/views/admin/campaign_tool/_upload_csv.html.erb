@@ -197,30 +197,33 @@
       readURL(this);
     });
 
-    $("#csv_file").change(function() {
+    $("#csv_file, #campaign_id").change(function() {
       _this = this
       $(".import-csv-message").css("display", "none")
       form_data = new FormData($("#csv_file").parents('form')[0])
-      if(_this.files[0].type == "text/csv"){
-        $.ajax({
-          url: '/admin/campaign_tool/import_csv',
-          type: "POST",
-          dataType: "JSON",
-          data: form_data,
-          processData: false,
-          contentType: false,
-        }).done(function(response) {
-          if(!response.success){
-            $(".import-csv-message").removeClass("success");
-            $(".import-csv-message").addClass("error").text(`${response.message}`).css("display", "block")
-            $(_this).val("");
-          } else {
-            $(".import-csv-message").removeClass("error");
-            $(".import-csv-message").addClass("success").text(`${response.message}`).css("display", "block")
-          }
-        }).fail(function(error) {});
-      } else {
-        $(".import-csv-message").text("File types support: CSV").css("display", "block")
+      file = $("#csv_file")[0]
+      if($("#csv_file").val()){
+        if(file.files[0].type == "text/csv"){
+          $.ajax({
+            url: '/admin/campaign_tool/import_csv',
+            type: "POST",
+            dataType: "JSON",
+            data: form_data,
+            processData: false,
+            contentType: false,
+          }).done(function(response) {
+            if(!response.success){
+              $(".import-csv-message").removeClass("success");
+              $(".import-csv-message").addClass("error").text(`${response.message}`).css("display", "block")
+              $("#csv_file").val("");
+            } else {
+              $(".import-csv-message").removeClass("error");
+              $(".import-csv-message").addClass("success").text(`${response.message}`).css("display", "block")
+            }
+          }).fail(function(error) {});
+        } else {
+          $(".import-csv-message").text("File types support: CSV").css("display", "block")
+        }
       }
     });
 
