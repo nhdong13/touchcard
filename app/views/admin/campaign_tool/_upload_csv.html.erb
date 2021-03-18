@@ -33,7 +33,7 @@
       <%= submit_tag 'import', class: "import-csv-btn" %>
     <% end %>
 
-    <%= form_tag admin_campaign_tool_create_test_post_card_path, multipart: true, :authenticity_token => true , class: "create_test_post_card" do %>
+    <%= form_tag admin_campaign_tool_create_test_post_card_path, multipart: true, :authenticity_token => true, class: "create_test_post_card" do %>
       <%= hidden_field_tag 'test_campaign_id' %>
       <div class="row">
         <div class="col-6">
@@ -82,7 +82,7 @@
             </div>
             <div class="col-6">
               <div>
-                <%= text_field_tag 'from[name]', nil %>
+                <%= text_field_tag 'from[name]', nil, 'data-lpignore': "true"%>
               </div>
             </div>
           </div>
@@ -262,12 +262,15 @@
 
     $(".button-submit input").click(function(e) {
       e.preventDefault()
+      _this = this
+      $(".general-message").hide()
       front_design = $("#front_design").val();
       back_design = $("#back_design").val();
 
       form_data = new FormData($('form.create_test_post_card')[0])
       if($(".create_test_post_card").valid()){
         if(front_design.length && back_design.length){
+          $(_this).val('Uploading..')
           $.ajax({
             url: '/admin/campaign_tool/create_test_post_card',
             type: "POST",
@@ -278,6 +281,7 @@
           }).done(function(response) {
             if(!response.success){
               $(".general-message").text(`${response.message}`).css("display", "block")
+              $(_this).val('Upload')
             } else {
               window.location = response.redirect_path
             }
