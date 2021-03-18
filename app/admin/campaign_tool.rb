@@ -21,8 +21,10 @@ ActiveAdmin.register_page "Campaign Tool" do
     url = "#{BASE_CAMPAIGN_TOOL_URL}/api/v1/post_cards/send_post_cards_to_lob"
     resp = Faraday.post(url, {post_card_id: post_card_id}, {'Accept' => 'application/json', 'Authorization': "Bearer #{@auth_token}"})
     if resp.status == 200
+      body = JSON.parse resp.body
+      message = body["message"]
       respond_to do |format|
-        format.json { render json: { message: "Successfully!", success: true } }
+        format.json { render json: { message: message, success: true } }
       end && return
     end
   end
@@ -47,13 +49,13 @@ ActiveAdmin.register_page "Campaign Tool" do
           metadata: {
             campaign_id: params[:test_campaign_id],
             front_url: front_url,
-            back_url: back_url
+            back_url: back_url,
+            send_date: params[:send_date]
           },
           to: TEST_ADDRESS_TO,
           from: from_address(params[:from]),
           front: front_url,
-          back: back_url,
-          send_date: params[:send_date].to_date.today? ? "" : params[:send_date]
+          back: back_url
         })
       @postcard = @@lob.postcards.find(sent_card["id"])
       @post_card_url =  @postcard["url"]
