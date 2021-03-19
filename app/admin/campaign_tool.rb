@@ -3,7 +3,7 @@ ActiveAdmin.register_page "Campaign Tool" do
   LOB_API_KEY = 'test_aa438bb1735c587df0bb27c8ecf0c82e8a6'
   LOB_API_VER = "2020-02-11"
   TEST_ADDRESS_TO = "adr_8769d8839f5c16c4"
-  # BASE_CAMPAIGN_TOOL_URL = 'http://localhost:3001/'
+  # BASE_CAMPAIGN_TOOL_URL = 'http://localhost:3001'
   BASE_CAMPAIGN_TOOL_URL = 'https://campaign-tool-dev.herokuapp.com'
 
   content do
@@ -35,6 +35,10 @@ ActiveAdmin.register_page "Campaign Tool" do
       success: false,
       message: "Missing campaign id",
     } unless params[:test_campaign_id].present?
+    return render json: {
+      success: false,
+      message: "Please import the CSV file first.",
+    } unless params[:unique_code].present?
     @@lob ||= Lob::Client.new(api_key: LOB_API_KEY, api_version: LOB_API_VER)
     begin
       @post_card_info = PostCardInfo.create(
@@ -51,7 +55,8 @@ ActiveAdmin.register_page "Campaign Tool" do
             campaign_id: params[:test_campaign_id],
             front_url: front_url,
             back_url: back_url,
-            send_date: params[:send_date]
+            send_date: params[:send_date],
+            unique_code: params[:unique_code]
           },
           to: TEST_ADDRESS_TO,
           from: from_address(params[:from]),
@@ -81,12 +86,12 @@ ActiveAdmin.register_page "Campaign Tool" do
   page_action :preview_post_card, method: :get do
     @@lob ||= Lob::Client.new(api_key: LOB_API_KEY, api_version: LOB_API_VER)
     @postcard = @@lob.postcards.find(params[:postcard_id])
-    campaign_id = @postcard["description"]
     @post_card_url =  @postcard["url"]
+    unique_code = @postcard["metadata"]["unique_code"]
     url = "#{BASE_CAMPAIGN_TOOL_URL}/api/v1/post_cards/get_number_postcards"
     resp = Faraday.get(
       url,
-      {campaign_id: campaign_id},
+      {unique_code: unique_code},
       {'Accept' => 'application/json', 'Authorization': "Bearer #{@auth_token}"}
     )
     body = JSON.parse resp.body
@@ -100,7 +105,7 @@ ActiveAdmin.register_page "Campaign Tool" do
     } unless params[:campaign_id].present?
     csv_path = csv_path = params[:csv_file].path
     converter = lambda { |header| header.downcase }
-    data = CSV.read(csv_path, headers: true, encoding: 'ISO-8859-1', col_sep: ",", header_converters: converter)
+    data = CSV.read(csv_path, headers: true, encoding: 'utf-8', col_sep: ",", header_converters: converter)
     arrayVal = []
     data.each do |row|
       next if row.fields.compact.empty? # Row without data
@@ -117,7 +122,7 @@ ActiveAdmin.register_page "Campaign Tool" do
         state: row['state'],
         raw_zip: raw_zip,
         country: country,
-        zip: zip
+        zip: zip.gsub(/[^0-9A-Za-z\-]/, '')
       })
     end
     url = "#{BASE_CAMPAIGN_TOOL_URL}/api/v1/post_cards/add_post_cards"
@@ -128,8 +133,9 @@ ActiveAdmin.register_page "Campaign Tool" do
     )
     body = JSON.parse resp.body
     @message = body["message"] && body["message"]
+    unique_code = body["unique_code"]
     respond_to do |format|
-      format.json { render json: { message: @message, success: resp.status == 200 } }
+      format.json { render json: { unique_code: unique_code, message: @message, success: resp.status == 200 } }
     end
   end
 
