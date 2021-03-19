@@ -35,6 +35,7 @@
 
     <%= form_tag admin_campaign_tool_create_test_post_card_path, multipart: true, :authenticity_token => true, class: "create_test_post_card" do %>
       <%= hidden_field_tag 'test_campaign_id' %>
+      <%= hidden_field_tag 'unique_code' %>
       <div class="row">
         <div class="col-6">
           <div class="row">
@@ -181,6 +182,8 @@
 <script type="text/javascript">
   $(document).ready(function() {
     $("#campaign_id").focus();
+    $("#unique_code").val("").trigger("change");
+
     function readURL(input) {
       if (input.files && input.files[0]) {
         var reader = new FileReader();
@@ -217,6 +220,7 @@
               $(".import-csv-message").addClass("error").text(`${response.message}`).css("display", "block")
               $("#csv_file").val("");
             } else {
+              $("#unique_code").val(response.unique_code).trigger("change");
               $(".import-csv-message").removeClass("error");
               $(".import-csv-message").addClass("success").text(`${response.message}`).css("display", "block")
             }
@@ -225,6 +229,14 @@
           $(".import-csv-message").removeClass("success");
           $(".import-csv-message").addClass("error").text("File types support: CSV").css("display", "block")
         }
+      }
+    });
+
+    $("#unique_code").change(function(){
+      if(!$(this).val()){
+        $(".create_test_post_card .button-submit input").prop("disabled", true)
+      } else {
+        $(".create_test_post_card .button-submit input").prop("disabled", false)
       }
     });
 
@@ -269,26 +281,28 @@
       back_design = $("#back_design").val();
 
       form_data = new FormData($('form.create_test_post_card')[0])
-      if($(".create_test_post_card").valid()){
-        if(front_design.length && back_design.length){
-          $(_this).val('Uploading...')
-          $.ajax({
-            url: '/admin/campaign_tool/create_test_post_card',
-            type: "POST",
-            dataType: "JSON",
-            data: form_data,
-            processData: false,
-            contentType: false,
-          }).done(function(response) {
-            if(!response.success){
-              $(".general-message").text(`${response.message}`).css("display", "block")
-              $(_this).val('Upload')
-            } else {
-              window.location = response.redirect_path
-            }
-          }).fail(function(error) {});
-        } else {
-          $(".general-message").text("Missing front design or back design!").css("display", "block")
+      if($("#unique_code").val()){
+        if($(".create_test_post_card").valid()){
+          if(front_design.length && back_design.length){
+            $(_this).val('Uploading...')
+            $.ajax({
+              url: '/admin/campaign_tool/create_test_post_card',
+              type: "POST",
+              dataType: "JSON",
+              data: form_data,
+              processData: false,
+              contentType: false,
+            }).done(function(response) {
+              if(!response.success){
+                $(".general-message").text(`${response.message}`).css("display", "block")
+                $(_this).val('Upload')
+              } else {
+                window.location = response.redirect_path
+              }
+            }).fail(function(error) {});
+          } else {
+            $(".general-message").text("Missing front design or back design!").css("display", "block")
+          }
         }
       }
     });
