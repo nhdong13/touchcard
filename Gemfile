@@ -3,7 +3,7 @@ source "https://rubygems.org"
 #ruby=2.4.4
 #ruby-gemset=touchcard
 
-ruby "2.4.4"
+ruby "3.0.0"
 
 gem "rails", "5.2.2"
 gem "rake", "~> 12.3.0"
