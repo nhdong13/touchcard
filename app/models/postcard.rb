@@ -100,7 +100,7 @@ class Postcard < ApplicationRecord
     front_png_path = PostcardRenderUtil.render_side_png(postcard: self, is_front: true)
     back_png_path = PostcardRenderUtil.render_side_png(postcard: self, is_front: false)
 
-    @lob ||= Lob::Client.new(api_key: ENV['LOB_API_KEY'], api_version: "2018-06-05")
+    @lob ||= Lob::Client.new(api_key: ENV['LOB_API_KEY'], api_version: LOB_API_VER)
     sent_card = @lob.postcards.create(
       description: "#{card_order.type} #{shop.domain}",
       to: to_address,
