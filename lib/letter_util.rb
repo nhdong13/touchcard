@@ -17,7 +17,7 @@ module LetterUtil
 
   def send_letter(to_address, from_address, html)
 
-    @lob ||= Lob::Client.new(api_key: ENV['LOB_API_KEY'], api_version: "2018-06-05")
+    @lob ||= Lob::Client.new(api_key: ENV['LOB_API_KEY'], api_version: LOB_API_VER)
     letter = @lob.letters.create(
         description: "Sample Letter for #{to_address['name']}",
         to: to_address,
