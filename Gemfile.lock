@@ -350,6 +350,7 @@ GEM
       sprockets (>= 3.0.0)
     stripe (3.9.1)
       faraday (~> 0.10)
+    stripe (5.30.0)
     therubyracer (0.12.3)
       libv8 (~> 3.16.14.15)
       ref
@@ -431,7 +432,7 @@ DEPENDENCIES
   shopify_app (~> 12)
   simplecov
   spring
-  stripe (~> 3.9)
+  stripe (~> 5.30)
   therubyracer
   thin
   thor (~> 0.19.1)
@@ -448,4 +449,4 @@ RUBY VERSION
    ruby 2.4.4p296
 
 BUNDLED WITH
-   1.17.3
+   2.2.13
