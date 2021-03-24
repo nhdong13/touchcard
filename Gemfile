@@ -27,7 +27,7 @@ gem "active_material", git: "https://github.com/laverick/active_material"
 gem "shopify_app", "~> 12"
 
 # Stripe
-gem "stripe", "~> 3.9"
+gem 'stripe', '~> 5.30'
 
 # S3 connection
 gem "aws-sdk", "~> 2.1"

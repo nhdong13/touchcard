@@ -13,7 +13,7 @@ ActiveAdmin.register Address do
 
 
 
-  index do
+  index pagination_total: false do
     column :id do |address|
       link_to address.id, admin_address_path(address)
     end

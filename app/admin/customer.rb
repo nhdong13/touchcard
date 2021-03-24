@@ -13,7 +13,7 @@ ActiveAdmin.register Customer do
   filter :created_at
   filter :updated_at
 
-  index do
+  index pagination_total: false do
     column :id do |customer|
       link_to customer.id, admin_customer_path(customer)
     end

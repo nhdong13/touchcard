@@ -25,11 +25,7 @@ ActiveAdmin.register Postcard do
   filter :price_rule
   filter :discount_pct
 
-  index do
-    div class: 'top_pagination' do
-      paginated_collection(collection, download_links: false)
-    end
-
+  index pagination_total: false do
     # actions
     column :id do |postcard|
       link_to postcard.id, admin_postcard_path(postcard)

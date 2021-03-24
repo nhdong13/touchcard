@@ -388,6 +388,7 @@ GEM
     ssrf_filter (1.0.7)
     stripe (3.9.1)
       faraday (~> 0.10)
+    stripe (5.30.0)
     therubyracer (0.12.3)
       libv8 (~> 3.16.14.15)
       ref
@@ -472,7 +473,7 @@ DEPENDENCIES
   shopify_app (~> 12)
   simplecov
   spring
-  stripe (~> 3.9)
+  stripe (~> 5.30)
   therubyracer
   thin
   thor (~> 0.19.1)
