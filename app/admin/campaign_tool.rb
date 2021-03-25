@@ -1,13 +1,8 @@
 ActiveAdmin.register_page "Campaign Tool" do
   menu priority: 16
-  LOB_API_KEY = 'test_aa438bb1735c587df0bb27c8ecf0c82e8a6'
-  LOB_API_VER = "2020-02-11"
-  TEST_ADDRESS_TO = "adr_8769d8839f5c16c4"
-  # BASE_CAMPAIGN_TOOL_URL = 'http://localhost:3001'
-  BASE_CAMPAIGN_TOOL_URL = 'https://campaign-tool-dev.herokuapp.com'
 
   content do
-    @@lob ||= Lob::Client.new(api_key: LOB_API_KEY, api_version: LOB_API_VER)
+    @@lob ||= Lob::Client.new(api_key: ENV['LOB_API_KEY'], api_version: LOB_API_VER)
     @postcard = @@lob.postcards.find("psc_12f4ba9c1a06ebc0")
 
     render "upload_csv"
@@ -39,7 +34,7 @@ ActiveAdmin.register_page "Campaign Tool" do
       success: false,
       message: "Please import the CSV file first.",
     } unless params[:unique_code].present?
-    @@lob ||= Lob::Client.new(api_key: LOB_API_KEY, api_version: LOB_API_VER)
+    @@lob ||= Lob::Client.new(api_key: ENV['LOB_API_KEY'], api_version: LOB_API_VER)
     begin
       @post_card_info = PostCardInfo.create(
         campaign_id: params[:test_campaign_id],
@@ -84,7 +79,7 @@ ActiveAdmin.register_page "Campaign Tool" do
 
 
   page_action :preview_post_card, method: :get do
-    @@lob ||= Lob::Client.new(api_key: LOB_API_KEY, api_version: LOB_API_VER)
+    @@lob ||= Lob::Client.new(api_key: ENV['LOB_API_KEY'], api_version: LOB_API_VER)
     @postcard = @@lob.postcards.find(params[:postcard_id])
     @post_card_url =  @postcard["url"]
     unique_code = @postcard["metadata"]["unique_code"]
