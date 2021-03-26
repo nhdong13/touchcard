@@ -14,7 +14,7 @@ ActiveAdmin.register_page "Campaign Tool" do
 
   page_action :send_post_cards_to_lob, method: :post do
     post_card_id = params[:post_card_id]
-    url = "#{BASE_CAMPAIGN_TOOL_URL}/api/v1/post_cards/send_post_cards_to_lob"
+    url = "#{ENV['BASE_CAMPAIGN_TOOL_URL']}/api/v1/post_cards/send_post_cards_to_lob"
     resp = Faraday.post(url, {post_card_id: post_card_id}, {'Accept' => 'application/json', 'Authorization': "Bearer #{@auth_token}"})
     if resp.status == 200
       body = JSON.parse resp.body
@@ -83,7 +83,7 @@ ActiveAdmin.register_page "Campaign Tool" do
     @postcard = @@lob.postcards.find(params[:postcard_id])
     @post_card_url =  @postcard["url"]
     unique_code = @postcard["metadata"]["unique_code"]
-    url = "#{BASE_CAMPAIGN_TOOL_URL}/api/v1/post_cards/get_number_postcards"
+    url = "#{ENV['BASE_CAMPAIGN_TOOL_URL']}/api/v1/post_cards/get_number_postcards"
     resp = Faraday.get(
       url,
       {unique_code: unique_code},
@@ -120,7 +120,7 @@ ActiveAdmin.register_page "Campaign Tool" do
         zip: zip.gsub(/[^0-9A-Za-z\-]/, '')
       })
     end
-    url = "#{BASE_CAMPAIGN_TOOL_URL}/api/v1/post_cards/add_post_cards"
+    url = "#{ENV['BASE_CAMPAIGN_TOOL_URL']}/api/v1/post_cards/add_post_cards"
     resp = Faraday.post(
       url,
       {campaign_id: params[:campaign_id], data: arrayVal.to_json},
@@ -138,7 +138,7 @@ ActiveAdmin.register_page "Campaign Tool" do
     before_action :get_auth_token, only: [:import_csv, :send_post_cards_to_lob, :preview_post_card]
 
     def get_auth_token
-      url = "#{BASE_CAMPAIGN_TOOL_URL}/authenticate"
+      url = "#{ENV['BASE_CAMPAIGN_TOOL_URL']}/authenticate"
       user = {email: "nusnick@yopmail.com", password: "12345678"}
       resp = Faraday.post(url, user, {'Accept' => 'application/json'})
       @auth_token = nil
