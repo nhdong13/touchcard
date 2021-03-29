@@ -37,7 +37,7 @@ module CardUtil
     front_png_path = PostcardRenderUtil.render_side_png(postcard: temp_postcard, is_front: true)
     back_png_path = PostcardRenderUtil.render_side_png(postcard: temp_postcard, is_front: false)
 
-    @lob ||= Lob::Client.new(api_key: ENV['LOB_API_KEY'], api_version: "2018-06-05")
+    @lob ||= Lob::Client.new(api_key: ENV['LOB_API_KEY'], api_version: LOB_API_VER)
     sent_postcard = @lob.postcards.create(
         description: "A Promo Sample of #{card_order.shop.domain if card_order&.shop&.domain}",
         metadata: {description: "Promo Sample for #{lob_to_address["name"] if lob_to_address && lob_to_address["name"]}"},

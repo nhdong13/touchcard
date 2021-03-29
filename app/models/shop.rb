@@ -81,7 +81,7 @@ class Shop < ApplicationRecord
   end
 
   def stripe_customer
-    Stripe::Customer.retrieve(stripe_customer_id)
+    Stripe::Customer.retrieve({id: stripe_customer_id, expand: ['subscriptions']})
   end
 
   def create_stripe_customer(token)

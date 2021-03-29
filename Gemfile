@@ -27,7 +27,7 @@ gem "json", "~> 2.5.1"
 gem "shopify_app", "~> 12"
 
 # Stripe
-gem "stripe", "~> 3.9"
+gem 'stripe', '~> 5.30'
 
 # S3 connection
 gem "aws-sdk", "~> 2.1"
@@ -78,7 +78,9 @@ gem "thor", "~> 1.1.0"
 gem "pg"
 
 gem "selenium-webdriver"
-
+gem 'bootstrap-datepicker-rails', '~> 1.9', '>= 1.9.0.1'
+gem 'carrierwave', '~> 2.2'
+gem "fog-aws"
 group :assets do
   gem "therubyracer", platforms: :ruby
 end
@@ -100,7 +102,7 @@ end
 group :test do
   gem "rspec-rails", "~> 3.7"
   gem "factory_bot", "~> 4.8"
-  gem "webmock", "~> 3.2"
+  gem "webmock"
   gem "timecop"
 end
 

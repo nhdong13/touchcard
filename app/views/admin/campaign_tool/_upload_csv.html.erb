@@ -1,0 +1,313 @@
+<script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js"></script>
+<div class='panel'>
+  <div class="form-content">
+    <%= form_tag admin_campaign_tool_import_csv_path, multipart: true, remote: true, :authenticity_token => true do %>
+      <div class="row">
+        <div class="col-6">
+          <div class="row">
+            <div class="col-2">
+              <h3> <strong>Campaign ID</strong></h3>
+            </div>
+            <div class="col-6">
+              <%= text_field_tag 'campaign_id', nil, required: true %>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-6">
+          <div class="row">
+            <div class="col-2">
+              <h3> <strong>CSV File</strong></h3>
+            </div>
+            <div class="col-6">
+              <%= file_field_tag 'csv_file', accept: '.csv' %>
+              <h4 class="message import-csv-message"></h4>
+              <div>
+                <%= link_to "Download CSV Template", download_csv_template_path %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <%= submit_tag 'import', class: "import-csv-btn" %>
+    <% end %>
+
+    <%= form_tag admin_campaign_tool_create_test_post_card_path, multipart: true, :authenticity_token => true, class: "create_test_post_card" do %>
+      <%= hidden_field_tag 'test_campaign_id' %>
+      <%= hidden_field_tag 'unique_code' %>
+      <div class="row">
+        <div class="col-6">
+          <div class="row">
+            <div class="col-2">
+              <h3><strong>Front Design</strong></h3>
+            </div>
+            <div class="col-6">
+              <div class="image-input-field">
+                <%= file_field_tag 'front_design_file', id: "front_design" %>
+              </div>
+              <img id="preview_front_design" src="" />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-6">
+          <div class="row">
+            <div class="col-2">
+              <h3><strong>Back Design</strong></h3>
+            </div>
+            <div class="col-6">
+              <div class="image-input-field">
+                <%= file_field_tag 'back_design_file', id: "back_design" %>
+              </div>
+              <img id="preview_back_design" src="" />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-6">
+          <div class="row">
+            <div class="col-2">
+              <h3><strong>Return Address</strong></h3>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-6">
+          <div class="row center-items">
+            <div class="col-2 address-label">
+              <h3>Name:</h3>
+            </div>
+            <div class="col-6">
+              <div>
+                <%= text_field_tag 'from[name]', nil, 'data-lpignore': "true"%>
+              </div>
+            </div>
+          </div>
+          <div class="row center-items">
+            <div class="col-2 address-label">
+              <h3>Address line 1:</h3>
+            </div>
+            <div class="col-6">
+              <div>
+                <%= text_field_tag 'from[address_line1]', nil %>
+              </div>
+            </div>
+          </div>
+          <div class="row center-items">
+            <div class="col-2 address-label">
+              <h3>Address line 2:</h3>
+            </div>
+            <div class="col-6">
+              <div>
+                <%= text_field_tag 'from[address_line2]', nil %>
+              </div>
+            </div>
+          </div>
+          <div class="row center-items">
+            <div class="col-2 address-label">
+              <h3>City:</h3>
+            </div>
+            <div class="col-6">
+              <div>
+                <%= text_field_tag 'from[city]', nil %>
+              </div>
+            </div>
+          </div>
+          <div class="row center-items">
+            <div class="col-2 address-label">
+              <h3>State:</h3>
+            </div>
+            <div class="col-6">
+              <div>
+                <%= text_field_tag 'from[state]', nil %>
+              </div>
+            </div>
+          </div>
+          <div class="row center-items">
+            <div class="col-2 address-label">
+              <h3>Zip:</h3>
+            </div>
+            <div class="col-6">
+              <div>
+                <%= text_field_tag 'from[zip]', nil %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-6">
+          <div class="row center-items">
+            <div class="col-2">
+              <h3><strong>Send Date</strong></h3>
+            </div>
+            <div class="col-6">
+              <%= text_field_tag 'send_date', nil, class: "datepicker" %>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-6">
+          <div class="row">
+            <div class="col-2">
+            </div>
+            <div class="col-6">
+              <h4 class="message error general-message"></h4>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-6">
+          <div class="row">
+            <div class="col-2">
+            </div>
+            <div class="col-6">
+              <div class="button-submit">
+                <%= submit_tag 'Upload' %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<script type="text/javascript">
+  $(document).ready(function() {
+    $("#campaign_id").focus();
+    $("#unique_code").val("").trigger("change");
+
+    function readURL(input) {
+      if (input.files && input.files[0]) {
+        var reader = new FileReader();
+
+        reader.onload = function(e) {
+          $(`#preview_${input.id}`).attr('src', e.target.result).css("display", "block");
+        }
+
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+
+    $("#front_design, #back_design").change(function() {
+      readURL(this);
+    });
+
+    $("#csv_file, #campaign_id").change(function() {
+      _this = this
+      $(".import-csv-message").css("display", "none")
+      form_data = new FormData($("#csv_file").parents('form')[0])
+      file = $("#csv_file")[0]
+      if($("#csv_file").val()){
+        if(file.files[0].name.split(".").pop().toLowerCase() == "csv"){
+          $.ajax({
+            url: '/admin/campaign_tool/import_csv',
+            type: "POST",
+            dataType: "JSON",
+            data: form_data,
+            processData: false,
+            contentType: false,
+          }).done(function(response) {
+            if(!response.success){
+              $(".import-csv-message").removeClass("success");
+              $(".import-csv-message").addClass("error").text(`${response.message}`).css("display", "block")
+              $("#csv_file").val("");
+            } else {
+              $("#unique_code").val(response.unique_code).trigger("change");
+              $(".import-csv-message").removeClass("error");
+              $(".import-csv-message").addClass("success").text(`${response.message}`).css("display", "block")
+            }
+          }).fail(function(error) {});
+        } else {
+          $(".import-csv-message").removeClass("success");
+          $(".import-csv-message").addClass("error").text("File types support: CSV").css("display", "block")
+        }
+      }
+    });
+
+    $("#unique_code").change(function(){
+      if(!$(this).val()){
+        $(".create_test_post_card .button-submit input").prop("disabled", true)
+      } else {
+        $(".create_test_post_card .button-submit input").prop("disabled", false)
+      }
+    });
+
+    $("#campaign_id").change(function() {
+      $("#test_campaign_id").val($(this).val())
+    });
+
+    $('.create_test_post_card').validate({
+      rules: {
+        'from[name]': false,
+        'from[address_line1]': false,
+        'from[address_line2]': false,
+        'from[city]': false,
+        'from[state]': false,
+        'from[zip]': false,
+      }
+    });
+
+    $("#from_name, #from_address_line1, #from_city, #from_state, #from_zip").change(function(){
+      if(!$("#from_name").val() &&
+          !$("#from_address_line1").val() &&
+          !$("#from_city").val() &&
+          !$("#from_state").val() &&
+          !$("#from_zip").val()
+        ){
+        $('#from_name, #from_address_line1, #from_city, #from_state, #from_zip').each(function() {
+          $(this).rules('remove', 'required');
+          $("label.error").hide();
+        });
+      } else {
+        $('#from_name, #from_address_line1, #from_city, #from_state, #from_zip').each(function() {
+          $(this).rules('add', 'required');
+        });
+      }
+    })
+
+    $(".button-submit input").click(function(e) {
+      e.preventDefault()
+      _this = this
+      $(".general-message").hide()
+      front_design = $("#front_design").val();
+      back_design = $("#back_design").val();
+
+      form_data = new FormData($('form.create_test_post_card')[0])
+      if($("#unique_code").val()){
+        if($(".create_test_post_card").valid()){
+          if(front_design.length && back_design.length){
+            $(_this).val('Uploading...')
+            $.ajax({
+              url: '/admin/campaign_tool/create_test_post_card',
+              type: "POST",
+              dataType: "JSON",
+              data: form_data,
+              processData: false,
+              contentType: false,
+            }).done(function(response) {
+              if(!response.success){
+                $(".general-message").text(`${response.message}`).css("display", "block")
+                $(_this).val('Upload')
+              } else {
+                window.location = response.redirect_path
+              }
+            }).fail(function(error) {});
+          } else {
+            $(".general-message").text("Missing front design or back design!").css("display", "block")
+          }
+        }
+      }
+    });
+    $(".datepicker").datepicker({ dateFormat: 'yy-mm-dd'});
+    $(".datepicker").datepicker('setDate', '+0');
+    $("#ui-datepicker-div").hide();
+  });
+</script>

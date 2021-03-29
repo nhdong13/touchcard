@@ -1,5 +1,5 @@
 import Vue from 'vue/dist/vue.esm'
-import AutomationForm from '../automation_form'
+import AutomationForm from '../automation_form.vue'
 import SubscriptionForm from '../subscription_form'
 import TurbolinksAdapter from 'vue-turbolinks'
 Vue.use(TurbolinksAdapter);
