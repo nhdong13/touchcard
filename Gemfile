@@ -5,7 +5,7 @@ source "https://rubygems.org"
 
 ruby "3.0.0"
 
-gem "rails", "5.2.2"
+gem "rails", "6.1.3"
 gem "rake", "~> 12.3.0"
 gem "rb-readline", "~> 0.5.3"
 
@@ -14,15 +14,15 @@ gem 'material_components_web-sass'
 gem "sass-rails", "~> 5.0", ">= 5.0.6"
 gem "uglifier", "~> 4.2"
 
-
+gem 'coffee-rails', '~> 5.0.0'
 gem "turbolinks"
-gem "sdoc", "~> 0.4.0", group: :doc
+gem "sdoc", "~> 2.0.4", group: :doc
 
 # Admin interface
 gem "devise", "~> 4.7"
-gem "activeadmin", "~> 1.4"
+gem "activeadmin", "~> 2.9"
 gem "active_material", git: "https://github.com/laverick/active_material"
-
+gem "json", "~> 2.5.1"
 # Shopify app
 gem "shopify_app", "~> 12"
 
@@ -73,7 +73,7 @@ gem "webpacker", "~> 3.0"
 
 # For running server processes in development
 gem "foreman", "~> 0.84"
-gem "thor", "~> 0.19.1"
+gem "thor", "~> 1.1.0"
 
 gem "pg"
 
@@ -88,6 +88,7 @@ group :development do
   gem "web-console"
   gem "thin"
   gem "spring"
+  gem "webrick"
 end
 
 group :development, :test do
