@@ -38,8 +38,8 @@ class Charge < ApplicationRecord
 
   def cancel
     # TODO: error handling
-    shop.update_attributes(charge_id: nil, charge_amount: 0, charge_date: nil)
-    update_attributes(status: "cancelled")
+    shop.update(charge_id: nil, charge_amount: 0, charge_date: nil)
+    update(status: "cancelled")
   end
 
   def activate
@@ -67,7 +67,7 @@ class Charge < ApplicationRecord
 
   def activate_bulk_charge
     # Do the bulk send
-    card_order.update_attributes(status: "sending")
+    card_order.update(status: "sending")
     card_order.bulk_send
   end
 
@@ -81,7 +81,7 @@ class Charge < ApplicationRecord
     old_charge.update_attribute(:status, "cancelled")
 
     # Update shop data and credits
-    shop.update_attributes(
+    shop.update(
       charge_id: id,
       amount: amount,
       charge_date: Date.today)
@@ -102,7 +102,7 @@ class Charge < ApplicationRecord
       create_params[:name] = "Touchcard Monthly Plan"
     end
     shopify_charge = klass.create(create_params)
-    update_attributes!(
+    update!(
       shopify_redirect: shopify_charge.confirmation_url,
       status: "pending",
       shopify_id: shopify_charge.id
@@ -115,7 +115,7 @@ class Charge < ApplicationRecord
     ShopifyAPI::RecurringApplicationCharge.delete(shopify_id)
 
     # Update self's data
-    update_attributes(shopify_id: nil, shopify_redirect: nil)
+    update(shopify_id: nil, shopify_redirect: nil)
   end
 
   def shopify_charge

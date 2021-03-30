@@ -6,7 +6,7 @@ class UpdatePostcardDiscountDetails < ActiveRecord::Migration[4.2]
       # We have not modified this migration accordingly
       next if not p.card_order.discount?
       exp_at = p.estimated_arrival + p.card_order.discount_exp.weeks
-      p.update_attributes(discount_pct: p.card_order.discount_pct,
+      p.update(discount_pct: p.card_order.discount_pct,
                           discount_exp_at: exp_at)
     end
   end

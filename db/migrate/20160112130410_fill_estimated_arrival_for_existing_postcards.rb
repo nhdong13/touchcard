@@ -2,7 +2,7 @@ class FillEstimatedArrivalForExistingPostcards < ActiveRecord::Migration[4.2]
   def up
     Postcard.where(sent: true).each do |postcard|
       eta = postcard.estimated_transit_days.business_days.after(postcard.send_date)
-      postcard.update_attributes(estimated_arrival: eta)
+      postcard.update(estimated_arrival: eta)
     end
   end
 

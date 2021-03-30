@@ -7,7 +7,7 @@ task :sanitize_postcard_links => :environment do
   orders = Order.where("shop_id = #{shop_id} and postcard_id is not null")
   orders.each do |order|
     if order.discount_codes.blank?
-      order.update_attributes(postcard_id: nil)
+      order.update(postcard_id: nil)
     end
   end
 end
