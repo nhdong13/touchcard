@@ -76,7 +76,7 @@ gem "foreman", "~> 0.84"
 gem "thor", "~> 1.1.0"
 
 gem "pg"
-
+gem "newrelic_rpm", "~> 6.15"
 gem "selenium-webdriver"
 gem 'bootstrap-datepicker-rails', '~> 1.9', '>= 1.9.0.1'
 gem 'carrierwave', '~> 2.2'
@@ -107,5 +107,4 @@ group :test do
 end
 
 group :production do
-  gem "newrelic_rpm", "~> 3.15"
 end
