@@ -234,6 +234,8 @@ GEM
     nio4r (2.5.7)
     nokogiri (1.11.2-x86_64-darwin)
       racc (~> 1.4)
+    nokogiri (1.11.2-x86_64-linux)
+      racc (~> 1.4)
     oauth2 (1.4.7)
       faraday (>= 0.8, < 2.0)
       jwt (>= 1.0, < 3.0)
@@ -420,8 +422,7 @@ GEM
     zeitwerk (2.4.2)
 
 PLATFORMS
-  x86_64-darwin-18
-  x86_64-linux
+  ruby
 
 DEPENDENCIES
   active_campaign (= 0.1.16)
@@ -444,6 +445,7 @@ DEPENDENCIES
   mailgunner (~> 2.4)
   material_components_web-sass
   newrelic_rpm (~> 6.15)
+  nokogiri (~> 1.11.2)
   pg
   rails (= 6.1.3)
   rake (~> 12.3.0)
