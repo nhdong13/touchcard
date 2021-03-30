@@ -78,6 +78,9 @@ gem "thor", "~> 1.1.0"
 gem "pg"
 gem "newrelic_rpm", "~> 6.15"
 gem "selenium-webdriver"
+gem 'bootstrap-datepicker-rails', '~> 1.9', '>= 1.9.0.1'
+gem 'carrierwave', '~> 2.2'
+gem "fog-aws"
 
 group :assets do
   gem "therubyracer", platforms: :ruby
