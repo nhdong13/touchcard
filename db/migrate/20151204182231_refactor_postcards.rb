@@ -17,7 +17,7 @@ class RefactorPostcards < ActiveRecord::Migration[4.2]
       shop.postcards.each do |postcard|
         order = Order.find_by(id: postcard.triggering_shopify_order_id)
         if order
-          postcard.update_attributes!(customer: order.customer, order: order)
+          postcard.update!(customer: order.customer, order: order)
           next
         end
         begin
@@ -27,7 +27,7 @@ class RefactorPostcards < ActiveRecord::Migration[4.2]
           retry
         end
         order = Order.from_shopify!(shopify_order)
-        postcard.update_attributes!(customer: order.customer, order: order)
+        postcard.update!(customer: order.customer, order: order)
       end
     end
 

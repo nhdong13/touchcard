@@ -13,7 +13,7 @@ class AddCouponExpirationNotificationToPostcard < ActiveRecord::Migration[4.2]
       # Safe buffer find ones that expires in 30 hours or less
       next unless (Time.now + 24.hours) < expires
 
-      postcard.update_attributes(expiration_notification_sent: false)
+      postcard.update(expiration_notification_sent: false)
     end
   end
 

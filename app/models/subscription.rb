@@ -35,7 +35,7 @@ class Subscription < ApplicationRecord
     subscription.quantity = new_quantity
     subscription.prorate = false
     subscription.save
-    update_attributes(quantity: new_quantity)
+    update(quantity: new_quantity)
     # don't need to do anything for downgrade as the billing won't change till
     # next month
     return true if downgrade
@@ -46,14 +46,14 @@ class Subscription < ApplicationRecord
       amount: delta_quantity * plan.amount,
       currency: "usd",
       description: "Plan upgrade from #{old_quantity} cards to #{new_quantity} cards adding #{delta_quantity} cards for this month")
-    shop.update_attributes(credit: shop.credit + delta_quantity)
+    shop.update(credit: shop.credit + delta_quantity)
   end
 
   # Update subscription date to match the stripe dates
   def change_subscription_dates
     subscription = shop.stripe_customer.subscriptions.retrieve(stripe_id)
     return if subscription.blank?
-    update_attributes(
+    update(
       current_period_start: Time.at(subscription.current_period_start),
       current_period_end:   Time.at(subscription.current_period_end)
     )
