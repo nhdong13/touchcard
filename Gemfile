@@ -81,6 +81,7 @@ gem "selenium-webdriver"
 gem 'bootstrap-datepicker-rails', '~> 1.9', '>= 1.9.0.1'
 gem 'carrierwave', '~> 2.2'
 gem "fog-aws"
+
 group :assets do
   gem "therubyracer", platforms: :ruby
 end
