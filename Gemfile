@@ -24,7 +24,7 @@ gem "activeadmin", "~> 2.9"
 gem "active_material", git: "https://github.com/laverick/active_material"
 gem "json", "~> 2.5.1"
 # Shopify app
-gem "shopify_app", "~> 12"
+gem "shopify_app", "~> 12.0.7"
 
 # Stripe
 gem "stripe", "~> 3.9"
@@ -82,6 +82,9 @@ gem 'bootstrap-datepicker-rails', '~> 1.9', '>= 1.9.0.1'
 gem 'carrierwave', '~> 2.2'
 gem "fog-aws"
 gem "nokogiri", "~> 1.11.2"
+gem "mimemagic", "0.3.7"
+gem "webrick"
+
 group :assets do
   gem "therubyracer", platforms: :ruby
 end
@@ -91,7 +94,6 @@ group :development do
   gem "web-console"
   gem "thin"
   gem "spring"
-  gem "webrick"
 end
 
 group :development, :test do
