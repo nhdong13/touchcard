@@ -30,7 +30,7 @@ gem "shopify_app", "~> 12.0.7"
 gem "stripe", "~> 3.9"
 
 # S3 connection
-gem "aws-sdk", "~> 2.1"
+gem "aws-sdk", "~> 3.0.2"
 
 # Image Manipulation
 gem "rmagick", "~> 2.15"
@@ -103,7 +103,7 @@ group :development, :test do
 end
 
 group :test do
-  gem "rspec-rails", "~> 3.7"
+  gem "rspec-rails", "~> 5.0.1"
   gem "factory_bot", "~> 4.8"
   gem "webmock", "~> 3.2"
   gem "timecop"
