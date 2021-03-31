@@ -84,6 +84,7 @@ gem "fog-aws"
 gem "nokogiri", "~> 1.11.2"
 gem "mimemagic", "0.3.7"
 gem "webrick"
+gem "puma"
 
 group :assets do
   gem "therubyracer", platforms: :ruby
