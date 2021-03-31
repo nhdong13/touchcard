@@ -185,5 +185,5 @@
   "scripts": {
     "postdeploy": "bundle exec rails db:schema:load db:seed db:sample_data"
   },
-  "stack": "heroku-18"
+  "stack": "heroku-20"
 }
