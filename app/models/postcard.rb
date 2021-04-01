@@ -65,6 +65,24 @@ class Postcard < ApplicationRecord
     todays_cards.size - num_failed
   end
 
+  def self.send_all_history_cards(shop)
+    num_failed = 0
+    shop.postcards
+    cards = shop.postcards
+      .where("paid = TRUE AND sent = FALSE AND canceled = FALSE AND data_source_status = ?", "history")
+    cards.each do |card|
+      begin
+        card.send_card
+      rescue => e
+        num_failed += 1
+        logger.error e
+        NewRelic::Agent::notice_error(e.message)
+        next
+      end
+    end
+    cards.size - num_failed
+  end
+
   def cost
     international? ? 2 : 1
   end

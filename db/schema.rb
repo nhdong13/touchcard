@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_03_12_075122) do
+ActiveRecord::Schema.define(version: 2021_03_31_042213) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -307,6 +307,7 @@ ActiveRecord::Schema.define(version: 2021_03_12_075122) do
     t.datetime "discount_exp_at"
     t.bigint "price_rule_id"
     t.boolean "canceled", default: false
+    t.string "data_source_status", default: "normal"
     t.index ["customer_id"], name: "index_postcards_on_customer_id"
     t.index ["postcard_trigger_id"], name: "index_postcards_on_postcard_trigger_id"
   end
@@ -339,6 +340,8 @@ ActiveRecord::Schema.define(version: 2021_03_12_075122) do
     t.datetime "last_login_at"
     t.json "metadata", default: {}
     t.text "oauth_scopes"
+    t.datetime "shopify_history_data_imported"
+    t.integer "shopify_history_data_imported_duration"
     t.index ["domain"], name: "index_shops_on_domain", unique: true
   end
 
