@@ -3,9 +3,9 @@ source "https://rubygems.org"
 #ruby=2.4.4
 #ruby-gemset=touchcard
 
-ruby "2.4.4"
+ruby "3.0.0"
 
-gem "rails", "5.2.2"
+gem "rails", "6.1.3"
 gem "rake", "~> 12.3.0"
 gem "rb-readline", "~> 0.5.3"
 
@@ -14,23 +14,23 @@ gem 'material_components_web-sass'
 gem "sass-rails", "~> 5.0", ">= 5.0.6"
 gem "uglifier", "~> 4.2"
 
-
+gem 'coffee-rails', '~> 5.0.0'
 gem "turbolinks"
-gem "sdoc", "~> 0.4.0", group: :doc
+gem "sdoc", "~> 2.0.4", group: :doc
 
 # Admin interface
 gem "devise", "~> 4.7"
-gem "activeadmin", "~> 1.4"
+gem "activeadmin", "~> 2.9"
 gem "active_material", git: "https://github.com/laverick/active_material"
-
+gem "json", "~> 2.5.1"
 # Shopify app
-gem "shopify_app", "~> 12"
+gem "shopify_app", "~> 12.0.7"
 
 # Stripe
 gem 'stripe', '~> 5.30'
 
 # S3 connection
-gem "aws-sdk", "~> 2.1"
+gem "aws-sdk", "~> 3.0.2"
 
 # Image Manipulation
 gem "rmagick", "~> 2.15"
@@ -73,14 +73,19 @@ gem "webpacker", "~> 3.0"
 
 # For running server processes in development
 gem "foreman", "~> 0.84"
-gem "thor", "~> 0.19.1"
+gem "thor", "~> 1.1.0"
 
 gem "pg"
-
+gem "newrelic_rpm", "~> 6.15"
 gem "selenium-webdriver"
 gem 'bootstrap-datepicker-rails', '~> 1.9', '>= 1.9.0.1'
 gem 'carrierwave', '~> 2.2'
 gem "fog-aws"
+gem "nokogiri", "~> 1.11.2"
+gem "mimemagic", "0.3.7"
+gem "webrick"
+gem "puma"
+
 group :assets do
   gem "therubyracer", platforms: :ruby
 end
@@ -99,12 +104,11 @@ group :development, :test do
 end
 
 group :test do
-  gem "rspec-rails", "~> 3.7"
+  gem "rspec-rails", "~> 5.0.1"
   gem "factory_bot", "~> 4.8"
   gem "webmock"
   gem "timecop"
 end
 
 group :production do
-  gem "newrelic_rpm", "~> 3.15"
 end

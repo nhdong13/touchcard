@@ -2,8 +2,8 @@ ActiveAdmin.register_page "Campaign Tool" do
   menu priority: 16
 
   content do
-    @@lob ||= Lob::Client.new(api_key: ENV['LOB_API_KEY'], api_version: LOB_API_VER)
-    @postcard = @@lob.postcards.find("psc_12f4ba9c1a06ebc0")
+    # @@lob ||= Lob::Client.new(api_key: ENV['LOB_API_KEY'], api_version: LOB_API_VER)
+    # @postcard = @@lob.postcards.find("psc_12f4ba9c1a06ebc0")
 
     render "upload_csv"
   end

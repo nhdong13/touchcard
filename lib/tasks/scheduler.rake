@@ -32,7 +32,7 @@ task :update_shop_metadata => :environment do
     rescue ActiveResource::UnauthorizedAccess, ActiveResource::ClientError => e
       puts "#{e.message}"
       puts "Adding Uninstalled Date"
-      shop.update_attributes(uninstalled_at: Time.new(2016))
+      shop.update(uninstalled_at: Time.new(2016))
       next
     end
   end
@@ -109,10 +109,10 @@ end
 
 def send_card_arrival_mail(postcard)
   CustomerMailer.card_arrived_notification(postcard).deliver
-  postcard.update_attributes(arrival_notification_sent: true)
+  postcard.update(arrival_notification_sent: true)
 end
 
 def send_coupon_expiration_email(postcard)
   CustomerMailer.send_coupon_expiration_notification(postcard).deliver
-  postcard.update_attributes(expiration_notification_sent: true)
+  postcard.update(expiration_notification_sent: true)
 end

@@ -28,7 +28,7 @@ class Customer < ApplicationRecord
       customer = find_by(shopify_id: shopify_customer.id)
 
       if customer
-        customer.update_attributes!(shopify_attrs)
+        customer.update!(shopify_attrs)
       else
         customer = create!(shopify_attrs)
       end
@@ -41,7 +41,7 @@ class Customer < ApplicationRecord
 
     def update_or_create_default_address(customer, shopify_customer)
       existing_default = customer.addresses.find_by(default: true)
-      existing_default.update_attributes!(default: false) if existing_default
+      existing_default.update!(default: false) if existing_default
       new_default_address(customer, shopify_customer)
     end
 
@@ -50,7 +50,7 @@ class Customer < ApplicationRecord
       if shopify_customer.respond_to?(:default_address) &&
          shopify_customer.default_address.blank? == false
         address = Address.from_shopify!(shopify_customer.default_address)
-        address.update_attributes!(customer: customer)
+        address.update!(customer: customer)
       end
     end
 

@@ -1,5 +1,5 @@
 import Vue from 'vue/dist/vue.esm'
-import CardSide from '../components/card_side'
+import CardSide from '../components/card_side.vue'
 import { CardAttributes } from '../components/card_attributes'
 
 console.log("Postcard Render Pack: LOADING");

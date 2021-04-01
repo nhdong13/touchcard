@@ -101,7 +101,7 @@ RSpec.describe OrdersCreateJob, type: :job do
         end
 
         context "shop not enough credits" do
-          before(:each) { shop.update_attributes(credit: 0) }
+          before(:each) { shop.update(credit: 0) }
 
           it "doesn't create postcard" do
             stub_order("everything")
@@ -189,7 +189,7 @@ RSpec.describe OrdersCreateJob, type: :job do
           end
           let!(:postcard) { create(:postcard, discount_code: 'TENOFF',
                                     postcard_trigger: order, customer: customer) }
-          before(:each) { order.update_attributes!(customer: customer) }
+          before(:each) { order.update!(customer: customer) }
           it "does not register the triggered postcard as revenue postcard" do
             # Note: This test is a refactored broken test. It's not hugely enlightening as-is.
             perform_enqueued_jobs { job }

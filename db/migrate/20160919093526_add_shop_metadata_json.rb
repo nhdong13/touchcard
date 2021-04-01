@@ -8,7 +8,7 @@ class AddShopMetadataJson < ActiveRecord::Migration[4.2]
       rescue ActiveResource::UnauthorizedAccess, ActiveResource::ClientError => e
         logger.error "#{e.message}"
         logger.error "Adding Uninstalled Date"
-        shop.update_attributes(uninstalled_at: Time.new(2016))
+        shop.update(uninstalled_at: Time.new(2016))
         next
       end
     end

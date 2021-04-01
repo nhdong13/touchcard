@@ -25,7 +25,7 @@ class Address < ApplicationRecord
         :province_code).merge(shopify_id: address.id)
       inst = find_by(shopify_id: address.id)
       return create!(create_attrs) unless inst
-      inst.update_attributes!(create_attrs)
+      inst.update!(create_attrs)
       inst
     end
   end

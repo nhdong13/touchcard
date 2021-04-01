@@ -12,7 +12,7 @@ class BaseController < ApplicationController
       render_authorization_error
     else
       @current_shop ||= Shop.find(session[:shopify])
-      @current_shop.update_attributes(last_login_at: Time.now, uninstalled_at: nil)
+      @current_shop.update(last_login_at: Time.now, uninstalled_at: nil)
     end
   end
 
