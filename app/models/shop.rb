@@ -52,6 +52,7 @@ class Shop < ApplicationRecord
         shop.get_shopify_id
         shop.sync_shopify_metadata
         AppInstalledJob.perform_later(shop)
+        FetchHistoryOrdersJob.perform_later(shop, 2)
       else
         shop.token = session.token
         shop.uninstalled_at = nil

@@ -41,6 +41,5 @@ class FetchHistoryOrdersJob < ActiveJob::Base
       end
     end
     shop.update(shopify_history_data_imported: processed_at_max, shopify_history_data_imported_duration: time_delay)
-    Postcard.send_all_history_cards(shop)
   end
 end
