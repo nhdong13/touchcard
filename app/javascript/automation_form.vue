@@ -7,7 +7,6 @@
     <h3>{{automation.type}}</h3>
     <strong>Send card <input type="number" min="0" max="52" v-model="automation.send_delay"> weeks after purchase</strong>
     <br>
-    <!--
       <br>
       <input id="automation-international-checkbox" type="checkbox" v-model="automation.international" />
       <label for="automation-international-checkbox" class="noselect"><strong>Send outside USA</strong></label>
@@ -17,7 +16,6 @@
             </span>
       </div>
       <br v-if="!automation.international">
-    -->
     <br>
     <input id="automation-filter-checkbox" type="checkbox" v-model="enableFiltering">
     <label for="automation-filter-checkbox" class="noselect"><strong>Filter by Order Size</strong></label>
@@ -28,6 +26,73 @@
     </div>
     <hr>
 
+    <h2>Return Address</h2>
+    <div class="row">
+      <div class="col-6">
+        <div class="row center-items">
+          <div class="col-2 address-label">
+            <h4>Name:</h4>
+          </div>
+          <div class="col-6">
+            <div>
+              <input type="text" name="from[name]" id="from_name" data-lpignore="true">
+            </div>
+          </div>
+        </div>
+        <div class="row center-items">
+          <div class="col-2 address-label">
+            <h4>Address line 1:</h4>
+          </div>
+          <div class="col-6">
+            <div>
+              <input type="text" name="from[address_line1]" id="from_address_line1">
+            </div>
+          </div>
+        </div>
+        <div class="row center-items">
+          <div class="col-2 address-label">
+            <h4>Address line 2:</h4>
+          </div>
+          <div class="col-6">
+            <div>
+              <input type="text" name="from[address_line2]" id="from_address_line2">
+            </div>
+          </div>
+        </div>
+        <div class="row center-items">
+          <div class="col-2 address-label">
+            <h4>City:</h4>
+          </div>
+          <div class="col-6">
+            <div>
+              <input type="text" name="from[city]" id="from_city">
+            </div>
+          </div>
+        </div>
+        <div class="row center-items">
+          <div class="col-2 address-label">
+            <h4>State:</h4>
+          </div>
+          <div class="col-6">
+            <div>
+              <input type="text" name="from[state]" id="from_state">
+            </div>
+          </div>
+        </div>
+        <div class="row center-items">
+          <div class="col-2 address-label">
+            <h4>Zip:</h4>
+          </div>
+          <div class="col-6">
+            <div>
+              <input type="text" name="from[zip]" id="from_zip">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br>
+    <hr />
     <h2>Front</h2>
     <card-editor
             ref="frontEditor"
