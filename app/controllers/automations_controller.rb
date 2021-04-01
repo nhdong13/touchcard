@@ -57,7 +57,7 @@ class AutomationsController < BaseController
   def update
     respond_to do |format|
       if @automation.update(automation_params)
-        FetchHistoryOrdersJob.perform_now(@current_shop, @automation.send_delay) if @automation.enabled?
+        SendAllHistoryCardsJob.perform_later(@current_shop) if @automation.enabled?
         flash[:notice] = "Automation successfully updated"
         format.html { redirect_to automations_path }
         format.json { render json: { message: "updated"}, status: :ok }
