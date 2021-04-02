@@ -6,7 +6,10 @@ ActiveAdmin.register_page "Change Password" do
   end
 
   page_action "change", :method => :put do
-    if params[:new_password].present? && params[:confirmation].present? && params[:new_password] != params[:confirmation] && current_admin_user.update(password: params[:new_password])
+    if params[:new_password].present? &&
+      params[:confirmation].present? &&
+      params[:new_password] == params[:confirmation] &&
+      current_admin_user.update(password: params[:new_password])
       flash[:notice] = 'Successfully update password'
     else
       flash[:error] = 'Failed to update password'
