@@ -1,3 +1,4 @@
 web: bundle exec puma -C config/puma.rb
 webpacker: ./bin/webpack --watch --progress --colors
 worker: bundle exec rails jobs:work
+log: tail -f ./log/*.log
