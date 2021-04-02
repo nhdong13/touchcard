@@ -13,6 +13,8 @@ class FetchHistoryOrdersJob < ActiveJob::Base
 
     shop.with_shopify_session do
       shopify_orders = ShopifyAPI::Order.all(params: params)
+      # second_page_shopify_orders = shopify_orders.next_page_info if shopify_orders.next_page?
+
       # second_page_shopify_orders  ShopifyAPI::Product.find(params: params.merge({page_info: first_page_shopify_orders.next_page_info })
       shopify_orders.each do |shopify_order|
         begin
@@ -34,10 +36,8 @@ class FetchHistoryOrdersJob < ActiveJob::Base
         international = default_address.country_code != "US"
 
         # Create a new card
-        post_sale_order = shop.card_orders.find_by(enabled: true, type: "PostSaleOrder")
-        next puts "Card not setup" if post_sale_order.nil?
-        next puts "Card not enabled" unless post_sale_order.enabled?
-        result = post_sale_order.prepare_for_sending(order, "history")
+        post_sale_order = shop.card_orders.find_by(type: "PostSaleOrder")
+        post_sale_order.prepare_for_sending(order, "history")
       end
     end
     shop.update(shopify_history_data_imported: processed_at_max, shopify_history_data_imported_duration: time_delay)
