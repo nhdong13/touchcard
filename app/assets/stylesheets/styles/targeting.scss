@@ -1,0 +1,51 @@
+.filter-form {
+  width: 450px;
+  .filter {
+    width: 150px;
+  }
+}
+
+.bordered-header {
+  border: 3px solid #5b3e82;
+  padding: 10px 0;
+}
+
+.add-more-filter {
+  border-style: dotted;
+  display: block;
+  margin-top: 20px;
+  width: 100%;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  padding: 12px 16px;
+  z-index: 1;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.next-btn {
+  width: 100%;
+  margin-top: 20px;
+  border: none;
+  background: #5b3e82;
+  color: white;
+  padding: 10px;
+  cursor: pointer;
+}
+
+#target_form {
+  margin: auto;
+}

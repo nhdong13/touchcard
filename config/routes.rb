@@ -51,6 +51,10 @@ Rails.application.routes.draw do
     # get 'select_type', :on => :collection
   end
 
+  resources :targeting, only: [:index] do
+    post :get, on: :collection
+  end
+
   # Redirect `/app` (legacy) to `/` to avoid upgrade issues
   get '/app', to: redirect('/')
 

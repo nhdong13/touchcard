@@ -12,6 +12,7 @@ gem "rb-readline", "~> 0.5.3"
 gem 'material_components_web-sass'
 
 gem "sass-rails", "~> 5.0", ">= 5.0.6"
+gem "jquery-rails"
 gem "uglifier", "~> 4.2"
 
 gem 'coffee-rails', '~> 5.0.0'

@@ -1,0 +1,25 @@
+<%= currently_at "Targerting" %>
+
+<div class="panel faq">
+  <%= form_with url: get_targeting_index_url, method: :post, id: "target_form", class: "filter-form" do |f| %>
+    <!--- Send section --->
+    <h3 class="text-center bordered-header">Send to contacts that</h3>
+    <div class="option-list">
+      <%= render "filter_option", is_first_filter: true, is_accepted: true %>
+    </div>
+    <button type="button" class="add-more-filter" id="add-more-btn">Add Filter</button>
+
+    <!--- Don't send section --->
+    <h3 class="text-center bordered-header">Don't send to contacts that</h3>
+    <div class="second-option-list">
+    </div>
+    <button type="button" class="add-more-filter" id="second-add-more-btn">Add Filter</button>
+    
+    <%= f.submit "Next", class: "next-btn" %>
+  <% end %>
+</div>
+<script>
+  var acceptedOptions = `<%= render "filter_option", is_first_filter: false, is_accepted: true %>`;
+  var removedOptions = `<%= render "filter_option", is_first_filter: false, is_accepted: false %>`;
+</script>
+<%= javascript_pack_tag 'targeting' %>

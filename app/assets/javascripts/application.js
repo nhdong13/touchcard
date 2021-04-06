@@ -15,6 +15,8 @@
 
 // --- Libraries ---
 //= require rails-ujs
+//= require jquery
+//= require jquery_ujs
 //= require material-components-web
 //= require turbolinks
 
