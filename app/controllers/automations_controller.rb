@@ -32,6 +32,7 @@ class AutomationsController < BaseController
 
 
   def edit
+    @return_address =  @automation.return_address || ReturnAddress.new
   end
 
   # POST /automations
@@ -99,6 +100,7 @@ class AutomationsController < BaseController
       filters_attributes: [[:id, :_destroy, filter_data: [:minimum, :maximum]]],
       front_json: [:version, :background_url, :discount_x, :discount_y],
       back_json: [:version, :background_url, :discount_x, :discount_y],
+      return_address_attributes: [:id, :name, :address_line1, :address_line2, :city, :state, :zip, :country_code]
     )
   end
 end

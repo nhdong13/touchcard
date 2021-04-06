@@ -483,7 +483,7 @@ html > body {
 .row {
   display: flex;
   margin-bottom: 10px;
-  input[type='text']{
+  input[type='text'], select{
     height: 30px;
     width: 100%;
   }
