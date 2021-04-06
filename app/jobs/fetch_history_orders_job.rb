@@ -30,7 +30,7 @@ class FetchHistoryOrdersJob < ActiveJob::Base
         next puts "no street in address" unless shopify_order.customer.default_address&.address1&.present?
 
         # Currently only new customers receive postcards
-        next puts "customer already exists" unless order.customer.new_customer?
+        next puts "customer already exists" if order.customer.postcards.where(data_source_status: "history").count > 0
 
         default_address = shopify_order.customer.default_address
         international = default_address.country_code != "US"

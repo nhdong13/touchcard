@@ -129,7 +129,9 @@ class CardOrder < ApplicationRecord
   def prepare_for_sending(postcard_trigger, data_status="normal")
     # This method can get called from a delayed_job, which does not allow for standard logging
     # We thus return a string and expect the caller to log
-    return "international customer not enabeled" if postcard_trigger.international && !international?
+    if data_status == "normal"
+      return "international customer not enabeled" if postcard_trigger.international && !international?
+    end
     return "order filtered out" unless send_postcard?(postcard_trigger)
 
     params = {
@@ -139,7 +141,7 @@ class CardOrder < ApplicationRecord
     }
 
     if data_status == "history"
-      params.merge!({data_source_status: data_status})
+      params.merge!({data_source_status: data_status, send_date: DateTime.now})
     else
       params.merge!({send_date: self.send_date})
     end
