@@ -4,10 +4,8 @@ class AutomationsController < BaseController
 
   def index
     # Create default automation if there isn't one already
-    if @current_shop.card_orders.empty?
-      @current_shop.post_sale_orders.create
-      FetchHistoryOrdersJob.perform_later(@current_shop, @current_shop.post_sale_orders.last.send_delay)
-    end
+
+    @current_shop.post_sale_orders.create if @current_shop.card_orders.empty?
     # This flash works, but it's sort of annoying
     if @current_shop.current_subscription && @current_shop.current_subscription.quantity.to_i > 0 && CardOrder.num_enabled == 0
       flash.now[:notice] = "You are subscribed but not sending. Enable an automation to start sending."
@@ -59,6 +57,7 @@ class AutomationsController < BaseController
   def update
     respond_to do |format|
       if @automation.update(automation_params)
+        FetchHistoryOrdersJob.perform_now(@current_shop, @current_shop.post_sale_orders.last.send_delay) if @automation.enabled?
         SendAllHistoryCardsJob.perform_later(@current_shop) if @automation.enabled?
         flash[:notice] = "Automation successfully updated"
         format.html { redirect_to automations_path }

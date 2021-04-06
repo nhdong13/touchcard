@@ -72,6 +72,7 @@ class Postcard < ApplicationRecord
       .where("paid = TRUE AND sent = FALSE AND canceled = FALSE AND data_source_status = ?", "history")
     cards.each do |card|
       begin
+        return if card.postcard_trigger.international && !card.card_order.international?
         card.send_card
       rescue => e
         num_failed += 1
