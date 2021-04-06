@@ -16,6 +16,8 @@ class CardOrder < ApplicationRecord
           class_name: "CardSide",
           dependent: :destroy
 
+  has_one :return_address, dependent: :destroy
+
   has_many :filters, dependent: :destroy
   has_many :postcards
 
@@ -26,6 +28,9 @@ class CardOrder < ApplicationRecord
   accepts_nested_attributes_for :filters,
                                 allow_destroy: true,
                                 reject_if: :all_blank
+
+  accepts_nested_attributes_for :return_address,
+                                allow_destroy: true
 
   validates :shop, :card_side_front, :card_side_back, presence: true
   validates :discount_pct, numericality: { greater_than_or_equal_to: -100,

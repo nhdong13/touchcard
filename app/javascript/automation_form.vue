@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="automation_form">
     <a :href="backUrl"  class="mdc-button mdc-button--stroked">Cancel</a>
     <button v-on:click="requestSave" class="mdc-button mdc-button--raised">Save</button>
     <hr>
@@ -7,17 +7,22 @@
     <h3>{{automation.type}}</h3>
     <strong>Send card <input type="number" min="0" max="52" v-model="automation.send_delay"> weeks after purchase</strong>
     <br>
-    <!--
       <br>
-      <input id="automation-international-checkbox" type="checkbox" v-model="automation.international" />
+      <input id="automation-international-checkbox" type="checkbox" v-model="automation.international" @change="handleChangeInternationalCheck"/>
       <label for="automation-international-checkbox" class="noselect"><strong>Send outside USA</strong></label>
       <div class="attention-note nested-toggle" v-if="automation.international">
-            <span>
-              <em>Note: International postcards cost two credits.</em>
-            </span>
+        <div><span><em>Note:</em></span>
+          <ul>
+            <li>
+              <em>International postcards cost two credits.</em>
+            </li>
+            <li>
+              <em>Please fill in all return address required fields.</em>
+            </li>
+          </ul>
+        </div>
       </div>
       <br v-if="!automation.international">
-    -->
     <br>
     <input id="automation-filter-checkbox" type="checkbox" v-model="enableFiltering">
     <label for="automation-filter-checkbox" class="noselect"><strong>Filter by Order Size</strong></label>
@@ -28,6 +33,97 @@
     </div>
     <hr>
 
+    <h2>Return Address</h2>
+    <div class="row">
+      <div class="col-8">
+        <div class="row center-items">
+          <div class="col-2 address-label"></div>
+          <div class="col-6">
+            <span class="error d-none return-address-general-error">
+              <em>Please fill in all return address required fields.</em>
+            </span>
+          </div>
+        </div>
+        <div class="row center-items">
+          <div class="col-2 address-label">
+            <h4>Name<span class='error'>*</span></h4>
+          </div>
+          <div class="col-6">
+            <div class="row">
+              <input type="text" name="from[name]" id="from_name" data-lpignore="true" v-model="returnAddress.name" @change="checkDataIsValid">
+            </div>
+            <span class="error d-none"><em>This field is required.</em></span>
+          </div>
+        </div>
+        <div class="row center-items">
+          <div class="col-2 address-label">
+            <h4>Address line 1<span class='error'>*</span></h4>
+          </div>
+          <div class="col-6">
+            <div class="row">
+              <input type="text" name="from[address_line1]" id="from_address_line1" v-model="returnAddress.address_line1" @change="checkDataIsValid">
+            </div>
+            <span class="error d-none"><em>This field is required.</em></span>
+          </div>
+        </div>
+        <div class="row center-items">
+          <div class="col-2 address-label">
+            <h4>Address line 2</h4>
+          </div>
+          <div class="col-6">
+            <div class="row">
+              <input type="text" name="from[address_line2]" id="from_address_line2" v-model="returnAddress.address_line2">
+            </div>
+          </div>
+        </div>
+        <div class="row center-items">
+          <div class="col-2 address-label">
+            <h4>City<span class='error'>*</span></h4>
+          </div>
+          <div class="col-6">
+            <div class="row">
+              <input type="text" name="from[city]" id="from_city" v-model="returnAddress.city" @change="checkDataIsValid">
+            </div>
+            <span class="error d-none"><em>This field is required.</em></span>
+          </div>
+        </div>
+        <div class="row center-items">
+          <div class="col-2 address-label">
+            <h4>State<span class='error'>*</span></h4>
+          </div>
+          <div class="col-6">
+            <div class="row">
+              <input type="text" name="from[state]" id="from_state" v-model="returnAddress.state" @change="checkDataIsValid">
+            </div>
+            <span class="error d-none"><em>This field is required.</em></span>
+          </div>
+        </div>
+        <div class="row center-items">
+          <div class="col-2 address-label">
+            <h4>Zip<span class='error'>*</span></h4>
+          </div>
+          <div class="col-6">
+            <div class="row">
+              <input type="text" name="from[zip]" id="from_zip" v-model="returnAddress.zip" @change="checkDataIsValid">
+            </div>
+            <span class="error d-none"><em>This field is required.</em></span>
+          </div>
+        </div>
+        <div class="row center-items">
+          <div class="col-2 address-label">
+            <h4>Country<span class='error'>*</span></h4>
+          </div>
+          <div class="col-6">
+            <div class="row">
+              <country-select id="from_country" v-model="onSelectCountry" :country="onSelectCountry" topCountry="US" @change="checkDataIsValid"/>
+            </div>
+            <span class="error d-none"><em>This field is required.</em></span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br>
+    <hr />
     <h2>Front</h2>
     <card-editor
             ref="frontEditor"
@@ -56,6 +152,8 @@
   /* global Turbolinks */
   import axios from 'axios'
   import CardEditor from './components/card_editor.vue'
+  import $ from 'jquery'
+  window.$ = $
 
   export default {
     props: {
@@ -65,6 +163,9 @@
       automation: {
         type: Object,
         required: true
+      },
+      returnAddress: {
+        type: Object
       },
       awsSignEndpoint: {
         type: String,
@@ -77,9 +178,11 @@
     },
     data: function() {
       return {
-        enableFiltering: (this.automation.filters_attributes.length > 0)
+        enableFiltering: (this.automation.filters_attributes.length > 0),
+        onSelectCountry: this.returnAddress.country_code,
       }
     },
+
     watch: {
       enableFiltering: function(enable) {
         console.log('enableFiltering: ' + enable);
@@ -96,6 +199,18 @@
             let last_index = this.automation.filters_attributes.length-1;
             let last_filter_id = this.automation.filters_attributes[last_index].id;
             this.automation.filters_attributes[last_index] = {'id': last_filter_id, _destroy: true};
+          }
+        }
+      },
+
+      onSelectCountry: function({ type, target }) {
+        let country_code = $("#from_country").val()
+        this.returnAddress.country_code = country_code
+        if(this.automation.international){
+          if(!country_code){
+            $("#from_country").parents(".col-6").find("span").show()
+          } else{
+            $("#from_country").parents(".col-6").find("span").hide()
           }
         }
       }
@@ -115,6 +230,40 @@
       this.automation.discount_exp = this.automation.discount_exp || 3;
     },
     methods: {
+      checkDataIsValid: function({ type, target }) {
+        if(this.automation.international){
+          if(!target.value){
+            $(target).parents(".col-6").find("span").show()
+          } else{
+            $(target).parents(".col-6").find("span").hide()
+          }
+        }
+      },
+
+      handleChangeInternationalCheck: function() {
+        if(!this.automation.international){
+          $(".return-address-general-error").hide();
+          $(".error").hide();
+        }
+      },
+
+      checkFormReturnAddressIsInvalid: function() {
+        if(this.automation.international){
+          if(!this.returnAddress.name ||
+            !this.returnAddress.address_line1 ||
+            !this.returnAddress.city ||
+            !this.returnAddress.state ||
+            !this.returnAddress.zip ||
+            !this.returnAddress.country_code) {
+              $(".return-address-general-error").show()
+              return true;
+            }
+        } else {
+          $(".return-address-general-error").hide()
+          return false;
+        }
+      },
+
       requestSave: function() {
 
         // TODO: Wait for uploads to complete in CardEditor
@@ -134,6 +283,8 @@
           this.automation.discount_exp = null;
         }
 
+        if (this.checkFormReturnAddressIsInvalid()) return;
+
         this.postOrPutForm();
 
         // // Ask the CardEditor to finish its uploads, serialization, etc
@@ -149,7 +300,8 @@
         if (this.id) {
           // Edit existing automation (PUT)
           let target = `/automations/${this.id}.json`;
-          axios.put(target, { card_order: this.automation })
+          this.automation.return_address_attributes = this.returnAddress;
+          axios.put(target, { card_order: this.automation})
             .then(function(response) {
               console.log(response);
               Turbolinks.visit('/automations');
@@ -179,6 +331,14 @@
   .nested-toggle {
     padding-top: 10px;
     padding-left: 10px;
+  }
+
+  .error{
+    color: red
+  }
+
+  .d-none{
+    display: none
   }
 
 </style>

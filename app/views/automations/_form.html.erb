@@ -2,6 +2,7 @@
             data: {
                 id: automation.id,
                 automation: automation.to_json(only: [:id, :type, :discount_pct, :discount_exp, :enabled, :international, :send_delay, :front_json, :back_json, :filters]),
+                return_address: return_address.to_json(only: [:id, :name, :address_line1, :address_line2, :city, :state, :zip, :country_code]),
                 filters: automation.filters.to_json(only: [:id, :filter_data]),
                 aws_sign_endpoint: aws_sign_endpoint,
                 back_url: _back_url

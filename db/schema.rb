@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_03_31_042213) do
+ActiveRecord::Schema.define(version: 2021_04_02_070254) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -310,6 +310,19 @@ ActiveRecord::Schema.define(version: 2021_03_31_042213) do
     t.string "data_source_status", default: "normal"
     t.index ["customer_id"], name: "index_postcards_on_customer_id"
     t.index ["postcard_trigger_id"], name: "index_postcards_on_postcard_trigger_id"
+  end
+
+  create_table "return_addresses", force: :cascade do |t|
+    t.string "name"
+    t.string "address_line1"
+    t.string "address_line2"
+    t.string "city"
+    t.string "state"
+    t.string "zip"
+    t.string "country_code"
+    t.integer "card_order_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "shops", id: :serial, force: :cascade do |t|
