@@ -171,11 +171,11 @@ class Postcard < ApplicationRecord
       return {} unless return_address
       {
         name: return_address.name[0...40],
-        address_line1: return_address.address1,
-        address_line2: return_address.address2,
+        address_line1: return_address.address_line1,
+        address_line2: return_address.address_line2,
         address_city: return_address.city,
-        address_state: return_address.province_code,
-        address_country: return_address.country_code,
+        address_state: return_address.state,
+        address_country: "US",
         address_zip: return_address.zip
       }
     else

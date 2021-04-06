@@ -109,17 +109,6 @@
             <span class="error d-none"><em>This field is required.</em></span>
           </div>
         </div>
-        <div class="row center-items">
-          <div class="col-2 address-label">
-            <h4>Country<span class='error'>*</span></h4>
-          </div>
-          <div class="col-6">
-            <div class="row">
-              <country-select id="from_country" v-model="onSelectCountry" :country="onSelectCountry" topCountry="US" @change="checkDataIsValid"/>
-            </div>
-            <span class="error d-none"><em>This field is required.</em></span>
-          </div>
-        </div>
       </div>
     </div>
     <br>
@@ -178,8 +167,7 @@
     },
     data: function() {
       return {
-        enableFiltering: (this.automation.filters_attributes.length > 0),
-        onSelectCountry: this.returnAddress.country_code,
+        enableFiltering: (this.automation.filters_attributes.length > 0)
       }
     },
 
@@ -201,20 +189,9 @@
             this.automation.filters_attributes[last_index] = {'id': last_filter_id, _destroy: true};
           }
         }
-      },
-
-      onSelectCountry: function({ type, target }) {
-        let country_code = $("#from_country").val()
-        this.returnAddress.country_code = country_code
-        if(this.automation.international){
-          if(!country_code){
-            $("#from_country").parents(".col-6").find("span").show()
-          } else{
-            $("#from_country").parents(".col-6").find("span").hide()
-          }
-        }
       }
     },
+
     components: {
       // 'card-editor': () => ({
       //   // https://vuejs.org/v2/guide/components.html#Async-Components
@@ -253,8 +230,7 @@
             !this.returnAddress.address_line1 ||
             !this.returnAddress.city ||
             !this.returnAddress.state ||
-            !this.returnAddress.zip ||
-            !this.returnAddress.country_code) {
+            !this.returnAddress.zip) {
               $(".return-address-general-error").show()
               return true;
             }
