@@ -17,12 +17,95 @@
               <em>International postcards cost two credits.</em>
             </li>
             <li>
-              <em>Please fill in all return address required fields.</em>
+              <em>US Return address is required when sending outside USA.</em>
             </li>
           </ul>
         </div>
       </div>
       <br v-if="!automation.international">
+      <br>
+      <input id="return-address-checkbox" type="checkbox" v-model="enableAddReturnAddress"/>
+      <label for="return-address-checkbox" class="noselect"><strong>Add Return Address</strong></label>
+      <div class="nested-toggle return-address" v-if="enableAddReturnAddress">
+        <div class="row">
+          <div class="col-8">
+            <div class="row center-items">
+              <div class="col-2 address-label"></div>
+              <div class="col-6">
+                <span class="error d-none return-address-general-error">
+                  <em>Please fill in all return address required fields.</em>
+                </span>
+              </div>
+            </div>
+            <div class="row center-items">
+              <div class="col-2 address-label">
+                <h4>Name<span class='error'>*</span></h4>
+              </div>
+              <div class="col-6">
+                <div class="row">
+                  <input type="text" name="from[name]" id="from_name" data-lpignore="true" v-model="returnAddress.name" @change="checkDataIsValid">
+                </div>
+                <span class="error d-none"><em>This field is required.</em></span>
+              </div>
+            </div>
+            <div class="row center-items">
+              <div class="col-2 address-label">
+                <h4>Address line 1<span class='error'>*</span></h4>
+              </div>
+              <div class="col-6">
+                <div class="row">
+                  <input type="text" name="from[address_line1]" id="from_address_line1" v-model="returnAddress.address_line1" @change="checkDataIsValid">
+                </div>
+                <span class="error d-none"><em>This field is required.</em></span>
+              </div>
+            </div>
+            <div class="row center-items">
+              <div class="col-2 address-label">
+                <h4>Address line 2</h4>
+              </div>
+              <div class="col-6">
+                <div class="row">
+                  <input type="text" name="from[address_line2]" id="from_address_line2" v-model="returnAddress.address_line2">
+                </div>
+              </div>
+            </div>
+            <div class="row center-items">
+              <div class="col-2 address-label">
+                <h4>City<span class='error'>*</span></h4>
+              </div>
+              <div class="col-6">
+                <div class="row">
+                  <input type="text" name="from[city]" id="from_city" v-model="returnAddress.city" @change="checkDataIsValid">
+                </div>
+                <span class="error d-none"><em>This field is required.</em></span>
+              </div>
+            </div>
+            <div class="row center-items">
+              <div class="col-2 address-label">
+                <h4>State<span class='error'>*</span></h4>
+              </div>
+              <div class="col-6">
+                <div class="row">
+                  <region-select id="from_state" v-model="onSelectState" :region="onSelectState" />
+                </div>
+                <span class="error d-none"><em>This field is required.</em></span>
+              </div>
+            </div>
+            <div class="row center-items">
+              <div class="col-2 address-label">
+                <h4>Zip<span class='error'>*</span></h4>
+              </div>
+              <div class="col-6">
+                <div class="row">
+                  <input type="text" name="from[zip]" id="from_zip" v-model="returnAddress.zip" @change="checkDataIsValid">
+                </div>
+                <span class="error d-none"><em>This field is required.</em></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    <br>
     <br>
     <input id="automation-filter-checkbox" type="checkbox" v-model="enableFiltering">
     <label for="automation-filter-checkbox" class="noselect"><strong>Filter by Order Size</strong></label>
@@ -32,85 +115,6 @@
       </span>
     </div>
     <hr>
-
-    <h2>Return Address</h2>
-    <div class="row">
-      <div class="col-8">
-        <div class="row center-items">
-          <div class="col-2 address-label"></div>
-          <div class="col-6">
-            <span class="error d-none return-address-general-error">
-              <em>Please fill in all return address required fields.</em>
-            </span>
-          </div>
-        </div>
-        <div class="row center-items">
-          <div class="col-2 address-label">
-            <h4>Name<span class='error'>*</span></h4>
-          </div>
-          <div class="col-6">
-            <div class="row">
-              <input type="text" name="from[name]" id="from_name" data-lpignore="true" v-model="returnAddress.name" @change="checkDataIsValid">
-            </div>
-            <span class="error d-none"><em>This field is required.</em></span>
-          </div>
-        </div>
-        <div class="row center-items">
-          <div class="col-2 address-label">
-            <h4>Address line 1<span class='error'>*</span></h4>
-          </div>
-          <div class="col-6">
-            <div class="row">
-              <input type="text" name="from[address_line1]" id="from_address_line1" v-model="returnAddress.address_line1" @change="checkDataIsValid">
-            </div>
-            <span class="error d-none"><em>This field is required.</em></span>
-          </div>
-        </div>
-        <div class="row center-items">
-          <div class="col-2 address-label">
-            <h4>Address line 2</h4>
-          </div>
-          <div class="col-6">
-            <div class="row">
-              <input type="text" name="from[address_line2]" id="from_address_line2" v-model="returnAddress.address_line2">
-            </div>
-          </div>
-        </div>
-        <div class="row center-items">
-          <div class="col-2 address-label">
-            <h4>City<span class='error'>*</span></h4>
-          </div>
-          <div class="col-6">
-            <div class="row">
-              <input type="text" name="from[city]" id="from_city" v-model="returnAddress.city" @change="checkDataIsValid">
-            </div>
-            <span class="error d-none"><em>This field is required.</em></span>
-          </div>
-        </div>
-        <div class="row center-items">
-          <div class="col-2 address-label">
-            <h4>State<span class='error'>*</span></h4>
-          </div>
-          <div class="col-6">
-            <div class="row">
-              <input type="text" name="from[state]" id="from_state" v-model="returnAddress.state" @change="checkDataIsValid">
-            </div>
-            <span class="error d-none"><em>This field is required.</em></span>
-          </div>
-        </div>
-        <div class="row center-items">
-          <div class="col-2 address-label">
-            <h4>Zip<span class='error'>*</span></h4>
-          </div>
-          <div class="col-6">
-            <div class="row">
-              <input type="text" name="from[zip]" id="from_zip" v-model="returnAddress.zip" @change="checkDataIsValid">
-            </div>
-            <span class="error d-none"><em>This field is required.</em></span>
-          </div>
-        </div>
-      </div>
-    </div>
     <br>
     <hr />
     <h2>Front</h2>
@@ -167,7 +171,9 @@
     },
     data: function() {
       return {
-        enableFiltering: (this.automation.filters_attributes.length > 0)
+        onSelectState: this.returnAddress.state,
+        enableFiltering: (this.automation.filters_attributes.length > 0),
+        enableAddReturnAddress: this.automation.international
       }
     },
 
@@ -187,6 +193,28 @@
             let last_index = this.automation.filters_attributes.length-1;
             let last_filter_id = this.automation.filters_attributes[last_index].id;
             this.automation.filters_attributes[last_index] = {'id': last_filter_id, _destroy: true};
+          }
+        }
+      },
+
+      enableAddReturnAddress: function(enable) {
+        if(this.automation.international){
+          if (!enable) {
+            this.enableAddReturnAddress = true
+            $(".return-address-general-error").show();
+            $("#return-address-checkbox").prop("checked", true);
+          }
+        }
+      },
+
+      onSelectState: function() {
+        let state = $("#from_state").val()
+        this.returnAddress.state = state
+        if(this.automation.international){
+          if(!state){
+            $("#from_state").parents(".col-6").find("span").show()
+          } else{
+            $("#from_state").parents(".col-6").find("span").hide()
           }
         }
       }
@@ -221,6 +249,8 @@
         if(!this.automation.international){
           $(".return-address-general-error").hide();
           $(".error").hide();
+        } else {
+          this.enableAddReturnAddress = true
         }
       },
 
