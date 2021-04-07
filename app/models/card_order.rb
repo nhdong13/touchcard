@@ -136,7 +136,7 @@ class CardOrder < ApplicationRecord
     }
 
     if data_status == "history"
-      params.merge!({data_source_status: data_status, send_date: DateTime.now})
+      params.merge!({data_source_status: data_status, send_date: Date.today})
     else
       params.merge!({send_date: self.send_date})
     end
