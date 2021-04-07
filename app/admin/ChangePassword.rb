@@ -9,6 +9,7 @@ ActiveAdmin.register_page "Change Password" do
     if params[:new_password].present? &&
       params[:confirmation].present? &&
       params[:new_password] == params[:confirmation] &&
+      current_admin_user.valid_password?(params[:old_password]) &&
       current_admin_user.update(password: params[:new_password])
       flash[:notice] = 'Successfully update password'
     else
