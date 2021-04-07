@@ -1,5 +1,5 @@
 ActiveAdmin.register_page "Change Password" do
-  menu priority: 17
+  menu false
 
   content do
     render "change_password"
