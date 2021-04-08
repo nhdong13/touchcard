@@ -86,7 +86,7 @@
               </div>
               <div class="col-6">
                 <div class="row">
-                  <region-select id="from_state" v-model="onSelectState" :region="onSelectState" />
+                  <region-select id="from_state" v-model="onSelectState" :region="onSelectState" :blackList="['AS','DC', 'FM', 'GU', 'MH', 'MP', 'PW', 'RP', 'VL', 'AA', 'AE', 'AP', 'VI', 'PR']"/>
                 </div>
                 <span class="error d-none"><em>This field is required.</em></span>
               </div>
