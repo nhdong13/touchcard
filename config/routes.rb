@@ -41,6 +41,12 @@ Rails.application.routes.draw do
     patch 'cancel_postcard', on: :member
   end
 
+  resources :campaigns, only: [:index] do
+    collection do
+      delete :delete_campaigns
+    end
+  end
+
   resource :subscriptions, only: [:new, :create, :show, :edit, :update, :destroy]
 
   resource :shops, only: [:edit, :update], path: 'settings'

@@ -1,0 +1,7 @@
+<%= currently_at "Campaigns" %>
+<%= tag.div id: "campaigns-dashboard",
+            data: {
+              campaigns: @campaigns.to_json(only: [:id, :type, :enabled]),
+              total_pages: @total_pages
+            }
+%>

@@ -2,7 +2,7 @@ class CardOrder < ApplicationRecord
   # TODO: Unused Automations Code
   #
   # TYPES = ['PostSaleOrder', 'CustomerWinbackOrder', 'LifetimePurchaseOrder', 'AbandonedCheckout']
-
+  self.inheritance_column = :_type_disabled
   belongs_to :shop
 
   # TODO: can remove card_side relation as card side data now lives in front_json and back_json

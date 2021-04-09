@@ -413,6 +413,7 @@ DEPENDENCIES
   foreman (~> 0.84)
   hirb (~> 0.7)
   httparty (~> 0.15)
+  kaminari
   lob (~> 5.0)
   mailgunner (~> 2.4)
   material_components_web-sass
@@ -448,4 +449,4 @@ RUBY VERSION
    ruby 2.4.4p296
 
 BUNDLED WITH
-   1.17.3
+   2.2.13

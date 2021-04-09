@@ -79,6 +79,7 @@ gem "pg"
 
 gem "selenium-webdriver"
 
+gem 'kaminari'
 group :assets do
   gem "therubyracer", platforms: :ruby
 end
