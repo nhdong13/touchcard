@@ -21,4 +21,30 @@ $(document).ready(function() {
     $(".second-option-list .filter-container").first().children("p.text-center").remove();
     $(".option-list .filter-container").first().children("p.text-center").remove();
   }
+
+  $(document).on("change","#accepted_filter_", function() {
+    toggleDatePicker(this)
+  })
+
+  $(document).on("change","#accepted_condition_", function() {
+    toggleDatePicker($(this).prev())
+  })
+
+  function toggleDatePicker(e) {
+    if ($(e).val() == 2 && ["3", "4", "5"].indexOf($(this).next().val()) >= 0) {
+      $(e).parent().children("#accepted_value_[type='datetime-local']").css('display', '');
+    } else {
+      $(e).parent().children("#accepted_value_[type='datetime-local']").hide();
+    }
+  }
+
+  $(".next-btn").click(function() {
+    $(".filter").each(function() {
+      if ($(this).val() == 2 && ["3", "4", "5"].indexOf($(this).next().val()) >= 0) {
+        $(this).parent().children("#accepted_value_[type='number']").remove();
+      } else {
+        $(this).parent().children("#accepted_value_[type='datetime-local']").remove();
+      }
+    })
+  })
 })

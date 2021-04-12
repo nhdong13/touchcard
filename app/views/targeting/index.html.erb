@@ -1,8 +1,7 @@
 <%= currently_at "Targerting" %>
 
 <div class="panel faq pt-3">
-  <h3>Filter by number of orders</h3>
-  <%= form_with url: get_targeting_index_url, method: :post, id: "target_form", class: "filter-form" do |f| %>
+  <%= form_with url: get_targeting_index_url, method: :post, id: "target_form", class: "filter-form", novalidate: true do |f| %>
     <!--- Send section --->
     <h3 class="text-center bordered-header">Send to contacts that</h3>
     <div class="option-list">
