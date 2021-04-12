@@ -10,6 +10,11 @@ class CustomerTargetingService
     @user_spends_count = orders.group(:customer_id).sum(:total_line_items_price)
     @user_last_orders = orders.group(:customer_id).maximum(:processed_at)
     @user_first_orders = orders.group(:customer_id).minimum(:processed_at)
+    @user_last_order_totals = {}
+    orders.filter do |order|
+      processed_time = @user_last_orders[order.customer_id]
+      processed_time.present? && processed_time == order.processed_at
+    end.each{|i| @user_last_order_totals[i.customer_id] = i.total_line_items_price}
     accepted_user_ids = orders.pluck(:customer_id)
     removed_user_ids = []
 
@@ -41,6 +46,8 @@ class CustomerTargetingService
       @user_last_orders
     when "3"
       @user_first_orders
+    when "4"
+      @user_last_order_totals
     else
       []
     end
