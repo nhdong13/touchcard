@@ -1528,6 +1528,7 @@ DEPENDENCIES
   hirb (~> 0.7)
   httparty (~> 0.15)
   json (~> 2.5.1)
+  kaminari
   lob (~> 5.0)
   mailgunner (~> 2.4)
   material_components_web-sass

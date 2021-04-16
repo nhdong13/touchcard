@@ -6,6 +6,14 @@ Vue.use(TurbolinksAdapter);
 import axios from 'axios'
 import vueCountryRegionSelect from 'vue-country-region-select'
 Vue.use(vueCountryRegionSelect)
+import 'vue-material/dist/vue-material.min.css'
+import 'vue-material/dist/theme/default.css'
+
+import campaignDashboard from '../components/campaigns/index'
+
+import Paginate from 'vuejs-paginate'
+Vue.component('paginate', Paginate)
+
 // To get Turbolinks working it helped to put the javascript pack tag in the <head>
 // If we need to expand Vue to other parts of the application I suspect it would help
 // to keep this structure and load individual containers loaded from this file.
@@ -16,6 +24,7 @@ document.addEventListener('turbolinks:load', () => {
   axios.defaults.headers.common['X-CSRF-Token'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
   var automationElement = document.getElementById('automation-editor');
+  var campaignDashboardElement = document.getElementById('campaigns-dashboard');
   var newSubscriptionElement = document.getElementById('new-subscription-form');
   var editSubscriptionElement = document.getElementById('edit-subscription-form');
 
@@ -41,6 +50,27 @@ document.addEventListener('turbolinks:load', () => {
       }
     });
     window.VueAutomation = automationVueApp;
+  }
+
+  if (campaignDashboardElement != null) {
+
+    const campaignDashboardVueApp = new Vue({
+      el: campaignDashboardElement,
+      data: function() {
+        let tmp_campaigns = JSON.parse(campaignDashboardElement.dataset.campaigns);
+        return {
+          campaigns: tmp_campaigns,
+          totalPages: parseInt(campaignDashboardElement.dataset.totalPages),
+          statuses: JSON.parse(campaignDashboardElement.dataset.statuses),
+          types: JSON.parse(campaignDashboardElement.dataset.types)
+        }
+      },
+      template: '<campaign-dashboard :campaigns="campaigns" :totalPages="totalPages" :campaignStatuses="statuses" :campaignTypes="types"></campaign-dashboard>',
+      components: {
+        campaignDashboard
+      }
+    });
+    window.VueCampaignDashboard = campaignDashboardVueApp;
   }
 
   if (newSubscriptionElement != null) {

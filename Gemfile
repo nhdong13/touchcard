@@ -86,6 +86,7 @@ gem "mimemagic", "0.3.7"
 gem "webrick"
 gem "puma"
 
+gem 'kaminari'
 group :assets do
   gem "therubyracer", platforms: :ruby
 end
