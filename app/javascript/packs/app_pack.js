@@ -4,8 +4,10 @@ import SubscriptionForm from '../subscription_form'
 import TurbolinksAdapter from 'vue-turbolinks'
 Vue.use(TurbolinksAdapter);
 import axios from 'axios'
+import 'vue-material/dist/vue-material.min.css'
+import 'vue-material/dist/theme/default.css'
 
-import CampaignDashboard from '../components/campaigns/index'
+import campaignDashboard from '../components/campaigns/index'
 
 import Paginate from 'vuejs-paginate'
 Vue.component('paginate', Paginate)
@@ -56,13 +58,14 @@ document.addEventListener('turbolinks:load', () => {
         let tmp_campaigns = JSON.parse(campaignDashboardElement.dataset.campaigns);
         return {
           campaigns: tmp_campaigns,
-          totalPages: parseInt(campaignDashboardElement.dataset.totalPages)
+          totalPages: parseInt(campaignDashboardElement.dataset.totalPages),
+          statuses: JSON.parse(campaignDashboardElement.dataset.statuses),
+          types: JSON.parse(campaignDashboardElement.dataset.types)
         }
       },
-      template: '<campaigns-dashboard :campaigns="campaigns" :totalPages="totalPages"></campaigns-dashboard>',
+      template: '<campaign-dashboard :campaigns="campaigns" :totalPages="totalPages" :campaignStatuses="statuses" :campaignTypes="types"></campaign-dashboard>',
       components: {
-        'campaigns-dashboard': CampaignDashboard
-
+        campaignDashboard
       }
     });
     window.VueCampaignDashboard = campaignDashboardVueApp;

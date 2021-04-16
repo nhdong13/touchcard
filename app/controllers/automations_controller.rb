@@ -59,7 +59,11 @@ class AutomationsController < BaseController
       if @automation.update(automation_params)
         flash[:notice] = "Automation successfully updated"
         format.html { redirect_to automations_path }
-        format.json { render json: { message: "updated"}, status: :ok }
+        format.json { render json: {
+          message: "updated",
+          campaign: @automation.to_json(only: [:id, :name, :status, :budget, :type, :enabled]) },
+          status: :ok
+        }
       else
         # flash[:error] = @automation.errors.full_messages.join("\n")
         format.html { render :edit }

@@ -1,12 +1,14 @@
 class CampaignsController < BaseController
   def index
-    @page = params[:page] || 1
-    @campaigns = @current_shop.card_orders.page(@page)
-    @total_pages = @campaigns.total_pages
-
+    @result = CampaignSearchService.new(@current_shop, params).index
     respond_to do |format|
       format.html {}
-      format.json { render json: @campaigns.to_json(only: [:id, :type, :enabled]) }
+      format.json { render json: {
+        campaigns: @result[:campaigns].to_json(only: [:id, :name, :status, :budget, :type, :enabled]),
+        total_pages: @result[:total_pages],
+        statuses: @result[:statuses],
+        types: @result[:types]
+      }}
     end
   end
 
@@ -21,7 +23,7 @@ class CampaignsController < BaseController
     respond_to do |format|
       format.html {}
       format.json { render json: {
-        campaigns: @campaigns.to_json(only: [:id, :type, :enabled]),
+        campaigns: @campaigns.to_json(only: [:id, :name, :status, :budget, :type, :enabled]),
         total_pages: @total_pages
       }}
     end

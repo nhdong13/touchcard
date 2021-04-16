@@ -4,13 +4,18 @@
     "@rails/webpacker": "^3.5.5",
     "axios": "^0.17.1",
     "coffeescript": "1.12.7",
+    "postcss-import": "^14.0.1",
+    "postcss-smart-import": "^0.7.6",
     "puppeteer": "1.11.0",
     "style-loader": "^0.23.0",
     "vue": "^2.5.17",
     "vue-draggable-resizable": "^1.5.4",
     "vue-loader": "14.2.2",
+    "vue-material": "^1.0.0-beta-15",
     "vue-template-compiler": "^2.5.17",
     "vue-turbolinks": "^2.0.0",
+    "vuejs-datepicker": "^1.6.2",
+    "vuejs-paginate": "^2.1.0",
     "webpack-merge": "^4.1.1"
   },
   "devDependencies": {
