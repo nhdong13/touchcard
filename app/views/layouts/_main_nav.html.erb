@@ -8,6 +8,7 @@
             <%= nav_tab 'Automations', root_path, current: current_tab %>
             <%= nav_tab 'Targerting', targeting_index_path, current: current_tab %>
             <%= nav_tab 'Help', faq_path, current: current_tab %>
+            <%= nav_tab 'My Campaigns', campaigns_path, current: current_tab %>
             <% if @current_shop.current_subscription %>
               <%= nav_tab 'Settings', edit_shops_path, current: current_tab %>
             <% end %>

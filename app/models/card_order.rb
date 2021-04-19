@@ -2,7 +2,7 @@ class CardOrder < ApplicationRecord
   # TODO: Unused Automations Code
   #
   # TYPES = ['PostSaleOrder', 'CustomerWinbackOrder', 'LifetimePurchaseOrder', 'AbandonedCheckout']
-
+  self.inheritance_column = :_type_disabled
   belongs_to :shop
 
   # TODO: can remove card_side relation as card side data now lives in front_json and back_json
@@ -16,6 +16,8 @@ class CardOrder < ApplicationRecord
           class_name: "CardSide",
           dependent: :destroy
 
+  has_one :return_address, dependent: :destroy
+
   has_many :filters, dependent: :destroy
   has_many :postcards
 
@@ -26,6 +28,9 @@ class CardOrder < ApplicationRecord
   accepts_nested_attributes_for :filters,
                                 allow_destroy: true,
                                 reject_if: :all_blank
+
+  accepts_nested_attributes_for :return_address,
+                                allow_destroy: true
 
   validates :shop, :card_side_front, :card_side_back, presence: true
   validates :discount_pct, numericality: { greater_than_or_equal_to: -100,
@@ -124,7 +129,9 @@ class CardOrder < ApplicationRecord
   def prepare_for_sending(postcard_trigger, data_status="normal")
     # This method can get called from a delayed_job, which does not allow for standard logging
     # We thus return a string and expect the caller to log
-    return "international customer not enabeled" if postcard_trigger.international && !international?
+    if data_status == "normal"
+      return "international customer not enabeled" if postcard_trigger.international && !international?
+    end
     return "order filtered out" unless send_postcard?(postcard_trigger)
 
     params = {
@@ -134,7 +141,7 @@ class CardOrder < ApplicationRecord
     }
 
     if data_status == "history"
-      params.merge!({data_source_status: data_status})
+      params.merge!({data_source_status: data_status, send_date: Date.today})
     else
       params.merge!({send_date: self.send_date})
     end

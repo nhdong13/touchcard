@@ -480,6 +480,36 @@ html > body {
   color: grey;
 }
 
+.row {
+  display: flex;
+  margin-bottom: 10px;
+  input[type='text'], select{
+    height: 30px;
+    width: 100%;
+  }
+
+  div[class^="col-"]{
+    padding: 0 15px;
+  }
+
+  &.center-items{
+    align-items: center
+  }
+
+  &.center{
+    justify-content: center;
+  }
+  .col-6 {
+    width: 50%
+  }
+  .col-8 {
+    width: 75%
+  }
+  .col-2 {
+    width: 25%
+  }
+}
+
 //input[type="text"], input[type="number"] {
 //  padding: 10px;
 //  border: solid 1px #dcdcdc;

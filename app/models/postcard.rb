@@ -72,6 +72,7 @@ class Postcard < ApplicationRecord
       .where("paid = TRUE AND sent = FALSE AND canceled = FALSE AND data_source_status = ?", "history")
     cards.each do |card|
       begin
+        return if card.postcard_trigger.international && !card.card_order.international?
         card.send_card
       rescue => e
         num_failed += 1
@@ -122,7 +123,7 @@ class Postcard < ApplicationRecord
     sent_card = @lob.postcards.create(
       description: "#{card_order.type} #{shop.domain}",
       to: to_address,
-      # from: shop_address, # Return address for Shop
+      from: return_address,
       front:  File.new(front_png_path),
       back: File.new(back_png_path)
     )
@@ -162,6 +163,24 @@ class Postcard < ApplicationRecord
       self.paid = false
     end
     self.save!
+  end
+
+  def return_address
+    if card_order.international
+      return_address = card_order.return_address
+      return {} unless return_address
+      {
+        name: return_address.name[0...40],
+        address_line1: return_address.address_line1,
+        address_line2: return_address.address_line2,
+        address_city: return_address.city,
+        address_state: return_address.state,
+        address_country: "US",
+        address_zip: return_address.zip
+      }
+    else
+      {}
+    end
   end
 
   def city

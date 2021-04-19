@@ -4,10 +4,8 @@ class AutomationsController < BaseController
 
   def index
     # Create default automation if there isn't one already
-    if @current_shop.card_orders.empty?
-      @current_shop.post_sale_orders.create
-      FetchHistoryOrdersJob.perform_later(@current_shop, @current_shop.post_sale_orders.last.send_delay)
-    end
+
+    @current_shop.post_sale_orders.create if @current_shop.card_orders.empty?
     # This flash works, but it's sort of annoying
     if @current_shop.current_subscription && @current_shop.current_subscription.quantity.to_i > 0 && CardOrder.num_enabled == 0
       flash.now[:notice] = "You are subscribed but not sending. Enable an automation to start sending."
@@ -34,6 +32,7 @@ class AutomationsController < BaseController
 
 
   def edit
+    @return_address =  @automation.return_address || ReturnAddress.new
   end
 
   # POST /automations
@@ -59,10 +58,15 @@ class AutomationsController < BaseController
   def update
     respond_to do |format|
       if @automation.update(automation_params)
+        FetchHistoryOrdersJob.perform_now(@current_shop, @current_shop.post_sale_orders.last.send_delay) if @automation.enabled?
         SendAllHistoryCardsJob.perform_later(@current_shop) if @automation.enabled?
         flash[:notice] = "Automation successfully updated"
         format.html { redirect_to automations_path }
-        format.json { render json: { message: "updated"}, status: :ok }
+        format.json { render json: {
+          message: "updated",
+          campaign: @automation.to_json(only: [:id, :name, :status, :budget, :type, :enabled]) },
+          status: :ok
+        }
       else
         # flash[:error] = @automation.errors.full_messages.join("\n")
         format.html { render :edit }
@@ -102,6 +106,7 @@ class AutomationsController < BaseController
       filters_attributes: [[:id, :_destroy, filter_data: [:minimum, :maximum]]],
       front_json: [:version, :background_url, :discount_x, :discount_y],
       back_json: [:version, :background_url, :discount_x, :discount_y],
+      return_address_attributes: [:id, :name, :address_line1, :address_line2, :city, :state, :zip, :country_code]
     )
   end
 end

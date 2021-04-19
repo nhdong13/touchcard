@@ -64,7 +64,7 @@ ActiveAdmin.register Postcard do
       row :discount_exp_at
       row "Lob Id" do |postcard|
         link_to postcard.postcard_id,
-                "https://dashboard.lob.com/#/postcards/#{postcard.postcard_id}" if postcard.postcard.id
+                "https://dashboard.lob.com/#/postcards/#{postcard.postcard_id}" if postcard.postcard_id
       end
       row :sent
       row :send_date
@@ -77,7 +77,7 @@ ActiveAdmin.register Postcard do
       end
       row :order_id do |postcard|
         # TODO: Should link to postcard.postcard_trigger: _id / _type
-        link_to(postcard.order_id, admin_order_path(postcard.order)) if postcard.order_id
+        link_to(postcard.postcard_trigger.id, admin_order_path(postcard.postcard_trigger)) if postcard.postcard_trigger
       end
       row :paid
 
