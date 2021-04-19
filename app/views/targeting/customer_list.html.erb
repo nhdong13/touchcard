@@ -18,4 +18,4 @@
     <% end %>
   </tbody>
 </table>
-<%= link_to "Download", get_targeting_index_path(accepted: @permited[:accepted], removed: @permited[:removed], format: :csv), method: :post  %>
+<%= link_to "Download", get_targeting_index_path(accepted: @accepted_attrs, removed: @removed_attrs, format: :csv), method: :post  %>

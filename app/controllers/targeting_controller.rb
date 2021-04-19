@@ -3,8 +3,9 @@ class TargetingController < BaseController
 
   def get
     service = CustomerTargetingService.new(@current_shop)
-    @permited = params.permit(:accepted, :removed)
-    @customers = service.find(@permited[:accepted], @permited[:removed])
+    @accepted_attrs = params[:accepted]&.permit!
+    @removed_attrs = params[:removed]&.permit!
+    @customers = service.find(@accepted_attrs, @removed_attrs)
     @csv = ExportCsvService.new(@customers, []).perform
     respond_to do |f|
       f.csv { send_data @csv, filename: "customers.csv" }
