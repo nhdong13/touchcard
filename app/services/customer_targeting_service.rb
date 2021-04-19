@@ -5,6 +5,13 @@ class CustomerTargetingService
     @orders = @current_shop.orders.where.not(customer_id: nil)
   end
 
+  def get_accepted_customers accepted_attrs
+
+  end
+
+  def get_removed_customers
+  end
+
   def find(accepted_attrs, removed_attrs)
     @user_orders_count = orders.group(:customer_id).count
     @user_spends_count = orders.group(:customer_id).sum(:total_line_items_price)
@@ -38,15 +45,15 @@ class CustomerTargetingService
 
   def select_collection filter
     case filter
-    when "0"
+    when "number_of_order"
       @user_orders_count
-    when "1"
+    when "total_spend"
       @user_spends_count
-    when "2"
+    when "last_order_date"
       @user_last_orders
-    when "3"
+    when "first_order_date"
       @user_first_orders
-    when "4"
+    when "last_order_total"
       @user_last_order_totals
     else
       []
