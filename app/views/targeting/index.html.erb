@@ -3,17 +3,14 @@
 <div class="panel faq pt-3">
   <%= form_with url: get_targeting_index_url, method: :post, id: "target_form", class: "filter-form", novalidate: true do |f| %>
     <!--- Send section --->
-    <h3 class="text-center bordered-header">Send to contacts that</h3>
-    <div class="option-list">
-      <%= render "filter_option", is_first_filter: true, is_accepted: true %>
-    </div>
+    <h3 class="text-center bordered-header">Include these customers</h3>
     <button type="button" class="add-more-filter" id="add-more-btn">Add Filter</button>
+    <div class="option-list mt-3"></div>
 
     <!--- Don't send section --->
-    <h3 class="text-center bordered-header mt-4">Don't send to contacts that</h3>
-    <div class="second-option-list">
-    </div>
+    <h3 class="text-center bordered-header mt-4">Exclude these customers</h3>
     <button type="button" class="add-more-filter" id="second-add-more-btn">Add Filter</button>
+    <div class="second-option-list mt-3"></div>
     
     <%= f.submit "Next", class: "next-btn" %>
   <% end %>

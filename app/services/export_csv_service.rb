@@ -8,9 +8,9 @@ class ExportCsvService
 
   def perform
     CSV.generate do |csv|
-      csv << ["No.", "Fullname"]
-      objects.each.with_index do |object, i|
-        csv << [i, object.public_send('full_name')]
+      csv << (["No."] + filters).flatten
+      objects.values.each.with_index(1) do |object, i|
+        csv << [i] + object
       end
     end
   end

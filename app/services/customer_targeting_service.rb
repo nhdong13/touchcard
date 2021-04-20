@@ -5,11 +5,9 @@ class CustomerTargetingService
     @orders = @current_shop.orders.where.not(customer_id: nil)
   end
 
-  def get_accepted_customers accepted_attrs
-
-  end
-
-  def get_removed_customers
+  def get_customer_ids filter, condition, value
+    collection = select_collection(filter)
+    filter_by(collection, condition, value)
   end
 
   def find(accepted_attrs, removed_attrs)
@@ -22,25 +20,36 @@ class CustomerTargetingService
       processed_time = @user_last_orders[order.customer_id]
       processed_time.present? && processed_time == order.processed_at
     end.each{|i| @user_last_order_totals[i.customer_id] = i.total_line_items_price}
-    accepted_user_ids = orders.pluck(:customer_id)
+
+    build_list(accepted_attrs, removed_attrs)
+  end
+
+  def build_list accepted_attrs, removed_attrs
+    accepted_user_ids = {}
     removed_user_ids = []
 
     unless accepted_attrs.present?
       accepted_user_ids = orders.pluck(:customer_id)
     else
       accepted_attrs[:filter].each_with_index do |filter, i|
-        collection = select_collection(filter)
-        filtered_user_ids = filter_by(collection, accepted_attrs[:condition][i], accepted_attrs[:value][i])
-        accepted_user_ids = accepted_user_ids.select{|id| filtered_user_ids.index(id).present?}
+        ids = get_customer_ids(filter, accepted_attrs[:condition][i], accepted_attrs[:value][i])
+        ids.each do |id|
+          accepted_user_ids[id] = Array.new(accepted_attrs[:filter].size) unless accepted_user_ids[id].present?
+          accepted_user_ids[id][i] = "X"
+        end
       end
     end
 
     removed_attrs[:filter].each_with_index do |filter, i|
-      collection = select_collection(filter)
-      removed_user_ids += filter_by(collection, removed_attrs[:condition][i], removed_attrs[:value][i])
+      removed_user_ids += get_customer_ids(filter, removed_attrs[:condition][i], removed_attrs[:value][i])
     end if removed_attrs.present?
+    removed_user_ids.each{|remove_id| accepted_user_ids.delete(remove_id)}
+    Customer.find(accepted_user_ids.keys).each{|customer| accepted_user_ids[customer.id].unshift(customer.full_name)}
+    accepted_user_ids
+  end
 
-    Customer.find(accepted_user_ids - removed_user_ids)
+  def build_csv list, titles
+    @csv = ExportCsvService.new(list, titles).perform
   end
 
   def select_collection filter

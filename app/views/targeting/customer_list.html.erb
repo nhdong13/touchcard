@@ -1,16 +1,21 @@
 <%= currently_at "Targerting" %>
-
+<%= link_to "Download", get_targeting_index_path(accepted: @accepted_attrs, removed: @removed_attrs, format: :csv), method: :post  %>
 <table>
+  <thead>
+    <tr>
+      <th>Customer ID</th>
+      <th>Fullname</th>
+      <% @accepted_attrs[:filter].each do |filter| %>
+        <th><%= filter %></th>
+      <% end %>
+  </thead>
   <tbody>
-    <thead>
+    <% @customers.values.each.with_index(1) do |cus, index| %>
       <tr>
-        <th>Customer ID</th>
-        <th>Fullname</th>
-    </thead>
-    <% @customers.each do |cus| %>
-      <tr>
-        <td><%= cus.id %></td>
-        <td><%= cus.full_name %></td>
+        <td><%= index %></td>
+        <% (0..(@accepted_attrs[:filter].size + 1)).each do |pos| %>
+          <td><%= cus[pos] %></td>
+        <% end %>
       </tr>
     <% end %>
     <% if @customers.empty? %>
@@ -18,4 +23,3 @@
     <% end %>
   </tbody>
 </table>
-<%= link_to "Download", get_targeting_index_path(accepted: @accepted_attrs, removed: @removed_attrs, format: :csv), method: :post  %>
