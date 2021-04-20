@@ -42,4 +42,8 @@ yarn-error.log*
 /node_modules
 
 nohup.out
-DevNotes.md
+DevNotes.md/public/packs
+/public/packs-test
+/node_modules
+yarn-debug.log*
+.yarn-integrity

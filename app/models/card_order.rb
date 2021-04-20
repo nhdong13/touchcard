@@ -5,6 +5,8 @@ class CardOrder < ApplicationRecord
   self.inheritance_column = :_type_disabled
   belongs_to :shop
 
+  CSV_ATTRIBUTES = %w(name type campaign_status campaign_budget campaign_schedule).freeze
+
   # TODO: can remove card_side relation as card side data now lives in front_json and back_json
   has_one :card_side_front,
           -> { where(is_back: false) },
@@ -50,6 +52,18 @@ class CardOrder < ApplicationRecord
     def num_enabled
       CardOrder.where(enabled: true).count
     end
+  end
+
+  def campaign_status
+    enabled ? "Sending" : "Paused"
+  end
+
+  def campaign_budget
+    budget ? budget : "-"
+  end
+
+  def campaign_schedule
+    schedule ? schedule : "--/--"
   end
 
   def send_postcard?(order)

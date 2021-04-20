@@ -28,4 +28,14 @@ class CampaignsController < BaseController
       }}
     end
   end
+
+  def export_csv
+    csv = ExportCsvService.new CardOrder.all, CardOrder::CSV_ATTRIBUTES
+    respond_to do |format|
+      format.json { render json: {
+        csv_data: csv.perform.to_json,
+        filename: "#{@current_shop.domain}_campaigns.csv" }
+      }
+    end
+  end
 end
