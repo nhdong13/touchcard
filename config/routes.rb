@@ -45,6 +45,7 @@ Rails.application.routes.draw do
     collection do
       delete :delete_campaigns
       get :export_csv
+      get :duplicate_campaign
     end
   end
 

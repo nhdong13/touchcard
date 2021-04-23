@@ -22,13 +22,17 @@ class AutomationsController < BaseController
 
   # TODO: Re-enable automation creation
   #
-  # def new
-  #   @automation = @current_shop.card_orders.new
-  #
-  #   NOTE: Don't think we actually need these now, since we're using json in card_orders instead
-  #   @automation.build_card_side_back(is_back: true)
-  #   @automation.build_card_side_front(is_back: false)
-  # end
+  def new
+    @automation = @current_shop.post_sale_orders.create
+    respond_to do |format|
+      flash[:notice] = "Automation successfully created"
+      format.html { redirect_to action: 'index'}
+      format.json { render json: @automation }
+    end
+    # NOTE: Don't think we actually need these now, since we're using json in card_orders instead
+    # @automation.build_card_side_back(is_back: true)
+    # @automation.build_card_side_front(is_back: false)
+  end
 
 
   def edit
@@ -61,7 +65,7 @@ class AutomationsController < BaseController
         format.html { redirect_to automations_path }
         format.json { render json: {
           message: "updated",
-          campaign: @automation.to_json(only: [:id, :name, :status, :budget, :type, :enabled]) },
+          campaign: ActiveModelSerializers::SerializableResource.new(@automation, {each_serializer: CardOrderSerializer}).to_json },
           status: :ok
         }
       else

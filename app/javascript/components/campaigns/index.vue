@@ -1,12 +1,11 @@
 <template>
-  <div>
+  <div class="campaign-tab">
     <div :class="'new-campaign-btn'">
       <button @click="onClickNewCampaign"> New Campaign </button>
-      <router-link to="/foo">Go to Foo</router-link>
     </div>
-    <div class="campaign-tab">
+    <div class="campaign-tab-content">
       <div :class="'action'">
-        <button> Duplicate </button>
+        <button v-on:click="duplicateCampaign" :disabled="selected.length > 1 || selected.length < 1"> Duplicate </button>
         <button v-on:click="deleteCampaigns"> Delete </button>
         <button v-on:click="exportCsv"> CSV </button>
         <DropdownMenu :campaignTypes="campaignTypes" :campaignStatuses="campaignStatuses" ref="DropdownMenu"></DropdownMenu>
@@ -32,9 +31,9 @@
             <td>
               <md-switch v-model="campaignActive" :value="item.id" class="md-primary" @change="value => onChangeCampaignActive(value, item.id)"></md-switch>
             </td>
-            <td>{{ item.name }}</td>
+            <td v-on:click="onEditCampaign(item.id)" class="campaign-name-style">{{ item.name }}</td>
             <td>{{ item.type }}</td>
-            <td>{{ campaignStatus(item.enabled) }}</td>
+            <td>{{ item.campaign_status}}</td>
             <td>{{ item.budget }}</td>
             <td>{{ item.schedule }}</td>
           </tr>
@@ -94,7 +93,7 @@
         currentPage: 1,
         searchQuery: null,
         debounce: null,
-        campaignActive: []
+        campaignActive: [],
       }
     },
 
@@ -131,7 +130,7 @@
 
           this.selected = checked;
         }
-      }
+      },
     },
 
     watch: {
@@ -140,13 +139,27 @@
       },
     },
 
-
     methods: {
+      onEditCampaign: function(id) {
+        Turbolinks.visit(`/automations/${id}/edit`);
+      },
+
+      duplicateCampaign: function() {
+        if(confirm('Are you sure?')){
+          let _this = this
+          axios.get('/campaigns/duplicate_campaign.json', { params: { campaign_id: this.selected } })
+            .then(function(response) {
+              _this.updateState(response.data)
+            }).catch(function (error) {
+          });
+        }
+      },
 
       onClickNewCampaign: function() {
-        axios.get('/automations/new', {})
+        axios.get('/automations/new.json', {})
           .then(function(response) {
             console.log(response);
+            Turbolinks.visit(`/automations/${response.data.id}/edit`);
           }).catch(function (error) {
         });
       },
@@ -251,6 +264,7 @@
       },
 
       updateState: function(data, willReturnToFisrtPage=true) {
+        debugger
         this.thisCampaigns = JSON.parse(data.campaigns)
         this.thisTotalPages = data.total_pages
         this.selected = []
@@ -263,7 +277,7 @@
 
 </script>
 <style lang="scss">
-  .campaign-tab {
+  .campaign-tab-content {
     background: white;
     padding: 10px 10px;
     box-shadow: 5px 10px 4px 0px rgba(0, 0, 0, 0.14);
@@ -291,10 +305,15 @@
     .full-width {
       width: 100%
     }
+
+    &:disabled{
+      border: 1px solid #999999;
+      background-color: #cccccc;
+      color: #666666;
+    }
   }
 
   .campaign-dashboard {
-
     width: 100%;
     .md-switch{
       margin: 16px 0;
@@ -319,6 +338,12 @@
     th {
       padding: 16px 0;
     }
+  }
+
+  .campaign-name-style{
+    color: #6baafc;
+    cursor: pointer;
+    text-decoration: underline;
   }
 
   .action{

@@ -79,6 +79,8 @@ gem "pg"
 
 gem "selenium-webdriver"
 
+gem 'active_model_serializers', '~> 0.10.12'
+
 gem 'kaminari'
 group :assets do
   gem "therubyracer", platforms: :ruby

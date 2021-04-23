@@ -4,7 +4,7 @@ class CampaignsController < BaseController
     respond_to do |format|
       format.html {}
       format.json { render json: {
-        campaigns: @result[:campaigns].to_json(only: [:id, :name, :status, :budget, :type, :enabled]),
+        campaigns: ActiveModelSerializers::SerializableResource.new(@result[:campaigns], {each_serializer: CardOrderSerializer}).to_json,
         total_pages: @result[:total_pages],
         statuses: @result[:statuses],
         types: @result[:types]
@@ -13,9 +13,10 @@ class CampaignsController < BaseController
   end
 
   def delete_campaigns
+    return unless params[:campaign_ids]
     campaign_ids = params[:campaign_ids]
     campaign_ids.each do |campaign_id|
-      CardOrder.find_by(id: campaign_id).destroy
+      CardOrder.find_by(id: campaign_id).archive
     end
     @campaigns = @current_shop.card_orders.page(1)
     @total_pages = @campaigns.total_pages
@@ -23,7 +24,7 @@ class CampaignsController < BaseController
     respond_to do |format|
       format.html {}
       format.json { render json: {
-        campaigns: @campaigns.to_json(only: [:id, :name, :status, :budget, :type, :enabled]),
+        campaigns: ActiveModelSerializers::SerializableResource.new(@campaigns, {each_serializer: CardOrderSerializer}).to_json,
         total_pages: @total_pages
       }}
     end
@@ -36,6 +37,20 @@ class CampaignsController < BaseController
         csv_data: csv.perform.to_json,
         filename: "#{@current_shop.domain}_campaigns.csv" }
       }
+    end
+  end
+
+  def duplicate_campaign
+    DuplicateCampaignService.new(@current_shop, params).duplicate
+    @result = CampaignSearchService.new(@current_shop, params).index
+    respond_to do |format|
+      format.html {}
+      format.json { render json: {
+        campaigns: ActiveModelSerializers::SerializableResource.new(@result[:campaigns], {each_serializer: CardOrderSerializer}).to_json,
+        total_pages: @result[:total_pages],
+        statuses: @result[:statuses],
+        types: @result[:types]
+      }}
     end
   end
 end
