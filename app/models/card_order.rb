@@ -68,9 +68,10 @@ class CardOrder < ApplicationRecord
 
   def update_campaign_status
     if enabled
-      self.update(campaign_status: "sending")
+      self.update(campaign_status: "sending", send_date_start: DateTime.now)
+      self.update(send_date_start: DateTime.now) if self.send_date_start.nil?
     else
-      self.update(campaign_status: "paused")
+      self.update(campaign_status: "paused", send_date_end: DateTime.now)
     end
   end
 
@@ -79,7 +80,7 @@ class CardOrder < ApplicationRecord
   end
 
   def campaign_schedule
-    schedule ? schedule : "--/--"
+    "--/--"
   end
 
   def send_postcard?(order)
