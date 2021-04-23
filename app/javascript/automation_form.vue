@@ -108,11 +108,25 @@
     <br>
     <br>
     <input id="automation-filter-checkbox" type="checkbox" v-model="enableFiltering">
-    <label for="automation-filter-checkbox" class="noselect"><strong>Filter by Order Size</strong></label>
-    <div class="filter-config nested-toggle" v-if="enableFiltering">
-      <span>
+    <label for="automation-filter-checkbox" class="noselect"><strong>Enable Filter</strong></label>
+    <div class="filter-config nested-toggle row" v-if="enableFiltering">
+      <div id="accepted-section">
+        <div class="filter-section-title">Include these customers</div>
+        <fieldset v-for="(filter, index) in acceptedFilters" :key="index">
+          <filter-option />
+        </fieldset>
+        <button type="button" class="add-more-filter-btn" id="add-accepted-filter" @click="addFilter('accepted')">Add Filter</button>
+      </div>
+      <div id="removed-section">
+        <div class="filter-section-title">Exclude these customers</div>
+        <fieldset v-for="(filter, index) in removedFilters" :key="index">
+          <filter-option />
+        </fieldset>
+        <button type="button" class="add-more-filter-btn" id="add-removed-filter" @click="addFilter">Add Filter</button>
+      </div>
+      <!-- <span>
         Minimum $: <input type="number" min="1" max="9999" v-model="automation.filters_attributes[automation.filters_attributes.length-1].filter_data.minimum">
-      </span>
+      </span> -->
     </div>
     <hr>
     <br>
@@ -145,6 +159,7 @@
   /* global Turbolinks */
   import axios from 'axios'
   import CardEditor from './components/card_editor.vue'
+  import FilterOption from './components/filter_option.vue'
   import $ from 'jquery'
   window.$ = $
 
@@ -173,13 +188,14 @@
       return {
         onSelectState: this.returnAddress.state,
         enableFiltering: (this.automation.filters_attributes.length > 0),
-        enableAddReturnAddress: this.automation.international
+        enableAddReturnAddress: this.automation.international,
+        acceptedFilters: 0,
+        removedFilters: 0,
       }
     },
 
     watch: {
       enableFiltering: function(enable) {
-        console.log('enableFiltering: ' + enable);
         if (enable) {
           const default_min_max = {minimum: 10, maximum: 99999};
           if (this.automation.filters_attributes.length > 0) {
@@ -226,6 +242,7 @@
       //   component: import('./components/card_editor.vue')
       //   // loading: LoadingComp, error: ErrorComp, delay: 200, timeout: 3000
       // })
+      FilterOption, 
       CardEditor,
       'card-editor': CardEditor
     },
@@ -233,6 +250,7 @@
       // Set defaults in case these props are passed as 'null'
       this.automation.discount_pct = this.automation.discount_pct || 20;
       this.automation.discount_exp = this.automation.discount_exp || 3;
+      console.log(this.automation);
     },
     methods: {
       checkDataIsValid: function({ type, target }) {
@@ -324,6 +342,9 @@
             ShopifyApp.flashError(error.request.responseText);
           });
         }
+      },
+      addFilter(list) {
+        list == "accepted" ? this.acceptedFilters += 1 : this.removedFilters += 1;
       }
     }
   }
@@ -347,4 +368,23 @@
     display: none
   }
 
+  .filter-config {
+    display: block;
+    width: 600px;
+  }
+
+  .filter-section-title {
+    background: #eee;
+    padding: 8px;
+    font-size: 15px;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 15px;
+  }
+
+  .add-more-filter-btn {
+    border-style: dotted;
+    width: 100%;
+    margin-top: 15px;
+  }
 </style>
