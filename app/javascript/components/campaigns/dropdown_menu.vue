@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="dropdown-btn">
     <button @click="isOpen = !isOpen" >Filters</button>
     <div class="dropdown-list" v-if="isOpen">
       <div class="filter-items">
@@ -23,11 +23,11 @@
         <datepicker v-model="filters.dateCompleted"></datepicker>
       </div>
       <div class="filter-items">
-        <button v-model="filters.clearAll" @click="onResetFilter" class="full-width">All</button>
+        <button v-model="filters.clearAll" @click="onResetFilter" class="margin-0 full-width">All</button>
       </div>
       <div class="filter-items">
         <button @click="closeFilters" class="full-width">Cancel</button>
-        <button @click="submitFilters" class="full-width">Save</button>
+        <button @click="submitFilters" class="full-width margin-0">Save</button>
       </div>
     </div>
   </div>
@@ -113,28 +113,16 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-button {
-  position: relative;
-  padding: 10px 20px;
-  background-color: white;
-  border: 1px solid black;
-  cursor: pointer;
-  transition: 0.3s;
-  &:focus {
-    outline: 0px;
+
+.dropdown-btn{
+  .margin-0{
+    margin: 0
   }
-  &:hover {
-    background: #000;
-    color: white;
-  }
-  &.isActive {
-    background: #000;
-    color: white;
-  }
-  .full-width {
+  .full-width{
     width: 100%
   }
 }
+
 .dropdown {
   position: relative;
   width: fit-content;

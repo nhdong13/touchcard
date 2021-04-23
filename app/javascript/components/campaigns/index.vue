@@ -1,52 +1,55 @@
 <template>
   <div class="campaign-tab">
-    <div :class="'action'">
-      <button> Duplicate </button>
-      <button v-on:click="deleteCampaigns"> Delete </button>
-      <button> CSV </button>
-      <DropdownMenu :campaignTypes="campaignTypes" :campaignStatuses="campaignStatuses" ref="DropdownMenu"></DropdownMenu>
-      <input :placeholder="'Search'" v-model="searchQuery" @input="debounceSearch" />
+    <div :class="'new-campaign-btn'">
+      <button @click="onClickNewCampaign"> New Campaign </button>
     </div>
-    <div>
-      <table class="campaign-dashboard">
-        <tr>
-          <th>
-            <input id="campaign-check-all" type="checkbox" v-model="selectAll"/>
-          </th>
-          <th></th>
-          <th>Name</th>
-          <th>Type</th>
-          <th>Status</th>
-          <th>Budget</th>
-          <th>Schedule</th>
-        </tr>
-        <tr v-for="item in thisCampaigns">
-          <td>
-            <input id="campaign-check-all" type="checkbox" v-model="selected" :value="item.id" number/>
-          </td>
-          <td>
-            <md-switch v-model="campaignActive" :value="item.id" class="md-primary" @change="value => onChangeCampaignActive(value, item.id)"></md-switch>
-          </td>
-          <td>{{ item.name }}</td>
-          <td>{{ item.type }}</td>
-          <td>{{ campaignStatus(item.enabled) }}</td>
-          <td>{{ item.budget }}</td>
-          <td>{{ item.schedule }}</td>
-        </tr>
-      </table>
+    <div class="campaign-tab-content">
+      <div :class="'action'">
+        <button v-on:click="duplicateCampaign" :disabled="selected.length > 1 || selected.length < 1"> Duplicate </button>
+        <button v-on:click="deleteCampaigns"> Delete </button>
+        <button v-on:click="exportCsv"> CSV </button>
+        <DropdownMenu :campaignTypes="campaignTypes" :campaignStatuses="campaignStatuses" ref="DropdownMenu"></DropdownMenu>
+        <input :placeholder="'Search'" v-model="searchQuery" @input="debounceSearch" />
+      </div>
+      <div>
+        <table class="campaign-dashboard">
+          <tr>
+            <th>
+              <input id="campaign-check-all" type="checkbox" v-model="selectAll"/>
+            </th>
+            <th></th>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Status</th>
+            <th>Budget</th>
+            <th>Schedule</th>
+          </tr>
+          <tr v-for="item in thisCampaigns">
+            <td>
+              <input id="campaign-check-all" type="checkbox" v-model="selected" :value="item.id" number/>
+            </td>
+            <td>
+              <md-switch v-model="campaignActive" :value="item.id" class="md-primary" @change="value => onChangeCampaignActive(value, item.id)"></md-switch>
+            </td>
+            <td v-on:click="onEditCampaign(item.id)" class="campaign-name-style">{{ item.name }}</td>
+            <td>{{ item.type }}</td>
+            <td>{{ item.campaign_status}}</td>
+            <td>{{ item.budget }}</td>
+            <td>{{ item.schedule }}</td>
+          </tr>
+        </table>
+      </div>
+      <paginate
+        v-model="currentPage"
+        :page-count="thisTotalPages"
+        :click-handler="changePagination"
+        :prev-text="'Prev'"
+        :next-text="'Next'"
+        :container-class="'pagination'"
+        :page-class="'page-item'">
+      </paginate>
+      </div>
     </div>
-    <paginate
-      v-model="currentPage"
-      :page-count="thisTotalPages"
-      :click-handler="changePagination"
-      :prev-text="'Prev'"
-      :next-text="'Next'"
-      :container-class="'pagination'"
-      :page-class="'page-item'">
-    </paginate>
-
-
-  </div>
 </template>
 
 <script>
@@ -90,7 +93,7 @@
         currentPage: 1,
         searchQuery: null,
         debounce: null,
-        campaignActive: []
+        campaignActive: [],
       }
     },
 
@@ -127,7 +130,7 @@
 
           this.selected = checked;
         }
-      }
+      },
     },
 
     watch: {
@@ -136,8 +139,45 @@
       },
     },
 
-
     methods: {
+      onEditCampaign: function(id) {
+        Turbolinks.visit(`/automations/${id}/edit`);
+      },
+
+      duplicateCampaign: function() {
+        if(confirm('Are you sure?')){
+          let _this = this
+          axios.get('/campaigns/duplicate_campaign.json', { params: { campaign_id: this.selected } })
+            .then(function(response) {
+              _this.updateState(response.data)
+            }).catch(function (error) {
+          });
+        }
+      },
+
+      onClickNewCampaign: function() {
+        axios.get('/automations/new.json', {})
+          .then(function(response) {
+            console.log(response);
+            Turbolinks.visit(`/automations/${response.data.id}/edit`);
+          }).catch(function (error) {
+        });
+      },
+
+      exportCsv: function(){
+        let target = `/campaigns/export_csv.json`;
+        axios.get(target, {})
+          .then(function(response) {
+            const url = window.URL.createObjectURL(new Blob([JSON.parse(response.data.csv_data)]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', response.data.filename); //or any other extension
+            document.body.appendChild(link);
+            link.click();
+          }).catch(function (error) {
+        });
+      },
+
       onChangeCampaignActive: function(event, campaign_id){
         let _this = this
         let target = `/automations/${campaign_id}.json`;
@@ -224,6 +264,7 @@
       },
 
       updateState: function(data, willReturnToFisrtPage=true) {
+        debugger
         this.thisCampaigns = JSON.parse(data.campaigns)
         this.thisTotalPages = data.total_pages
         this.selected = []
@@ -236,7 +277,7 @@
 
 </script>
 <style lang="scss">
-  .campaign-tab {
+  .campaign-tab-content {
     background: white;
     padding: 10px 10px;
     box-shadow: 5px 10px 4px 0px rgba(0, 0, 0, 0.14);
@@ -264,13 +305,29 @@
     .full-width {
       width: 100%
     }
+
+    &:disabled{
+      border: 1px solid #999999;
+      background-color: #cccccc;
+      color: #666666;
+    }
   }
 
   .campaign-dashboard {
-
     width: 100%;
     .md-switch{
       margin: 16px 0;
+    }
+  }
+
+  .new-campaign-btn{
+    text-align: right;
+    margin-bottom: 5px;
+    button{
+      font-size: 16px;
+      border: 1px solid #9900ff;
+      background: #9900ff;
+      color: white;
     }
   }
 
@@ -281,6 +338,12 @@
     th {
       padding: 16px 0;
     }
+  }
+
+  .campaign-name-style{
+    color: #6baafc;
+    cursor: pointer;
+    text-decoration: underline;
   }
 
   .action{

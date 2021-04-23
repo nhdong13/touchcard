@@ -5,6 +5,7 @@
     "axios": "^0.17.1",
     "coffeescript": "1.12.7",
     "jquery": "^3.6.0",
+    "postcss": "^8.2.10",
     "postcss-import": "^14.0.1",
     "postcss-smart-import": "^0.7.6",
     "puppeteer": "1.11.0",
