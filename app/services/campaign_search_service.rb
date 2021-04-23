@@ -7,12 +7,12 @@ class CampaignSearchService
   def index
     page = @params[:page] || 1
     campaigns = @current_shop.card_orders
-    campaigns = campaigns.where("lower(card_orders.type) LIKE ?", "%#{@params[:query]}%")
+    campaigns = campaigns.where("lower(card_orders.name) LIKE ?", "%#{@params[:query]}%") if @params[:query].present?
     campaigns = campaigns.where(type: filter_base_on_type) if filter_base_on_type
-    campaigns = campaigns.where(status: filter_base_on_status) if filter_base_on_status
+    campaigns = campaigns.where(campaign_status: filter_base_on_status) if filter_base_on_status
     campaigns = campaigns.where(created_at: filter_base_on_date_created) if filter_base_on_date_created
     # campaigns = campaigns.where(status: filter_base_on_date_completed) if filter_base_on_date_completed
-    campaigns = campaigns.page(page)
+    campaigns = campaigns.page(page).order(created_at: :desc)
     total_pages = campaigns.total_pages
 
     return {
@@ -37,7 +37,7 @@ class CampaignSearchService
   end
 
   def filter_base_on_status
-    filters["status"]
+    filters["status"].downcase if filters["status"]
   end
 
   def filter_base_on_date_created
@@ -58,7 +58,7 @@ class CampaignSearchService
 
   def statuses
     # TODO change it to status
-    @current_shop.card_orders.pluck(:type).uniq
+    @current_shop.card_orders.pluck(:campaign_status).uniq.map { |s| s.capitalize unless s.nil? }
   end
 
 end

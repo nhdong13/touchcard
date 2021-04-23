@@ -46,6 +46,8 @@ Rails.application.routes.draw do
   resources :campaigns, only: [:index] do
     collection do
       delete :delete_campaigns
+      get :export_csv
+      get :duplicate_campaign
     end
   end
 
@@ -53,7 +55,7 @@ Rails.application.routes.draw do
 
   resource :shops, only: [:edit, :update], path: 'settings'
 
-  resources :automations, only: [:index, :show, :edit, :update] do
+  resources :automations, only: [:new, :index, :show, :edit, :update] do
     # get 'select_type', :on => :collection
   end
 

@@ -1,9 +1,11 @@
 class CardOrder < ApplicationRecord
   # TODO: Unused Automations Code
   #
-  # TYPES = ['PostSaleOrder', 'CustomerWinbackOrder', 'LifetimePurchaseOrder', 'AbandonedCheckout']
+  TYPES = ['PostSaleOrder', 'CustomerWinbackOrder', 'LifetimePurchaseOrder', 'AbandonedCheckout']
   self.inheritance_column = :_type_disabled
   belongs_to :shop
+
+  CSV_ATTRIBUTES = %w(name type campaign_status campaign_budget campaign_schedule).freeze
 
   # TODO: can remove card_side relation as card side data now lives in front_json and back_json
   has_one :card_side_front,
@@ -49,12 +51,41 @@ class CardOrder < ApplicationRecord
 
   delegate :current_subscription, to: :shop
 
+
+  default_scope { where(archived: false) }
+
   scope :active, -> { where(archived: false) }
+
+  before_create :add_default_params
+  after_update :update_campaign_status, if: :saved_change_to_enabled?
+
+  def add_default_params
+    self.name = "PostSaleOrder" if self.name.nil?
+    self.type = "PostSaleOrder" if self.name.nil?
+    self.campaign_status = "draft"
+  end
 
   class << self
     def num_enabled
       CardOrder.where(enabled: true).count
     end
+  end
+
+  def update_campaign_status
+    if enabled
+      self.update(campaign_status: "sending", send_date_start: DateTime.now)
+      self.update(send_date_start: DateTime.now) if self.send_date_start.nil?
+    else
+      self.update(campaign_status: "paused", send_date_end: DateTime.now)
+    end
+  end
+
+  def campaign_budget
+    budget ? budget : "-"
+  end
+
+  def campaign_schedule
+    "--/--"
   end
 
   def send_postcard?(order)

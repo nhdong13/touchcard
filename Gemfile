@@ -87,6 +87,8 @@ gem "mimemagic", "0.3.7"
 gem "webrick"
 gem "puma"
 
+gem 'active_model_serializers', '~> 0.10.12'
+
 gem 'kaminari'
 group :assets do
   gem "therubyracer", platforms: :ruby

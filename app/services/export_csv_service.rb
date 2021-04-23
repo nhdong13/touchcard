@@ -1,17 +1,21 @@
-class ExportCsvService
-  attr_reader :objects, :filters
+require "csv"
 
-  def initialize objects, filters
+class ExportCsvService
+  def initialize objects, attributes
+    @attributes = attributes
     @objects = objects
-    @filters = filters
+    @header = attributes
   end
 
   def perform
     CSV.generate do |csv|
-      csv << (["No."] + filters).flatten
-      objects.values.each.with_index(1) do |object, i|
-        csv << [i] + object
+      csv << @header
+      objects.each do |object|
+        csv << @attributes.map{ |attr| object.public_send(attr) }
       end
     end
   end
+
+  private
+  attr_reader :attributes, :objects
 end
