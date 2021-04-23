@@ -49,7 +49,7 @@ class CustomerTargetingService
   end
 
   def build_csv list, titles
-    @csv = ExportCsvService.new(list, titles).perform
+    @csv = CustomerExportCsvService.new(list, titles).perform
   end
 
   def select_collection filter
