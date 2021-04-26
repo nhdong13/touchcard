@@ -29,7 +29,7 @@ class CustomerTargetingService
     removed_user_ids = []
 
     unless accepted_attrs.present?
-      accepted_user_ids = orders.pluck(:customer_id)
+      orders.pluck(:customer_id).each{|id| accepted_user_ids[id] = []}
     else
       accepted_attrs[:filter].each_with_index do |filter, i|
         ids = get_customer_ids(filter, accepted_attrs[:condition][i], accepted_attrs[:value][i])
@@ -49,7 +49,7 @@ class CustomerTargetingService
   end
 
   def build_csv list, titles
-    @csv = ExportCsvService.new(list, titles).perform
+    @csv = CustomerExportCsvService.new(list, titles).perform
   end
 
   def select_collection filter

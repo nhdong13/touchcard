@@ -1,7 +1,7 @@
 <%= currently_at "Targerting" %>
 
 <div class="panel faq pt-3">
-  <%= form_with url: get_targeting_index_url, method: :post, id: "target_form", class: "filter-form", novalidate: true do |f| %>
+  <%= form_with url: get_targeting_index_url, method: :post, format: :csv, id: "target_form", class: "filter-form", novalidate: true do |f| %>
     <!--- Send section --->
     <h3 class="text-center bordered-header">Include these customers</h3>
     <button type="button" class="add-more-filter" id="add-more-btn">Add Filter</button>
