@@ -18,11 +18,35 @@
               <input id="campaign-check-all" type="checkbox" v-model="selectAll"/>
             </th>
             <th></th>
-            <th>Name</th>
-            <th>Type</th>
-            <th>Status</th>
+            <th v-on:click="onSortByAlphabetically('sortByName', 'campaign_name')">
+              Name
+              <span>
+                <font-awesome-icon icon="caret-down" v-if="sortByName"/>
+                <font-awesome-icon icon="caret-up" v-else/>
+              </span>
+            </th>
+            <th v-on:click="onSortByAlphabetically('sortByType', 'type')">
+              Type
+              <span>
+                <font-awesome-icon icon="caret-down" v-if="sortByType"/>
+                <font-awesome-icon icon="caret-up" v-else/>
+              </span>
+            </th>
+            <th v-on:click="onSortByAlphabetically('sortByStatus', 'campaign_status')">
+              Status
+              <span>
+                <font-awesome-icon icon="caret-down" v-if="sortByStatus"/>
+                <font-awesome-icon icon="caret-up" v-else/>
+              </span>
+            </th>
             <th>Budget</th>
-            <th>Schedule</th>
+            <th v-on:click="onSortByAlphabetically('sortBySendDateStart', 'send_date_start')">
+              Schedule
+              <span>
+                <font-awesome-icon icon="caret-down" v-if="sortBySendDateStart"/>
+                <font-awesome-icon icon="caret-up" v-else/>
+              </span>
+            </th>
           </tr>
           <tr v-for="item in thisCampaigns">
             <td>
@@ -31,7 +55,7 @@
             <td>
               <md-switch v-model="campaignActive" :value="item.id" class="md-primary" @change="value => onChangeCampaignActive(value, item.id)"></md-switch>
             </td>
-            <td v-on:click="onEditCampaign(item.id)" class="campaign-name-style">{{ item.name }}</td>
+            <td v-on:click="onEditCampaign(item.id)" class="campaign-name-style">{{ item.campaign_name }}</td>
             <td>{{ item.type }}</td>
             <td>{{ item.campaign_status}}</td>
             <td>{{ item.budget }}</td>
@@ -58,6 +82,7 @@
   import axios from 'axios'
   import DropdownMenu from './dropdown_menu.vue'
   import { MdSwitch } from 'vue-material/dist/components'
+  import _ from 'lodash'
 
   Vue.use(MdSwitch)
 
@@ -94,6 +119,12 @@
         searchQuery: null,
         debounce: null,
         campaignActive: [],
+        campaignType: ['Automation', 'One-off'],
+        sortBy: ['sortByName', 'sortByType'],
+        sortByName: true,
+        sortByType: true,
+        sortByStatus: true,
+        sortBySendDateStart: true
       }
     },
 
@@ -140,6 +171,16 @@
     },
 
     methods: {
+      onSortByAlphabetically: function(sortby, name){
+        if(this[sortby]){
+          this[sortby] = false
+          this.thisCampaigns = _.orderBy(this.thisCampaigns, name, 'desc')
+        } else {
+          this[sortby] = true
+          this.thisCampaigns = _.orderBy(this.thisCampaigns, name, 'asc')
+        }
+      },
+
       onEditCampaign: function(id) {
         Turbolinks.visit(`/automations/${id}/edit`);
       },
@@ -264,7 +305,6 @@
       },
 
       updateState: function(data, willReturnToFisrtPage=true) {
-        debugger
         this.thisCampaigns = JSON.parse(data.campaigns)
         this.thisTotalPages = data.total_pages
         this.selected = []
@@ -336,6 +376,7 @@
     text-align: center;
     border-bottom: 1px solid #ddd;
     th {
+      cursor: pointer;
       padding: 16px 0;
     }
   }

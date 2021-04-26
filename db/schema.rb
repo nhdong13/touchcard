@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_04_23_063847) do
+ActiveRecord::Schema.define(version: 2021_04_23_081047) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -92,7 +92,7 @@ ActiveRecord::Schema.define(version: 2021_04_23_063847) do
     t.json "front_json", default: {}
     t.json "back_json", default: {}
     t.json "price_rules", default: {}
-    t.string "name"
+    t.string "campaign_name"
     t.string "campaign_status"
     t.integer "budget"
     t.datetime "send_date_start"

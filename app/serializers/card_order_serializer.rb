@@ -1,12 +1,13 @@
 class CardOrderSerializer < ActiveModel::Serializer
   attributes :id,
-             :name,
+             :campaign_name,
              :status,
              :campaign_status,
              :budget,
              :type,
              :enabled,
-             :schedule
+             :schedule,
+             :send_date_start
 
 
   def campaign_status
