@@ -1,6 +1,9 @@
 {
   "license": "UNLICENSED",
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.35",
+    "@fortawesome/free-solid-svg-icons": "^5.15.3",
+    "@fortawesome/vue-fontawesome": "^2.0.2",
     "@rails/webpacker": "^3.5.5",
     "axios": "^0.17.1",
     "coffeescript": "1.12.7",
