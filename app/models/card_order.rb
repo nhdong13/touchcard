@@ -1,6 +1,7 @@
 class CardOrder < ApplicationRecord
   # TODO: Unused Automations Code
   #
+  enum budget_type: [ :non_set, :monthly, :lifetime ]
   TYPES = ['PostSaleOrder', 'CustomerWinbackOrder', 'LifetimePurchaseOrder', 'AbandonedCheckout']
   self.inheritance_column = :_type_disabled
   belongs_to :shop

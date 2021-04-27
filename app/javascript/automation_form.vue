@@ -1,10 +1,37 @@
 <template>
-  <div>
+  <div class="automation-form">
     <a :href="backUrl"  class="mdc-button mdc-button--stroked">Cancel</a>
     <button v-on:click="requestSave" class="mdc-button mdc-button--raised">Save</button>
     <hr>
     <!-- div v-cloak></div -->
     <h3>{{automation.type}}</h3>
+    <strong>Type</strong>
+    <input type="radio" id="automation" value="automation" v-model="campaign_type">
+    <label for="automation">Automation</label>
+    <input type="radio" id="one_off" value="one_off" v-model="campaign_type">
+    <label for="one_off">One-off</label>
+    <br>
+    <br>
+    <div>
+      <strong>Budget</strong>
+      <input type="radio" id="non_set_budget" value="none_set" v-model="automation.budget_type">
+      <label for="non_set_budget">None set</label>
+      <input type="radio" id="monthly_budget" value="monthly" v-model="automation.budget_type">
+      <label for="monthly_budget">Monthly</label>
+      <input type="radio" id="lifetime_budget" value="lifetime" v-model="automation.budget_type">
+      <label for="lifetime_budget">Lifetime</label>
+      <div class="filter-config nested-toggle" v-if="setLimitToKens">
+        <span>
+          Limit: <input type="numer" id="budget_limit" v-model="automation.budget"> credits
+        </span>
+      </div>
+    </div>
+    <br>
+    <div>
+      <strong>Send at</strong>
+      <datepicker v-model="sendDate"></datepicker>
+    </div>
+    <br>
     <strong>Send card <input type="number" min="0" max="52" v-model="automation.send_delay"> weeks after purchase</strong>
     <br>
     <!--
@@ -56,6 +83,8 @@
   /* global Turbolinks */
   import axios from 'axios'
   import CardEditor from './components/card_editor.vue'
+  import Datepicker from 'vuejs-datepicker';
+
 
   export default {
     props: {
@@ -77,9 +106,22 @@
     },
     data: function() {
       return {
-        enableFiltering: (this.automation.filters_attributes.length > 0)
+        enableFiltering: (this.automation.filters_attributes.length > 0),
+        campaign_type: "automation",
+        sendDate: "",
       }
     },
+
+    computed: {
+      setLimitToKens: function(){
+        let willSet = true;
+        if(this.automation.budget_type == "non_set"){
+          willSet = false
+        }
+        return willSet
+      }
+    },
+
     watch: {
       enableFiltering: function(enable) {
         console.log('enableFiltering: ' + enable);
@@ -107,7 +149,8 @@
       //   // loading: LoadingComp, error: ErrorComp, delay: 200, timeout: 3000
       // })
       CardEditor,
-      'card-editor': CardEditor
+      'card-editor': CardEditor,
+      Datepicker
     },
     beforeMount: function() {
       // Set defaults in case these props are passed as 'null'
@@ -171,7 +214,7 @@
   }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
   [v-cloak] {
     display: none;
   }
@@ -179,6 +222,12 @@
   .nested-toggle {
     padding-top: 10px;
     padding-left: 10px;
+  }
+
+  .automation-form{
+    .vdp-datepicker{
+      display: inline-block;
+    }
   }
 
 </style>
