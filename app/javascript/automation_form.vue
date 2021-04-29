@@ -5,9 +5,42 @@
     <hr>
     <!-- div v-cloak></div -->
     <h3>{{automation.type}}</h3>
-    <strong>Send card <input type="number" min="0" max="52" v-model="automation.send_delay"> weeks after purchase</strong>
-    <br>
-      <br>
+
+    <div class="automation-section">
+      <strong>Type</strong>
+      <input type="radio" id="automation" value="automation" v-model="automation.campaign_type" v-on:click="setBudgetType">
+      <label for="automation">Automation</label>
+      <input type="radio" id="one_off" value="one_off" v-model="automation.campaign_type" v-on:click="setBudgetType">
+      <label for="one_off">One-off</label>
+    </div>
+
+    <div v-if="automation.campaign_type =='automation'" class="automation-section">
+      <strong>Send card <input type="number" min="0" max="52" v-model="automation.send_delay"> weeks after purchase</strong>
+    </div>
+    <div class="automation-section">
+      <strong>Budget</strong>
+      <span v-if="automation.campaign_type =='automation'">
+        <input type="radio" id="non_set_budget" value="non_set" v-model="budget_type">
+        <label for="non_set_budget">Non set</label>
+      </span>
+      <span v-if="automation.campaign_type =='automation'">
+        <input type="radio" id="monthly_budget" value="monthly" v-model="budget_type">
+        <label for="monthly_budget">Monthly</label>
+      </span>
+      <input type="radio" id="lifetime_budget" value="lifetime" v-model="budget_type">
+      <label for="lifetime_budget">Lifetime</label>
+      <div class="filter-config nested-toggle" v-if="setLimitToKens">
+        <span>
+          Limit: <input type="numer" id="budget_limit" v-model="automation.budget_update"> credits
+        </span>
+      </div>
+    </div>
+
+    <div class="automation-section" v-if="automation.campaign_type =='one_off'">
+      <strong>Send at</strong>
+      <datepicker v-model="sendDate"></datepicker>
+    </div>
+    <div class="automation-section">
       <input id="automation-international-checkbox" type="checkbox" v-model="automation.international" @change="handleChangeInternationalCheck"/>
       <label for="automation-international-checkbox" class="noselect"><strong>Send outside USA</strong></label>
       <div class="attention-note nested-toggle" v-if="automation.international">
@@ -22,8 +55,8 @@
           </ul>
         </div>
       </div>
-      <br v-if="!automation.international">
-      <br>
+    </div>
+    <div class="automation-section">
       <input id="return-address-checkbox" type="checkbox" v-model="enableAddReturnAddress"/>
       <label for="return-address-checkbox" class="noselect"><strong>Add Return Address</strong></label>
       <div class="nested-toggle return-address" v-if="enableAddReturnAddress">
@@ -105,8 +138,7 @@
           </div>
         </div>
       </div>
-    <br>
-    <br>
+    </div>
     <input id="automation-filter-checkbox" type="checkbox" v-model="enableFiltering">
     <label for="automation-filter-checkbox" class="noselect"><strong>Enable Filter</strong></label>
     <button @click="downloadCSV"> CSV </button>
@@ -125,8 +157,16 @@
         Minimum $: <input type="number" min="1" max="9999" v-model="automation.filters_attributes[automation.filters_attributes.length-1].filter_data.minimum">
       </span> -->
     </div>
-    <hr>
-    <br>
+
+    <div class="automation-section">
+      <input id="automation-filter-checkbox" type="checkbox" v-model="enableFiltering">
+      <label for="automation-filter-checkbox" class="noselect"><strong>Filter by Order Size</strong></label>
+      <div class="filter-config nested-toggle" v-if="enableFiltering">
+      <!-- <span>
+          Minimum $: <input type="number" min="1" max="9999" v-model="automation.filters_attributes[automation.filters_attributes.length-1].filter_data.minimum">
+      </span> -->
+      </div>
+    </div>
     <hr />
     <h2>Front</h2>
     <card-editor
@@ -159,6 +199,7 @@
   import FilterOption from './components/filter_option.vue'
   import $ from 'jquery'
   window.$ = $
+  import Datepicker from 'vuejs-datepicker';
 
   export default {
     props: {
@@ -188,6 +229,19 @@
         enableAddReturnAddress: this.automation.international,
         acceptedFilters: [],
         removedFilters: [],
+        sendDate: "",
+        budget_type: this.automation.budget_type,
+        willShowBudgetType: true,
+      }
+    },
+
+    computed: {
+      setLimitToKens: function(){
+        let willSet = true;
+        if(this.budget_type == "non_set"){
+          willSet = false
+        }
+        return willSet
       }
     },
 
@@ -239,9 +293,10 @@
       //   component: import('./components/card_editor.vue')
       //   // loading: LoadingComp, error: ErrorComp, delay: 200, timeout: 3000
       // })
-      FilterOption, 
+      FilterOption,
       CardEditor,
-      'card-editor': CardEditor
+      'card-editor': CardEditor,
+      Datepicker
     },
     beforeMount: function() {
       // Set defaults in case these props are passed as 'null'
@@ -288,6 +343,17 @@
         }
       },
 
+      setBudgetType: function(event){
+        let campaign_type = event.target.value;
+        if(campaign_type == "one_off"){
+          this.budget_type = "lifetime"
+          this.willShowBudgetType = false
+        } else {
+          this.budget_type = this.automation.budget_type
+          this.willShowBudgetType = true
+        }
+      },
+
       requestSave: function() {
 
         // TODO: Wait for uploads to complete in CardEditor
@@ -307,6 +373,7 @@
           this.automation.discount_exp = null;
         }
 
+        this.automation.budget_type = this.budget_type
         if (this.checkFormReturnAddressIsInvalid()) return;
 
         this.postOrPutForm();
@@ -425,11 +492,13 @@
   }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
   [v-cloak] {
     display: none;
   }
-
+  .automation-section{
+    margin: 16px 0
+  }
   .nested-toggle {
     padding-top: 10px;
     padding-left: 10px;
@@ -462,4 +531,9 @@
     width: 100%;
     margin-top: 15px;
   }
+
+  .vdp-datepicker{
+    display: inline-block;
+  }
+
 </style>

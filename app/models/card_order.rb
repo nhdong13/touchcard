@@ -1,6 +1,8 @@
 class CardOrder < ApplicationRecord
   # TODO: Unused Automations Code
   #
+  enum budget_type: [ :non_set, :monthly, :lifetime ]
+  enum campaign_type: [ :automation, :one_off ]
   TYPES = ['PostSaleOrder', 'CustomerWinbackOrder', 'LifetimePurchaseOrder', 'AbandonedCheckout']
   self.inheritance_column = :_type_disabled
   belongs_to :shop
@@ -58,6 +60,8 @@ class CardOrder < ApplicationRecord
 
   before_create :add_default_params
   after_update :update_campaign_status, if: :saved_change_to_enabled?
+  after_update :update_credits, if: :saved_change_to_budget_update?
+  after_update :update_budget, if: :saved_change_to_budget_type?
 
   def add_default_params
     self.campaign_name = "PostSaleOrder" unless self.campaign_name.present?
@@ -68,6 +72,43 @@ class CardOrder < ApplicationRecord
   class << self
     def num_enabled
       CardOrder.where(enabled: true).count
+    end
+  end
+
+  def update_budget
+    if non_set?
+      update_columns(
+        budget: 0,
+        credits: 0,
+        budget_update: 0
+      )
+    end
+  end
+
+  def update_credits
+    if budget.zero? && credits.zero?
+      update(
+        budget: budget_update,
+        credits: budget_update
+        )
+    else
+      if budget_update >= budget
+        new_credits = credits + (budget_update - budget)
+        update(
+          budget: budget_update,
+          credits: new_credits
+        )
+      else
+        new_credits = credits - (budget - budget_update)
+        if new_credits < 0
+          raise "the budget is lower than credits used."
+        else
+          update(
+            budget: budget_update,
+            credits: new_credits
+          )
+        end
+      end
     end
   end
 
@@ -150,12 +191,26 @@ class CardOrder < ApplicationRecord
     val.nil? ? nil : val.abs
   end
 
-
   def send_date
     return Date.today + send_delay.weeks
     # 4-6 business days delivery according to lob
     # TODO: handle international + 5 to 7 business days
     #send_date = arrive_by - 1.week
+  end
+
+  def can_afford?(postcard)
+    @can_afford ||= credits >= postcard.cost
+  end
+
+  def pay(postcard)
+    if can_afford?(postcard) && !postcard.paid?
+      self.credits -= postcard.cost
+      self.save!
+    else
+      logger.info "not enough credits postcard:#{postcard.id}" if can_afford?(postcard)
+      logger.info "already paid for postcard:#{postcard.id}" if postcard.paid?
+      return false
+    end
   end
 
   def prepare_for_sending(postcard_trigger, data_status="normal")
@@ -179,7 +234,7 @@ class CardOrder < ApplicationRecord
     end
 
     postcard = postcard_trigger.postcards.new(params)
-    if shop.pay(postcard)
+    if self.pay(postcard)
       postcard.paid = true
       postcard.save
     else

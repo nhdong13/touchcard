@@ -58,7 +58,10 @@
             <td v-on:click="onEditCampaign(item.id)" class="campaign-name-style">{{ item.campaign_name }}</td>
             <td>{{ item.type }}</td>
             <td>{{ item.campaign_status}}</td>
-            <td>{{ item.budget }}</td>
+            <td>
+              <span class='t-b' v-if="item.budget > 0 ? true : false"> {{item.credits}}/{{ item.budget }} credits</span>
+              <i class='t-b'>{{ item.budget_type }}</i>
+            </td>
             <td>{{ item.schedule }}</td>
           </tr>
         </table>
@@ -393,6 +396,11 @@
     button{
       margin-right: 10px;
     }
+  }
+
+  .t-b {
+    display: block;
+    margin: 3px;
   }
 
   .pagination{
