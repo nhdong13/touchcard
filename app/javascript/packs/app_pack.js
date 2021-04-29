@@ -14,6 +14,12 @@ import campaignDashboard from '../components/campaigns/index'
 import Paginate from 'vuejs-paginate'
 Vue.component('paginate', Paginate)
 
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faCaretDown, faCaretUp } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+library.add(faCaretDown, faCaretUp)
+Vue.component('font-awesome-icon', FontAwesomeIcon)
+
 // To get Turbolinks working it helped to put the javascript pack tag in the <head>
 // If we need to expand Vue to other parts of the application I suspect it would help
 // to keep this structure and load individual containers loaded from this file.

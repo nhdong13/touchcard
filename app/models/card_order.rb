@@ -60,8 +60,8 @@ class CardOrder < ApplicationRecord
   after_update :update_campaign_status, if: :saved_change_to_enabled?
 
   def add_default_params
-    self.name = "PostSaleOrder" if self.name.nil?
-    self.type = "PostSaleOrder" if self.name.nil?
+    self.campaign_name = "PostSaleOrder" unless self.campaign_name.present?
+    self.type = "PostSaleOrder" if self.type.nil?
     self.campaign_status = "draft"
   end
 
@@ -94,8 +94,8 @@ class CardOrder < ApplicationRecord
     filter = filters.last # Somehow got a multiple-filter bug, so make sure we use latest value
     # if the filters are nil assume they're unbounded
     result = true
-    filter.filter_data["accepted"].each{|filter| result = result && CustomerTargetingService.match_filter(order, filter)}
-    filter.filter_data["removed"].each{|filter| result = result && !CustomerTargetingService.match_filter(order, filter)}
+    filter.filter_data["accepted"].each{|filter| result = result && CustomerTargetingService.match_filter?(order, filter)}
+    filter.filter_data["removed"].each{|filter| result = result && !CustomerTargetingService.match_filter?(order, filter)}
     result
   end
 

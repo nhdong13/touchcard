@@ -110,7 +110,7 @@ class CustomerTargetingService
     compare_field(field_to_filter, split_filter[1], split_filter[2])
   end
 
-  def select_field_to_filter field, order
+  def self.select_field_to_filter field, order
     case field
     when "number_of_order"
       order.customer.orders_count
@@ -127,30 +127,30 @@ class CustomerTargetingService
     end
   end
 
-  def compare_field field, condition, value
+  def self.compare_field field, condition, value
     case condition
     when "0"
-      field.to_i == value
+      field.to_i == value.to_i
     when "1"
-      field.to_i > value
+      field.to_i > value.to_i
     when "2"
-      field.to_i < value
+      field.to_i < value.to_i
     when "3"
-      field.to_time.end_of_day < value
+      field.to_time < value.to_time.end_of_day
     when "4"
       begin_value = raw_value[0].to_time.beginning_of_day
       end_value = raw_value[1].to_time.end_of_day
       collection.filter{|k,v| (v < begin_value) && (v > end_value)}.keys
     when "5"
-      field.to_time.beginning_of_day > value
-    when "6"
-      field.to_i.days > Time.now.beginning_of_day - value
-    when "7"
-      begin_value = raw_value[0].to_i.days
-      end_value = raw_value[1].to_i.days
-      collection.filter{|k,v| (v > Time.now.beginning_of_day - begin_value) && (v < Time.now.end_of_day - end_value)}.keys
-    when "8"
-      field.to_i.days < Time.now.end_of_day - value
+      field.to_time > value.to_time.beginning_of_day
+    # when "6"
+    #   field.to_i.days > Time.now.beginning_of_day - value.to_i
+    # when "7"
+    #   begin_value = raw_value[0].to_i.days
+    #   end_value = raw_value[1].to_i.days
+    #   collection.filter{|k,v| (v > Time.now.beginning_of_day - begin_value) && (v < Time.now.end_of_day - end_value)}.keys
+    # when "8"
+    #   field.to_i.days < Time.now.end_of_day - value
     else []
   end
   end
