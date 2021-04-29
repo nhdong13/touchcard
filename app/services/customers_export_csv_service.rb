@@ -1,4 +1,4 @@
-class CustomerExportCsvService
+class CustomersExportCsvService
   attr_reader :objects, :filters
 
   def initialize objects, filters

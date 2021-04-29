@@ -49,7 +49,7 @@ class CustomerTargetingService
   end
 
   def build_csv list, titles
-    @csv = CustomerExportCsvService.new(list, titles).perform
+    @csv = CustomersExportCsvService.new(list, titles).perform
   end
 
   def select_collection filter
@@ -107,21 +107,28 @@ class CustomerTargetingService
   def self.match_filter? order, filter
     split_filter = filter.split("#")
     field_to_filter = select_field_to_filter(split_filter[0], order)
+    byebug
     compare_field(field_to_filter, split_filter[1], split_filter[2])
   end
 
   def self.select_field_to_filter field, order
+    orders = Order.where(customer_id: order.customer_id, shop_id: order.shop_id)
     case field
     when "number_of_order"
-      order.customer.orders_count
+      # order.customer.orders_count
+      orders.count
     when "total_spend"
-      order.customer.total_spent
+      # order.customer.total_spent
+      orders.sum(:total_line_items_price)
     when "last_order_date"
-      order.customer.last_order_date
+      # order.customer.last_order_date
+      orders.maximum(:processed_at)
     when "first_order_date"
-      order.customer.orders.order(created_at: :asc).first.created_at.to_date
+      # order.customer.orders.order(created_at: :asc).first.created_at.to_date
+      orders.minimum(:processed_at)
     when "last_order_total"
-      order.customer.orders.order(created_at: :desc).first.total_line_items_price
+      # order.customer.orders.order(created_at: :desc).first.total_line_items_price
+      orders.order(:processed_at).last.total_line_items_price
     else
       []
     end

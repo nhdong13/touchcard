@@ -34,8 +34,8 @@
                          ["Last order total", "last_order_total"]
                         ],
         CONDITIONS: [["is", 0], ["is greater than", 1], ["is less than", 2],
-              ["before", 3], ["between", 4], ["after", 5], ["before", 6],
-              ["between", 7], ["after", 8]],
+              ["before", 3], ["after", 5]] //["between", 4], ["before", 6],
+              //["between", 7], ["after", 8]],
       }
     },
     methods: {
@@ -47,6 +47,7 @@
       },
       removeFilter() {
         $(this.$el).remove();
+        this.$emit('filterRemove', this.filter, this.collection, this.index);
       },
       filterChange() {
         this.$emit('filterChange', this.filter, this.collection, this.index);

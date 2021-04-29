@@ -109,16 +109,17 @@
     <br>
     <input id="automation-filter-checkbox" type="checkbox" v-model="enableFiltering">
     <label for="automation-filter-checkbox" class="noselect"><strong>Enable Filter</strong></label>
+    <button @click="downloadCSV"> CSV </button>
     <div class="filter-config nested-toggle row" v-if="enableFiltering">
       <div id="accepted-section">
         <div class="filter-section-title">Include these customers</div>
         <button type="button" class="add-more-filter-btn" id="add-accepted-filter" @click="addFilter('accepted')">Add Filter</button>
-        <filter-option :filter="filter" v-for="(filter, index) in acceptedFilters" :key="index" @filterChange="filterChange" collection="accepted" :index="index" />
+        <filter-option :filter="filter" v-for="(filter, index) in acceptedFilters" :key="index" @filterChange="filterChange" @filterRemove="filterRemove" collection="accepted" :index="index" />
       </div>
       <div id="removed-section">
         <div class="filter-section-title">Exclude these customers</div>
         <button type="button" class="add-more-filter-btn" id="add-removed-filter" @click="addFilter">Add Filter</button>
-        <filter-option :filter="filter" v-for="(filter, index) in removedFilters" :key="index" @filterChange="filterChange" collection="removed" :index="index" />
+        <filter-option :filter="filter" v-for="(filter, index) in removedFilters" :key="index" @filterChange="filterChange" @filterRemove="filterRemove" collection="removed" :index="index" />
       </div>
       <!-- <span>
         Minimum $: <input type="number" min="1" max="9999" v-model="automation.filters_attributes[automation.filters_attributes.length-1].filter_data.minimum">
@@ -350,6 +351,9 @@
       filterChange(filter, collection, index) {
         collection == "accepted" ? this.acceptedFilters[index] = filter : this.removedFilters[index] = filter;
       },
+      filterRemove(filter, collection, index) {
+        collection == "accepted" ? this.acceptedFilters.splice(index, 1) : this.removedFilters.splice(index, 1);
+      },
       convertRawFilters(rawValue) {
         ["accepted", "removed"].forEach(section => {
           rawValue[section].forEach(value => {
@@ -376,6 +380,46 @@
       },
       useNumberInput(filter, condition) {
         return (['number_of_order', 'total_spend', 'last_order_total'].indexOf(filter) > -1) || ((['last_order_date', 'first_order_date'].indexOf(filter) > -1) && [6, 7, 8].indexOf(condition) > -1);
+      },
+      convertFiltersToParams() {
+        let res = {};
+        let tmp = this.acceptedFilters.length == 0 ? {} : {"filter": [], "condition": [], "value": []};
+        this.acceptedFilters.forEach(item => {
+          let value = this.useNumberInput(item["selectedFilter"], item["selectedCondition"]) ? item["inputValue"] : item["dateValue"];
+          tmp["filter"].push(item["selectedFilter"]);
+          tmp["condition"].push(item["selectedCondition"].toString());
+          tmp["value"].push(value);
+        });
+        if (tmp != {}) {
+          res["accepted"] = tmp;
+        }
+
+        tmp = this.removedFilters.length == 0 ? {} : {"filter": [], "condition": [], "value": []};
+        this.removedFilters.forEach(item => {
+          let value = this.useNumberInput(item["selectedFilter"], item["selectedCondition"]) ? item["inputValue"] : item["dateValue"];
+          tmp["filter"].push(item["selectedFilter"]);
+          tmp["condition"].push(item["selectedCondition"].toString());
+          tmp["value"].push(value);
+        });
+
+        if (tmp != {}) {
+          res["removed"] = tmp;
+        }
+        return res;
+      },
+      downloadCSV() {
+        let url = `/targeting/get.csv`;
+        let body = this.convertFiltersToParams();
+        axios.post(url, body).then(function(response) {
+          const url = window.URL.createObjectURL(new Blob([response.data]))
+          const link = document.createElement('a')
+          link.href = url
+          link.setAttribute('download', 'customers.csv')
+          document.body.appendChild(link)
+          link.click()
+        }).catch(function (error) {
+          console.log(error)
+        });
       }
     }
   }
