@@ -93,9 +93,10 @@ class CardOrder < ApplicationRecord
     spend = order.total_price / 100.0
     filter = filters.last # Somehow got a multiple-filter bug, so make sure we use latest value
     # if the filters are nil assume they're unbounded
-    min = filter.filter_data["minimum"].to_f || -1.0
-    max = filter.filter_data["maximum"].to_f.positive? ? filter.filter_data["maximum"].to_f : 1_000_000_000.0
-    spend > min && spend < max
+    result = true
+    filter.filter_data["accepted"].each{|filter| result = result && CustomerTargetingService.match_filter(order, filter)}
+    filter.filter_data["removed"].each{|filter| result = result && !CustomerTargetingService.match_filter(order, filter)}
+    result
   end
 
   # number of postcards sent for current subscription

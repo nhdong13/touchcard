@@ -107,7 +107,7 @@ class AutomationsController < BaseController
       :discount_pct,
       :international,
       :send_delay,
-      filters_attributes: [[:id, :_destroy, filter_data: [:minimum, :maximum]]],
+      filters_attributes: [[:id, :_destroy, filter_data: [accepted: [], removed: []]]],
       front_json: [:version, :background_url, :discount_x, :discount_y],
       back_json: [:version, :background_url, :discount_x, :discount_y],
       return_address_attributes: [:id, :name, :address_line1, :address_line2, :city, :state, :zip, :country_code]

@@ -1,15 +1,15 @@
 <template>
   <div class="filter-line">
-    <select class="filter-dropdown" v-model="selectedFilter">
+    <select class="filter-dropdown" v-model="filter.selectedFilter" @change="filterChange">
       <option v-for="option in FILTER_OPTIONS" :key="option[1]" :value="option[1]">{{option[0]}}</option>
     </select>
-    <select class="option-dropdown" v-if="selectedFilter != ''" v-model="selectedCondition">
+    <select class="option-dropdown" v-if="filter.selectedFilter != ''" v-model="filter.selectedCondition" @change="filterChange">
       <option v-for="condition in CONDITIONS" v-if="showOption(condition[1])" :key="condition[1]" :value="condition[1]">{{condition[0]}}</option>
     </select>
-    <datepicker class="valueInput" v-model="dateValue" v-if="selectedFilter != '' && !showNumberInput()" />
-    <input type="number" class="valueInput" v-model="inputValue" v-if="showNumberInput()" />
+    <datepicker class="valueInput" v-model="filter.dateValue" v-if="filter.selectedFilter != '' && !showNumberInput()" @change="filterChange" />
+    <input type="number" class="valueInput" v-model="filter.inputValue" v-if="showNumberInput()" @change="filterChange" />
     <div class="dropdown">
-      <button type="button" class="more-action-btn" v-if="selectedFilter != ''">...</button>
+      <button type="button" class="more-action-btn" v-if="filter.selectedFilter != ''">...</button>
       <div class="dropdown-content">
         <p @click="removeFilter">Remove Filter</p>
       </div>
@@ -23,6 +23,7 @@
     components: {
       Datepicker
     },
+    props: ["filter", "collection", "index"],
     data() {
       return {
         FILTER_OPTIONS: [["Select a filter" , ""              ],
@@ -35,21 +36,20 @@
         CONDITIONS: [["is", 0], ["is greater than", 1], ["is less than", 2],
               ["before", 3], ["between", 4], ["after", 5], ["before", 6],
               ["between", 7], ["after", 8]],
-        selectedFilter: "",
-        selectedCondition: 0,
-        dateValue: null,
-        inputValue: null,
       }
     },
     methods: {
       showNumberInput() {
-        return (['number_of_order', 'total_spend', 'last_order_total'].indexOf(this.selectedFilter) > -1) || ((['last_order_date', 'first_order_date'].indexOf(this.selectedFilter) > -1) && [6, 7, 8].indexOf(this.selectedCondition) > -1)
+        return (['number_of_order', 'total_spend', 'last_order_total'].indexOf(this.filter.selectedFilter) > -1) || ((['last_order_date', 'first_order_date'].indexOf(this.filter.selectedFilter) > -1) && [6, 7, 8].indexOf(this.filter.selectedCondition) > -1)
       },
       showOption(option) {
-        return ((this.selectedFilter == 'last_order_date' || this.selectedFilter == 'first_order_date') && [3, 4, 5, 6, 7, 8].indexOf(option) > -1) || ((['number_of_order', 'total_spend', 'last_order_total'].indexOf(this.selectedFilter) > -1) && [0, 1, 2].indexOf(option) > -1)
+        return ((this.filter.selectedFilter == 'last_order_date' || this.filter.selectedFilter == 'first_order_date') && [3, 4, 5, 6, 7, 8].indexOf(option) > -1) || ((['number_of_order', 'total_spend', 'last_order_total'].indexOf(this.filter.selectedFilter) > -1) && [0, 1, 2].indexOf(option) > -1)
       },
       removeFilter() {
-        $(this.$el).parent().remove();
+        $(this.$el).remove();
+      },
+      filterChange() {
+        this.$emit('filterChange', this.filter, this.collection, this.index);
       }
     }
   }
@@ -89,6 +89,7 @@
   background: none;
   font-size: 20px;
   font-weight: bold;
+  padding: 3px 6px;
 }
 
 .dropdown:hover .dropdown-content {

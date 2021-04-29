@@ -103,4 +103,55 @@ class CustomerTargetingService
       else []
     end
   end
+
+  def self.match_filter? order, filter
+    split_filter = filter.split("#")
+    field_to_filter = select_field_to_filter(split_filter[0], order)
+    compare_field(field_to_filter, split_filter[1], split_filter[2])
+  end
+
+  def select_field_to_filter field, order
+    case field
+    when "number_of_order"
+      order.customer.orders_count
+    when "total_spend"
+      order.customer.total_spent
+    when "last_order_date"
+      order.customer.last_order_date
+    when "first_order_date"
+      order.customer.orders.order(created_at: :asc).first.created_at.to_date
+    when "last_order_total"
+      order.customer.orders.order(created_at: :desc).first.total_line_items_price
+    else
+      []
+    end
+  end
+
+  def compare_field field, condition, value
+    case condition
+    when "0"
+      field.to_i == value
+    when "1"
+      field.to_i > value
+    when "2"
+      field.to_i < value
+    when "3"
+      field.to_time.end_of_day < value
+    when "4"
+      begin_value = raw_value[0].to_time.beginning_of_day
+      end_value = raw_value[1].to_time.end_of_day
+      collection.filter{|k,v| (v < begin_value) && (v > end_value)}.keys
+    when "5"
+      field.to_time.beginning_of_day > value
+    when "6"
+      field.to_i.days > Time.now.beginning_of_day - value
+    when "7"
+      begin_value = raw_value[0].to_i.days
+      end_value = raw_value[1].to_i.days
+      collection.filter{|k,v| (v > Time.now.beginning_of_day - begin_value) && (v < Time.now.end_of_day - end_value)}.keys
+    when "8"
+      field.to_i.days < Time.now.end_of_day - value
+    else []
+  end
+  end
 end

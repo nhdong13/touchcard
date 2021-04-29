@@ -112,17 +112,13 @@
     <div class="filter-config nested-toggle row" v-if="enableFiltering">
       <div id="accepted-section">
         <div class="filter-section-title">Include these customers</div>
-        <fieldset v-for="(filter, index) in acceptedFilters" :key="index">
-          <filter-option />
-        </fieldset>
         <button type="button" class="add-more-filter-btn" id="add-accepted-filter" @click="addFilter('accepted')">Add Filter</button>
+        <filter-option :filter="filter" v-for="(filter, index) in acceptedFilters" :key="index" @filterChange="filterChange" collection="accepted" :index="index" />
       </div>
       <div id="removed-section">
         <div class="filter-section-title">Exclude these customers</div>
-        <fieldset v-for="(filter, index) in removedFilters" :key="index">
-          <filter-option />
-        </fieldset>
         <button type="button" class="add-more-filter-btn" id="add-removed-filter" @click="addFilter">Add Filter</button>
+        <filter-option :filter="filter" v-for="(filter, index) in removedFilters" :key="index" @filterChange="filterChange" collection="removed" :index="index" />
       </div>
       <!-- <span>
         Minimum $: <input type="number" min="1" max="9999" v-model="automation.filters_attributes[automation.filters_attributes.length-1].filter_data.minimum">
@@ -189,8 +185,8 @@
         onSelectState: this.returnAddress.state,
         enableFiltering: (this.automation.filters_attributes.length > 0),
         enableAddReturnAddress: this.automation.international,
-        acceptedFilters: 0,
-        removedFilters: 0,
+        acceptedFilters: [],
+        removedFilters: [],
       }
     },
 
@@ -250,7 +246,10 @@
       // Set defaults in case these props are passed as 'null'
       this.automation.discount_pct = this.automation.discount_pct || 20;
       this.automation.discount_exp = this.automation.discount_exp || 3;
-      console.log(this.automation);
+      // console.log(this.automation);
+      let last_index = this.automation.filters_attributes.length-1;
+      let filters = this.automation.filters_attributes[last_index].filter_data;
+      this.convertRawFilters(filters);
     },
     methods: {
       checkDataIsValid: function({ type, target }) {
@@ -325,6 +324,7 @@
           // Edit existing automation (PUT)
           let target = `/automations/${this.id}.json`;
           this.automation.return_address_attributes = this.returnAddress;
+          if (this.enableFiltering) this.collectFilters();
           axios.put(target, { card_order: this.automation})
             .then(function(response) {
               console.log(response);
@@ -344,7 +344,38 @@
         }
       },
       addFilter(list) {
-        list == "accepted" ? this.acceptedFilters += 1 : this.removedFilters += 1;
+        let defaultValue = {selectedFilter: "", selectedCondition: 0, inputValue: null, dateValue: null};
+        list == "accepted" ? this.acceptedFilters.push(defaultValue) : this.removedFilters.push(defaultValue);
+      },
+      filterChange(filter, collection, index) {
+        collection == "accepted" ? this.acceptedFilters[index] = filter : this.removedFilters[index] = filter;
+      },
+      convertRawFilters(rawValue) {
+        ["accepted", "removed"].forEach(section => {
+          rawValue[section].forEach(value => {
+            let splitValue = value.split("#");
+            let defaultValue = {selectedFilter: splitValue[0], selectedCondition: splitValue[1], inputValue: null, dateValue: null};
+            this.useNumberInput(splitValue[0], splitValue[1]) ? defaultValue["inputValue"] = splitValue[2] : defaultValue["dateValue"] = splitValue[2];
+            section == "accepted" ? this.acceptedFilters.push(defaultValue) : this.removedFilters.push(defaultValue);
+          });
+        });
+      },
+      collectFilters() {
+        let collectedFilters = {accepted: [], removed: []};
+        collectedFilters["accepted"] = this.acceptedFilters.map(item => {
+          let value = this.useNumberInput(item["selectedFilter"], item["selectedCondition"]) ? item["inputValue"] : item["dateValue"];
+          return value ? [item["selectedFilter"], item["selectedCondition"], value].join("#") : null;
+        }).filter(item => item != null);
+        collectedFilters["removed"] = this.removedFilters.map(item => {
+          let value = this.useNumberInput(item["selectedFilter"], item["selectedCondition"]) ? item["inputValue"] : item["dateValue"];
+          return value ? [item["selectedFilter"], item["selectedCondition"], value].join("#") : null;
+        }).filter(item => item != null);
+        let last_index = this.automation.filters_attributes.length-1;
+        this.automation.filters_attributes[last_index].filter_data = collectedFilters;
+        return this.automation.filters_attributes[last_index].filter_data;
+      },
+      useNumberInput(filter, condition) {
+        return (['number_of_order', 'total_spend', 'last_order_total'].indexOf(filter) > -1) || ((['last_order_date', 'first_order_date'].indexOf(filter) > -1) && [6, 7, 8].indexOf(condition) > -1);
       }
     }
   }
