@@ -59,7 +59,7 @@
             <td>{{ item.type }}</td>
             <td>{{ item.campaign_status}}</td>
             <td>
-              <span class='t-b' v-if="item.budget > 0 ? true : false">{{ item.budget }} credits</span>
+              <span class='t-b' v-if="item.budget > 0 ? true : false"> {{item.credits}}/{{ item.budget }} credits</span>
               <i class='t-b'>{{ item.budget_type }}</i>
             </td>
             <td>{{ item.schedule }}</td>

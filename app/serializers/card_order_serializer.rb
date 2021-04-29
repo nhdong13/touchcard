@@ -4,12 +4,14 @@ class CardOrderSerializer < ActiveModel::Serializer
              :status,
              :campaign_status,
              :budget,
+             :budget_update,
              :budget_type,
              :type,
              :enabled,
              :schedule,
              :send_date_start,
-             :tokens_used
+             :tokens_used,
+             :credits
 
 
   def campaign_status
@@ -18,7 +20,9 @@ class CardOrderSerializer < ActiveModel::Serializer
   end
 
   def tokens_used
+
   end
+
   def budget_type
     case object.budget_type
     when "non_set"

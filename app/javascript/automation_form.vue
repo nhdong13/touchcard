@@ -5,35 +5,41 @@
     <hr>
     <!-- div v-cloak></div -->
     <h3>{{automation.type}}</h3>
-    <strong>Type</strong>
-    <input type="radio" id="automation" value="automation" v-model="campaign_type">
-    <label for="automation">Automation</label>
-    <input type="radio" id="one_off" value="one_off" v-model="campaign_type">
-    <label for="one_off">One-off</label>
-    <br>
-    <br>
-    <div>
+    <div class="automation-section">
+      <strong>Type</strong>
+      <input type="radio" id="automation" value="automation" v-model="automation.campaign_type" v-on:click="setBudgetType">
+      <label for="automation">Automation</label>
+      <input type="radio" id="one_off" value="one_off" v-model="automation.campaign_type" v-on:click="setBudgetType">
+      <label for="one_off">One-off</label>
+    </div>
+
+    <div class="automation-section">
       <strong>Budget</strong>
-      <input type="radio" id="non_set_budget" value="none_set" v-model="automation.budget_type">
-      <label for="non_set_budget">None set</label>
-      <input type="radio" id="monthly_budget" value="monthly" v-model="automation.budget_type">
-      <label for="monthly_budget">Monthly</label>
-      <input type="radio" id="lifetime_budget" value="lifetime" v-model="automation.budget_type">
+      <span v-if="automation.campaign_type =='automation'">
+        <input type="radio" id="non_set_budget" value="non_set" v-model="budget_type">
+        <label for="non_set_budget">Non set</label>
+      </span>
+      <span v-if="automation.campaign_type =='automation'">
+        <input type="radio" id="monthly_budget" value="monthly" v-model="budget_type">
+        <label for="monthly_budget">Monthly</label>
+      </span>
+      <input type="radio" id="lifetime_budget" value="lifetime" v-model="budget_type">
       <label for="lifetime_budget">Lifetime</label>
       <div class="filter-config nested-toggle" v-if="setLimitToKens">
         <span>
-          Limit: <input type="numer" id="budget_limit" v-model="automation.budget"> credits
+          Limit: <input type="numer" id="budget_limit" v-model="automation.budget_update"> credits
         </span>
       </div>
     </div>
-    <br>
-    <div>
+
+    <div class="automation-section" v-if="automation.campaign_type =='one_off'">
       <strong>Send at</strong>
       <datepicker v-model="sendDate"></datepicker>
     </div>
-    <br>
-    <strong>Send card <input type="number" min="0" max="52" v-model="automation.send_delay"> weeks after purchase</strong>
-    <br>
+
+    <div v-if="automation.campaign_type =='automation'" class="automation-section">
+      <strong>Send card <input type="number" min="0" max="52" v-model="automation.send_delay"> weeks after purchase</strong>
+    </div>
     <!--
       <br>
       <input id="automation-international-checkbox" type="checkbox" v-model="automation.international" />
@@ -45,13 +51,15 @@
       </div>
       <br v-if="!automation.international">
     -->
-    <br>
-    <input id="automation-filter-checkbox" type="checkbox" v-model="enableFiltering">
-    <label for="automation-filter-checkbox" class="noselect"><strong>Filter by Order Size</strong></label>
-    <div class="filter-config nested-toggle" v-if="enableFiltering">
-      <span>
-        Minimum $: <input type="number" min="1" max="9999" v-model="automation.filters_attributes[automation.filters_attributes.length-1].filter_data.minimum">
-      </span>
+
+    <div class="automation-section">
+      <input id="automation-filter-checkbox" type="checkbox" v-model="enableFiltering">
+      <label for="automation-filter-checkbox" class="noselect"><strong>Filter by Order Size</strong></label>
+      <div class="filter-config nested-toggle" v-if="enableFiltering">
+        <span>
+          Minimum $: <input type="number" min="1" max="9999" v-model="automation.filters_attributes[automation.filters_attributes.length-1].filter_data.minimum">
+        </span>
+      </div>
     </div>
     <hr>
 
@@ -107,15 +115,16 @@
     data: function() {
       return {
         enableFiltering: (this.automation.filters_attributes.length > 0),
-        campaign_type: "automation",
         sendDate: "",
+        budget_type: this.automation.budget_type,
+        willShowBudgetType: true,
       }
     },
 
     computed: {
       setLimitToKens: function(){
         let willSet = true;
-        if(this.automation.budget_type == "non_set"){
+        if(this.budget_type == "non_set"){
           willSet = false
         }
         return willSet
@@ -158,6 +167,17 @@
       this.automation.discount_exp = this.automation.discount_exp || 3;
     },
     methods: {
+      setBudgetType: function(event){
+        let campaign_type = event.target.value;
+        if(campaign_type == "one_off"){
+          this.budget_type = "lifetime"
+          this.willShowBudgetType = false
+        } else {
+          this.budget_type = this.automation.budget_type
+          this.willShowBudgetType = true
+        }
+      },
+
       requestSave: function() {
 
         // TODO: Wait for uploads to complete in CardEditor
@@ -176,6 +196,8 @@
           this.automation.discount_pct = null;
           this.automation.discount_exp = null;
         }
+
+        this.automation.budget_type = this.budget_type
 
         this.postOrPutForm();
 
@@ -218,7 +240,9 @@
   [v-cloak] {
     display: none;
   }
-
+  .automation-section{
+    margin: 16px 0
+  }
   .nested-toggle {
     padding-top: 10px;
     padding-left: 10px;
