@@ -1,7 +1,7 @@
 <template>
   <div class="filter-line">
     <select class="filter-dropdown" v-model="filter.selectedFilter" @change="filterChange">
-      <option v-for="option in FILTER_OPTIONS" :key="option[1]" :value="option[1]">{{option[0]}}</option>
+      <option v-for="option in availableFilter" :key="option[1]" :value="option[1]">{{option[0]}}</option>
     </select>
     <select class="option-dropdown" v-if="filter.selectedFilter != ''" v-model="filter.selectedCondition" @change="filterChange">
       <option v-for="condition in CONDITIONS" v-if="showOption(condition[1])" :key="condition[1]" :value="condition[1]">{{condition[0]}}</option>
@@ -24,6 +24,9 @@
       Datepicker
     },
     props: ["filter", "collection", "index"],
+    beforeMount() {
+      this.resetAvailableFilter();
+    },
     data() {
       return {
         FILTER_OPTIONS: [["Select a filter" , ""              ],
@@ -33,12 +36,20 @@
                          ["First order date", "first_order_date"],
                          ["Last order total", "last_order_total"]
                         ],
+        availableFilter: [],
         CONDITIONS: [["is", 0], ["is greater than", 1], ["is less than", 2],
               ["before", 3], ["after", 5]] //["between", 4], ["before", 6],
               //["between", 7], ["after", 8]],
       }
     },
     methods: {
+      resetAvailableFilter() {
+        let selected = [];
+        $(`#${this.collection}-section .filter-dropdown`).each(function() {
+          selected.push($(this).val());
+        });
+        this.availableFilter = this.FILTER_OPTIONS.filter(el => el[1] == "" || !(selected.indexOf(el[1]) > -1));
+      },
       showNumberInput() {
         return (['number_of_order', 'total_spend', 'last_order_total'].indexOf(this.filter.selectedFilter) > -1) || ((['last_order_date', 'first_order_date'].indexOf(this.filter.selectedFilter) > -1) && [6, 7, 8].indexOf(this.filter.selectedCondition) > -1)
       },
@@ -46,7 +57,6 @@
         return ((this.filter.selectedFilter == 'last_order_date' || this.filter.selectedFilter == 'first_order_date') && [3, 4, 5, 6, 7, 8].indexOf(option) > -1) || ((['number_of_order', 'total_spend', 'last_order_total'].indexOf(this.filter.selectedFilter) > -1) && [0, 1, 2].indexOf(option) > -1)
       },
       removeFilter() {
-        $(this.$el).remove();
         this.$emit('filterRemove', this.filter, this.collection, this.index);
       },
       filterChange() {
