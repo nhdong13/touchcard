@@ -31,6 +31,12 @@
     },
     props: ["filter", "collection", "index"],
     beforeMount() {
+      if (this.filter.selectedFilter.includes("order_date")) {
+        this.selectedFilter = "order_date";
+        this.selectedDateOption = this.filter.selectedFilter.split("order_date")[0];
+      } else {
+        this.selectedFilter = this.filter.selectedFilter;
+      }
       this.resetAvailableFilter();
     },
     data() {

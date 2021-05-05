@@ -461,6 +461,7 @@
         let tmp = this.acceptedFilters.length == 0 ? {} : {"filter": [], "condition": [], "value": []};
         this.acceptedFilters.forEach(item => {
           let value = this.useNumberInput(item["selectedFilter"], item["selectedCondition"]) ? item["inputValue"] : item["dateValue"];
+          if (value == null) return;
           tmp["filter"].push(item["selectedFilter"]);
           tmp["condition"].push(item["selectedCondition"].toString());
           tmp["value"].push(value);
