@@ -1,8 +1,14 @@
 <template>
   <div class="filter-line">
-    <select class="filter-dropdown" v-model="filter.selectedFilter" @change="filterChange">
+    <input v-model="filter.selectedFilter" @change="filterChange" class="d-none filter-value" />
+    <select class="filter-dropdown" v-model="selectedFilter" @change="detectFilter">
       <option v-for="option in availableFilter" :key="option[1]" :value="option[1]">{{option[0]}}</option>
     </select>
+    <div class="date-options">
+      <select class="date-options-dropdown" v-model="selectedDateOption" v-if="selectedFilter == 'order_date'" @change="detectFilter">
+        <option v-for="option in DATE_OPTIONS" :key="option[1]" :value="option[1]">{{option[0]}}</option>
+      </select>
+    </div>
     <select class="option-dropdown" v-if="filter.selectedFilter != ''" v-model="filter.selectedCondition" @change="filterChange">
       <option v-for="condition in CONDITIONS" v-if="showOption(condition[1])" :key="condition[1]" :value="condition[1]">{{condition[0]}}</option>
     </select>
@@ -29,14 +35,16 @@
     },
     data() {
       return {
-        FILTER_OPTIONS: [["Select a filter" , ""              ],
+        availableFilter: [],
+        selectedFilter: "",
+        selectedDateOption: "first_",
+        FILTER_OPTIONS: [["Select a filter" , ""                ],
                          ["Number of orders", "number_of_order" ],
                          ["Total Spend"     , "total_spend"     ],
-                         ["Last order date" , "last_order_date" ],
-                         ["First order date", "first_order_date"],
+                         ["Order date"      , "order_date"      ],
                          ["Last order total", "last_order_total"]
                         ],
-        availableFilter: [],
+        DATE_OPTIONS: [["First order date", "first_"], ["Last order date", "last_"]],
         CONDITIONS: [["is", 0], ["is greater than", 1], ["is less than", 2],
               ["before", 3], ["after", 5]] //["between", 4], ["before", 6],
               //["between", 7], ["after", 8]],
@@ -61,13 +69,17 @@
       },
       filterChange() {
         this.$emit('filterChange', this.filter, this.collection, this.index);
-      }
+      },
+      detectFilter() {
+        this.filter.selectedFilter = this.selectedFilter == "order_date" ? this.selectedDateOption + this.selectedFilter : this.selectedFilter;
+        this.filterChange();
+      },
     }
   }
 </script>
 <style scoped>
 .filter-line {
-  width: 600px;
+  width: 700px;
   display: flex;
   margin-top: 15px;
 }
@@ -89,7 +101,7 @@
 }
 
 .valueInput {
-  width: 254px;
+  width: 224px;
   margin-right: 4px;
   height: 30px;
 }
@@ -117,5 +129,14 @@
 
 .dropdown-content p {
   cursor: pointer;
+}
+
+.date-options {
+  width: 130px;
+  margin-right: 10px;
+}
+
+.d-none {
+  display: none;
 }
 </style>

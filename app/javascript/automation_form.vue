@@ -423,7 +423,7 @@
         collection == "accepted" ? this.acceptedFilters.splice(index, 1) : this.removedFilters.splice(index, 1);
       },
       removeEmptyFilter() {
-        $(".filter-dropdown").each(function() {
+        $(".filter-value").each(function() {
           if ($(this).val() == "") {
             $(this).parent().remove();
           }
@@ -522,7 +522,7 @@
 
   .filter-config {
     display: block;
-    width: 600px;
+    width: 700px;
   }
 
   .filter-section-title {
