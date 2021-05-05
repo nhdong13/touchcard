@@ -11,7 +11,8 @@ class CardOrderSerializer < ActiveModel::Serializer
              :schedule,
              :send_date_start,
              :tokens_used,
-             :credits
+             :credits,
+             :campaign_type
 
 
   def campaign_status
@@ -20,7 +21,11 @@ class CardOrderSerializer < ActiveModel::Serializer
   end
 
   def tokens_used
+  end
 
+  def campaign_type
+    return "-" if object.campaign_type.nil?
+    object.campaign_type.capitalize.split("_").join("-")
   end
 
   def budget_type
