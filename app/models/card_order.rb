@@ -76,12 +76,14 @@ class CardOrder < ApplicationRecord
   end
 
   def update_budget
+    current_credits = credits
     if non_set?
       update_columns(
         budget: 0,
         credits: 0,
         budget_update: 0
       )
+      shop.update(credit: shop.credit + current_credits)
     end
   end
 
@@ -91,15 +93,24 @@ class CardOrder < ApplicationRecord
         budget: budget_update,
         credits: budget_update
         )
+      shop_credits = shop.credit - budget_update
+      if shop_credits < budget_update
+          raise "not enough token"
+      else
+        shop.update(credit: shop_credits)
+      end
     else
       if budget_update >= budget
         new_credits = credits + (budget_update - budget)
+        shop_credits = shop.credit - (budget_update - budget)
         update(
           budget: budget_update,
           credits: new_credits
         )
+        shop.update(credit: shop_credits)
       else
         new_credits = credits - (budget - budget_update)
+        shop_credits = shop.credit + (budget - budget_update)
         if new_credits < 0
           raise "the budget is lower than credits used."
         else
@@ -107,6 +118,7 @@ class CardOrder < ApplicationRecord
             budget: budget_update,
             credits: new_credits
           )
+          shop.update(credit: shop_credits)
         end
       end
     end

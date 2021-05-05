@@ -56,7 +56,7 @@
               <md-switch v-model="campaignActive" :value="item.id" class="md-primary" @change="value => onChangeCampaignActive(value, item.id)"></md-switch>
             </td>
             <td v-on:click="onEditCampaign(item.id)" class="campaign-name-style">{{ item.campaign_name }}</td>
-            <td>{{ item.type }}</td>
+            <td>{{ item.campaign_type }}</td>
             <td>{{ item.campaign_status}}</td>
             <td>
               <span class='t-b' v-if="item.budget > 0 ? true : false"> {{item.credits}}/{{ item.budget }} credits</span>
