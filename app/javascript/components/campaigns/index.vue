@@ -39,7 +39,7 @@
                 <font-awesome-icon icon="caret-up" v-else/>
               </span>
             </th>
-            <th>Budget</th>
+            <th>Monthly budget</th>
             <th v-on:click="onSortByAlphabetically('sortBySendDateStart', 'send_date_start')">
               Schedule
               <span>
@@ -59,8 +59,7 @@
             <td>{{ item.campaign_type }}</td>
             <td>{{ item.campaign_status}}</td>
             <td>
-              <span class='t-b' v-if="item.budget > 0 ? true : false"> {{item.credits}}/{{ item.budget }} credits</span>
-              <i class='t-b'>{{ item.budget_type }}</i>
+              <span class='t-b'> {{ item.budget }}</span>
             </td>
             <td>{{ item.schedule }}</td>
           </tr>

@@ -31,20 +31,19 @@ class CardOrderSerializer < ActiveModel::Serializer
   def budget_type
     case object.budget_type
     when "non_set"
-      "Non set"
+      "-"
     when "monthly"
-      "Monthly"
-    when "lifetime"
-      "Lifetime"
+      object.credits
     end
   end
 
   def budget
+    return "-" if object.one_off?
     case object.budget_type
     when "non_set"
-      ""
+      "-"
     else
-      object.budget
+      "$#{object.budget}"
     end
   end
 

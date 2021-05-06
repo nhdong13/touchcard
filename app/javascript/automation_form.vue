@@ -18,7 +18,7 @@
     </div>
 
     <div class="automation-section">
-      <strong>Budget</strong>
+      <strong>Monthly budget</strong>
       <span v-if="campaign_type =='automation'">
         <input type="radio" id="non_set_budget" value="non_set" v-model="budget_type">
         <label for="non_set_budget">Non set</label>
@@ -27,8 +27,6 @@
         <input type="radio" id="monthly_budget" value="monthly" v-model="budget_type">
         <label for="monthly_budget">Monthly</label>
       </span>
-      <input type="radio" id="lifetime_budget" value="lifetime" v-model="budget_type">
-      <label for="lifetime_budget">Lifetime</label>
       <div class="filter-config nested-toggle" v-if="setLimitToKens">
         <span>
           Limit: <input type="numer" id="budget_limit" v-model="automation.budget_update"> credits
@@ -175,7 +173,6 @@
       setBudgetType: function(event){
         let campaign_type = event.target.value;
         if(campaign_type == "one_off"){
-          this.budget_type = "lifetime"
           this.willShowBudgetType = false
         } else {
           this.budget_type = this.automation.budget_type
