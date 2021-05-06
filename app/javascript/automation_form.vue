@@ -8,22 +8,26 @@
 
     <div class="automation-section">
       <strong>Type</strong>
-      <input type="radio" id="automation" value="automation" v-model="automation.campaign_type" v-on:click="setBudgetType">
-      <label for="automation">Automation</label>
-      <input type="radio" id="one_off" value="one_off" v-model="automation.campaign_type" v-on:click="setBudgetType">
-      <label for="one_off">One-off</label>
+      <span v-if="automation.campaign_type == null || automation.campaign_type == 'automation'">
+        <input type="radio" id="automation" value="automation" v-model="campaign_type" v-on:click="setBudgetType">
+        <label for="automation">Automation</label>
+      </span>
+      <span v-if="automation.campaign_type == null || automation.campaign_type == 'one_off'">
+        <input type="radio" id="one_off" value="one_off" v-model="campaign_type" v-on:click="setBudgetType">
+        <label for="one_off">One-off</label>
+      </span>
     </div>
 
-    <div v-if="automation.campaign_type =='automation'" class="automation-section">
+    <div v-if="campaign_type =='automation'" class="automation-section">
       <strong>Send card <input type="number" min="0" max="52" v-model="automation.send_delay"> weeks after purchase</strong>
     </div>
     <div class="automation-section">
       <strong>Budget</strong>
-      <span v-if="automation.campaign_type =='automation'">
+      <span v-if="campaign_type =='automation'">
         <input type="radio" id="non_set_budget" value="non_set" v-model="budget_type">
         <label for="non_set_budget">Non set</label>
       </span>
-      <span v-if="automation.campaign_type =='automation'">
+      <span v-if="campaign_type =='automation'">
         <input type="radio" id="monthly_budget" value="monthly" v-model="budget_type">
         <label for="monthly_budget">Monthly</label>
       </span>
@@ -36,7 +40,7 @@
       </div>
     </div>
 
-    <div class="automation-section" v-if="automation.campaign_type =='one_off'">
+    <div class="automation-section" v-if="campaign_type =='one_off'">
       <strong>Send at</strong>
       <datepicker v-model="sendDate"></datepicker>
     </div>
@@ -232,6 +236,7 @@
         sendDate: "",
         budget_type: this.automation.budget_type,
         willShowBudgetType: true,
+        campaign_type: this.automation.campaign_type ? this.automation.campaign_type : "automation"
       }
     },
 
@@ -374,6 +379,7 @@
         }
 
         this.automation.budget_type = this.budget_type
+        this.automation.campaign_type = this.campaign_type
         if (this.checkFormReturnAddressIsInvalid()) return;
 
         this.postOrPutForm();
