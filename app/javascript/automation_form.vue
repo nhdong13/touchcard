@@ -445,6 +445,7 @@
           let value = this.useNumberInput(item["selectedFilter"], item["selectedCondition"]) ? item["inputValue"] : item["dateValue"];
           return value ? [item["selectedFilter"], item["selectedCondition"], value].join("#") : null;
         }).filter(item => item != null);
+
         collectedFilters["removed"] = this.removedFilters.map(item => {
           let value = this.useNumberInput(item["selectedFilter"], item["selectedCondition"]) ? item["inputValue"] : item["dateValue"];
           return value ? [item["selectedFilter"], item["selectedCondition"], value].join("#") : null;
@@ -454,7 +455,7 @@
         return this.automation.filters_attributes[last_index].filter_data;
       },
       useNumberInput(filter, condition) {
-        return (['number_of_order', 'total_spend', 'last_order_total'].indexOf(filter) > -1) || ((['last_order_date', 'first_order_date'].indexOf(filter) > -1) && [6, 7, 8].indexOf(condition) > -1);
+        return (['number_of_order', 'total_spend', 'last_order_total'].indexOf(filter) > -1) || ((['last_order_date', 'first_order_date'].indexOf(filter) > -1) && ["6", "7", "8"].indexOf(condition) > -1);
       },
       convertFiltersToParams() {
         let res = {};
@@ -523,7 +524,7 @@
 
   .filter-config {
     display: block;
-    width: 700px;
+    width: 850px;
   }
 
   .filter-section-title {
