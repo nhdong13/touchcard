@@ -1,8 +1,10 @@
 class CustomerTargetingService
   attr_accessor :current_shop, :orders
-  def initialize(shop)
-    @current_shop = shop
-    @orders = @current_shop.orders.where.not(customer_id: nil)
+  def initialize(shop=nil)
+    if shop
+      @current_shop = shop
+      @orders = @current_shop.orders.where.not(customer_id: nil)
+    end
   end
 
   def get_customer_ids filter, condition, value
@@ -44,7 +46,9 @@ class CustomerTargetingService
       removed_user_ids += get_customer_ids(filter, removed_attrs[:condition][i], removed_attrs[:value][i])
     end if removed_attrs.present?
     removed_user_ids.each{|remove_id| accepted_user_ids.delete(remove_id)}
-    Customer.find(accepted_user_ids.keys).each{|customer| accepted_user_ids[customer.id].unshift(customer.full_name)}
+    Customer.includes(:orders, :postcards, :addresses).find(accepted_user_ids.keys).each do |customer|
+      get_customer_detail(customer).each{|item| accepted_user_ids[customer.id].unshift(item)}
+    end
     accepted_user_ids
   end
 
@@ -70,48 +74,48 @@ class CustomerTargetingService
   end
 
   def filter_by collection, filter_type, raw_value
-    case filter_type
-      when "0"
-        value = raw_value.to_i
-        collection.filter{|k,v| v == value}.keys
-      when "1"
-        value = raw_value.to_i
-        collection.filter{|k,v| v > value}.keys
-      when "2"
-        value = raw_value.to_i
-        collection.filter{|k,v| v < value}.keys
-      when "3"
-        value = raw_value.to_time.end_of_day
-        collection.filter{|k,v| v < value}.keys
-      when "4"
-        begin_value = raw_value[0].to_time.beginning_of_day
-        end_value = raw_value[1].to_time.end_of_day
-        collection.filter{|k,v| (v < begin_value) && (v > end_value)}.keys
-      when "5"
-        value = raw_value.to_time.beginning_of_day
-        collection.filter{|k,v| v > value}.keys
-      when "6"
-        value = raw_value.to_i.days
-        collection.filter{|k,v| v > Time.now.beginning_of_day - value}.keys
-      when "7"
-        begin_value = raw_value[0].to_i.days
-        end_value = raw_value[1].to_i.days
-        collection.filter{|k,v| (v > Time.now.beginning_of_day - begin_value) && (v < Time.now.end_of_day - end_value)}.keys
-      when "8"
-        value = raw_value.to_i.days
-        collection.filter{|k,v| v < Time.now.end_of_day - value}.keys
-      else []
-    end
+    collection.filter{|k,v| compare_field(v, filter_type, raw_value)}.keys
+    # case filter_type
+    #   when "0"
+    #     value = raw_value.to_i
+    #     collection.filter{|k,v| v == value}.keys
+    #   when "1"
+    #     value = raw_value.to_i
+    #     collection.filter{|k,v| v > value}.keys
+    #   when "2"
+    #     value = raw_value.to_i
+    #     collection.filter{|k,v| v < value}.keys
+    #   when "3"
+    #     value = raw_value.to_time.end_of_day
+    #     collection.filter{|k,v| v < value}.keys
+    #   when "4"
+    #     begin_value = raw_value[0].to_time.beginning_of_day
+    #     end_value = raw_value[1].to_time.end_of_day
+    #     collection.filter{|k,v| (v < begin_value) && (v > end_value)}.keys
+    #   when "5"
+    #     value = raw_value.to_time.beginning_of_day
+    #     collection.filter{|k,v| v > value}.keys
+    #   when "6"
+    #     value = raw_value.to_i.days
+    #     collection.filter{|k,v| v > Time.now.beginning_of_day - value}.keys
+    #   when "7"
+    #     begin_value = raw_value[0].to_i.days
+    #     end_value = raw_value[1].to_i.days
+    #     collection.filter{|k,v| (v > Time.now.beginning_of_day - begin_value) && (v < Time.now.end_of_day - end_value)}.keys
+    #   when "8"
+    #     value = raw_value.to_i.days
+    #     collection.filter{|k,v| v < Time.now.end_of_day - value}.keys
+    #   else []
+    # end
   end
 
-  def self.match_filter? order, filter
+  def match_filter? order, filter
     split_filter = filter.split("#")
     field_to_filter = select_field_to_filter(split_filter[0], order)
-    byebug
     compare_field(field_to_filter, split_filter[1], split_filter[2])
   end
 
-  def self.select_field_to_filter field, order
+  def select_field_to_filter field, order
     orders = Order.where(customer_id: order.customer_id, shop_id: order.shop_id)
     case field
     when "number_of_order"
@@ -134,31 +138,67 @@ class CustomerTargetingService
     end
   end
 
-  def self.compare_field field, condition, value
+  def compare_field field, condition, value
     case condition
-    when "0"
-      field.to_i == value.to_i
-    when "1"
-      field.to_i > value.to_i
-    when "2"
-      field.to_i < value.to_i
-    when "3"
-      field.to_time < value.to_time.end_of_day
-    when "4"
-      begin_value = raw_value[0].to_time.beginning_of_day
-      end_value = raw_value[1].to_time.end_of_day
-      collection.filter{|k,v| (v < begin_value) && (v > end_value)}.keys
-    when "5"
-      field.to_time > value.to_time.beginning_of_day
-    # when "6"
-    #   field.to_i.days > Time.now.beginning_of_day - value.to_i
-    # when "7"
-    #   begin_value = raw_value[0].to_i.days
-    #   end_value = raw_value[1].to_i.days
-    #   collection.filter{|k,v| (v > Time.now.beginning_of_day - begin_value) && (v < Time.now.end_of_day - end_value)}.keys
-    # when "8"
-    #   field.to_i.days < Time.now.end_of_day - value
-    else []
+      when "0"
+        field.to_i == value.to_i
+      when "1"
+        field.to_i > value.to_i
+      when "2"
+        field.to_i < value.to_i
+      when "3"
+        field.to_time < value.to_time.end_of_day
+      when "4"
+        splited_value = value.split("&")
+        begin_value = splited_value[0].to_time.beginning_of_day
+        end_value = splited_value[1].to_time.end_of_day
+        (field.to_time > begin_value) && (field.to_time < end_value)
+      when "5"
+        field.to_time > value.to_time.beginning_of_day
+      when "6"
+        field.to_time > Time.now.beginning_of_day - value.to_i.days
+      when "7"
+        splited_value = value.split("&")
+        begin_value = splited_value[0].to_i.days
+        end_value = splited_value[1].to_i.days
+        (field.to_time < Time.now.end_of_day - begin_value) && (field.to_time > Time.now.beginning_of_day - end_value)
+      when "8"
+        field.to_time < Time.now.end_of_day - value.to_i.days
+      else
+        false
+    end
   end
+
+  def get_customer_detail customer
+    customer_detail = customer.default_address
+    customer_order = Order.where(customer_id: customer.id).last
+    customer_first_order = Order.where(customer_id: customer.id).first
+    [ customer.full_name,
+      customer.email,
+      customer_detail.company,
+      customer_detail.address1,
+      customer_detail.city,
+      customer_detail.province,
+      customer_detail.country,
+      customer_detail.zip,
+      customer_detail.phone,
+      customer_detail.company,
+      customer_detail.address1,
+      customer_detail.city,
+      customer_detail.province,
+      customer_detail.country,
+      customer_detail.zip,
+      customer_detail.phone,
+      customer.orders_count,
+      customer.total_spent,
+      customer_order.processed_at,
+      customer_order.fulfillment_status,
+      customer_order.total_price,
+      customer_first_order.processed_at,
+      customer.postcards.count,
+      customer.postcards.last&.date_sent,
+      customer.accepts_marketing,
+      customer.verified_email ? "Email verified" : "Not verified"
+    ].reverse
   end
 end

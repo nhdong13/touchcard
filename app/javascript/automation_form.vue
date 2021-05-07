@@ -177,15 +177,15 @@
       </span> -->
     </div>
 
-    <div class="automation-section">
+    <!-- <div class="automation-section">
       <input id="automation-filter-checkbox" type="checkbox" v-model="enableFiltering">
       <label for="automation-filter-checkbox" class="noselect"><strong>Filter by Order Size</strong></label>
       <div class="filter-config nested-toggle" v-if="enableFiltering">
-      <!-- <span>
+      <span>
           Minimum $: <input type="number" min="1" max="9999" v-model="automation.filters_attributes[automation.filters_attributes.length-1].filter_data.minimum">
-      </span> -->
+      </span> 
       </div>
-    </div>
+    </div>-->
     <hr />
     <h2>Front</h2>
     <card-editor
@@ -459,6 +459,7 @@
       },
       addFilter(list) {
         let defaultValue = {selectedFilter: "", selectedCondition: 0, inputValue: null, dateValue: null};
+        this.removeEmptyFilter();
         list == "accepted" ? this.acceptedFilters.push(defaultValue) : this.removedFilters.push(defaultValue);
       },
       filterChange(filter, collection, index) {
@@ -466,6 +467,13 @@
       },
       filterRemove(filter, collection, index) {
         collection == "accepted" ? this.acceptedFilters.splice(index, 1) : this.removedFilters.splice(index, 1);
+      },
+      removeEmptyFilter() {
+        $(".filter-value").each(function() {
+          if ($(this).val() == "") {
+            $(this).parent().remove();
+          }
+        });
       },
       convertRawFilters(rawValue) {
         ["accepted", "removed"].forEach(section => {
@@ -483,6 +491,7 @@
           let value = this.useNumberInput(item["selectedFilter"], item["selectedCondition"]) ? item["inputValue"] : item["dateValue"];
           return value ? [item["selectedFilter"], item["selectedCondition"], value].join("#") : null;
         }).filter(item => item != null);
+
         collectedFilters["removed"] = this.removedFilters.map(item => {
           let value = this.useNumberInput(item["selectedFilter"], item["selectedCondition"]) ? item["inputValue"] : item["dateValue"];
           return value ? [item["selectedFilter"], item["selectedCondition"], value].join("#") : null;
@@ -492,13 +501,14 @@
         return this.automation.filters_attributes[last_index].filter_data;
       },
       useNumberInput(filter, condition) {
-        return (['number_of_order', 'total_spend', 'last_order_total'].indexOf(filter) > -1) || ((['last_order_date', 'first_order_date'].indexOf(filter) > -1) && [6, 7, 8].indexOf(condition) > -1);
+        return (['number_of_order', 'total_spend', 'last_order_total'].indexOf(filter) > -1) || ((['last_order_date', 'first_order_date'].indexOf(filter) > -1) && ["6", "7", "8"].indexOf(condition) > -1);
       },
       convertFiltersToParams() {
         let res = {};
         let tmp = this.acceptedFilters.length == 0 ? {} : {"filter": [], "condition": [], "value": []};
         this.acceptedFilters.forEach(item => {
           let value = this.useNumberInput(item["selectedFilter"], item["selectedCondition"]) ? item["inputValue"] : item["dateValue"];
+          if (value == null) return;
           tmp["filter"].push(item["selectedFilter"]);
           tmp["condition"].push(item["selectedCondition"].toString());
           tmp["value"].push(value);
@@ -560,7 +570,7 @@
 
   .filter-config {
     display: block;
-    width: 600px;
+    width: 850px;
   }
 
   .filter-section-title {
