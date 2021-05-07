@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_05_05_084536) do
+ActiveRecord::Schema.define(version: 2021_05_07_080705) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -101,6 +101,7 @@ ActiveRecord::Schema.define(version: 2021_05_05_084536) do
     t.integer "credits", default: 0
     t.integer "budget_update", default: 0
     t.integer "campaign_type"
+    t.integer "limit_cards_per_day"
   end
 
   create_table "card_sides", id: :serial, force: :cascade do |t|
