@@ -7,7 +7,7 @@ class CampaignsController < BaseController
         campaigns: ActiveModelSerializers::SerializableResource.new(@result[:campaigns], {each_serializer: CardOrderSerializer}).to_json,
         total_pages: @result[:total_pages],
         statuses: @result[:statuses],
-        types: @result[:types]
+        campaign_types: @result[:campaign_types]
       }}
     end
   end
@@ -49,7 +49,7 @@ class CampaignsController < BaseController
         campaigns: ActiveModelSerializers::SerializableResource.new(@result[:campaigns], {each_serializer: CardOrderSerializer}).to_json,
         total_pages: @result[:total_pages],
         statuses: @result[:statuses],
-        types: @result[:types]
+        campaign_types: @result[:campaign_types]
       }}
     end
   end

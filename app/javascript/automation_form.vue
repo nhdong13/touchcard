@@ -34,9 +34,26 @@
       </div>
     </div>
 
+
     <div class="automation-section" v-if="campaign_type =='one_off'">
-      <strong>Send at</strong>
-      <datepicker v-model="sendDate"></datepicker>
+      <div>
+        <input id="sending-schedule-checkbox" type="checkbox" v-model="willCheckSendingSchedule">
+        <label for="sending-schedule-checkbox" class="noselect"><strong>Setting sending schedule</strong></label>
+      </div>
+      <div v-if="willShowSendingSchedule">
+        <div class="filter-config nested-toggle">
+          <span>Start date:</span>
+          <datepicker v-model="automation.send_date_start"></datepicker>
+        </div>
+        <div class="filter-config nested-toggle">
+          <span>End date:</span>
+          <datepicker v-model="automation.send_date_end"></datepicker>
+        </div>
+        <div class="filter-config nested-toggle">
+          <span>Limit per day:</span>
+          <input type="numer" id="budget_limit" v-model="automation.limit_cards_per_day"> postcards
+        </div>
+      </div>
     </div>
 
     <div v-if="campaign_type =='automation'" class="automation-section">
@@ -117,20 +134,45 @@
     data: function() {
       return {
         enableFiltering: (this.automation.filters_attributes.length > 0),
-        sendDate: "",
         budget_type: this.automation.budget_type,
         willShowBudgetType: true,
-        campaign_type: this.automation.campaign_type ? this.automation.campaign_type : "automation"
+        campaign_type: this.automation.campaign_type ? this.automation.campaign_type : "automation",
+        willShowSendingSchedule: false
       }
     },
 
     computed: {
       setLimitToKens: function(){
         let willSet = true;
-        if(this.budget_type == "non_set"){
-          willSet = false
+        if(this.campaign_type == "one_off"){
+          return willSet;
+        } else {
+          if(this.budget_type == "non_set"){
+            willSet = false
+          }
         }
         return willSet
+      },
+
+      willCheckSendingSchedule: {
+        get: function(){
+          let willShow = false;
+          if(this.automation.campaign_type == "one_off" && this.automation.send_date_end){
+            willShow = true;
+            this.willShowSendingSchedule = true
+          }
+          return willShow;
+        },
+        set: function(value){
+          if (value) {
+            this.willShowSendingSchedule = true
+          } else {
+            this.automation.send_date_start = ""
+            this.automation.send_date_end = ""
+            this.automation.limit_cards_per_day = 0
+            this.willShowSendingSchedule = false
+          }
+        }
       }
     },
 

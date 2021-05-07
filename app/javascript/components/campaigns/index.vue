@@ -53,7 +53,12 @@
               <input id="campaign-check-all" type="checkbox" v-model="selected" :value="item.id" number/>
             </td>
             <td>
-              <md-switch v-model="campaignActive" :value="item.id" class="md-primary" @change="value => onChangeCampaignActive(value, item.id)"></md-switch>
+              <span v-if="['Draft', 'Sent'].includes(item.campaign_status)">
+                <md-switch v-model="campaignActive" class="md-primary" disabled></md-switch>
+              </span>
+              <span v-else>
+                <md-switch v-model="campaignActive" :value="item.id" class="md-primary" @change="value => onChangeCampaignActive(value, item.id)"></md-switch>
+              </span>
             </td>
             <td v-on:click="onEditCampaign(item.id)" class="campaign-name-style">{{ item.campaign_name }}</td>
             <td>{{ item.campaign_type }}</td>
@@ -61,7 +66,10 @@
             <td>
               <span class='t-b'> {{ item.budget }}</span>
             </td>
-            <td>{{ item.schedule }}</td>
+            <td>
+              <span class='t-b'> {{ item.schedule }}</span>
+              <span v-if="item.campaign_status == 'Draft'" style="font-size: 10px">Sending on</span>
+            </td>
           </tr>
         </table>
       </div>
@@ -135,6 +143,14 @@
     },
 
     computed: {
+
+      disablePauseToggle: function (){
+        if(['draft', 'sent'].includes(campaign.id)){
+          return true
+        }
+        return false;
+      },
+
       selectAll: {
         get() {
           if (this.thisCampaigns && this.thisCampaigns.length > 0) {

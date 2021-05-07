@@ -57,7 +57,6 @@ document.addEventListener('turbolinks:load', () => {
   }
 
   if (campaignDashboardElement != null) {
-
     const campaignDashboardVueApp = new Vue({
       el: campaignDashboardElement,
       data: function() {
@@ -66,10 +65,10 @@ document.addEventListener('turbolinks:load', () => {
           campaigns: tmp_campaigns,
           totalPages: parseInt(campaignDashboardElement.dataset.totalPages),
           statuses: JSON.parse(campaignDashboardElement.dataset.statuses),
-          types: JSON.parse(campaignDashboardElement.dataset.types)
+          campaignTypes: JSON.parse(campaignDashboardElement.dataset.campaignTypes)
         }
       },
-      template: '<campaign-dashboard :campaigns="campaigns" :totalPages="totalPages" :campaignStatuses="statuses" :campaignTypes="types"></campaign-dashboard>',
+      template: '<campaign-dashboard :campaigns="campaigns" :totalPages="totalPages" :campaignStatuses="statuses" :campaignTypes="campaignTypes"></campaign-dashboard>',
       components: {
         campaignDashboard
       }

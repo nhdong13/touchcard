@@ -12,7 +12,9 @@ class CardOrderSerializer < ActiveModel::Serializer
              :send_date_start,
              :tokens_used,
              :credits,
-             :campaign_type
+             :campaign_type,
+             :send_date_start
+             :send_date_end
 
 
   def campaign_status
@@ -48,15 +50,27 @@ class CardOrderSerializer < ActiveModel::Serializer
   end
 
   def schedule
-    case object.campaign_status
-    when "draft"
-      "Not set"
-    when "sending"
-      "#{DatetimeService.new(object.send_date_start).to_date} - Ongoing"
-    when "paused"
-      "#{DatetimeService.new(object.send_date_start).to_date} - #{DatetimeService.new(object.send_date_end).to_date}"
+    result = "-"
+    start_date = DatetimeService.new(object.send_date_start).to_date
+    end_date = DatetimeService.new(object.send_date_end).to_date
+    if object.one_off?
+      if object.send_date_end
+        result = "#{start_date} - #{end_date}"
+      else
+        result = "#{start_date}"
+      end
     else
-      "Not set"
+      case object.campaign_status
+      when "draft"
+        result = "Not set"
+      when "sending"
+        result = "#{start_date} - Ongoing"
+      when "paused"
+        result = "#{start_date} - #{end_date}"
+      else
+        result = "Not set"
+      end
     end
+    result
   end
 end
