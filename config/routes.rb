@@ -60,7 +60,10 @@ Rails.application.routes.draw do
   end
 
   resources :targeting, only: [:index] do
-    post :get, on: :collection
+    collection do
+      post :get
+      get :get_filters
+    end
   end
 
   # Redirect `/app` (legacy) to `/` to avoid upgrade issues

@@ -13,4 +13,8 @@ class TargetingController < BaseController
       f.html { render "customer_list" }
     end
   end
+
+  def get_filters
+    render json: {filters: FILTER_OPTIONS, conditions: CONDITIONS}
+  end
 end
