@@ -9,7 +9,6 @@ class CardOrderSerializer < ActiveModel::Serializer
              :type,
              :enabled,
              :schedule,
-             :send_date_start,
              :tokens_used,
              :credits,
              :campaign_type,
@@ -60,13 +59,10 @@ class CardOrderSerializer < ActiveModel::Serializer
         result = "#{start_date}"
       end
     else
-      case object.campaign_status
-      when "draft"
-        result = "Not set"
-      when "sending"
-        result = "#{start_date} - Ongoing"
-      when "paused"
+      if object.send_date_start && object.send_date_end
         result = "#{start_date} - #{end_date}"
+      elsif object.send_date_start
+        result = "#{start_date} - Ongoing"
       else
         result = "Not set"
       end

@@ -5,8 +5,8 @@
     </div>
     <div class="campaign-tab-content">
       <div :class="'action'">
-        <button v-on:click="duplicateCampaign" :disabled="selected.length > 1 || selected.length < 1"> Duplicate </button>
-        <button v-on:click="deleteCampaigns"> Delete </button>
+        <button v-on:click="showModalConfirmDuplicate" :disabled="selected.length > 1 || selected.length < 1"> Duplicate </button>
+        <button v-on:click="showModalConfirmDeleteCampaign" :disabled="selected.length < 1"> Delete </button>
         <button v-on:click="exportCsv"> CSV </button>
         <DropdownMenu :campaignTypes="campaignTypes" :campaignStatuses="campaignStatuses" ref="DropdownMenu"></DropdownMenu>
         <input :placeholder="'Search'" v-model="searchQuery" @input="debounceSearch" />
@@ -83,6 +83,32 @@
         :page-class="'page-item'">
       </paginate>
       </div>
+      <campaignModal name="duplicateModal" :classes="'duplicate-modal'" :width="450" :height="200">
+        <div>
+          <div>
+            <strong><h3>What do you want to name this campaign?</h3></strong>
+          </div>
+          <div>
+            <input id="campaign_name" v-model="duplicateCampaignName">
+          </div>
+          <br/>
+          <div>
+            <button v-on:click="duplicateCampaign"> Save </button>
+          </div>
+        </div>
+      </campaignModal>
+
+      <campaignModal name="deleteCampaignModal" :classes="'delete-campaign-modal'" :width="450" :height="200">
+        <div>
+          <div>
+            <strong><h3>This action cannot be undone. Are you sure you want to delete the campaign(s)?</h3></strong>
+          </div>
+          <div>
+            <button v-on:click="closeModalConfirmDeleteCampaign"> Cancel </button>
+            <button v-on:click="deleteCampaigns"> Delete </button>
+          </div>
+        </div>
+      </campaignModal>
     </div>
 </template>
 
@@ -93,7 +119,9 @@
   import DropdownMenu from './dropdown_menu.vue'
   import { MdSwitch } from 'vue-material/dist/components'
   import _ from 'lodash'
+  import VModal from 'vue-js-modal'
 
+  Vue.use(VModal, { componentName: 'campaignModal'})
   Vue.use(MdSwitch)
 
   export default {
@@ -119,6 +147,9 @@
       },
     },
 
+    mounted () {
+    },
+
     data: function() {
        return {
         thisCampaigns: this.campaigns,
@@ -134,7 +165,8 @@
         sortByName: true,
         sortByType: true,
         sortByStatus: true,
-        sortBySendDateStart: true
+        sortBySendDateStart: true,
+        duplicateCampaignName: ""
       }
     },
 
@@ -203,15 +235,31 @@
         Turbolinks.visit(`/automations/${id}/edit`);
       },
 
+
+      showModalConfirmDuplicate: function() {
+        this.$modal.show('duplicateModal')
+      },
+
+      closeModalConfirmDuplicate: function() {
+        this.$modal.hide('duplicateModal')
+      },
+
+      showModalConfirmDeleteCampaign: function() {
+        this.$modal.show('deleteCampaignModal')
+      },
+
+      closeModalConfirmDeleteCampaign: function() {
+        this.$modal.hide('deleteCampaignModal')
+      },
+
       duplicateCampaign: function() {
-        if(confirm('Are you sure?')){
-          let _this = this
-          axios.get('/campaigns/duplicate_campaign.json', { params: { campaign_id: this.selected } })
-            .then(function(response) {
-              _this.updateState(response.data)
-            }).catch(function (error) {
-          });
-        }
+        let _this = this
+        axios.get('/campaigns/duplicate_campaign.json', { params: { campaign_id: this.selected, campaign_name: this.duplicateCampaignName } })
+          .then(function(response) {
+            _this.updateState(response.data)
+            _this.closeModalConfirmDuplicate()
+          }).catch(function (error) {
+        });
       },
 
       onClickNewCampaign: function() {
@@ -302,16 +350,15 @@
       },
 
       deleteCampaigns: function() {
-        if(confirm('Are you sure?')){
-          let _this = this
-          let target = `/campaigns/delete_campaigns.json`;
-          let campaignsSelected = this.selected
-          axios.delete(target, { params: {campaign_ids: campaignsSelected} })
-            .then(function(response) {
-              _this.updateState(response.data)
-            }).catch(function (error) {
-          });
-        }
+        let _this = this
+        let target = `/campaigns/delete_campaigns.json`;
+        let campaignsSelected = this.selected
+        axios.delete(target, { params: {campaign_ids: campaignsSelected} })
+          .then(function(response) {
+            _this.updateState(response.data)
+            _this.closeModalConfirmDeleteCampaign()
+          }).catch(function (error) {
+        });
       },
 
       collectParamsFilters: function() {
@@ -434,6 +481,17 @@
         outline: none;
         box-shadow: none;
       }
+    }
+  }
+
+  .duplicate-modal, .delete-campaign-modal{
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    #campaign_name{
+      width:100%;
+      height: 35px;
     }
   }
 </style>

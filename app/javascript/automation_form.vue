@@ -5,6 +5,12 @@
     <hr>
     <!-- div v-cloak></div -->
     <h3>{{automation.type}}</h3>
+
+    <div class="automation-section">
+      <strong>Name: </strong>
+      <input id="campaign_name" v-model="automation.campaign_name">
+    </div>
+
     <div class="automation-section">
       <strong>Type</strong>
       <span v-if="automation.campaign_type == null || automation.campaign_type == 'automation'">
@@ -56,6 +62,18 @@
       </div>
     </div>
 
+    <div class="automation-section" v-else>
+      <strong>Campaign schedules</strong>
+      <div class="filter-config nested-toggle">
+        <span>Start date:</span>
+        <datepicker v-model="automation.send_date_start"></datepicker>
+      </div>
+      <div class="filter-config nested-toggle">
+        <span>End date:</span>
+        <datepicker v-model="automation.send_date_end"></datepicker>
+      </div>
+    </div>
+
     <div v-if="campaign_type =='automation'" class="automation-section">
       <strong>Send card <input type="number" min="0" max="52" v-model="automation.send_delay"> weeks after purchase</strong>
     </div>
@@ -103,6 +121,7 @@
             :aws_sign_endpoint="awsSignEndpoint"
     ></card-editor>
     <br>
+
   </div>
 </template>
 
@@ -111,7 +130,6 @@
   import axios from 'axios'
   import CardEditor from './components/card_editor.vue'
   import Datepicker from 'vuejs-datepicker';
-
 
   export default {
     props: {
