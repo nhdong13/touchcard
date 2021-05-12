@@ -7,7 +7,7 @@ class CampaignSearchService
   def index
     page = @params[:page] || 1
     campaigns = @current_shop.card_orders
-    campaigns = campaigns.where("lower(card_orders.name) LIKE ?", "%#{@params[:query]}%") if @params[:query].present?
+    campaigns = campaigns.where("lower(card_orders.campaign_name) LIKE ?", "%#{@params[:query]}%") if @params[:query].present?
     campaigns = campaigns.where(campaign_type: filter_base_on_campaign_type) if filter_base_on_campaign_type.present?
     campaigns = campaigns.where(campaign_status: filter_base_on_status) if filter_base_on_status
     campaigns = campaigns.where(created_at: filter_base_on_date_created) if filter_base_on_date_created

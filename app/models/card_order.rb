@@ -7,7 +7,7 @@ class CardOrder < ApplicationRecord
   self.inheritance_column = :_type_disabled
   belongs_to :shop
 
-  CSV_ATTRIBUTES = %w(name type campaign_status campaign_budget campaign_schedule).freeze
+  CSV_ATTRIBUTES = %w(campaign_name type campaign_status budget schedule).freeze
 
   # TODO: can remove card_side relation as card side data now lives in front_json and back_json
   has_one :card_side_front,

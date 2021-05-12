@@ -5,11 +5,18 @@
     </div>
     <div class="campaign-tab-content">
       <div :class="'action'">
-        <button v-on:click="showModalConfirmDuplicate" :disabled="selected.length > 1 || selected.length < 1"> Duplicate </button>
-        <button v-on:click="showModalConfirmDeleteCampaign" :disabled="selected.length < 1"> Delete </button>
-        <button v-on:click="exportCsv"> CSV </button>
-        <DropdownMenu :campaignTypes="campaignTypes" :campaignStatuses="campaignStatuses" ref="DropdownMenu"></DropdownMenu>
-        <input :placeholder="'Search'" v-model="searchQuery" @input="debounceSearch" />
+        <div :class="'action'">
+          <button v-on:click="showModalConfirmDuplicate" :disabled="selected.length > 1 || selected.length < 1"> Duplicate </button>
+          <button v-on:click="showModalConfirmDeleteCampaign" :disabled="selected.length < 1"> Delete </button>
+        </div>
+        <div :class="'search-action'">
+          <button v-on:click="exportCsv">
+            CSV
+            <font-awesome-icon icon="long-arrow-alt-down"/>
+           </button>
+          <DropdownMenu :campaignTypes="campaignTypes" :campaignStatuses="campaignStatuses" ref="DropdownMenu"></DropdownMenu>
+          <input :placeholder="'Search'" v-model="searchQuery" @input="debounceSearch" />
+        </div>
       </div>
       <div>
         <table class="campaign-dashboard">
@@ -454,10 +461,14 @@
 
   .action{
     display: flex;
-    margin-bottom: 10px;
     button{
       margin-right: 10px;
     }
+  }
+
+  .search-action{
+    display: flex;
+    margin-left: auto;
   }
 
   .t-b {
