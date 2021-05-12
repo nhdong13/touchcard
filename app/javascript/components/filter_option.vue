@@ -10,7 +10,7 @@
       </select>
     </div>
     <select class="option-dropdown" v-if="filter.selectedFilter != ''" v-model="filter.selectedCondition" @change="optionChange">
-      <option v-for="condition in filterConditions" v-if="showOption(condition[1])" :key="condition[1]" :value="condition[1]" :disabled="condition[1].length > 2 ? true : false">{{condition[0]}}</option>
+      <option v-for="condition in filterConditions" v-if="showOption(condition[1])" :key="condition[1]" :value="condition[1]" :disabled="condition[1].length == 3 ? true : false">{{condition[0]}}</option>
     </select>
     <div class="f-value" v-if="showSecondInput()">
       <input v-model="filter.dateValue" @change="filterChange" class="d-none" />
@@ -22,8 +22,9 @@
       <input type="number" class="valueInput" v-model="inputValue0" v-if="showNumberInput()" @change="detectValue('number')" />
     </div>
     <div class="f-value" v-else>
-      <datepicker class="valueInput" v-model="filter.dateValue" v-if="filter.selectedFilter != '' && !showNumberInput()" @change="filterChange" />
-      <input type="number" class="valueInput" v-model="filter.inputValue" v-if="showNumberInput()" @change="filterChange" />
+      <input type="text" class="valueInput" v-model="filter.inputValue" v-if="showTextInput()" @change="filterChange" />
+      <input type="number" class="valueInput" v-model="filter.inputValue" v-else-if="showNumberInput()" @change="filterChange" />
+      <datepicker class="valueInput" v-model="filter.dateValue" v-else-if="filter.selectedFilter != ''" @change="filterChange" />
     </div>
     <div class="dropdown">
       <button type="button" class="more-action-btn" v-if="filter.selectedFilter != ''">...</button>
@@ -97,13 +98,21 @@
         this.inputValue0 = null;
       },
       showNumberInput() {
-        return (['number_of_order', 'total_spend', 'last_order_total'].indexOf(this.filter.selectedFilter) > -1) || ((['last_order_date', 'first_order_date'].indexOf(this.filter.selectedFilter) > -1) && ["6", "7", "8"].indexOf(this.filter.selectedCondition) > -1)
+        return ['number_of_order', 'total_spend', 'last_order_total', 'shipping_country', 'shipping_state', 'referring_site', 'landing_site', 'order_tag', 'discount_code_used'].indexOf(this.filter.selectedFilter) > -1 ||
+               ((['last_order_date', 'first_order_date'].indexOf(this.filter.selectedFilter) > -1) && ["6", "7", "8"].indexOf(this.filter.selectedCondition) > -1)
+      },
+      showTextInput() {
+        return ['shipping_country', 'shipping_state', 'referring_site', 'landing_site', 'order_tag', 'discount_code_used'].indexOf(this.filter.selectedFilter) > -1
       },
       showSecondInput() {
         return this.selectedFilter == "order_date" && (this.filter.selectedCondition == "4" || this.filter.selectedCondition == "7");
       },
       showOption(option) {
-        return option == "" || ((this.filter.selectedFilter == 'last_order_date' || this.filter.selectedFilter == 'first_order_date') && ["3", "4", "5", "6", "7", "8", "888", "999"].indexOf(option.toString()) > -1) || ((['number_of_order', 'total_spend', 'last_order_total'].indexOf(this.filter.selectedFilter) > -1) && ["0", "1", "2"].indexOf(option.toString()) > -1)
+        return option == "" ||
+              (['last_order_date', 'first_order_date'].indexOf(this.filter.selectedFilter) > -1 && ["3", "4", "5", "6", "7", "8", "888", "999"].indexOf(option) > -1) ||
+              ((['number_of_order', 'total_spend', 'last_order_total'].indexOf(this.filter.selectedFilter) > -1) && ["0", "1", "2"].indexOf(option) > -1) ||
+              (['shipping_country', 'shipping_state', 'referring_site', 'landing_site'].indexOf(this.filter.selectedFilter) > -1 && option == "9") ||
+              (['order_tag', 'discount_code_used'].indexOf(this.filter.selectedFilter) > -1 && option == "find_value")
       },
       removeFilter() {
         this.$emit('filterRemove', this.filter, this.collection, this.index);

@@ -440,7 +440,7 @@
           rawValue[section].forEach(value => {
             let splitValue = value.split("#");
             let defaultValue = {selectedFilter: splitValue[0], selectedCondition: splitValue[1], inputValue: null, dateValue: null};
-            this.useNumberInput(splitValue[0], splitValue[1]) ? defaultValue["inputValue"] = splitValue[2] : defaultValue["dateValue"] = splitValue[2];
+            this.useDateInput(splitValue[0], splitValue[1]) ? defaultValue["dateValue"] = splitValue[2] : defaultValue["inputValue"] = splitValue[2];
             section == "accepted" ? this.acceptedFilters.push(defaultValue) : this.removedFilters.push(defaultValue);
           });
         });
@@ -448,12 +448,12 @@
       collectFilters() {
         let collectedFilters = {accepted: [], removed: []};
         collectedFilters["accepted"] = this.acceptedFilters.map(item => {
-          let value = this.useNumberInput(item["selectedFilter"], item["selectedCondition"]) ? item["inputValue"] : item["dateValue"];
+          let value = this.useDateInput(item["selectedFilter"], item["selectedCondition"]) ? item["dateValue"] : item["inputValue"];
           return value ? [item["selectedFilter"], item["selectedCondition"], value].join("#") : null;
         }).filter(item => item != null);
 
         collectedFilters["removed"] = this.removedFilters.map(item => {
-          let value = this.useNumberInput(item["selectedFilter"], item["selectedCondition"]) ? item["inputValue"] : item["dateValue"];
+          let value = this.useDateInput(item["selectedFilter"], item["selectedCondition"]) ? item["dateValue"] : item["inputValue"];
           return value ? [item["selectedFilter"], item["selectedCondition"], value].join("#") : null;
         }).filter(item => item != null);
         let last_index = this.automation.filters_attributes.length-1;
@@ -463,11 +463,14 @@
       useNumberInput(filter, condition) {
         return (['number_of_order', 'total_spend', 'last_order_total'].indexOf(filter) > -1) || ((['last_order_date', 'first_order_date'].indexOf(filter) > -1) && ["6", "7", "8"].indexOf(condition) > -1);
       },
+      useDateInput(filter, condition) {
+        return (['last_order_date', 'first_order_date'].indexOf(filter) > -1) && ["3", "4", "5"].indexOf(condition) > -1;
+      },
       convertFiltersToParams() {
         let res = {};
         let tmp = this.acceptedFilters.length == 0 ? {} : {"filter": [], "condition": [], "value": []};
         this.acceptedFilters.forEach(item => {
-          let value = this.useNumberInput(item["selectedFilter"], item["selectedCondition"]) ? item["inputValue"] : item["dateValue"];
+          let value = this.useDateInput(item["selectedFilter"], item["selectedCondition"]) ? item["dateValue"] : item["inputValue"];
           if (value == null) return;
           tmp["filter"].push(item["selectedFilter"]);
           tmp["condition"].push(item["selectedCondition"].toString());
@@ -479,7 +482,7 @@
 
         tmp = this.removedFilters.length == 0 ? {} : {"filter": [], "condition": [], "value": []};
         this.removedFilters.forEach(item => {
-          let value = this.useNumberInput(item["selectedFilter"], item["selectedCondition"]) ? item["inputValue"] : item["dateValue"];
+          let value = this.useDateInput(item["selectedFilter"], item["selectedCondition"]) ? item["dateValue"] : item["inputValue"];
           tmp["filter"].push(item["selectedFilter"]);
           tmp["condition"].push(item["selectedCondition"].toString());
           tmp["value"].push(value);

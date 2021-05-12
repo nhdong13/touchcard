@@ -22,6 +22,18 @@ class CustomerTargetingService
       processed_time = @user_last_orders[order.customer_id]
       processed_time.present? && processed_time == order.processed_at
     end.each{|i| @user_last_order_totals[i.customer_id] = i.total_line_items_price}
+    @user_shipping_countries = {}
+    orders.each{|order| @user_shipping_countries[order.customer_id] = order.customer.default_address.country_code}
+    @user_shipping_states = {}
+    orders.each{|order| @user_shipping_states[order.customer_id] = order.customer.default_address.province}
+    @user_referring_sites = {}
+    orders.each{|order| @user_referring_sites[order.customer_id] = order.referring_site}
+    @user_landing_sites = {}
+    orders.each{|order| @user_landing_sites[order.customer_id] = order.landing_site}
+    @user_order_tags = {}
+    orders.each{|order| @user_order_tags[order.customer_id] = order.tags}
+    @user_discount_codes = {}
+    orders.each{|order| @user_discount_codes[order.customer_id] = order.discount_codes.map{|item| item['code']} if order.discount_codes.class == Array}
 
     build_list(accepted_attrs, removed_attrs)
   end
@@ -68,13 +80,25 @@ class CustomerTargetingService
       @user_first_orders
     when "last_order_total"
       @user_last_order_totals
+    when "shipping_country"
+      @user_shipping_countries
+    when "shipping_state"
+      @user_shipping_states
+    when "referring_site"
+      @user_referring_sites
+    when "landing_site"
+      @user_landing_sites
+    when "order_tag"
+      @user_order_tags
+    when "discount_code_used"
+      @user_discount_codes
     else
       []
     end
   end
 
   def filter_by collection, filter_type, raw_value
-    collection.filter{|k,v| compare_field(v, filter_type, raw_value)}.keys
+    collection.filter{|k,v| compare_field(v, filter_type, raw_value) if v}.keys
     # case filter_type
     #   when "0"
     #     value = raw_value.to_i
@@ -133,6 +157,18 @@ class CustomerTargetingService
     when "last_order_total"
       # order.customer.orders.order(created_at: :desc).first.total_line_items_price
       orders.order(:processed_at).last.total_line_items_price
+    when "order_total"
+      order.total_price
+    when "shipping_country"
+      order.customer.default_address.country_code
+    when "shipping_state"
+      order.customer.default_address.province
+    when "referring_site"
+      order.landing_site
+    when "discount_code"
+      order.discount_codes.map{|item| item['code']} if order.discount_codes.class == Array
+    when "tag"
+      order.tags
     else
       []
     end
@@ -164,6 +200,10 @@ class CustomerTargetingService
         (field.to_time < Time.now.end_of_day - begin_value) && (field.to_time > Time.now.beginning_of_day - end_value)
       when "8"
         field.to_time < Time.now.end_of_day - value.to_i.days
+      when "9"
+        field == value
+      when "find_value"
+        field.index(value)
       else
         false
     end
