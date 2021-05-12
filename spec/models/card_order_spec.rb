@@ -5,21 +5,23 @@ RSpec.describe CardOrder, type: :model do
   describe "#send_postcard?" do
     it "returns false if total amount is insufficient regardless of line items price" do
       filter = create(:filter)
-      filter.filter_data["minimum"] = 50
+      # filter.filter_data["minimum"] = 50
+      filter.filter_data["accepted"] = ["order_total#1#50"]
 
       card_order = setup_card_order
       card_order.filters = [filter]
 
       order = create(:order)
-      order.total_line_items_price = 6000 # $60.00
-      order.total_price = 1050 # $10.50
+      order.total_line_items_price = 60 # $60.00
+      order.total_price = 10 # $10.50
 
       expect(card_order.send_postcard?(order)).to eq false
     end
 
     it "returns true if total_price is high enough" do
       filter = create(:filter)
-      filter.filter_data["minimum"] = 50
+      # filter.filter_data["minimum"] = 50
+      filter.filter_data["accepted"] = ["order_total#1#50"]
 
       card_order = setup_card_order
       card_order.filters = [filter]
@@ -33,11 +35,12 @@ RSpec.describe CardOrder, type: :model do
 
     it "returns false when the order cost does not exceed the filter cost" do
       filter = create(:filter)
-      filter.filter_data["minimum"] = 10.00
+      # filter.filter_data["minimum"] = 10.00
+      filter.filter_data["accepted"] = ["order_total#1#10"]
       card_order = setup_card_order
       card_order.filters = [filter]
       order = create(:order)
-      order.total_price = 1000 # $10.00
+      order.total_price = 10 # $10.00
 
       expect(card_order.send_postcard?(order)).to eq false
     end
@@ -52,35 +55,37 @@ RSpec.describe CardOrder, type: :model do
 
     it "returns false if we're over maximum" do
       filter = create(:filter)
-      filter.filter_data["minimum"] = 10.00
-      filter.filter_data["maximum"] = 100.00
+      # filter.filter_data["minimum"] = 10.00
+      # filter.filter_data["maximum"] = 100.00
+      filter.filter_data["accepted"] = ["order_total#2#100", "order_total#1#10"]
       card_order = setup_card_order
       card_order.filters = [filter]
       order = create(:order)
-      order.total_price = 500_00 # $500.00
+      order.total_price = 500 # $500.00
 
       expect(card_order.send_postcard?(order)).to eq false
     end
 
     it "returns true if we're between minimum and maximum" do
       filter = create(:filter)
-      filter.filter_data["minimum"] = 10.00
-      filter.filter_data["maximum"] = 100.00
+      # filter.filter_data["minimum"] = 10.00
+      # filter.filter_data["maximum"] = 100.00
+      filter.filter_data["accepted"] = ["order_total#2#100", "order_total#1#10"]
       card_order = setup_card_order
       card_order.filters = [filter]
       order = create(:order)
-      order.total_price = 50_00 # $500.00
+      order.total_price = 50 # $500.00
 
       expect(card_order.send_postcard?(order)).to eq true
     end
 
     it "returns true for any value if maximum is empty" do
       filter = create(:filter)
-      filter.filter_data["maximum"] = ''
+      # filter.filter_data["maximum"] = ''
       card_order = setup_card_order
       card_order.filters = [filter]
       order = create(:order)
-      order.total_price = 1_00 # $1.00
+      order.total_price = 1 # $1.00
 
       expect(card_order.send_postcard?(order)).to eq true
     end

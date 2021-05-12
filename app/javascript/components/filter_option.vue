@@ -9,8 +9,8 @@
         <option v-for="option in DATE_OPTIONS" :key="option[1]" :value="option[1]">{{option[0]}}</option>
       </select>
     </div>
-    <select class="option-dropdown" v-if="filter.selectedFilter != ''" v-model="filter.selectedCondition" @change="filterChange">
-      <option v-for="condition in CONDITIONS" v-if="showOption(condition[1])" :key="condition[1]" :value="condition[1]" :disabled="condition[1].length > 2 ? true : false">{{condition[0]}}</option>
+    <select class="option-dropdown" v-if="filter.selectedFilter != ''" v-model="filter.selectedCondition" @change="optionChange">
+      <option v-for="condition in filterConditions" v-if="showOption(condition[1])" :key="condition[1]" :value="condition[1]" :disabled="condition[1].length == 3 ? true : false">{{condition[0]}}</option>
     </select>
     <div class="f-value" v-if="showSecondInput()">
       <input v-model="filter.dateValue" @change="filterChange" class="d-none" />
@@ -22,8 +22,9 @@
       <input type="number" class="valueInput" v-model="inputValue0" v-if="showNumberInput()" @change="detectValue('number')" />
     </div>
     <div class="f-value" v-else>
-      <datepicker class="valueInput" v-model="filter.dateValue" v-if="filter.selectedFilter != '' && !showNumberInput()" @change="filterChange" />
-      <input type="number" class="valueInput" v-model="filter.inputValue" v-if="showNumberInput()" @change="filterChange" />
+      <input type="text" class="valueInput" v-model="filter.inputValue" v-if="showTextInput()" @change="filterChange" />
+      <input type="number" class="valueInput" v-model="filter.inputValue" v-else-if="showNumberInput()" @change="filterChange" />
+      <datepicker class="valueInput" v-model="filter.dateValue" v-else-if="filter.selectedFilter != ''" @change="filterChange" />
     </div>
     <div class="dropdown">
       <button type="button" class="more-action-btn" v-if="filter.selectedFilter != ''">...</button>
@@ -36,6 +37,7 @@
 <script>
   import $ from 'jquery';
   import Datepicker from 'vuejs-datepicker';
+  import axios from 'axios';
   export default {
     components: {
       Datepicker
@@ -57,7 +59,7 @@
       } else {
         this.selectedFilter = this.filter.selectedFilter;
       }
-      this.resetAvailableFilter();
+      this.getAllFilterValues()
     },
     data() {
       return {
@@ -68,34 +70,49 @@
         inputValue: null,
         inputValue0: null,
         selectedDateOption: "first_",
-        FILTER_OPTIONS: [["Select a filter" , ""                ],
-                         ["Number of orders", "number_of_order" ],
-                         ["Total Spend"     , "total_spend"     ],
-                         ["Order date"      , "order_date"      ],
-                         ["Last order total", "last_order_total"]
-                        ],
         DATE_OPTIONS: [["First order date", "first_"], ["Last order date", "last_"]],
-        CONDITIONS: [["is", "0"], ["is greater than", "1"], ["is less than", "2"],
-                    ["Absolute", "999"], ["before", "3"], ["between", "4"], ["after", "5"], 
-                    ["Relative", "888"], ["before", "6"], ["between", "7"], ["after", "8"]]
+        filterOptions: [],
+        filterConditions: [],
       }
     },
     methods: {
+      getAllFilterValues() {
+        axios.get("/targeting/get_filters").then((response) => {
+          response.data.filters.forEach(filter => this.filterOptions.push(filter));
+          response.data.conditions.forEach(condition => this.filterConditions.push(condition));
+          this.resetAvailableFilter();
+        });
+      },
       resetAvailableFilter() {
         let selected = [];
         $(`#${this.collection}-section .filter-dropdown`).each(function() {
           selected.push($(this).val());
         });
-        this.availableFilter = this.FILTER_OPTIONS.filter(el => el[1] == "" || !(selected.indexOf(el[1]) > -1));
+        this.availableFilter = this.filterOptions.filter(el => el[1] == "" || !(selected.indexOf(el[1]) > -1));
+      },
+      resetInputValue(filterChange = false) {
+        if (filterChange) this.filter.selectedCondition = "";
+        this.dateValue = null;
+        this.dateValue0 = null;
+        this.inputValue = null;
+        this.inputValue0 = null;
       },
       showNumberInput() {
-        return (['number_of_order', 'total_spend', 'last_order_total'].indexOf(this.filter.selectedFilter) > -1) || ((['last_order_date', 'first_order_date'].indexOf(this.filter.selectedFilter) > -1) && ["6", "7", "8"].indexOf(this.filter.selectedCondition) > -1)
+        return ['number_of_order', 'total_spend', 'last_order_total', 'shipping_country', 'shipping_state', 'referring_site', 'landing_site', 'order_tag', 'discount_code_used'].indexOf(this.filter.selectedFilter) > -1 ||
+               ((['last_order_date', 'first_order_date'].indexOf(this.filter.selectedFilter) > -1) && ["6", "7", "8"].indexOf(this.filter.selectedCondition) > -1)
+      },
+      showTextInput() {
+        return ['shipping_country', 'shipping_state', 'referring_site', 'landing_site', 'order_tag', 'discount_code_used'].indexOf(this.filter.selectedFilter) > -1
       },
       showSecondInput() {
         return this.selectedFilter == "order_date" && (this.filter.selectedCondition == "4" || this.filter.selectedCondition == "7");
       },
       showOption(option) {
-        return ((this.filter.selectedFilter == 'last_order_date' || this.filter.selectedFilter == 'first_order_date') && ["3", "4", "5", "6", "7", "8", "888", "999"].indexOf(option) > -1) || ((['number_of_order', 'total_spend', 'last_order_total'].indexOf(this.filter.selectedFilter) > -1) && ["0", "1", "2"].indexOf(option) > -1)
+        return option == "" ||
+              (['last_order_date', 'first_order_date'].indexOf(this.filter.selectedFilter) > -1 && ["3", "4", "5", "6", "7", "8", "888", "999"].indexOf(option) > -1) ||
+              ((['number_of_order', 'total_spend', 'last_order_total'].indexOf(this.filter.selectedFilter) > -1) && ["0", "1", "2"].indexOf(option) > -1) ||
+              (['shipping_country', 'shipping_state', 'referring_site', 'landing_site'].indexOf(this.filter.selectedFilter) > -1 && option == "9") ||
+              (['order_tag', 'discount_code_used'].indexOf(this.filter.selectedFilter) > -1 && option == "find_value")
       },
       removeFilter() {
         this.$emit('filterRemove', this.filter, this.collection, this.index);
@@ -103,8 +120,13 @@
       filterChange() {
         this.$emit('filterChange', this.filter, this.collection, this.index);
       },
+      optionChange() {
+        this.resetInputValue(false);
+        this.filterChange();
+      },
       detectFilter() {
         this.filter.selectedFilter = this.selectedFilter == "order_date" ? this.selectedDateOption + this.selectedFilter : this.selectedFilter;
+        this.resetInputValue(true);
         this.filterChange();
       },
       detectValue(type) {
