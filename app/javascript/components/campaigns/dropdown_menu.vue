@@ -1,6 +1,9 @@
 <template>
   <div class="dropdown-btn">
-    <button @click="isOpen = !isOpen" >Filters</button>
+    <button @click="isOpen = !isOpen" >
+      Filters
+      <font-awesome-icon icon="caret-down"/>
+    </button>
     <div class="dropdown-list" v-if="isOpen">
       <div class="filter-items">
         <span>Type</span>

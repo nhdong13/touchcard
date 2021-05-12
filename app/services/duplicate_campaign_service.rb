@@ -9,12 +9,25 @@ class DuplicateCampaignService
     # create clone card_order
     return unless @card_order
     card_order_clone = @card_order.dup
-    card_order_clone.name = "#{@card_order.name} clone"
+    dup_campaign_name = generate_campaign_name
+    card_order_clone.campaign_name = dup_campaign_name
+    card_order_clone.card_order_parent_id = @card_order.id
     card_order_clone.enabled = false
     card_order_clone.save(validate: false)
     clone_front_card_sides(card_order_clone)
     clone_back_card_sides(card_order_clone)
     clone_filters(card_order_clone)
+  end
+
+
+  def generate_campaign_name
+    return @params["campaign_name"] if @params["campaign_name"].present?
+    number = @card_order.copies.count
+    if number > 0
+      "Copy #{number + 1} of #{@card_order.campaign_name}"
+    else
+      "Copy of #{@card_order.campaign_name}"
+    end
   end
 
   def clone_front_card_sides card_order_clone

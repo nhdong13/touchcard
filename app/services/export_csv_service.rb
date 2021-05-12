@@ -3,7 +3,7 @@ require "csv"
 class ExportCsvService
   def initialize objects, attributes
     @attributes = attributes
-    @objects = objects
+    @objects = JSON.parse(objects)
     @header = attributes
   end
 
@@ -11,7 +11,7 @@ class ExportCsvService
     CSV.generate do |csv|
       csv << @header
       objects.each do |object|
-        csv << @attributes.map{ |attr| object.public_send(attr) }
+        csv << @attributes.map{ |attr| object[attr] }
       end
     end
   end

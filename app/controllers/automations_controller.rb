@@ -114,7 +114,8 @@ class AutomationsController < BaseController
       :send_date_start,
       :send_date_end,
       :limit_cards_per_day,
-      filters_attributes: [[:id, :_destroy, filter_data: [accepted: [], removed: []]]],
+      :campaign_name,
+      filters_attributes: [[:id, :_destroy, filter_data: [:minimum, :maximum]]],
       front_json: [:version, :background_url, :discount_x, :discount_y],
       back_json: [:version, :background_url, :discount_x, :discount_y],
       return_address_attributes: [:id, :name, :address_line1, :address_line2, :city, :state, :zip, :country_code]

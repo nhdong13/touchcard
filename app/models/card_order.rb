@@ -7,7 +7,7 @@ class CardOrder < ApplicationRecord
   self.inheritance_column = :_type_disabled
   belongs_to :shop
 
-  CSV_ATTRIBUTES = %w(name type campaign_status campaign_budget campaign_schedule).freeze
+  CSV_ATTRIBUTES = %w(campaign_name type campaign_status budget schedule).freeze
 
   # TODO: can remove card_side relation as card side data now lives in front_json and back_json
   has_one :card_side_front,
@@ -24,6 +24,9 @@ class CardOrder < ApplicationRecord
 
   has_many :filters, dependent: :destroy
   has_many :postcards
+
+  belongs_to :card_order_parent, :class_name => "CardOrder"
+  has_many :copies, :class_name => "CardOrder", :foreign_key => "card_order_parent_id"
 
   accepts_nested_attributes_for :card_side_front, update_only: true
   # , reject_if: :invalid_image_size
@@ -115,10 +118,9 @@ class CardOrder < ApplicationRecord
 
   def update_campaign_status
     if enabled
-      self.update(campaign_status: "sending", send_date_start: DateTime.now)
-      self.update(send_date_start: DateTime.now) if self.send_date_start.nil?
+      self.update(campaign_status: "sending")
     else
-      self.update(campaign_status: "paused", send_date_end: DateTime.now)
+      self.update(campaign_status: "paused")
     end
   end
 

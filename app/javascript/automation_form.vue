@@ -7,6 +7,11 @@
     <h3>{{automation.type}}</h3>
 
     <div class="automation-section">
+      <strong>Name: </strong>
+      <input id="campaign_name" v-model="automation.campaign_name">
+    </div>
+
+    <div class="automation-section">
       <strong>Type</strong>
       <span v-if="automation.campaign_type == null || automation.campaign_type == 'automation'">
         <input type="radio" id="automation" value="automation" v-model="campaign_type" v-on:click="setBudgetType">
@@ -38,7 +43,6 @@
       </div>
     </div>
 
-
     <div class="automation-section" v-if="campaign_type =='one_off'">
       <div>
         <input id="sending-schedule-checkbox" type="checkbox" v-model="willCheckSendingSchedule">
@@ -59,6 +63,19 @@
         </div>
       </div>
     </div>
+
+    <div class="automation-section" v-else>
+      <strong>Campaign schedules</strong>
+      <div class="filter-config nested-toggle">
+        <span>Start date:</span>
+        <datepicker v-model="automation.send_date_start"></datepicker>
+      </div>
+      <div class="filter-config nested-toggle">
+        <span>End date:</span>
+        <datepicker v-model="automation.send_date_end"></datepicker>
+      </div>
+    </div>
+
     <div class="automation-section">
       <input id="automation-international-checkbox" type="checkbox" v-model="automation.international" @change="handleChangeInternationalCheck"/>
       <label for="automation-international-checkbox" class="noselect"><strong>Send outside USA</strong></label>
@@ -183,7 +200,7 @@
       <div class="filter-config nested-toggle" v-if="enableFiltering">
       <span>
           Minimum $: <input type="number" min="1" max="9999" v-model="automation.filters_attributes[automation.filters_attributes.length-1].filter_data.minimum">
-      </span> 
+      </span>
       </div>
     </div>-->
     <hr />
@@ -208,6 +225,7 @@
             :aws_sign_endpoint="awsSignEndpoint"
     ></card-editor>
     <br>
+
   </div>
 </template>
 
