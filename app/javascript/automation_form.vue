@@ -7,6 +7,11 @@
     <h3>{{automation.type}}</h3>
 
     <div class="automation-section">
+      <strong>Name: </strong>
+      <input id="campaign_name" v-model="automation.campaign_name">
+    </div>
+
+    <div class="automation-section">
       <strong>Type</strong>
       <span v-if="automation.campaign_type == null || automation.campaign_type == 'automation'">
         <input type="radio" id="automation" value="automation" v-model="campaign_type" v-on:click="setBudgetType">
@@ -22,7 +27,7 @@
       <strong>Send card <input type="number" min="0" max="52" v-model="automation.send_delay"> weeks after purchase</strong>
     </div>
     <div class="automation-section">
-      <strong>Budget</strong>
+      <strong>Monthly budget</strong>
       <span v-if="campaign_type =='automation'">
         <input type="radio" id="non_set_budget" value="non_set" v-model="budget_type">
         <label for="non_set_budget">Non set</label>
@@ -31,8 +36,6 @@
         <input type="radio" id="monthly_budget" value="monthly" v-model="budget_type">
         <label for="monthly_budget">Monthly</label>
       </span>
-      <input type="radio" id="lifetime_budget" value="lifetime" v-model="budget_type">
-      <label for="lifetime_budget">Lifetime</label>
       <div class="filter-config nested-toggle" v-if="setLimitToKens">
         <span>
           Limit: <input type="numer" id="budget_limit" v-model="automation.budget_update"> credits
@@ -41,9 +44,38 @@
     </div>
 
     <div class="automation-section" v-if="campaign_type =='one_off'">
-      <strong>Send at</strong>
-      <datepicker v-model="sendDate"></datepicker>
+      <div>
+        <input id="sending-schedule-checkbox" type="checkbox" v-model="willCheckSendingSchedule">
+        <label for="sending-schedule-checkbox" class="noselect"><strong>Setting sending schedule</strong></label>
+      </div>
+      <div v-if="willShowSendingSchedule">
+        <div class="filter-config nested-toggle">
+          <span>Start date:</span>
+          <datepicker v-model="automation.send_date_start"></datepicker>
+        </div>
+        <div class="filter-config nested-toggle">
+          <span>End date:</span>
+          <datepicker v-model="automation.send_date_end"></datepicker>
+        </div>
+        <div class="filter-config nested-toggle">
+          <span>Limit per day:</span>
+          <input type="numer" id="budget_limit" v-model="automation.limit_cards_per_day"> postcards
+        </div>
+      </div>
     </div>
+
+    <div class="automation-section" v-else>
+      <strong>Campaign schedules</strong>
+      <div class="filter-config nested-toggle">
+        <span>Start date:</span>
+        <datepicker v-model="automation.send_date_start"></datepicker>
+      </div>
+      <div class="filter-config nested-toggle">
+        <span>End date:</span>
+        <datepicker v-model="automation.send_date_end"></datepicker>
+      </div>
+    </div>
+
     <div class="automation-section">
       <input id="automation-international-checkbox" type="checkbox" v-model="automation.international" @change="handleChangeInternationalCheck"/>
       <label for="automation-international-checkbox" class="noselect"><strong>Send outside USA</strong></label>
@@ -168,7 +200,7 @@
       <div class="filter-config nested-toggle" v-if="enableFiltering">
       <span>
           Minimum $: <input type="number" min="1" max="9999" v-model="automation.filters_attributes[automation.filters_attributes.length-1].filter_data.minimum">
-      </span> 
+      </span>
       </div>
     </div>-->
     <hr />
@@ -193,6 +225,7 @@
             :aws_sign_endpoint="awsSignEndpoint"
     ></card-editor>
     <br>
+
   </div>
 </template>
 
@@ -236,17 +269,43 @@
         sendDate: "",
         budget_type: this.automation.budget_type,
         willShowBudgetType: true,
-        campaign_type: this.automation.campaign_type ? this.automation.campaign_type : "automation"
+        campaign_type: this.automation.campaign_type ? this.automation.campaign_type : "automation",
+        willShowSendingSchedule: false
       }
     },
 
     computed: {
       setLimitToKens: function(){
         let willSet = true;
-        if(this.budget_type == "non_set"){
-          willSet = false
+        if(this.campaign_type == "one_off"){
+          return willSet;
+        } else {
+          if(this.budget_type == "non_set"){
+            willSet = false
+          }
         }
         return willSet
+      },
+
+      willCheckSendingSchedule: {
+        get: function(){
+          let willShow = false;
+          if(this.automation.campaign_type == "one_off" && this.automation.send_date_end){
+            willShow = true;
+            this.willShowSendingSchedule = true
+          }
+          return willShow;
+        },
+        set: function(value){
+          if (value) {
+            this.willShowSendingSchedule = true
+          } else {
+            this.automation.send_date_start = ""
+            this.automation.send_date_end = ""
+            this.automation.limit_cards_per_day = 0
+            this.willShowSendingSchedule = false
+          }
+        }
       }
     },
 
@@ -351,7 +410,6 @@
       setBudgetType: function(event){
         let campaign_type = event.target.value;
         if(campaign_type == "one_off"){
-          this.budget_type = "lifetime"
           this.willShowBudgetType = false
         } else {
           this.budget_type = this.automation.budget_type

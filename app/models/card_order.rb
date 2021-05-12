@@ -1,13 +1,13 @@
 class CardOrder < ApplicationRecord
   # TODO: Unused Automations Code
   #
-  enum budget_type: [ :non_set, :monthly, :lifetime ]
+  enum budget_type: [ :non_set, :monthly ]
   enum campaign_type: [ :automation, :one_off ]
   TYPES = ['PostSaleOrder', 'CustomerWinbackOrder', 'LifetimePurchaseOrder', 'AbandonedCheckout']
   self.inheritance_column = :_type_disabled
   belongs_to :shop
 
-  CSV_ATTRIBUTES = %w(name type campaign_status campaign_budget campaign_schedule).freeze
+  CSV_ATTRIBUTES = %w(campaign_name type campaign_status budget schedule).freeze
 
   # TODO: can remove card_side relation as card side data now lives in front_json and back_json
   has_one :card_side_front,
@@ -24,6 +24,9 @@ class CardOrder < ApplicationRecord
 
   has_many :filters, dependent: :destroy
   has_many :postcards
+
+  belongs_to :card_order_parent, :class_name => "CardOrder"
+  has_many :copies, :class_name => "CardOrder", :foreign_key => "card_order_parent_id"
 
   accepts_nested_attributes_for :card_side_front, update_only: true
   # , reject_if: :invalid_image_size
@@ -83,7 +86,6 @@ class CardOrder < ApplicationRecord
         credits: 0,
         budget_update: 0
       )
-      shop.update(credit: shop.credit + current_credits)
     end
   end
 
@@ -93,24 +95,15 @@ class CardOrder < ApplicationRecord
         budget: budget_update,
         credits: budget_update
         )
-      shop_credits = shop.credit - budget_update
-      if shop_credits < budget_update
-          raise "not enough token"
-      else
-        shop.update(credit: shop_credits)
-      end
     else
       if budget_update >= budget
         new_credits = credits + (budget_update - budget)
-        shop_credits = shop.credit - (budget_update - budget)
         update(
           budget: budget_update,
           credits: new_credits
         )
-        shop.update(credit: shop_credits)
       else
         new_credits = credits - (budget - budget_update)
-        shop_credits = shop.credit + (budget - budget_update)
         if new_credits < 0
           raise "the budget is lower than credits used."
         else
@@ -118,7 +111,6 @@ class CardOrder < ApplicationRecord
             budget: budget_update,
             credits: new_credits
           )
-          shop.update(credit: shop_credits)
         end
       end
     end
@@ -126,10 +118,9 @@ class CardOrder < ApplicationRecord
 
   def update_campaign_status
     if enabled
-      self.update(campaign_status: "sending", send_date_start: DateTime.now)
-      self.update(send_date_start: DateTime.now) if self.send_date_start.nil?
+      self.update(campaign_status: "sending")
     else
-      self.update(campaign_status: "paused", send_date_end: DateTime.now)
+      self.update(campaign_status: "paused")
     end
   end
 

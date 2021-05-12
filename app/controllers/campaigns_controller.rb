@@ -7,7 +7,7 @@ class CampaignsController < BaseController
         campaigns: ActiveModelSerializers::SerializableResource.new(@result[:campaigns], {each_serializer: CardOrderSerializer}).to_json,
         total_pages: @result[:total_pages],
         statuses: @result[:statuses],
-        types: @result[:types]
+        campaign_types: @result[:campaign_types]
       }}
     end
   end
@@ -31,7 +31,8 @@ class CampaignsController < BaseController
   end
 
   def export_csv
-    csv = ExportCsvService.new CardOrder.all, CardOrder::CSV_ATTRIBUTES
+    card_oders = ActiveModelSerializers::SerializableResource.new(CardOrder.all, {each_serializer: CardOrderSerializer}).to_json
+    csv = ExportCsvService.new card_oders, CardOrder::CSV_ATTRIBUTES
     respond_to do |format|
       format.json { render json: {
         csv_data: csv.perform.to_json,
@@ -49,7 +50,7 @@ class CampaignsController < BaseController
         campaigns: ActiveModelSerializers::SerializableResource.new(@result[:campaigns], {each_serializer: CardOrderSerializer}).to_json,
         total_pages: @result[:total_pages],
         statuses: @result[:statuses],
-        types: @result[:types]
+        campaign_types: @result[:campaign_types]
       }}
     end
   end
