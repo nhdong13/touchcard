@@ -75,7 +75,6 @@
             </td>
             <td>
               <span class='t-b'> {{ item.schedule }}</span>
-              <span v-if="item.campaign_status == 'Draft'" style="font-size: 10px">Sending on</span>
             </td>
           </tr>
         </table>

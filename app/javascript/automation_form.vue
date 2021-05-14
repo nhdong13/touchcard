@@ -7,7 +7,7 @@
     <h3>{{automation.type}}</h3>
 
     <div class="automation-section">
-      <strong>Name: </strong>
+      <strong>Campaign name </strong>
       <input id="campaign_name" v-model="automation.campaign_name">
     </div>
 
@@ -43,34 +43,91 @@
 
     <div class="automation-section" v-if="campaign_type =='one_off'">
       <div>
-        <input id="sending-schedule-checkbox" type="checkbox" v-model="willCheckSendingSchedule">
-        <label for="sending-schedule-checkbox" class="noselect"><strong>Setting sending schedule</strong></label>
+        <strong>Campaign schedule</strong>
       </div>
-      <div v-if="willShowSendingSchedule">
+      <div>
         <div class="filter-config nested-toggle">
-          <span>Start date:</span>
-          <datepicker v-model="automation.send_date_start"></datepicker>
+          <div class="datepicker-with-icon">
+            <span style="width: 80px">Start date:</span>
+            <datepicker
+              v-model="automation.send_date_start"
+              :disabled-dates="disabledDates"
+              :open-date="new Date()"
+              name="send_date_start"
+              ref="sendDateStart"
+            ></datepicker>
+            <div class="icon-calendar" v-on:click="openSendDateStartDatePicker">
+              <font-awesome-icon icon="calendar-alt"/>
+            </div>
+          </div>
         </div>
         <div class="filter-config nested-toggle">
-          <span>End date:</span>
-          <datepicker v-model="automation.send_date_end"></datepicker>
+          <div class="datepicker-with-icon">
+            <span style="width: 80px">End date:</span>
+            <datepicker
+              v-model="automation.send_date_end"
+              :disabled-dates="disabledDates"
+              name="sendDateEnd"
+              ref="sendDateEnd"
+              :disabled="automation.send_continuously"
+            ></datepicker>
+            <div class="icon-calendar" v-on:click="openSendDateEndDatePicker">
+              <font-awesome-icon icon="calendar-alt"/>
+            </div>
+          </div>
         </div>
-        <div class="filter-config nested-toggle">
-          <span>Limit per day:</span>
-          <input type="numer" id="budget_limit" v-model="automation.limit_cards_per_day"> postcards
-        </div>
+      </div>
+    </div>
+
+    <div class="automation-section" v-if="campaign_type =='one_off'">
+      <div>
+        <input id="daily-schedule-checkbox" type="checkbox" v-model="willCheckDailySendingSchedule">
+        <label for="daily-schedule-checkbox" class="noselect"><strong>Daily schedule and limits</strong></label>
+      </div>
+      <div class="filter-config nested-toggle" v-if="willShowDailySendingSchedule">
+        <span>Limit per day:</span>
+        <input type="numer" id="budget_limit" v-model="automation.limit_cards_per_day"> postcards
       </div>
     </div>
 
     <div class="automation-section" v-else>
       <strong>Campaign schedules</strong>
       <div class="filter-config nested-toggle">
-        <span>Start date:</span>
-        <datepicker v-model="automation.send_date_start"></datepicker>
+        <div class="datepicker-with-icon">
+          <span style="width: 80px">Start date:</span>
+          <datepicker
+            v-model="automation.send_date_start"
+            :disabled-dates="disabledDates"
+            :open-date="new Date()"
+            name="send_date_start"
+            ref="sendDateStart"
+          ></datepicker>
+          <div class="icon-calendar" v-on:click="openSendDateStartDatePicker">
+            <font-awesome-icon icon="calendar-alt"/>
+          </div>
+          <div v-if="automation.send_continuously">
+            <span style="margin-left: 7px">- Ongoing</span>
+          </div>
+        </div>
       </div>
       <div class="filter-config nested-toggle">
-        <span>End date:</span>
-        <datepicker v-model="automation.send_date_end"></datepicker>
+        <div class="datepicker-with-icon">
+          <span style="width: 80px">End date:</span>
+          <datepicker
+            v-model="automation.send_date_end"
+            :disabled-dates="disabledDates"
+            name="sendDateEnd"
+            ref="sendDateEnd"
+            :disabled="automation.send_continuously"
+          ></datepicker>
+          <div class="icon-calendar" v-on:click="openSendDateEndDatePicker">
+            <font-awesome-icon icon="calendar-alt"/>
+          </div>
+          <div class="send-continuously-option">
+            <input id="send-continuously" type="checkbox" v-model="automation.send_continuously"/>
+            <label for="send-continuously" class="noselect">Or send continuously?</label>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -155,7 +212,10 @@
         budget_type: this.automation.budget_type,
         willShowBudgetType: true,
         campaign_type: this.automation.campaign_type ? this.automation.campaign_type : "automation",
-        willShowSendingSchedule: false
+        willShowDailySendingSchedule: false,
+        disabledDates: {
+          to: new Date(Date.now() - 8640000)
+        }
       }
     },
 
@@ -172,26 +232,24 @@
         return willSet
       },
 
-      willCheckSendingSchedule: {
+      willCheckDailySendingSchedule: {
         get: function(){
           let willShow = false;
-          if(this.automation.campaign_type == "one_off" && this.automation.send_date_end){
+          if(this.automation.campaign_type == "one_off" && this.automation.limit_cards_per_day > 0){
             willShow = true;
-            this.willShowSendingSchedule = true
+            this.willShowDailySendingSchedule = true
           }
           return willShow;
         },
         set: function(value){
           if (value) {
-            this.willShowSendingSchedule = true
+            this.willShowDailySendingSchedule = true
           } else {
-            this.automation.send_date_start = ""
-            this.automation.send_date_end = ""
             this.automation.limit_cards_per_day = 0
-            this.willShowSendingSchedule = false
+            this.willShowDailySendingSchedule = false
           }
         }
-      }
+      },
     },
 
     watch: {
@@ -230,6 +288,15 @@
       this.automation.discount_exp = this.automation.discount_exp || 3;
     },
     methods: {
+      openSendDateEndDatePicker: function(){
+        this.$refs.sendDateEnd.showCalendar()
+        this.$refs.sendDateEnd.$el.querySelector('input').focus()
+      },
+      openSendDateStartDatePicker: function(){
+        this.$refs.sendDateStart.showCalendar()
+        this.$refs.sendDateStart.$el.querySelector('input').focus()
+      },
+
       setBudgetType: function(event){
         let campaign_type = event.target.value;
         if(campaign_type == "one_off"){
@@ -314,6 +381,27 @@
   .automation-form{
     .vdp-datepicker{
       display: inline-block;
+    }
+  }
+
+
+  .send-continuously-option{
+    display: flex;
+    align-items: center;
+  }
+
+  .datepicker-with-icon{
+    align-items: center;
+    cursor: pointer;
+    display: flex;
+    .icon-calendar {
+      width: 21px;
+      height: 21px;
+      border: 1px solid;
+      border-left: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
   }
 

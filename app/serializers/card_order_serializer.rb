@@ -59,12 +59,18 @@ class CardOrderSerializer < ActiveModel::Serializer
         result = "#{start_date}"
       end
     else
-      if object.send_date_start && object.send_date_end
-        result = "#{start_date} - #{end_date}"
-      elsif object.send_date_start
-        result = "#{start_date} - Ongoing"
+      if object.send_continuously
+        if object.send_date_start
+          result = "#{start_date} - Ongoing"
+        else
+          result = "Not set"
+        end
       else
-        result = "Not set"
+        if object.send_date_start && object.send_date_end
+          result = "#{start_date} - #{end_date}"
+        else
+          result = "Not set"
+        end
       end
     end
     result
