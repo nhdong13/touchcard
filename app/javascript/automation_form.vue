@@ -9,6 +9,7 @@
     <div class="automation-section">
       <strong>Campaign name </strong>
       <input id="campaign_name" v-model="automation.campaign_name">
+      <span class="error campaign-name-error">This field is required.</span>
     </div>
 
     <div class="automation-section">
@@ -55,6 +56,7 @@
               :open-date="new Date()"
               name="send_date_start"
               ref="sendDateStart"
+              @selected="changeSendDateEnd"
             ></datepicker>
             <div class="icon-calendar" v-on:click="openSendDateStartDatePicker">
               <font-awesome-icon icon="calendar-alt"/>
@@ -66,7 +68,7 @@
             <span style="width: 80px">End date:</span>
             <datepicker
               v-model="automation.send_date_end"
-              :disabled-dates="disabledDates"
+              :disabled-dates="disabledEndDates"
               name="sendDateEnd"
               ref="sendDateEnd"
               :disabled="automation.send_continuously"
@@ -101,6 +103,7 @@
             :open-date="new Date()"
             name="send_date_start"
             ref="sendDateStart"
+            @selected="changeSendDateEnd"
           ></datepicker>
           <div class="icon-calendar" v-on:click="openSendDateStartDatePicker">
             <font-awesome-icon icon="calendar-alt"/>
@@ -115,7 +118,7 @@
           <span style="width: 80px">End date:</span>
           <datepicker
             v-model="automation.send_date_end"
-            :disabled-dates="disabledDates"
+            :disabled-dates="disabledEndDates"
             name="sendDateEnd"
             ref="sendDateEnd"
             :disabled="automation.send_continuously"
@@ -187,6 +190,8 @@
   import axios from 'axios'
   import CardEditor from './components/card_editor.vue'
   import Datepicker from 'vuejs-datepicker';
+  import $ from 'jquery'
+  window.$ = $
 
   export default {
     props: {
@@ -215,11 +220,16 @@
         willShowDailySendingSchedule: false,
         disabledDates: {
           to: new Date(Date.now() - 8640000)
-        }
+        },
       }
     },
 
     computed: {
+      disabledEndDates: function(){
+        let startDate = this.automation.send_date_start || new Date()
+        return {to: new Date(new Date(startDate) - 8640000)}
+      },
+
       setLimitToKens: function(){
         let willSet = true;
         if(this.campaign_type == "one_off"){
@@ -282,16 +292,27 @@
       'card-editor': CardEditor,
       Datepicker
     },
+
     beforeMount: function() {
       // Set defaults in case these props are passed as 'null'
       this.automation.discount_pct = this.automation.discount_pct || 20;
       this.automation.discount_exp = this.automation.discount_exp || 3;
+      this.automation.send_date_end = this.automation.send_date_end || new Date()
+      this.automation.send_date_start = this.automation.send_date_start || new Date()
     },
+
     methods: {
+
+      changeSendDateEnd: function (){
+        this.automation.send_date_end = ""
+        this.openSendDateEndDatePicker();
+      },
+
       openSendDateEndDatePicker: function(){
         this.$refs.sendDateEnd.showCalendar()
         this.$refs.sendDateEnd.$el.querySelector('input').focus()
       },
+
       openSendDateStartDatePicker: function(){
         this.$refs.sendDateStart.showCalendar()
         this.$refs.sendDateStart.$el.querySelector('input').focus()
@@ -304,6 +325,16 @@
         } else {
           this.budget_type = this.automation.budget_type
           this.willShowBudgetType = true
+        }
+      },
+
+      checkNameCampaignIsInvalid: function() {
+        if(!this.automation.campaign_name) {
+          $(".campaign-name-error").show()
+          return true;
+        } else {
+          $(".campaign-name-error").hide()
+          return false;
         }
       },
 
@@ -328,6 +359,8 @@
 
         this.automation.budget_type = this.budget_type
         this.automation.campaign_type = this.campaign_type
+
+        if (this.checkNameCampaignIsInvalid()) return;
 
         this.postOrPutForm();
 
@@ -403,6 +436,14 @@
       justify-content: center;
       align-items: center;
     }
+  }
+
+  .error{
+    color: red
+  }
+
+  .campaign-name-error{
+    display: none;
   }
 
 </style>
