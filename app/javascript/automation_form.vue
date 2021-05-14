@@ -294,8 +294,6 @@
   import axios from 'axios'
   import CardEditor from './components/card_editor.vue'
   import FilterOption from './components/filter_option.vue'
-  import $ from 'jquery'
-  window.$ = $
   import Datepicker from 'vuejs-datepicker';
   import $ from 'jquery'
   window.$ = $
