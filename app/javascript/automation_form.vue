@@ -24,7 +24,7 @@
       </span>
     </div>
 
-    <div class="automation-section">
+    <div class="automation-section" v-if="campaign_type =='automation'">
       <strong>Monthly budget</strong>
       <span v-if="campaign_type =='automation'">
         <input type="radio" id="non_set_budget" value="non_set" v-model="budget_type">
@@ -220,7 +220,7 @@
         willShowDailySendingSchedule: false,
         disabledDates: {
           to: new Date(Date.now() - 8640000)
-        },
+        }
       }
     },
 
@@ -232,12 +232,8 @@
 
       setLimitToKens: function(){
         let willSet = true;
-        if(this.campaign_type == "one_off"){
-          return willSet;
-        } else {
-          if(this.budget_type == "non_set"){
-            willSet = false
-          }
+        if(this.budget_type == "non_set"){
+          willSet = false
         }
         return willSet
       },
