@@ -1,6 +1,8 @@
 class OrdersCreateJob < ActiveJob::Base
 
-  def perform(shop_domain:, webhook:)
+  def perform(arg)
+    shop_domain = arg[:shop_domain]
+    webhook = arg[:webhook]
     shop = Shop.find_by(domain: shop_domain)
     shop.with_shopify_session do
       shopify_order = ShopifyAPI::Order.find(webhook["id"])
