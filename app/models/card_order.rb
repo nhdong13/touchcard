@@ -4,6 +4,8 @@ class CardOrder < ApplicationRecord
   enum budget_type: [ :non_set, :monthly ]
   enum campaign_type: [ :automation, :one_off ]
   TYPES = ['PostSaleOrder', 'CustomerWinbackOrder', 'LifetimePurchaseOrder', 'AbandonedCheckout']
+
+  enum campaign_status: [:draft, :processing, :scheduled, :sending, :sent, :paused, :error, :out_of_credit]
   self.inheritance_column = :_type_disabled
   belongs_to :shop
 
@@ -67,7 +69,7 @@ class CardOrder < ApplicationRecord
   after_update :update_budget, if: :saved_change_to_budget_type?
 
   def add_default_params
-    self.campaign_name = "PostSaleOrder" unless self.campaign_name.present?
+    self.campaign_name = "My campaign" unless self.campaign_name.present?
     self.type = "PostSaleOrder" if self.type.nil?
     self.campaign_status = "draft"
   end
@@ -118,18 +120,10 @@ class CardOrder < ApplicationRecord
 
   def update_campaign_status
     if enabled
-      self.update(campaign_status: "sending")
+      self.sending!
     else
-      self.update(campaign_status: "paused")
+      self.paused!
     end
-  end
-
-  def campaign_budget
-    budget ? budget : "-"
-  end
-
-  def campaign_schedule
-    "--/--"
   end
 
   def send_postcard?(order)
