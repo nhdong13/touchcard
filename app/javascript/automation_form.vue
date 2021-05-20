@@ -476,7 +476,7 @@
         }
       },
       addFilter(list) {
-        let defaultValue = {selectedFilter: "", selectedCondition: 0, inputValue: null, dateValue: null};
+        let defaultValue = {selectedFilter: "", selectedCondition: 0, value: null};
         this.removeEmptyFilter();
         list == "accepted" ? this.acceptedFilters.push(defaultValue) : this.removedFilters.push(defaultValue);
       },
@@ -495,61 +495,33 @@
       },
       convertRawFilters(rawValue) {
         ["accepted", "removed"].forEach(section => {
-          rawValue[section].forEach(value => {
-            let splitValue = value.split("#");
-            let defaultValue = {selectedFilter: splitValue[0], selectedCondition: splitValue[1], inputValue: null, dateValue: null};
-            this.useDateInput(splitValue[0], splitValue[1]) ? defaultValue["dateValue"] = splitValue[2] : defaultValue["inputValue"] = splitValue[2];
+          Object.keys(rawValue[section]).forEach(value => {
+            let defaultValue = {selectedFilter: value, selectedCondition: rawValue[section][value].condition, value: rawValue[section][value].value};
             section == "accepted" ? this.acceptedFilters.push(defaultValue) : this.removedFilters.push(defaultValue);
           });
         });
       },
       collectFilters() {
-        let collectedFilters = {accepted: [], removed: []};
-        collectedFilters["accepted"] = this.acceptedFilters.map(item => {
-          let value = this.useDateInput(item["selectedFilter"], item["selectedCondition"]) ? item["dateValue"] : item["inputValue"];
-          return value ? [item["selectedFilter"], item["selectedCondition"], value].join("#") : null;
-        }).filter(item => item != null);
-
-        collectedFilters["removed"] = this.removedFilters.map(item => {
-          let value = this.useDateInput(item["selectedFilter"], item["selectedCondition"]) ? item["dateValue"] : item["inputValue"];
-          return value ? [item["selectedFilter"], item["selectedCondition"], value].join("#") : null;
-        }).filter(item => item != null);
+        let collectedFilters = this.convertFiltersToParams();
         let last_index = this.automation.filters_attributes.length-1;
         this.automation.filters_attributes[last_index].filter_data = collectedFilters;
         return this.automation.filters_attributes[last_index].filter_data;
       },
-      useNumberInput(filter, condition) {
-        return (['number_of_order', 'total_spend', 'last_order_total'].indexOf(filter) > -1) || ((['last_order_date', 'first_order_date'].indexOf(filter) > -1) && ["6", "7", "8"].indexOf(condition) > -1);
-      },
-      useDateInput(filter, condition) {
-        return (['last_order_date', 'first_order_date'].indexOf(filter) > -1) && ["3", "4", "5"].indexOf(condition) > -1;
-      },
       convertFiltersToParams() {
         let res = {};
-        let tmp = this.acceptedFilters.length == 0 ? {} : {"filter": [], "condition": [], "value": []};
-        this.acceptedFilters.forEach(item => {
-          let value = this.useDateInput(item["selectedFilter"], item["selectedCondition"]) ? item["dateValue"] : item["inputValue"];
-          if (value == null) return;
-          tmp["filter"].push(item["selectedFilter"]);
-          tmp["condition"].push(item["selectedCondition"].toString());
-          tmp["value"].push(value);
-        });
-        if (tmp != {}) {
-          res["accepted"] = tmp;
-        }
-
-        tmp = this.removedFilters.length == 0 ? {} : {"filter": [], "condition": [], "value": []};
-        this.removedFilters.forEach(item => {
-          let value = this.useDateInput(item["selectedFilter"], item["selectedCondition"]) ? item["dateValue"] : item["inputValue"];
-          tmp["filter"].push(item["selectedFilter"]);
-          tmp["condition"].push(item["selectedCondition"].toString());
-          tmp["value"].push(value);
-        });
-
-        if (tmp != {}) {
-          res["removed"] = tmp;
-        }
+        [this.acceptedFilters, this.removedFilters].forEach((collection, index) => {
+          let tmp = this.generateFilterToObject(collection);
+          index == 0 ? res["accepted"] = tmp : res["removed"] = tmp;
+        })
         return res;
+      },
+      generateFilterToObject(list) {
+        let tmp = {};
+        list.forEach(item => {
+          if (item["value"] == null) return;
+          tmp[item["selectedFilter"]] = {condition: item["selectedCondition"], value: item["value"]};
+        });
+        return tmp;
       },
       downloadCSV() {
         let url = `/targeting/get.csv`;

@@ -13,9 +13,9 @@ FILTER_OPTIONS =[["Select a filter"   , ""                  ],
                  ["Discount code used", "discount_code_used"]
                 ]
 CONDITIONS = [["Select a filter" , ""], ["is", "0"], ["is greater than", "1"], ["is less than", "2"],
-              ["Absolute", "999"], ["before", "3"], ["between", "4"], ["after", "5"], 
-              ["Relative", "888"], ["before", "6"], ["between", "7"], ["after", "8"],
-              ["Is", "9"], ["Equal", "find_value"]
+              ["Absolute", "disable_display_1"], ["before", "before"], ["between", "between_date"], ["after", "after"], 
+              ["Relative", "disable_display_2"], ["between", "between_number"], ["matches", "matches_number"],
+              ["between", "between_string"], ["matches", "matches_string"]
              ]
 CSV_TITLE = [ "Fullame",
               "Email",

@@ -3,7 +3,7 @@ class CustomerTargetingService
   def initialize(shop=nil)
     if shop
       @current_shop = shop
-      @orders = @current_shop.orders.where.not(customer_id: nil)
+      @orders = shop.orders.where.not(customer_id: nil)
     end
   end
 
@@ -45,17 +45,17 @@ class CustomerTargetingService
     unless accepted_attrs.present?
       orders.pluck(:customer_id).each{|id| accepted_user_ids[id] = []}
     else
-      accepted_attrs[:filter].each_with_index do |filter, i|
-        ids = get_customer_ids(filter, accepted_attrs[:condition][i], accepted_attrs[:value][i])
+      accepted_attrs.as_json.each_with_index do |(k, v), i|
+        ids = get_customer_ids(k, v["condition"], v["value"])
         ids.each do |id|
-          accepted_user_ids[id] = Array.new(accepted_attrs[:filter].size) unless accepted_user_ids[id].present?
+          accepted_user_ids[id] = Array.new(accepted_attrs.keys.size) unless accepted_user_ids[id].present?
           accepted_user_ids[id][i] = "X"
         end
       end
     end
 
-    removed_attrs[:filter].each_with_index do |filter, i|
-      removed_user_ids += get_customer_ids(filter, removed_attrs[:condition][i], removed_attrs[:value][i])
+    removed_attrs.as_json.each_with_index do |(k, v), i|
+      removed_user_ids += get_customer_ids(k, v["condition"], v["value"])
     end if removed_attrs.present?
     removed_user_ids.each{|remove_id| accepted_user_ids.delete(remove_id)}
     Customer.includes(:orders, :postcards, :addresses).find(accepted_user_ids.keys).each do |customer|
@@ -99,44 +99,11 @@ class CustomerTargetingService
 
   def filter_by collection, filter_type, raw_value
     collection.filter{|k,v| compare_field(v, filter_type, raw_value) if v}.keys
-    # case filter_type
-    #   when "0"
-    #     value = raw_value.to_i
-    #     collection.filter{|k,v| v == value}.keys
-    #   when "1"
-    #     value = raw_value.to_i
-    #     collection.filter{|k,v| v > value}.keys
-    #   when "2"
-    #     value = raw_value.to_i
-    #     collection.filter{|k,v| v < value}.keys
-    #   when "3"
-    #     value = raw_value.to_time.end_of_day
-    #     collection.filter{|k,v| v < value}.keys
-    #   when "4"
-    #     begin_value = raw_value[0].to_time.beginning_of_day
-    #     end_value = raw_value[1].to_time.end_of_day
-    #     collection.filter{|k,v| (v < begin_value) && (v > end_value)}.keys
-    #   when "5"
-    #     value = raw_value.to_time.beginning_of_day
-    #     collection.filter{|k,v| v > value}.keys
-    #   when "6"
-    #     value = raw_value.to_i.days
-    #     collection.filter{|k,v| v > Time.now.beginning_of_day - value}.keys
-    #   when "7"
-    #     begin_value = raw_value[0].to_i.days
-    #     end_value = raw_value[1].to_i.days
-    #     collection.filter{|k,v| (v > Time.now.beginning_of_day - begin_value) && (v < Time.now.end_of_day - end_value)}.keys
-    #   when "8"
-    #     value = raw_value.to_i.days
-    #     collection.filter{|k,v| v < Time.now.end_of_day - value}.keys
-    #   else []
-    # end
   end
 
-  def match_filter? order, filter
-    split_filter = filter.split("#")
-    field_to_filter = select_field_to_filter(split_filter[0], order)
-    compare_field(field_to_filter, split_filter[1], split_filter[2])
+  def match_filter? order, k, v
+    field_to_filter = select_field_to_filter(k, order)
+    compare_field(field_to_filter, v[:condition], v[:value])
   end
 
   def select_field_to_filter field, order
@@ -174,30 +141,40 @@ class CustomerTargetingService
     end
   end
 
+  def calculate_compare_number_field field
+    case field.class.to_s
+    when ActiveSupport::TimeWithZone.to_s
+      (field.to_date - Date.current).to_i.abs
+    else
+      field.to_i
+    end
+  end
+
   def compare_field field, condition, value
     case condition
+      when "before"
+        field.to_time < value.to_time.end_of_day
+      when "between_date"
+        splited_value = value.split("&")
+        begin_value = splited_value[0].to_time.beginning_of_day
+        end_value = splited_value[1].to_time.end_of_day
+        (field.to_time > begin_value) && (field.to_time < end_value)
+      when "after"
+        field.to_time > value.to_time.beginning_of_day
+      when "matches_number"
+        calculate_compare_number_field(field) == value.to_i
+      when "between_number"
+        splited_value = value.split("&")
+        begin_value = splited_value[0].to_i
+        end_value = splited_value[1].to_i
+        calculated_field = calculate_compare_number_field(field)
+        (calculated_field >= begin_value) && (calculated_field <= end_value)
       when "0"
         field.to_i == value.to_i
       when "1"
         field.to_i > value.to_i
       when "2"
         field.to_i < value.to_i
-      when "3"
-        field.to_time < value.to_time.end_of_day
-      when "4"
-        splited_value = value.split("&")
-        begin_value = splited_value[0].to_time.beginning_of_day
-        end_value = splited_value[1].to_time.end_of_day
-        (field.to_time > begin_value) && (field.to_time < end_value)
-      when "5"
-        field.to_time > value.to_time.beginning_of_day
-      when "6"
-        field.to_time > Time.now.beginning_of_day - value.to_i.days
-      when "7"
-        splited_value = value.split("&")
-        begin_value = splited_value[0].to_i.days
-        end_value = splited_value[1].to_i.days
-        (field.to_time < Time.now.end_of_day - begin_value) && (field.to_time > Time.now.beginning_of_day - end_value)
       when "8"
         field.to_time < Time.now.end_of_day - value.to_i.days
       when "9"
@@ -240,5 +217,66 @@ class CustomerTargetingService
       customer.accepts_marketing,
       customer.verified_email ? "Email verified" : "Not verified"
     ].reverse
+  end
+
+  def user_orders_count
+    orders.group(:customer_id).count
+  end
+
+  def user_total_spents
+    orders.group(:customer_id).sum(:total_line_items_price)
+  end
+
+  def user_last_orders
+    orders.group(:customer_id).maximum(:processed_at)
+  end
+
+  def user_first_orders
+    orders.group(:customer_id).minimum(:processed_at)
+  end
+
+  def user_last_order_totals
+    res = {}
+    orders.filter do |order|
+      processed_time = user_last_orders[order.customer_id]
+      processed_time.present? && processed_time == order.processed_at
+    end.each{|i| res[i.customer_id] = i.total_line_items_price}
+    res
+  end
+
+  def user_shipping_countries
+    res = {}
+    orders.each{|order| res[order.customer_id] = order.customer.default_address.country_code}
+    res
+  end
+
+  def user_shipping_states
+    res = {}
+    orders.each{|order| res[order.customer_id] = order.customer.default_address.province}
+    res
+  end
+
+  def user_referring_sites
+    res = {}
+    orders.each{|order| res[order.customer_id] = order.referring_site}
+    res
+  end
+
+  def user_landing_sites
+    res = {}
+    orders.each{|order| res[order.customer_id] = order.landing_site}
+    res
+  end
+
+  def user_order_tags
+    res = {}
+    orders.each{|order| res[order.customer_id] = order.tags}
+    res
+  end
+
+  def user_discount_codes
+    res = {}
+    orders.each{|order| res[order.customer_id] = order.discount_codes.map{|item| item['code']} if order.discount_codes.class == Array}
+    res
   end
 end

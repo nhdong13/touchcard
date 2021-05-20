@@ -138,8 +138,8 @@ class CardOrder < ApplicationRecord
     filter = filters.last # Somehow got a multiple-filter bug, so make sure we use latest value
     # if the filters are nil assume they're unbounded
     result = true
-    filter.filter_data["accepted"]&.each{|filter| result = result && CustomerTargetingService.new.match_filter?(order, filter)}
-    filter.filter_data["removed"]&.each{|filter| result = result && !CustomerTargetingService.new.match_filter?(order, filter)}
+    filter.filter_data[:accepted]&.each{|k, v| result = result && CustomerTargetingService.new.match_filter?(order, k, v)}
+    filter.filter_data[:removed]&.each{|k, v| result = result && CustomerTargetingService.new.match_filter?(order, k, v)}
     result
   end
 

@@ -6,7 +6,7 @@ class TargetingController < BaseController
     @accepted_attrs = params[:accepted]&.permit!
     @removed_attrs = params[:removed]&.permit!
     @customers = service.find(@accepted_attrs, @removed_attrs)
-    @titles = @accepted_attrs.present? ? CSV_TITLE + @accepted_attrs[:filter] : CSV_TITLE
+    @titles = @accepted_attrs.present? ? CSV_TITLE + @accepted_attrs.keys : CSV_TITLE
     @csv = service.build_csv(@customers, @titles)
     respond_to do |f|
       f.csv { send_data @csv, filename: "customers.csv" }

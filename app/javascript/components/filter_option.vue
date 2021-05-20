@@ -10,21 +10,19 @@
       </select>
     </div>
     <select class="option-dropdown" v-if="filter.selectedFilter != ''" v-model="filter.selectedCondition" @change="optionChange">
-      <option v-for="condition in filterConditions" v-if="showOption(condition[1])" :key="condition[1]" :value="condition[1]" :disabled="condition[1].length == 3 ? true : false">{{condition[0]}}</option>
+      <option v-for="condition in filterConditions" v-if="showOption(condition[1])" :key="condition[1]" :value="condition[1]" :disabled="condition[1].includes('disable_display') || condition[1] == '' ? true : false">{{condition[0]}}</option>
     </select>
     <div class="f-value" v-if="showSecondInput()">
-      <input v-model="filter.dateValue" @change="filterChange" class="d-none" />
-      <datepicker class="valueInput" v-model="dateValue" v-if="filter.selectedFilter != '' && !showNumberInput()" :input="detectValue('date')" :disabled-dates="datePickerOptions()" />
-      <datepicker class="valueInput" v-model="dateValue0" v-if="filter.selectedFilter != '' && !showNumberInput()" :input="detectValue('date')" :disabled-dates="datePickerOptions2()"> </datepicker>
+      <datepicker class="valueInput" v-model="value1" v-if="filter.selectedFilter != '' && !showNumberInput()" :input="combineValue()" :disabled-dates="datePickerOptions()" />
+      <datepicker class="valueInput" v-model="value2" v-if="filter.selectedFilter != '' && !showNumberInput()" :input="combineValue()" :disabled-dates="datePickerOptions2()"> </datepicker>
 
-      <input v-model="filter.inputValue" @change="filterChange" class="d-none" />
-      <input type="number" class="valueInput" v-model="inputValue" v-if="showNumberInput()" @change="detectValue('number')" />
-      <input type="number" class="valueInput" v-model="inputValue0" v-if="showNumberInput()" @change="detectValue('number')" />
+      <input type="number" class="valueInput" v-model="value1" v-if="showNumberInput()" @change="combineValue()" />
+      <input type="number" class="valueInput" v-model="value2" v-if="showNumberInput()" @change="combineValue()" />
     </div>
     <div class="f-value" v-else>
-      <input type="text" class="valueInput" v-model="filter.inputValue" v-if="showTextInput()" @change="filterChange" />
-      <input type="number" class="valueInput" v-model="filter.inputValue" v-else-if="showNumberInput()" @change="filterChange" />
-      <datepicker class="valueInput" v-model="filter.dateValue" v-else-if="filter.selectedFilter != ''" @change="filterChange" />
+      <input type="text" class="valueInput" v-model="filter.value" v-if="showTextInput()" @change="filterChange" />
+      <input type="number" class="valueInput" v-model="filter.value" v-else-if="showNumberInput()" @change="filterChange" />
+      <datepicker class="valueInput" v-model="filter.value" v-else-if="filter.selectedFilter != '' && showDateInput()" @change="filterChange" />
     </div>
     <div class="dropdown">
       <button type="button" class="more-action-btn" v-if="filter.selectedFilter != ''">...</button>
@@ -47,28 +45,22 @@
       if (this.filter.selectedFilter.includes("order_date")) {
         this.selectedFilter = "order_date";
         this.selectedDateOption = this.filter.selectedFilter.split("order_date")[0];
-
-        if (this.filter.selectedCondition == "4") {
-          this.dateValue = this.filter.dateValue.split("&")[0];
-          this.dateValue0 = this.filter.dateValue.split("&")[1];
-        }
-        if (this.filter.selectedCondition == "7") {
-          this.inputValue = this.filter.inputValue.split("&")[0];
-          this.inputValue0 = this.filter.inputValue.split("&")[1];
-        }
       } else {
         this.selectedFilter = this.filter.selectedFilter;
       }
+      if (this.filter.selectedCondition.toString().includes("between")) {
+          this.value1 = this.filter.value.split("&")[0];
+          this.value2 = this.filter.value.split("&")[1];
+        }
       this.getAllFilterValues()
     },
     data() {
       return {
         availableFilter: [],
         selectedFilter: "",
-        dateValue: null,
-        dateValue0: null,
-        inputValue: null,
-        inputValue0: null,
+        value: null,
+        value1: null,
+        value2: null,
         selectedDateOption: "first_",
         DATE_OPTIONS: [["First order date", "first_"], ["Last order date", "last_"]],
         filterOptions: [],
@@ -92,27 +84,30 @@
       },
       resetInputValue(filterChange = false) {
         if (filterChange) this.filter.selectedCondition = "";
-        this.dateValue = null;
-        this.dateValue0 = null;
-        this.inputValue = null;
-        this.inputValue0 = null;
+        this.value = null;
+        this.value1 = null;
+        this.value2 = null;
       },
       showNumberInput() {
         return ['number_of_order', 'total_spend', 'last_order_total', 'shipping_country', 'shipping_state', 'referring_site', 'landing_site', 'order_tag', 'discount_code_used'].indexOf(this.filter.selectedFilter) > -1 ||
-               ((['last_order_date', 'first_order_date'].indexOf(this.filter.selectedFilter) > -1) && ["6", "7", "8"].indexOf(this.filter.selectedCondition) > -1)
+               (this.selectedFilter == "order_date" && ["between_number", "matches_number"].indexOf(this.filter.selectedCondition) > -1)
       },
       showTextInput() {
         return ['shipping_country', 'shipping_state', 'referring_site', 'landing_site', 'order_tag', 'discount_code_used'].indexOf(this.filter.selectedFilter) > -1
       },
+      showDateInput() {
+        return this.selectedFilter == "order_date" && (["between_date", "before", "after"].indexOf(this.filter.selectedCondition) > -1)
+      },
       showSecondInput() {
-        return this.selectedFilter == "order_date" && (this.filter.selectedCondition == "4" || this.filter.selectedCondition == "7");
+        // return this.selectedFilter == "order_date" && (this.filter.selectedCondition == "4" || this.filter.selectedCondition == "7");
+        return this.filter.selectedCondition.toString().includes("between");
       },
       showOption(option) {
         return option == "" ||
-              (['last_order_date', 'first_order_date'].indexOf(this.filter.selectedFilter) > -1 && ["3", "4", "5", "6", "7", "8", "888", "999"].indexOf(option) > -1) ||
-              ((['number_of_order', 'total_spend', 'last_order_total'].indexOf(this.filter.selectedFilter) > -1) && ["0", "1", "2"].indexOf(option) > -1) ||
-              (['shipping_country', 'shipping_state', 'referring_site', 'landing_site'].indexOf(this.filter.selectedFilter) > -1 && option == "9") ||
-              (['order_tag', 'discount_code_used'].indexOf(this.filter.selectedFilter) > -1 && option == "find_value")
+              (this.selectedFilter == "order_date" && ["before", "between_date", "after", "between_number", "matches_number", "disable_display_1", "disable_display_2"].indexOf(option) > -1) ||
+              ((['number_of_order', 'total_spend', 'last_order_total'].indexOf(this.filter.selectedFilter) > -1) && ["matches_number", "between_number"].indexOf(option) > -1);// ||
+              // (['shipping_country', 'shipping_state', 'referring_site', 'landing_site'].indexOf(this.filter.selectedFilter) > -1 && option == "9") ||
+              // (['order_tag', 'discount_code_used'].indexOf(this.filter.selectedFilter) > -1 && option == "find_value")
       },
       removeFilter() {
         this.$emit('filterRemove', this.filter, this.collection, this.index);
@@ -129,19 +124,15 @@
         this.resetInputValue(true);
         this.filterChange();
       },
-      detectValue(type) {
-        if (type == "date") {
-          this.filter.dateValue = this.dateValue && this.dateValue0 ? `${this.dateValue}&${this.dateValue0}` : null;
-        } else {
-          this.filter.inputValue = this.inputValue && this.inputValue0 ? `${this.inputValue}&${this.inputValue0}` : null;
-        }
+      combineValue() {
+        this.filter.value = this.value1 && this.value2 ? `${this.value1}&${this.value2}` : null;
         this.filterChange();
       },
       datePickerOptions() {
-        return { from: this.dateValue0 };
+        return { from: this.value2 };
       },
       datePickerOptions2() {
-        return { to: this.dateValue };
+        return { to: this.value1 };
       }
     }
   }
