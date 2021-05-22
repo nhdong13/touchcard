@@ -125,6 +125,12 @@
         this.filterChange();
       },
       combineValue() {
+        if (this.value1 == null || this.value1 < 0) {
+          this.value1 = 0;
+        }
+        if (this.value2 == null || this.value2 < this.value1) {
+          this.value2 = 999999999;
+        }
         this.filter.value = this.value1 && this.value2 ? `${this.value1}&${this.value2}` : null;
         this.filterChange();
       },
