@@ -108,7 +108,7 @@ class CustomerTargetingService
 
   def select_field_to_filter field, order
     orders = Order.where(customer_id: order.customer_id, shop_id: order.shop_id)
-    case field
+    case field.to_s
     when "number_of_order"
       orders.count
     when "total_spend"
