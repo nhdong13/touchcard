@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_05_11_085809) do
+ActiveRecord::Schema.define(version: 2021_05_17_064334) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -93,7 +93,6 @@ ActiveRecord::Schema.define(version: 2021_05_11_085809) do
     t.json "back_json", default: {}
     t.json "price_rules", default: {}
     t.string "campaign_name"
-    t.string "campaign_status"
     t.integer "budget", default: 0
     t.datetime "send_date_start"
     t.datetime "send_date_end"
@@ -103,6 +102,8 @@ ActiveRecord::Schema.define(version: 2021_05_11_085809) do
     t.integer "campaign_type"
     t.integer "limit_cards_per_day"
     t.integer "card_order_parent_id"
+    t.boolean "send_continuously", default: false
+    t.integer "campaign_status", default: 0
   end
 
   create_table "card_sides", id: :serial, force: :cascade do |t|

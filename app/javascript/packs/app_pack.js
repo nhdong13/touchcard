@@ -15,9 +15,9 @@ import Paginate from 'vuejs-paginate'
 Vue.component('paginate', Paginate)
 
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faCaretDown, faCaretUp, faLongArrowAltDown } from '@fortawesome/free-solid-svg-icons'
+import { faCaretDown, faCaretUp, faLongArrowAltDown, faCalendarAlt } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-library.add(faCaretDown, faCaretUp, faLongArrowAltDown)
+library.add(faCaretDown, faCaretUp, faLongArrowAltDown, faCalendarAlt)
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 
 // To get Turbolinks working it helped to put the javascript pack tag in the <head>
