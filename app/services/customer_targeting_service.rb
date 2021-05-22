@@ -25,7 +25,7 @@ class CustomerTargetingService
     @user_shipping_countries = {}
     orders.each{|order| @user_shipping_countries[order.customer_id] = order.customer.default_address.country_code}
     @user_shipping_states = {}
-    orders.each{|order| @user_shipping_states[order.customer_id] = order.customer.default_address.province}
+    orders.each{|order| @user_shipping_states[order.customer_id] = order.customer.default_address.province_code}
     @user_referring_sites = {}
     orders.each{|order| @user_referring_sites[order.customer_id] = order.referring_site}
     @user_landing_sites = {}
@@ -110,26 +110,21 @@ class CustomerTargetingService
     orders = Order.where(customer_id: order.customer_id, shop_id: order.shop_id)
     case field
     when "number_of_order"
-      # order.customer.orders_count
       orders.count
     when "total_spend"
-      # order.customer.total_spent
       orders.sum(:total_line_items_price)
     when "last_order_date"
-      # order.customer.last_order_date
       orders.maximum(:processed_at)
     when "first_order_date"
-      # order.customer.orders.order(created_at: :asc).first.created_at.to_date
       orders.minimum(:processed_at)
     when "last_order_total"
-      # order.customer.orders.order(created_at: :desc).first.total_line_items_price
       orders.order(:processed_at).last.total_line_items_price
     when "order_total"
       order.total_price
     when "shipping_country"
       order.customer.default_address.country_code
     when "shipping_state"
-      order.customer.default_address.province
+      order.customer.default_address.province_code
     when "referring_site"
       order.landing_site
     when "discount_code"
@@ -169,8 +164,8 @@ class CustomerTargetingService
         end_value = splited_value[1].to_i
         calculated_field = calculate_compare_number_field(field)
         (calculated_field >= begin_value) && (calculated_field <= end_value)
-      when "0"
-        field.to_i == value.to_i
+      when "matches_string"
+        field.to_s == value.to_s
       when "1"
         field.to_i > value.to_i
       when "2"
@@ -252,7 +247,7 @@ class CustomerTargetingService
 
   def user_shipping_states
     res = {}
-    orders.each{|order| res[order.customer_id] = order.customer.default_address.province}
+    orders.each{|order| res[order.customer_id] = order.customer.default_address.province_code}
     res
   end
 

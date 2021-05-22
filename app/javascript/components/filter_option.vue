@@ -105,8 +105,8 @@
       showOption(option) {
         return option == "" ||
               (this.selectedFilter == "order_date" && ["before", "between_date", "after", "between_number", "matches_number", "disable_display_1", "disable_display_2"].indexOf(option) > -1) ||
-              ((['number_of_order', 'total_spend', 'last_order_total'].indexOf(this.filter.selectedFilter) > -1) && ["matches_number", "between_number"].indexOf(option) > -1);// ||
-              // (['shipping_country', 'shipping_state', 'referring_site', 'landing_site'].indexOf(this.filter.selectedFilter) > -1 && option == "9") ||
+              ((['number_of_order', 'total_spend', 'last_order_total'].indexOf(this.filter.selectedFilter) > -1) && ["matches_number", "between_number"].indexOf(option) > -1) ||
+              (['shipping_country', 'shipping_state', 'referring_site', 'landing_site'].indexOf(this.filter.selectedFilter) > -1 && option == "matches_string");
               // (['order_tag', 'discount_code_used'].indexOf(this.filter.selectedFilter) > -1 && option == "find_value")
       },
       removeFilter() {
