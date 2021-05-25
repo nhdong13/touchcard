@@ -66,6 +66,7 @@
       }
       this.getAllFilterValues();
       this.getAllCountries();
+      this.countrySelected();
     },
     data() {
       return {
@@ -81,7 +82,7 @@
         countriesList: [],
         statesList: [],
         switcherValue: false,
-        selectedCountry: null,
+        selectedCountry: "US",
       }
     },
     methods: {
