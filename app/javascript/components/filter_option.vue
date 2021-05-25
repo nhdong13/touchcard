@@ -23,13 +23,13 @@
       <input type="text" class="valueInput" v-model="filter.value" v-if="showTextInput()" @change="filterChange" />
       <input type="number" class="valueInput" v-model="filter.value" v-else-if="showNumberInput()" @change="filterChange" />
       <datepicker class="valueInput" v-model="filter.value" v-if="showDateInput()" @change="filterChange" />
-      <treeselect class="valueInput" v-model="filter.value" v-if="showCountrySelect()" :multiple="true" :options="countriesList" />
+      <treeselect class="valueInput" v-model="filter.value" v-if="showCountrySelect()" :multiple="true" :options="countriesList" placeholder="Any country" />
 
       <div class="f-value" v-if="showStateSelect()">
         <select class="valueInput" v-model="selectedCountry" @change="countrySelected">
           <option v-for="country in countriesList" :key="country.id" :value="country.id">{{country.label}}</option>
         </select>
-        <treeselect class="valueInput" v-model="filter.value" :options="statesList" :multiple="true" />
+        <treeselect class="valueInput" v-model="filter.value" :options="statesList" :multiple="true" placeholder="Any state" />
       </div>
     </div>
     <div class="dropdown">
