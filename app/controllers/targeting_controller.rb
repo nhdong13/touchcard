@@ -17,4 +17,21 @@ class TargetingController < BaseController
   def get_filters
     render json: {filters: FILTER_OPTIONS, conditions: CONDITIONS}
   end
+
+  def get_countries
+    file = File.open("./public/countries.json")
+    data = JSON.load(file)
+    file.close
+    res = data.map{|item| {id: item["code2"], label: item["name"]}}
+    render json: res
+  end
+
+  def get_states
+    file = File.open("./public/countries.json")
+    data = JSON.load(file)
+    file.close
+    res = data.select{|item| item["code2"] == params[:country]}
+    res = res[0]["states"].map{|state| {id: state["code"], label: state["name"]}} if res.present?
+    render json: res
+  end
 end

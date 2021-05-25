@@ -15,7 +15,7 @@ FILTER_OPTIONS =[["Select a filter"   , ""                  ],
 CONDITIONS = [["Select a filter" , ""], ["is", "0"], ["is greater than", "1"], ["is less than", "2"],
               ["Absolute", "disable_display_1"], ["before", "before"], ["between", "between_date"], ["after", "after"], 
               ["Relative", "disable_display_2"], ["between", "between_number"], ["matches", "matches_number"],
-              ["between", "between_string"], ["matches", "matches_string"]
+              ["between", "between_string"], ["matches", "matches_string"], ["from", "from"]
              ]
 CSV_TITLE = [ "Fullame",
               "Email",

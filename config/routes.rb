@@ -63,6 +63,8 @@ Rails.application.routes.draw do
     collection do
       post :get
       get :get_filters
+      get :get_countries
+      get :get_states
     end
   end
 

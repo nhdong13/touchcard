@@ -176,6 +176,8 @@ class CustomerTargetingService
         field == value
       when "find_value"
         field.index(value)
+      when "from"
+        value.join(",").index(field).present?
       else
         false
     end
