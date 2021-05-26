@@ -65,6 +65,7 @@ Rails.application.routes.draw do
       get :get_filters
       get :get_countries
       get :get_states
+      get :get_country_by_state
     end
   end
 

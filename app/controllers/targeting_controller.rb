@@ -1,4 +1,7 @@
 class TargetingController < BaseController
+  before_action :read_file, only: [:get_countries, :get_states, :get_country_by_state]
+  attr_accessor :data
+
   def index; end
 
   def get
@@ -17,21 +20,27 @@ class TargetingController < BaseController
   def get_filters
     render json: {filters: FILTER_OPTIONS, conditions: CONDITIONS}
   end
-
+  
   def get_countries
-    file = File.open("./public/countries.json")
-    data = JSON.load(file)
-    file.close
-    res = data.map{|item| {id: item["code2"], label: item["name"]}}
+    res = data.map{|item| {id: item["iso3"], label: item["name"]}}
     render json: res
   end
 
   def get_states
-    file = File.open("./public/countries.json")
-    data = JSON.load(file)
-    file.close
-    res = data.select{|item| item["code2"] == params[:country]}
-    res = res[0]["states"].map{|state| {id: state["code"], label: state["name"]}} if res.present?
+    res = data.select{|item| item["iso3"] == params[:country]}
+    res = res[0]["states"].map{|state| {id: state["id"], label: state["name"]}} if res.present?
     render json: res
+  end
+
+  def get_country_by_state
+    res = data.select{|item| item["states"].map{|state| state["id"]}.index(params[:state].to_i).present?}
+    render json: {result: res.present? ? res[0]["iso3"] : nil}
+  end
+
+  private
+  def read_file
+    file = File.open("./public/countries.json")
+    @data = JSON.load(file)
+    file.close
   end
 end

@@ -64,6 +64,9 @@
         this.value1 = this.filter.value.split("&")[0];
         this.value2 = this.filter.value.split("&")[1];
       }
+      if (this.filter.selectedFilter == "shipping_state" && this.filter.selectedCondition == "from") {
+        this.getSelectedCountryByState();
+      }
       this.getAllFilterValues();
       this.getAllCountries();
       this.countrySelected();
@@ -82,7 +85,7 @@
         countriesList: [],
         statesList: [],
         switcherValue: false,
-        selectedCountry: "US",
+        selectedCountry: "USA",
       }
     },
     methods: {
@@ -177,6 +180,12 @@
       countrySelected() {
         axios.get("/targeting/get_states", {params: {country: this.selectedCountry}}).then((response) => {
           this.statesList = response.data;
+        })
+      },
+      getSelectedCountryByState() {
+        axios.get("/targeting/get_country_by_state", {params: {state: this.filter.value[0]}}).then((response) => {
+          this.selectedCountry = response.data.result;
+          this.countrySelected();
         })
       }
     }
