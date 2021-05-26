@@ -84,6 +84,8 @@ class CustomerTargetingService
       @user_shipping_countries
     when "shipping_state"
       @user_shipping_states
+    when "shipping_city"
+      user_shipping_cities
     when "referring_site"
       @user_referring_sites
     when "landing_site"
@@ -125,6 +127,8 @@ class CustomerTargetingService
       order.customer.default_address.country_code
     when "shipping_state"
       order.customer.default_address.province_code
+    when "shipping_city"
+      order.customer.default_address.city
     when "referring_site"
       order.landing_site
     when "discount_code"
@@ -250,6 +254,12 @@ class CustomerTargetingService
   def user_shipping_states
     res = {}
     orders.each{|order| res[order.customer_id] = order.customer.default_address.province_code}
+    res
+  end
+
+  def user_shipping_cities
+    res = {}
+    orders.each{|order| res[order.customer_id] = order.customer.default_address.city}
     res
   end
 

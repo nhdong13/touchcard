@@ -31,6 +31,7 @@
         </select>
         <treeselect class="valueInput" v-model="filter.value" :options="statesList" :multiple="true" placeholder="Any state" />
       </div>
+      <vue-tags-input v-model="newtag" :tags="tags" @tags-changed="newTags => tagsChanged(newTags)" v-if="showCityInput()" class="valueInput" />
     </div>
     <div class="dropdown">
       <button type="button" class="more-action-btn" v-if="filter.selectedFilter != ''">...</button>
@@ -47,9 +48,10 @@
   import Switcher from './switcher.vue';
   import Treeselect from '@riophae/vue-treeselect'
   import './treeselect.css';
+  import VueTagsInput from '@johmun/vue-tags-input';
   export default {
     components: {
-      Datepicker,Switcher,Treeselect
+      Datepicker,Switcher,Treeselect,VueTagsInput
     },
     props: ["filter", "collection", "index"],
     beforeMount() {
@@ -66,6 +68,9 @@
       }
       if (this.filter.selectedFilter == "shipping_state" && this.filter.selectedCondition == "from") {
         this.getSelectedCountryByState();
+      }
+      if (this.filter.selectedFilter == "shipping_city" && this.filter.selectedCondition == "from") {
+        this.tags = this.filter.value.map(value => {return {text: value, tiClasses: ["ti-valid"]}});
       }
       this.getAllFilterValues();
       this.getAllCountries();
@@ -86,6 +91,8 @@
         statesList: [],
         switcherValue: false,
         selectedCountry: "USA",
+        newtag: '',
+        tags: [],
       }
     },
     methods: {
@@ -129,11 +136,14 @@
       showStateSelect() {
         return this.filter.selectedFilter == "shipping_state" && this.filter.selectedCondition == "from";
       },
+      showCityInput() {
+        return this.filter.selectedFilter == "shipping_city" && this.filter.selectedCondition == "from";  
+      },
       showOption(option) {
         return option == "" ||
               (this.selectedFilter == "order_date" && ["before", "between_date", "after", "between_number", "matches_number", "disable_display_1", "disable_display_2"].indexOf(option) > -1) ||
               ((['number_of_order', 'total_spend', 'last_order_total'].indexOf(this.filter.selectedFilter) > -1) && ["matches_number", "between_number"].indexOf(option) > -1) ||
-              (['shipping_country', 'shipping_state'].indexOf(this.filter.selectedFilter) > -1 && option == "from");
+              (['shipping_country', 'shipping_state', 'shipping_city'].indexOf(this.filter.selectedFilter) > -1 && option == "from");
               // (['order_tag', 'discount_code_used'].indexOf(this.filter.selectedFilter) > -1 && option == "find_value")
       },
       removeFilter() {
@@ -187,6 +197,10 @@
           this.selectedCountry = response.data.result;
           this.countrySelected();
         })
+      },
+      tagsChanged(newTags) {
+        this.tags = newTags;
+        this.filter.value = newTags.map(tag => tag.text);
       }
     }
   }
@@ -265,5 +279,42 @@
 .f-value {
   width: 100%;
   display: flex;
+}
+</style>
+<style lang="css">
+.vue-tags-input {
+  max-width: 100% !important;
+}
+
+.vue-tags-input .ti-input {
+  border: 1px solid black !important;
+  padding: 3px 5px !important;
+  border-width: thin;
+  border-radius: 3px;
+  height: 30px;
+}
+
+.vue-tags-input .ti-input .ti-tags {
+  margin: 0;
+  height: 22px !important;
+}
+
+.vue-tags-input .ti-input .ti-tags .ti-tag {
+  height: 22px !important;
+  position: relative;
+  background: #e3f2fd !important;
+  color: #039be5 !important;
+  padding: 2px 5px;
+  margin: 0;
+  margin-right: 5px;
+}
+
+.vue-tags-input .ti-input .ti-tags .ti-new-tag-input-wrapper {
+  margin: 0 5px;
+  padding: 0;
+}
+
+.vue-tags-input .ti-input .ti-tags .ti-new-tag-input-wrapper input {
+  height: 22px;
 }
 </style>
