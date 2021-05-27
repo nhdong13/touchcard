@@ -30,8 +30,6 @@ class CustomerTargetingService
     orders.each{|order| @user_referring_sites[order.customer_id] = order.referring_site}
     @user_landing_sites = {}
     orders.each{|order| @user_landing_sites[order.customer_id] = order.landing_site}
-    @user_order_tags = {}
-    orders.each{|order| @user_order_tags[order.customer_id] = order.tags}
     @user_discount_codes = {}
     orders.each{|order| @user_discount_codes[order.customer_id] = order.discount_codes.map{|item| item['code']} if order.discount_codes.class == Array}
 
@@ -90,8 +88,8 @@ class CustomerTargetingService
       @user_referring_sites
     when "landing_site"
       @user_landing_sites
-    when "order_tag"
-      @user_order_tags
+    when "order_tags"
+      user_order_tags
     when "discount_code_used"
       @user_discount_codes
     else
@@ -133,7 +131,7 @@ class CustomerTargetingService
       order.landing_site
     when "discount_code"
       order.discount_codes.map{|item| item['code']} if order.discount_codes.class == Array
-    when "tag"
+    when "order_tags"
       order.tags
     else
       []
@@ -182,6 +180,11 @@ class CustomerTargetingService
         field.index(value)
       when "from"
         value.join(",").index(field).present?
+      when "tag_is"
+        value.sort == field.split(", ").sort
+      when "tag_contain"
+        value.each{|item| return true if field.index(item).present?}
+        false
       else
         false
     end

@@ -31,7 +31,7 @@
         </select>
         <treeselect class="valueInput" v-model="filter.value" :options="statesList" :multiple="true" placeholder="Any state" />
       </div>
-      <vue-tags-input v-model="newtag" :tags="tags" @tags-changed="newTags => tagsChanged(newTags)" v-if="showCityInput()" class="valueInput" />
+      <vue-tags-input v-model="newtag" :tags="tags" @tags-changed="newTags => tagsChanged(newTags)" v-if="showCityOrTagsInput()" class="valueInput" />
     </div>
     <div class="dropdown">
       <button type="button" class="more-action-btn" v-if="filter.selectedFilter != ''">...</button>
@@ -69,7 +69,7 @@
       if (this.filter.selectedFilter == "shipping_state" && this.filter.selectedCondition == "from") {
         this.getSelectedCountryByState();
       }
-      if (this.filter.selectedFilter == "shipping_city" && this.filter.selectedCondition == "from") {
+      if ((this.filter.selectedFilter == "shipping_city" && this.filter.selectedCondition == "from") || (this.filter.selectedFilter == "order_tags")) {
         this.tags = this.filter.value.map(value => {return {text: value, tiClasses: ["ti-valid"]}});
       }
       this.getAllFilterValues();
@@ -136,14 +136,15 @@
       showStateSelect() {
         return this.filter.selectedFilter == "shipping_state" && this.filter.selectedCondition == "from";
       },
-      showCityInput() {
-        return this.filter.selectedFilter == "shipping_city" && this.filter.selectedCondition == "from";  
+      showCityOrTagsInput() {
+        return (this.filter.selectedFilter == "shipping_city" && this.filter.selectedCondition == "from") || ('order_tags' == this.filter.selectedFilter && ["tag_is", "tag_contain"].indexOf(this.filter.selectedCondition) > -1);  
       },
       showOption(option) {
         return option == "" ||
               (this.selectedFilter == "order_date" && ["before", "between_date", "after", "between_number", "matches_number", "disable_display_1", "disable_display_2"].indexOf(option) > -1) ||
               ((['number_of_order', 'total_spend', 'last_order_total'].indexOf(this.filter.selectedFilter) > -1) && ["matches_number", "between_number"].indexOf(option) > -1) ||
-              (['shipping_country', 'shipping_state', 'shipping_city'].indexOf(this.filter.selectedFilter) > -1 && option == "from");
+              (['shipping_country', 'shipping_state', 'shipping_city'].indexOf(this.filter.selectedFilter) > -1 && option == "from") ||
+              ('order_tags' == this.filter.selectedFilter && ["tag_is", "tag_contain"].indexOf(option) > -1);
               // (['order_tag', 'discount_code_used'].indexOf(this.filter.selectedFilter) > -1 && option == "find_value")
       },
       removeFilter() {

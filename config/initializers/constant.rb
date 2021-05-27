@@ -10,13 +10,13 @@ FILTER_OPTIONS =[["Select a filter"   , ""                  ],
                  ["Shipping city"     , "shipping_city"     ],
                  ["Referring site"    , "referring_site"    ],
                  ["Landing site"      , "landing_site"      ],
-                 ["Order tag"         , "order_tag"         ],
+                 ["Order tags"        , "order_tags"        ],
                  ["Discount code used", "discount_code_used"]
                 ]
 CONDITIONS = [["Select a filter" , ""], ["is", "0"], ["is greater than", "1"], ["is less than", "2"],
               ["Absolute", "disable_display_1"], ["before", "before"], ["between", "between_date"], ["after", "after"], 
               ["Relative", "disable_display_2"], ["between", "between_number"], ["matches", "matches_number"],
-              ["between", "between_string"], ["matches", "matches_string"], ["from", "from"]
+              ["between", "between_string"], ["matches", "matches_string"], ["from", "from"], ["is", "tag_is"], ["contains", "tag_contain"]
              ]
 CSV_TITLE = [ "Fullame",
               "Email",
