@@ -64,9 +64,9 @@ class CardOrder < ApplicationRecord
   scope :active, -> { where(archived: false) }
 
   before_create :add_default_params
-  # after_update :update_campaign_status, if: :saved_change_to_enabled?
-  # after_update :update_credits, if: :saved_change_to_budget_update?
-  # after_update :update_budget, if: :saved_change_to_budget_type?
+  after_update :update_campaign_status, if: :saved_change_to_enabled?
+  after_update :update_credits, if: :saved_change_to_budget_update?
+  after_update :update_budget, if: :saved_change_to_budget_type?
 
   def add_default_params
     self.campaign_name = "My campaign" unless self.campaign_name.present?
