@@ -27,7 +27,7 @@ gem "json", "~> 2.5.1"
 gem "shopify_app", "~> 12.0.7"
 
 # Stripe
-gem "stripe", "~> 3.9"
+gem 'stripe', '~> 5.30'
 
 # S3 connection
 gem "aws-sdk", "~> 3.0.2"
