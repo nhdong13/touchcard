@@ -46,7 +46,8 @@ class Subscription < ApplicationRecord
       customer: shop.stripe_customer.id,
       amount: delta_quantity * plan.amount,
       currency: "usd",
-      description: "Plan upgrade from #{old_quantity} cards to #{new_quantity} cards adding #{delta_quantity} cards for this month")
+      description: "Plan upgrade from #{old_quantity} cards to #{new_quantity} cards adding #{delta_quantity} cards for this month"
+    })
     shop.update(credit: shop.credit + delta_quantity)
   end
 
