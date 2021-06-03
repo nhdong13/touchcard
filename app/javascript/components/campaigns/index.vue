@@ -79,16 +79,18 @@
           </tr>
         </table>
       </div>
-      <CustomePagination
-        v-model="currentPage"
-        :total-page="thisTotalPages"
-        :page-range="5"
-        :container-class="'pagination'"
-        :page-class="'page-item'"
-        :click-handler="changePagination"
-      > 
-      </CustomePagination>
+      <div id="pagination">
+        <CustomePagination
+          v-model="currentPage"
+          :total-page="thisTotalPages"
+          :page-range="5"
+          :container-class="'pagination'"
+          :page-class="'page-item'"
+          :click-handler="changePagination"
+        > 
+        </CustomePagination>
       </div>
+    </div>
       <campaignModal name="duplicateModal" :classes="'duplicate-modal'" :width="450" :height="200">
         <div>
           <div>
@@ -175,9 +177,6 @@
         sortByStatus: true,
         sortBySendDateStart: true,
         duplicateCampaignName: "",
-        // May have a better way
-        prevButton: `<svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="caret-left" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 512" class="svg-inline--fa fa-caret-left fa-w-6"><path fill="currentColor" d="M192 127.338v257.324c0 17.818-21.543 26.741-34.142 14.142L29.196 270.142c-7.81-7.81-7.81-20.474 0-28.284l128.662-128.662c12.599-12.6 34.142-3.676 34.142 14.142z" class=""></path></svg>`,
-        nextButton: `<svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="caret-right" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 512" class="svg-inline--fa fa-caret-right fa-w-6"><path fill="currentColor" d="M0 384.662V127.338c0-17.818 21.543-26.741 34.142-14.142l128.662 128.662c7.81 7.81 7.81 20.474 0 28.284L34.142 398.804C21.543 411.404 0 402.48 0 384.662z" class=""></path></svg>`
       }
     },
 
@@ -457,6 +456,8 @@
     }
   }
 
+
+
   .campaign-name-style{
     color: #6baafc;
     cursor: pointer;
@@ -480,14 +481,17 @@
     margin: 3px;
   }
 
-  .pagination{
-    display: flex;
-    justify-content: center;
+  #pagination .page-item {
+    display: inline-block;
+  }
+
+  #pagination .pagination{
+    text-align: center;
     list-style: none;
     li{
       padding: 5px;
       &.active{
-        background: darkgray;
+        background: #f4f4f4;
       }
       &.disabled{
         color: gray;
@@ -495,6 +499,14 @@
       a:focus{
         outline: none;
         box-shadow: none;
+      }
+      a {
+        text-decoration: none;
+        font-size: 18px;
+        color: #6a6a6a;
+      }
+      svg {
+        color: #676766;
       }
     }
   }

@@ -6,7 +6,7 @@
 		</a>
 	</li>
 	<!-- range of pages -->
-	<li v-for="page in pages" :class="[page.isSelected ? 'active' : '']">
+	<li v-for="page in pages" :class="[pageClass ,page.isSelected ? 'active' : '']" id="pages">
 		<a v-if="page.firstPage" @click="onClickPage(1)">1</a>
 		<a v-else-if="page.lastPage" @click="onClickPage(totalPage)">{{ totalPage }}</a>
 		<a v-else-if="page.breakView">{{ breakViewText }}</a>
@@ -150,9 +150,5 @@ export default {
 <style type="text/css" scoped>
 a {
   cursor: pointer;
-}
-
-.active {
-	background-color: grey;
 }
 </style>
