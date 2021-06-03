@@ -89,7 +89,16 @@
         :page-class="'page-item'"
         >
       </paginate>
-      
+      <!-- TESTING PAGINATION ONLY -->
+      <!-- <paginate
+        :pageCount="20"
+        :page-range="5"
+        :prev-text="prevButton"
+        :next-text="nextButton"
+        :container-class="'pagination'"
+        :page-class="'page-item'"
+      > 
+      </paginate>-->
       </div>
       <campaignModal name="duplicateModal" :classes="'duplicate-modal'" :width="450" :height="200">
         <div>
