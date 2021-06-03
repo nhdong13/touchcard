@@ -79,26 +79,15 @@
           </tr>
         </table>
       </div>
-      <paginate
+      <CustomePagination
         v-model="currentPage"
-        :page-count="thisTotalPages"
-        :click-handler="changePagination"
-        :prev-text="prevButton"
-        :next-text="nextButton"
-        :container-class="'pagination'"
-        :page-class="'page-item'"
-        >
-      </paginate>
-      <!-- TESTING PAGINATION ONLY -->
-      <!-- <paginate
-        :pageCount="20"
+        :total-page="thisTotalPages"
         :page-range="5"
-        :prev-text="prevButton"
-        :next-text="nextButton"
         :container-class="'pagination'"
         :page-class="'page-item'"
+        :click-handler="changePagination"
       > 
-      </paginate>-->
+      </CustomePagination>
       </div>
       <campaignModal name="duplicateModal" :classes="'duplicate-modal'" :width="450" :height="200">
         <div>
@@ -137,13 +126,15 @@
   import { MdSwitch } from 'vue-material/dist/components'
   import _ from 'lodash'
   import VModal from 'vue-js-modal'
+  import CustomePagination from './pagination.vue'
 
   Vue.use(VModal, { componentName: 'campaignModal'})
   Vue.use(MdSwitch)
 
   export default {
     components: {
-      DropdownMenu
+      DropdownMenu,
+      CustomePagination
     },
     props: {
       campaigns: {
