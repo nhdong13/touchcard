@@ -26,7 +26,7 @@ export default {
 	name: "CustomePagination",
 	props: {
 		value: {
-			type: Number,
+			type: Number
 		},
 		pageRange: {
 	      	type: Number,

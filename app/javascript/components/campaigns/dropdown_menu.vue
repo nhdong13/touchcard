@@ -26,7 +26,7 @@
         <datepicker v-model="filters.dateCompleted"></datepicker>
       </div>
       <div class="filter-items">
-        <button v-model="filters.clearAll" @click="onResetFilter" class="margin-0 full-width">All</button>
+        <button v-model="filters.clearAll" @click="onResetFilter" class="margin-0 full-width">Clear all filters</button>
       </div>
       <div class="filter-items">
         <button @click="closeFilters" class="full-width">Cancel</button>
@@ -48,21 +48,25 @@ export default {
   created() {
     window.addEventListener('click', this.checkClickOn);
   },
-  props: ['campaignTypes', 'campaignStatuses'],
   data() {
     return {
       isOpen: false,
       date: new Date(),
       filters: {
-        type: "",
-        status: "",
+        type: "Any",
+        status: "Any",
         dateCreated: "",
         dateCompleted: "",
         clearAll: false,
-      }
+      },
+      campaignTypes: ['Any', 'Automation', 'One-off'],
+      campaignStatuses: ['Any', 'Processing', 'Scheduled', 'Sending', 'Sent', 'Paused', 'Draft', 'Out of credit', 'Error']
     };
   },
-
+  mounted() {
+    this.filters.type = 'Any'
+    this.filters.status = 'Any'
+  },
   methods: {
     checkClickOn(event) {
       if (document.getElementById(this.id) && !document.getElementById(this.id).contains(event.target)) {
@@ -104,8 +108,8 @@ export default {
 
     onResetFilter: function() {
       this.filters = {
-        type: "",
-        status: "",
+        type: "Any",
+        status: "Any",
         dateCreated: "",
         dateCompleted: "",
         clearAll: false,

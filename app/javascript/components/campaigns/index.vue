@@ -14,7 +14,7 @@
             CSV
             <font-awesome-icon icon="long-arrow-alt-down"/>
            </button>
-          <DropdownMenu :campaignTypes="campaignTypes" :campaignStatuses="campaignStatuses" ref="DropdownMenu"></DropdownMenu>
+          <DropdownMenu ref="DropdownMenu"></DropdownMenu>
           <input :placeholder="'Search'" v-model="searchQuery" @input="debounceSearch" />
         </div>
       </div>
@@ -156,10 +156,8 @@
         required: true
       },
     },
-
     mounted () {
     },
-
     data: function() {
        return {
         thisCampaigns: this.campaigns,
@@ -170,7 +168,6 @@
         searchQuery: null,
         debounce: null,
         campaignActive: [],
-        campaignType: ['Automation', 'One-off'],
         sortBy: ['sortByName', 'sortByType'],
         sortByName: true,
         sortByType: true,
@@ -341,13 +338,13 @@
         });
       },
 
-      campaignStatus: function(enabled){
-        if (enabled) {
-          return "Sending"
-        } else {
-          return "Paused"
-        }
-      },
+      // campaignStatus: function(enabled){
+      //   if (enabled) {
+      //     return "Sending"
+      //   } else {
+      //     return "Paused"
+      //   }
+      // },
 
       changePagination: function(pageNum){
         let _this = this
