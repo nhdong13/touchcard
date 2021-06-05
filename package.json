@@ -23,6 +23,7 @@
     "vue-material": "^1.0.0-beta-15",
     "vue-template-compiler": "^2.5.17",
     "vue-turbolinks": "^2.0.0",
+    "vue2-datepicker": "^3.9.1",
     "vuejs-datepicker": "^1.6.2",
     "vuejs-paginate": "^2.1.0",
     "webpack-merge": "^4.1.1"
