@@ -77,7 +77,7 @@ class Postcard < ApplicationRecord
     if card_order.has_discount?
       self.discount_pct = -(card_order.discount_pct.abs)
       self.discount_exp_at = estimated_arrival + card_order.discount_exp.weeks
-      if (ENV['APP_URL'] == "https://touchcard-staging.herokuapp.com/") and (card_order.shop.domain != "stagecard.myshopify.com")
+      if (ENV['APP_URL'] == "https://touchcard-dev.herokuapp.com/") and (card_order.shop.domain != "stagecard.myshopify.com")
         self.discount_code = "SAM-PLE-XXX"
         return
       end
