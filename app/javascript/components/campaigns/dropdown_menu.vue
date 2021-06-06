@@ -13,8 +13,8 @@
       </div>
       <div class="filter-items">
         <span>Status</span>
-        <select v-model="filters.status">
-          <option v-for="item in campaignStatuses" :value="item">{{ item }}</option>
+        <select v-model="filters.status" @change="addStatus">
+          <option v-for="item in availableStatus" :value="item">{{ item }}</option>
         </select>
       </div>
       <div class="filter-items">
@@ -42,6 +42,11 @@
       <div class="filter-items">
         <button @click="closeFilters" class="full-width">Cancel</button>
         <button @click="submitFilters" class="full-width margin-0">Save</button>
+      </div>
+      <div v-if="selectedStatuses.length > 0">
+        <md-divider></md-divider>
+        <md-subheader>Status</md-subheader>
+        <md-chip md-deletable v-for="item in selectedStatuses"  @md-delete="removeStatus(item)">{{ item }}</md-chip>
       </div>
     </div>
   </div>
@@ -71,7 +76,8 @@ export default {
         clearAll: false,
       },
       campaignTypes: ['Any', 'Automation', 'One-off'],
-      campaignStatuses: ['Any', 'Processing', 'Scheduled', 'Sending', 'Sent', 'Paused', 'Draft', 'Out of credit', 'Error'],
+      availableStatus: ['Any', 'Processing', 'Scheduled', 'Sending', 'Sent', 'Paused', 'Draft', 'Out of credit', 'Error'],
+      selectedStatuses: [],
       isDisable: true,
       range: []
     };
@@ -138,6 +144,19 @@ export default {
       const today = new Date()
       today.setHours(0, 0, 0, 0);
       return date > today
+    },
+
+    removeStatus: function(status) {
+      this.selectedStatuses = this.selectedStatuses.filter(element => element != status)
+    },
+
+    addStatus: function() {
+      if(this.filters.status == "Any") return
+      this.availableStatus = this.availableStatus.filter(function(element) {
+        return (element != this.filters.status && element != "Any") ? true : false
+      },this)
+      this.selectedStatuses.push(this.filters.status)
+      console.log(this.availableStatus)
     }
   }
 };

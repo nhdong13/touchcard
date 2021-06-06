@@ -3,11 +3,18 @@ import AutomationForm from '../automation_form.vue'
 import SubscriptionForm from '../subscription_form'
 import TurbolinksAdapter from 'vue-turbolinks'
 Vue.use(TurbolinksAdapter);
+
 import axios from 'axios'
+
 import vueCountryRegionSelect from 'vue-country-region-select'
 Vue.use(vueCountryRegionSelect)
+
 import 'vue-material/dist/vue-material.min.css'
 import 'vue-material/dist/theme/default.css'
+import { MdDivider, MdChips, MdSubheader } from 'vue-material/dist/components'
+Vue.use(MdDivider)
+Vue.use(MdChips)
+Vue.use(MdSubheader)
 
 import campaignDashboard from '../components/campaigns/index'
 
