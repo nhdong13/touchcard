@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_05_17_064334) do
+ActiveRecord::Schema.define(version: 2021_06_07_071226) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -367,6 +367,7 @@ ActiveRecord::Schema.define(version: 2021_05_17_064334) do
     t.text "oauth_scopes"
     t.datetime "shopify_history_data_imported"
     t.integer "shopify_history_data_imported_duration"
+    t.json "campaign_filter_option", default: {}
     t.index ["domain"], name: "index_shops_on_domain", unique: true
   end
 
@@ -388,6 +389,7 @@ ActiveRecord::Schema.define(version: 2021_05_17_064334) do
     t.string "stripe_id", null: false
     t.index ["plan_id"], name: "index_subscriptions_on_plan_id"
     t.index ["shop_id"], name: "index_subscriptions_on_shop_id"
+    t.index ["stripe_id"], name: "index_subscriptions_on_stripe_id"
   end
 
   add_foreign_key "addresses", "customers"

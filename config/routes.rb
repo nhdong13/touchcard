@@ -54,6 +54,7 @@ Rails.application.routes.draw do
   resource :subscriptions, only: [:new, :create, :show, :edit, :update, :destroy]
 
   resource :shops, only: [:edit, :update], path: 'settings'
+  patch '/settings/set_campaign_filter_option', to: 'shops#set_campaign_filter_option'
 
   resources :automations, only: [:new, :index, :show, :edit, :update] do
     # get 'select_type', :on => :collection
