@@ -70,7 +70,7 @@ ActiveAdmin.register Shop do
         link_to "edit", adjust_credits_admin_shop_path(shop)
       end
       row :stripe_customer_id do |shop|
-        link_to shop.stripe_customer_id, "https://dashboard.stripe.com/customers/#{shop.stripe_customer_id}" if shop.stripe_customer_id
+        link_to shop.stripe_customer_id, "https://dashboard.stripe.com/customers/#{shop.stripe_customer_id}", target: :_blank if shop.stripe_customer_id
       end
       row :approval_state
       row :plan_name
@@ -97,7 +97,7 @@ ActiveAdmin.register Shop do
     panel "Subscription Data" do
       table_for shop.subscriptions do
         column :id do |subscription|
-          link_to(subscription.id, admin_subscription_path(subscription))
+          link_to(subscription.id, admin_subscription_path(subscription), target: :_blank)
         end
 
         column :quantity
