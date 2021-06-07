@@ -13,8 +13,8 @@
       </div>
       <div class="filter-items">
         <span>Status</span>
-        <select v-model="filters.status" @change="addStatus">
-          <option v-for="item in availableStatus" :value="item">{{ item }}</option>
+        <select v-model="filters.status" @change="selectStatus">
+          <option v-for="item in availableStatus" :value="item.content" :class="[item.isHidden ? 'd-none' : '']">{{ item.content }}</option>
         </select>
       </div>
       <div class="filter-items">
@@ -76,9 +76,35 @@ export default {
         clearAll: false,
       },
       campaignTypes: ['Any', 'Automation', 'One-off'],
-      availableStatus: ['Any', 'Processing', 'Scheduled', 'Sending', 'Sent', 'Paused', 'Draft', 'Out of credit', 'Error'],
+      availableStatus: [{
+        content: 'Any',
+        isHidden: false
+      }, {
+        content: 'Processing',
+        isHidden: false
+      }, {
+        content: 'Scheduled',
+        isHidden: false
+      }, {
+        content: 'Sending',
+        isHidden: false
+      }, {
+        content: 'Sent',
+        isHidden: false
+      }, {
+        content: 'Paused',
+        isHidden: false
+      }, {
+        content: 'Draft',
+        isHidden: false
+      }, {
+        content: 'Out of credit',
+        isHidden: false
+      }, {
+        content: 'Error',
+        isHidden: false
+      }],
       selectedStatuses: [],
-      isDisable: true,
       range: []
     };
   },
@@ -113,14 +139,16 @@ export default {
         return {
           type: this.filters.type,
           status: this.filters.status,
-          created_at: this.range[0],
-          date_completed: this.range[1]
+          dateCreated: {
+            created_at: this.range[0],
+            date_completed: this.range[1]  
+          }
         }  
       } else {
         return {
           type: this.filters.type,
           status: this.filters.status,
-          date: "Any"
+          dateCreated: "Any"
         }
       }
       
@@ -138,6 +166,10 @@ export default {
         clearAll: false,
       }
       this.range = []
+      this.selectedStatuses = []
+      for (var i = 0; i < this.availableStatus.length; i++) {
+        this.availableStatus[i].isHidden = false
+      }
     },
 
     disableAfterToday: function(date) {
@@ -148,15 +180,19 @@ export default {
 
     removeStatus: function(status) {
       this.selectedStatuses = this.selectedStatuses.filter(element => element != status)
+      this.availableStatus.find(element => element.content == status).isHidden = false
     },
 
-    addStatus: function() {
-      if(this.filters.status == "Any") return
-      this.availableStatus = this.availableStatus.filter(function(element) {
-        return (element != this.filters.status && element != "Any") ? true : false
-      },this)
+    selectStatus: function() {
+      if(this.filters.status == "Any") {
+        for (var i = 0; i < this.availableStatus.length; i++) {
+          this.availableStatus[i].isHidden = false
+        }
+        this.selectedStatuses = []  
+        return
+      }
+      this.availableStatus.find(element => element.content == this.filters.status).isHidden = true
       this.selectedStatuses.push(this.filters.status)
-      console.log(this.availableStatus)
     }
   }
 };
@@ -177,6 +213,7 @@ export default {
   position: relative;
   width: fit-content;
   &-list {
+    max-width: 400px;
     padding: 15px;
     background: white;
     margin-top: 5px;
@@ -200,6 +237,10 @@ export default {
 
 #date-picker {
   margin-bottom: 5px;
+}
+
+.d-none {
+  display: none;
 }
 
 </style>
