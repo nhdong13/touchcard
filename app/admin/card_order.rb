@@ -101,7 +101,7 @@ ActiveAdmin.register CardOrder do
       end
       row "front background_url", :front_json do |card_order|
         json = card_order.front_json
-        link_to json['background_url'], json['background_url'] if json['background_url']
+        link_to json['background_url'], json['background_url'], target: :_blank if json['background_url']
       end
 
       row :back_json do |card_order|
@@ -110,7 +110,7 @@ ActiveAdmin.register CardOrder do
 
       row "back background_url", :back_json do |card_order|
         json = card_order.back_json
-        link_to json['background_url'], json['background_url'] if json['background_url']
+        link_to json['background_url'], json['background_url'], target: :_blank if json['background_url']
       end
 
       row "Old Card Side Front", :card_side_front
