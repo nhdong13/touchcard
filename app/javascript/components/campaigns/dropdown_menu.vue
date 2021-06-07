@@ -118,6 +118,16 @@ export default {
     submitFilters: function() {
       let target = `/campaigns.json`;
       let _this = this
+      
+      // Save filter setting
+      axios.patch(`/settings/set_campaign_filter_option`,
+      {
+        filters: this.collectParamsFilters()
+      }).catch(function(error) {
+        console.log(error)
+      })
+
+      // Update campaign
       axios.get(target,
         {
           params: {
@@ -131,27 +141,15 @@ export default {
         }).catch(function (error) {
       });
 
-
     },
 
     collectParamsFilters: function() {
-      if(this.filters.dateCreated == "Pickdate") {
-        return {
-          type: this.filters.type,
-          status: this.filters.status,
-          dateCreated: {
-            created_at: this.range[0],
-            date_completed: this.range[1]  
-          }
-        }  
-      } else {
-        return {
-          type: this.filters.type,
-          status: this.filters.status,
-          dateCreated: "Any"
-        }
+      return {
+        type: this.filters.type,
+        status: this.selectedStatuses.length > 0 ? this.selectedStatuses : "Any",
+        dateCreated: (this.filters.dateCreated == "Pickdate") ? { created_at: this.range[0], date_completed: this.range[1] } : {},
+        dateSelection: this.filters.dateCreated
       }
-      
     },
 
     closeFilters: function() {
