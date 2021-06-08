@@ -64,10 +64,8 @@ export default {
     DatePicker
   },
   created() {
-    let _this = this
     window.addEventListener('click', this.checkClickOn);
     this.loadFilterSettings()
-    console.log(this.range)
   },
   data() {
     return {
