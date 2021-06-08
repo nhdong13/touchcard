@@ -11,11 +11,15 @@ class CampaignSearchService
     campaigns = campaigns.where("lower(card_orders.campaign_name) LIKE ?", "%#{@params[:query]}%") if @params[:query].present?
     campaigns = campaigns.where(campaign_type: filter_base_on_campaign_type) if filter_base_on_campaign_type != "any"
     campaigns = campaigns.where(campaign_status: filter_base_on_status) if !filter_base_on_status.nil?
-    campaigns = campaigns.where(created_at: filter_base_on_date_created..filter_base_on_date_completed)
-    # campaigns = campaigns.where(status: filter_base_on_date_completed) if filter_base_on_date_completed
+    # CASE 
+    #   WHEN campaign_status = 0 THEN updated_at BETWEEN :start_date AND :end_date
+    #   ELSE created_at BETWEEN :start_date AND :end_date
+    # END
+    # 0 ==> draft
+    campaigns = campaigns.where("CASE WHEN campaign_status = 0 THEN updated_at BETWEEN :start_date AND :end_date ELSE created_at BETWEEN :start_date AND :end_date END",{start_date: filter_base_on_date_created, end_date: filter_base_on_date_completed})
+    # campaigns = campaigns.where(created_at: filter_base_on_date_created..filter_base_on_date_completed)
     campaigns = campaigns.page(page).order(created_at: :desc)
     total_pages = campaigns.total_pages
-
     return {
       campaigns: campaigns,
       total_pages: total_pages,
@@ -25,20 +29,20 @@ class CampaignSearchService
   end
 
   def get_filters
-    if !@current_shop.campaign_filter_option.empty?
+    if @current_shop.campaign_filter_option
       filters = @current_shop.campaign_filter_option
-      filters.reject!{|k, v| v.empty?} if filters
     else
       {}
     end
   end
 
   def filter_base_on_campaign_type
-    if @filters["type"]
-      return @filters["type"].downcase.split("-").join("_")
-    else
-      return "any"
-    end
+    @filters["type"] ? @filters["type"].downcase.split("-").join("_") : "any"
+    # if @filters["type"]
+    #   return @filters["type"].downcase.split("-").join("_")
+    # else
+    #   return "any"
+    # end
   end
 
   def filter_base_on_status
