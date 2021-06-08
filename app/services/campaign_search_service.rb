@@ -34,14 +34,11 @@ class CampaignSearchService
   end
 
   def filter_base_on_campaign_type
-    # Rails.logger.debug ">>>>>>>>>>>>>>>>>>>"
-    # Rails.logger.debug filters["type"] ? filters["type"].downcase.split("-").join("_") : "any"
     if @filters["type"]
       return @filters["type"].downcase.split("-").join("_")
     else
       return "any"
     end
-    # filters["type"] ? filters["type"].downcase.split("-").join("_") : "any"
   end
 
   def filter_base_on_status

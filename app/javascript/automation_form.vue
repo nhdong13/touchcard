@@ -66,7 +66,7 @@
             </div>
           </div>
         </div>
-        <div class="filter-config nested-toggle">
+        <!-- <div class="filter-config nested-toggle">
           <div class="datepicker-with-icon">
             <span style="width: 80px">End date:</span>
             <datepicker
@@ -80,7 +80,7 @@
               <font-awesome-icon icon="calendar-alt"/>
             </div>
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
 
@@ -297,6 +297,7 @@
   import FilterOption from './components/filter_option.vue'
   import Datepicker from 'vuejs-datepicker';
   import $ from 'jquery'
+  import { isEmpty } from 'lodash'
   window.$ = $
 
   export default {
@@ -318,6 +319,11 @@
       backUrl: {
         type: String,
         required: true
+      }
+    },
+    created() {
+      if(isEmpty(this.automation)) {
+        this.automation.send_date_start = new Date()
       }
     },
     data: function() {
