@@ -12,6 +12,16 @@ class ShopsController < BaseController
     end
   end
 
+  # GET /settings/set_campaign_filter_option.json
+  def get_campaign_filter_option
+    respond_to do |format|
+      format.html
+      format.json {
+        render :json => {:filter => @shop.campaign_filter_option}, status: :ok
+      }
+    end
+  end
+
   def edit
   end
 
@@ -35,7 +45,7 @@ class ShopsController < BaseController
 
   private
     def campaign_filter_params
-      params.require(:filters).permit(:type, {:status => [] }, {:dateCreated => {}}, :dateSelection)
+      params.require(:filters).permit(:type, {:status => [] }, {:dateCreated => {}})
     end
 
 end

@@ -2,15 +2,16 @@ class CampaignSearchService
   def initialize current_shop, params
     @params = params
     @current_shop = current_shop
+    @filters = get_filters
   end
 
   def index
     page = @params[:page] || 1
     campaigns = @current_shop.card_orders
     campaigns = campaigns.where("lower(card_orders.campaign_name) LIKE ?", "%#{@params[:query]}%") if @params[:query].present?
-    campaigns = campaigns.where(campaign_type: filter_base_on_campaign_type) if filter_base_on_campaign_type.present?
-    campaigns = campaigns.where(campaign_status: filter_base_on_status) if filter_base_on_status
-    campaigns = campaigns.where(created_at: filter_base_on_date_created) if filter_base_on_date_created
+    campaigns = campaigns.where(campaign_type: filter_base_on_campaign_type) if filter_base_on_campaign_type != "any"
+    campaigns = campaigns.where(campaign_status: filter_base_on_status) if !filter_base_on_status.nil?
+    campaigns = campaigns.where(created_at: filter_base_on_date_created..filter_base_on_date_completed)
     # campaigns = campaigns.where(status: filter_base_on_date_completed) if filter_base_on_date_completed
     campaigns = campaigns.page(page).order(created_at: :desc)
     total_pages = campaigns.total_pages
@@ -23,9 +24,9 @@ class CampaignSearchService
     }
   end
 
-  def filters
-    if @params[:filters]
-      filters = JSON.parse(@params[:filters])
+  def get_filters
+    if !@current_shop.campaign_filter_option.empty?
+      filters = @current_shop.campaign_filter_option
       filters.reject!{|k, v| v.empty?} if filters
     else
       {}
@@ -33,23 +34,34 @@ class CampaignSearchService
   end
 
   def filter_base_on_campaign_type
-    filters["type"] ? filters["type"].downcase.split("-").join("_") : ""
+    # Rails.logger.debug ">>>>>>>>>>>>>>>>>>>"
+    # Rails.logger.debug filters["type"] ? filters["type"].downcase.split("-").join("_") : "any"
+    if @filters["type"]
+      return @filters["type"].downcase.split("-").join("_")
+    else
+      return "any"
+    end
+    # filters["type"] ? filters["type"].downcase.split("-").join("_") : "any"
   end
 
   def filter_base_on_status
-    filters["status"].downcase if filters["status"]
+    if @filters["status"]
+      return @filters["status"].map do |e|
+        e.downcase
+      end
+    else
+      return nil
+    end    
   end
 
   def filter_base_on_date_created
-    return nil unless filters["created_at"]
-    date = filters["created_at"].to_time
-    date.beginning_of_day..date.end_of_day
+    return @current_shop.created_at unless @filters["dateCreated"]
+    date = @filters["dateCreated"]["created_at"].to_time
   end
 
   def filter_base_on_date_completed
-    return nil unless filters["date_completed"]
-    date = filters["date_completed"].to_time
-    date.beginning_of_day..date.end_of_day
+    return Time.now.utc unless @filters["dateCreated"]
+    date = @filters["dateCreated"]["date_completed"].to_time
   end
 
   def campaign_types

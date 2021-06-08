@@ -56,6 +56,7 @@
 import axios from 'axios'
 import DatePicker from 'vue2-datepicker';
 import 'vue2-datepicker/index.css';
+import _ from 'lodash';
 
 export default {
   name: 'dropdownMenu',
@@ -63,7 +64,10 @@ export default {
     DatePicker
   },
   created() {
+    let _this = this
     window.addEventListener('click', this.checkClickOn);
+    this.loadFilterSettings()
+    console.log(this.range)
   },
   data() {
     return {
@@ -118,21 +122,12 @@ export default {
     submitFilters: function() {
       let target = `/campaigns.json`;
       let _this = this
-      
-      // Save filter setting
-      axios.patch(`/settings/set_campaign_filter_option`,
-      {
-        filters: this.collectParamsFilters()
-      }).catch(function(error) {
-        console.log(error)
-      })
-
-      // Update campaign
-      axios.get(target,
+      this.saveFilterSettings()
+      axios.get(`/campaigns.json`,
         {
           params: {
             query: _this.$parent.getParamsQuery(),
-            filters: this.collectParamsFilters(),
+            // filters: this.collectParamsFilters(),
           }
         }
       ).then(function(response) {
@@ -146,9 +141,8 @@ export default {
     collectParamsFilters: function() {
       return {
         type: this.filters.type,
-        status: this.selectedStatuses.length > 0 ? this.selectedStatuses : "Any",
+        status: this.selectedStatuses.length > 0 ? this.selectedStatuses : [],
         dateCreated: (this.filters.dateCreated == "Pickdate") ? { created_at: this.range[0], date_completed: this.range[1] } : {},
-        dateSelection: this.filters.dateCreated
       }
     },
 
@@ -191,6 +185,40 @@ export default {
       }
       this.availableStatus.find(element => element.content == this.filters.status).isHidden = true
       this.selectedStatuses.push(this.filters.status)
+    },
+
+    saveFilterSettings: function() {
+      axios.patch(`/settings/campaign_filter_option`,
+      {
+        filters: this.collectParamsFilters()
+      }).catch(function(error) {
+        console.log(error)
+      })
+    },
+
+    loadFilterSettings: function() {
+      let _this = this
+      axios.get(`/settings/campaign_filter_option.json`).then(function(response) {
+        const filterSetting = response.data.filter
+        _this.filters.type = response.data.filter.type
+        if(_.isEmpty(filterSetting.status)) {
+          _this.filters.status = "Any"
+        } else {
+          for (var i = 0; i < filterSetting.status.length; i++) {
+            _this.filters.status = filterSetting.status[i]
+            _this.selectStatus()
+          }
+        }
+        if(_.isEmpty(filterSetting.dateCreated) || _.isEmpty(filterSetting.dateCreated.created_at) || _.isEmpty(filterSetting.dateCreated.date_completed)) {
+          _this.filters.dateCreated = "Any"
+        } else {
+          _this.filters.dateCreated = "Pickdate"
+          _this.range.push(new Date(filterSetting.dateCreated.created_at))
+          _this.range.push(new Date(filterSetting.dateCreated.date_completed))
+        }
+      }).catch(function(error) {
+        if(!_.isEmpty(error)) console.log(error)
+      })
     }
   }
 };
