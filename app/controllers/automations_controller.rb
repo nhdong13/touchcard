@@ -5,7 +5,7 @@ class AutomationsController < BaseController
   def index
     # Create default automation if there isn't one already
 
-    @current_shop.post_sale_orders.create if @current_shop.card_orders.empty?
+    # @current_shop.post_sale_orders.create if @current_shop.card_orders.empty?
     # This flash works, but it's sort of annoying
     if @current_shop.current_subscription && @current_shop.current_subscription.quantity.to_i > 0 && CardOrder.num_enabled == 0
       flash.now[:notice] = "You are subscribed but not sending. Enable an automation to start sending."
@@ -81,13 +81,19 @@ class AutomationsController < BaseController
 
   # TODO: Re-enable automation destruction
   #
-  # def destroy
-  #   @automation.archive
-  #   @automation.safe_destroy!
-  #   # TODO: Rescue exception
-  # # rescue
-  #   # Catch error from transaction and do something
-  # end
+  def destroy
+    @automation.archive
+    begin
+      @automation.safe_destroy!
+    rescue ActiveRecord::RecordNotFound
+      respond_to do |format|
+        format.json { render json: { message: "Failed to delete" }, status: :internal_server_error }
+      end
+    end
+    respond_to do |format|
+      format.json { render json: { message: "Delete successfully" }, status: :ok }
+    end
+  end
 
   private
 

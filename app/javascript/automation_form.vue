@@ -670,7 +670,13 @@
       },
       onConfirm: function() {
         console.log("the campaign will be deleted and the user will return to the campaigns page")
-        Turbolinks.visit('/automations');
+        const url = `/automations/${this.id}.json`
+        axios.delete(url).then(function(response) {
+          console.log(response)
+          Turbolinks.visit('/automations');
+        }).catch(function(error) {
+          if(error) console.log(error)
+        })
       }
     }
   }
