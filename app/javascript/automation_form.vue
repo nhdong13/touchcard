@@ -286,7 +286,31 @@
             :aws_sign_endpoint="awsSignEndpoint"
     ></card-editor>
     <br>
-
+    <div class="text-right">
+      <md-button class="cancel-btn text-white" v-on:click="isCancel = true">Cancel</md-button>
+      <md-button class="review-and-continue-btn text-white">Review and continue</md-button>
+    </div>
+    <div>
+      <!-- TODO: raise issue to Vue-material -->
+      <!-- <md-dialog-confirm
+        :md-active.sync="isCancel"
+        md-title="Cancel?"
+        md-content="This action can not be undone and you will lose all progress. Are you sure to continue?"
+        md-confirm-text="Cancel anyway"
+        md-cancel-text="No, go back"
+        @md-cancel="onCancel"
+        @md-confirm="onConfirm"
+      /> -->
+      <cancel-campaign-dialog
+        :md-active.sync="isCancel"
+        title="Cancel?"
+        content="This action can not be undone and you will lose all progress. Are you sure to continue?"
+        confirm-text="Cancel anyway"
+        cancel-text="No, go back"
+        @onCancel="onCancel"
+        @onConfirm="onConfirm"
+      />
+    </div>
   </div>
 </template>
 
@@ -298,6 +322,7 @@
   import Datepicker from 'vuejs-datepicker';
   import $ from 'jquery'
   import { isEmpty } from 'lodash'
+  import CancelCampaignDialog from './components/cancel_campaign_dialog.vue'
   window.$ = $
 
   export default {
@@ -340,7 +365,8 @@
         willShowDailySendingSchedule: false,
         disabledDates: {
           to: new Date(Date.now() - 8640000)
-        }
+        },
+        isCancel: false
       }
     },
 
@@ -429,7 +455,8 @@
       FilterOption,
       CardEditor,
       'card-editor': CardEditor,
-      Datepicker
+      Datepicker,
+      CancelCampaignDialog
     },
 
     beforeMount: function() {
@@ -636,6 +663,14 @@
         }).catch(function (error) {
           console.log(error)
         });
+      },
+      onCancel: function() {
+        console.log("the user will return to the campaigns page")
+        Turbolinks.visit('/automations');
+      },
+      onConfirm: function() {
+        console.log("the campaign will be deleted and the user will return to the campaigns page")
+        Turbolinks.visit('/automations');
       }
     }
   }
@@ -714,4 +749,26 @@
     display: none;
   }
 
+  .review-and-continue-btn.text-white,
+  .cancel-btn.text-white {
+    color: white;
+  }
+
+  .cancel-btn {
+    background-color: #647786;
+    border-radius: 5px;
+    font-weight: bold;
+    box-shadow: 2px 4px #888888;
+  }
+
+  .review-and-continue-btn {
+    background-color: #0150ee;
+    border-radius: 5px;
+    font-weight: bold;
+    box-shadow: 2px 4px #888888;
+  }
+
+  .text-right {
+    text-align: right;
+  }
 </style>
