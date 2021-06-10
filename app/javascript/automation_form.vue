@@ -290,7 +290,7 @@
     <br>
     <div class="text-right">
       <md-button class="cancel-btn text-white" v-on:click="isCancel = true" v-if="isEditExistCampaign">Cancel</md-button>
-      <md-button class="review-and-continue-btn text-white">Review and continue</md-button>
+      <md-button class="review-and-continue-btn text-white" v-on:click="saveAndReview">Review and continue</md-button>
     </div>
     <div>
       <cancel-campaign-dialog
@@ -313,7 +313,7 @@
   import FilterOption from './components/filter_option.vue'
   import Datepicker from 'vuejs-datepicker';
   import $ from 'jquery'
-  import { isEmpty, isEqual } from 'lodash'
+  import { isEmpty } from 'lodash'
   import CancelCampaignDialog from './components/cancel_campaign_dialog.vue'
   window.$ = $
 
@@ -695,14 +695,12 @@
           Turbolinks.visit('/automations');  
         }
       },
-
       saveAutomation: function() {
-        // 
-        if(this.automation.campaign_status == "draft" && isEqual(this.saved_automation, this.automation)) {
+        // This will minimize the overhead of clone the automation
+        if(this.isTwoJsonEqual(this.saved_automation, this.automation)) {
           console.log("Campaign doesn't change")
           return
         }
-
         // Get card side data for saving
         let frontAttrs = this.$refs.frontEditor.$data.attributes;
         let backAttrs = this.$refs.backEditor.$data.attributes;
@@ -724,6 +722,15 @@
 
         // TODO: Must somehow make sure automation is JSON safe
         this.saved_automation = JSON.parse(JSON.stringify(this.automation))
+      },
+      isTwoJsonEqual: function(a, b) {
+        return JSON.stringify(a) === JSON.stringify(b)
+      },
+      saveAndReview: function() {
+        if(this.automation.campaign_status != "draft") {
+          this.requestSave()  
+        }
+        console.log("Go to summary page")
       }
     }
   }
