@@ -313,7 +313,7 @@
   import FilterOption from './components/filter_option.vue'
   import Datepicker from 'vuejs-datepicker';
   import $ from 'jquery'
-  import { isEmpty } from 'lodash'
+  import { isEmpty, isEqual } from 'lodash'
   import CancelCampaignDialog from './components/cancel_campaign_dialog.vue'
   window.$ = $
 
@@ -347,17 +347,18 @@
         if(startDate.toDateString() <= today.toDateString()) {
           this.isStartDateEqualCurrentDate = true
         } else {
-          this.disabledDates.to = new Date(startDate - 8640000)
+          this.disabledDates.from = new Date(startDate - 8640000)
+          today.setDate(today.getDate() - 1)
+          this.disabledDates.to = today
         }
       }
-      console.log(this.id)
       this.isEditExistCampaign = this.id ? true : false
     },
     mounted: function() {
       if(this.automation.campaign_status == "draft") {
         window.setInterval(() => {
           this.saveAutomation()
-        }, 5000)
+        }, 1000)
       } else {
         this.saveAutomation()
       }
@@ -436,7 +437,6 @@
           }
         }
       },
-
       enableAddReturnAddress: function(enable) {
         if(this.automation.international){
           if (!enable) {
@@ -679,7 +679,6 @@
         });
       },
       onCancel: function() {
-        console.log("the user will return to the campaigns page")
         this.isCancel = false
       },
       onConfirm: function() {
@@ -698,9 +697,33 @@
       },
 
       saveAutomation: function() {
+        // 
+        if(this.automation.campaign_status == "draft" && isEqual(this.saved_automation, this.automation)) {
+          console.log("Campaign doesn't change")
+          return
+        }
+
+        // Get card side data for saving
+        let frontAttrs = this.$refs.frontEditor.$data.attributes;
+        let backAttrs = this.$refs.backEditor.$data.attributes;
+
+        this.automation.front_json = frontAttrs;
+        this.automation.back_json = backAttrs;
+
+        // Null out discount_pct and discount_exp for backwards-compatability (might not be essential)
+        // Using `.showsDiscount` assumes card_editor.vue has created card_attributes objects from json
+        if (!frontAttrs.showsDiscount && !backAttrs.showsDiscount ) {
+          this.automation.discount_pct = null;
+          this.automation.discount_exp = null;
+        }
+
+        this.automation.budget_type = this.budget_type
+        this.automation.campaign_type = this.campaign_type
+        this.automation.return_address_attributes = this.returnAddress;
+        if (this.enableFiltering) this.collectFilters();
+
         // TODO: Must somehow make sure automation is JSON safe
         this.saved_automation = JSON.parse(JSON.stringify(this.automation))
-        console.log(this.saved_automation)
       }
     }
   }
