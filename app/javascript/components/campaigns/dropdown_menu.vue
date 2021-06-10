@@ -198,7 +198,7 @@ export default {
       let _this = this
       axios.get(`/settings/campaign_filter_option.json`).then(function(response) {
         const filterSetting = response.data.filter
-        _this.filters.type = response.data.filter.type
+        _this.filters.type = _.isEmpty(filterSetting.type) ? "Any" : filterSetting.type
         if(_.isEmpty(filterSetting.status)) {
           _this.filters.status = "Any"
         } else {
