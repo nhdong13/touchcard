@@ -60,6 +60,7 @@
               name="send_date_start"
               ref="sendDateStart"
               @selected="changeSendDateEnd"
+              :disabled="isStartDateEqualCurrentDate"
             ></datepicker>
             <div class="icon-calendar" v-on:click="openSendDateStartDatePicker">
               <font-awesome-icon icon="calendar-alt"/>
@@ -107,6 +108,7 @@
             name="send_date_start"
             ref="sendDateStart"
             @selected="changeSendDateEnd"
+            :disabled="isStartDateEqualCurrentDate"
           ></datepicker>
           <div class="icon-calendar" v-on:click="openSendDateStartDatePicker">
             <font-awesome-icon icon="calendar-alt"/>
@@ -287,20 +289,10 @@
     ></card-editor>
     <br>
     <div class="text-right">
-      <md-button class="cancel-btn text-white" v-on:click="isCancel = true">Cancel</md-button>
+      <md-button class="cancel-btn text-white" v-on:click="isCancel = true" v-if="isEditExistCampaign">Cancel</md-button>
       <md-button class="review-and-continue-btn text-white">Review and continue</md-button>
     </div>
     <div>
-      <!-- TODO: raise issue to Vue-material -->
-      <!-- <md-dialog-confirm
-        :md-active.sync="isCancel"
-        md-title="Cancel?"
-        md-content="This action can not be undone and you will lose all progress. Are you sure to continue?"
-        md-confirm-text="Cancel anyway"
-        md-cancel-text="No, go back"
-        @md-cancel="onCancel"
-        @md-confirm="onConfirm"
-      /> -->
       <cancel-campaign-dialog
         :md-active.sync="isCancel"
         title="Cancel?"
@@ -347,8 +339,27 @@
       }
     },
     created() {
-      if(isEmpty(this.automation)) {
+      if(isEmpty(this.automation.send_date_start)) {
         this.automation.send_date_start = new Date()
+      } else {
+        const today = new Date()
+        const startDate = new Date(this.automation.send_date_start)
+        if(startDate.toDateString() <= today.toDateString()) {
+          this.isStartDateEqualCurrentDate = true
+        } else {
+          this.disabledDates.to = new Date(startDate - 8640000)
+        }
+      }
+      console.log(this.id)
+      this.isEditExistCampaign = this.id ? true : false
+    },
+    mounted: function() {
+      if(this.automation.campaign_status == "draft") {
+        window.setInterval(() => {
+          this.saveAutomation()
+        }, 5000)
+      } else {
+        this.saveAutomation()
       }
     },
     data: function() {
@@ -366,7 +377,10 @@
         disabledDates: {
           to: new Date(Date.now() - 8640000)
         },
-        isCancel: false
+        isCancel: false,
+        isStartDateEqualCurrentDate: false,
+        saved_automation: {}, // Use with autosave, play as backup when user don't want to change campaign any more
+        isEditExistCampaign: true
       }
     },
 
@@ -666,17 +680,27 @@
       },
       onCancel: function() {
         console.log("the user will return to the campaigns page")
-        Turbolinks.visit('/automations');
+        this.isCancel = false
       },
       onConfirm: function() {
         console.log("the campaign will be deleted and the user will return to the campaigns page")
-        const url = `/automations/${this.id}.json`
-        axios.delete(url).then(function(response) {
-          console.log(response)
-          Turbolinks.visit('/automations');
-        }).catch(function(error) {
-          if(error) console.log(error)
-        })
+        if(this.automation.campaign_status == "draft") {
+          const url = `/automations/${this.id}.json`
+          axios.delete(url).then(function(response) {
+            Turbolinks.clearCache()
+            Turbolinks.visit('/automations', {flush: true, cacheRequest: false});
+          }).catch(function(error) {
+            if(error) console.log(error)
+          })
+        } else {
+          Turbolinks.visit('/automations');  
+        }
+      },
+
+      saveAutomation: function() {
+        // TODO: Must somehow make sure automation is JSON safe
+        this.saved_automation = JSON.parse(JSON.stringify(this.automation))
+        console.log(this.saved_automation)
       }
     }
   }
