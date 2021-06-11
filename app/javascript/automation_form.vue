@@ -335,7 +335,8 @@
       } else {
         const today = new Date()
         const startDate = new Date(this.automation.send_date_start)
-        if(startDate.toDateString() <= today.toDateString()) {
+        console.log(startDate.getTime() <= today.getTime())
+        if(startDate.getTime() <= today.getTime()) {
           this.isStartDateEqualCurrentDate = true
         } else {
           this.disabledDates.from = new Date(startDate - 8640000)
@@ -717,13 +718,22 @@
 
         // TODO: Must somehow make sure automation is JSON safe
         this.saved_automation = JSON.parse(JSON.stringify(this.automation))
+
+        if(this.automation.campaign_status == "draft") {
+          axios.put(`/automations/${this.id}.json`, { card_order: this.automation})
+            .then(function(response) {
+              console.log(response);
+            }).catch(function (error) {
+            ShopifyApp.flashError(error.request.responseText);
+          });
+        }
       },
       isTwoJsonEqual: function(a, b) {
         return JSON.stringify(a) === JSON.stringify(b)
       },
       saveAndReview: function() {
         this.validateForm()
-        if(!this.isFormValid()) return
+        // if(!this.isFormValid()) return
         if(this.automation.campaign_status != "draft") {
           this.requestSave()  
         }
