@@ -1,8 +1,8 @@
 <template>
   <div class="automation_form">
-    <a :href="backUrl"  class="mdc-button mdc-button--stroked">Cancel</a>
+    <!-- <a :href="backUrl"  class="mdc-button mdc-button--stroked">Cancel</a>
     <button v-on:click="requestSave" class="mdc-button mdc-button--raised">Save</button>
-    <hr>
+    <hr> -->
     <!-- div v-cloak></div -->
     <h3>{{automation.type}}</h3>
 
@@ -67,21 +67,6 @@
             </div>
           </div>
         </div>
-        <!-- <div class="filter-config nested-toggle">
-          <div class="datepicker-with-icon">
-            <span style="width: 80px">End date:</span>
-            <datepicker
-              v-model="automation.send_date_end"
-              :disabled-dates="disabledEndDates"
-              name="sendDateEnd"
-              ref="sendDateEnd"
-              :disabled="automation.send_continuously"
-            ></datepicker>
-            <div class="icon-calendar" v-on:click="openSendDateEndDatePicker">
-              <font-awesome-icon icon="calendar-alt"/>
-            </div>
-          </div>
-        </div> -->
       </div>
     </div>
 
@@ -120,16 +105,18 @@
       </div>
       <div class="filter-config nested-toggle">
         <div class="datepicker-with-icon">
-          <span style="width: 80px">End date:</span>
-          <datepicker
-            v-model="automation.send_date_end"
-            :disabled-dates="disabledEndDates"
-            name="sendDateEnd"
-            ref="sendDateEnd"
-            :disabled="automation.send_continuously"
-          ></datepicker>
-          <div class="icon-calendar" v-on:click="openSendDateEndDatePicker">
-            <font-awesome-icon icon="calendar-alt"/>
+          <span style="width: 80px">End date<small :class="{error: errors.endDate}" v-if="errors.endDate">*</small>:</span>
+          <div :class="['datepicker-with-icon', {invalid: errors.endDate}]">
+            <datepicker
+              v-model="automation.send_date_end"
+              :disabled-dates="disabledEndDates"
+              name="sendDateEnd"
+              ref="sendDateEnd"
+              :disabled="automation.send_continuously"
+            ></datepicker>
+            <div class="icon-calendar" v-on:click="openSendDateEndDatePicker">
+              <font-awesome-icon icon="calendar-alt"/>
+            </div>
           </div>
           <div class="send-continuously-option">
             <input id="send-continuously" type="checkbox" v-model="automation.send_continuously"/>
@@ -267,26 +254,30 @@
       </div>
     </div>-->
     <hr />
-    <h2>Front</h2>
-    <card-editor
-            ref="frontEditor"
-            :isBack="false"
-            :json="automation.front_json"
-            :discount_pct.sync="automation.discount_pct"
-            :discount_exp.sync="automation.discount_exp"
-            :aws_sign_endpoint="awsSignEndpoint"
-    ></card-editor>
+    <h2>Front<small :class="{error: errors.uploadedFrontDesign}" v-if="errors.uploadedFrontDesign">*</small></h2>
+    <div :class="{ invalid: errors.uploadedFrontDesign }">
+      <card-editor
+              ref="frontEditor"
+              :isBack="false"
+              :json="automation.front_json"
+              :discount_pct.sync="automation.discount_pct"
+              :discount_exp.sync="automation.discount_exp"
+              :aws_sign_endpoint="awsSignEndpoint"
+      ></card-editor>
+    </div>
     <br>
     <hr />
-    <h2>Back</h2>
-    <card-editor
-            ref="backEditor"
-            :isBack="true"
-            :json="automation.back_json"
-            :discount_pct.sync="automation.discount_pct"
-            :discount_exp.sync="automation.discount_exp"
-            :aws_sign_endpoint="awsSignEndpoint"
-    ></card-editor>
+    <h2>Back<small :class="{error: errors.uploadedBackDesign}" v-if="errors.uploadedBackDesign">*</small></h2>
+    <div :class="{ invalid: errors.uploadedBackDesign }">
+      <card-editor
+              ref="backEditor"
+              :isBack="true"
+              :json="automation.back_json"
+              :discount_pct.sync="automation.discount_pct"
+              :discount_exp.sync="automation.discount_exp"
+              :aws_sign_endpoint="awsSignEndpoint"
+      ></card-editor>
+    </div>
     <br>
     <div class="text-right">
       <md-button class="cancel-btn text-white" v-on:click="isCancel = true" v-if="isEditExistCampaign">Cancel</md-button>
@@ -381,7 +372,12 @@
         isCancel: false,
         isStartDateEqualCurrentDate: false,
         saved_automation: {}, // Use with autosave, play as backup when user don't want to change campaign any more
-        isEditExistCampaign: true
+        isEditExistCampaign: true,
+        errors: {
+          endDate: false,
+          uploadedFrontDesign: false,
+          uploadedBackDesign: false,
+        }
       }
     },
 
@@ -698,7 +694,6 @@
       saveAutomation: function() {
         // This will minimize the overhead of clone the automation
         if(this.isTwoJsonEqual(this.saved_automation, this.automation)) {
-          console.log("Campaign doesn't change")
           return
         }
         // Get card side data for saving
@@ -727,10 +722,34 @@
         return JSON.stringify(a) === JSON.stringify(b)
       },
       saveAndReview: function() {
+        this.validateForm()
+        if(!this.isFormValid()) return
         if(this.automation.campaign_status != "draft") {
           this.requestSave()  
         }
         console.log("Go to summary page")
+      },
+
+      validateForm: function() {
+        // No need to validate start date and campaign name cus they have default values
+
+        if(!this.automation.send_continuously && isEmpty(this.automation.send_date_end)) {
+          this.errors.endDate = true
+        } 
+
+        if(!this.$refs.frontEditor.$data.attributes.background_url) {
+          this.errors.uploadedFrontDesign = true
+        }
+
+        if(!this.$refs.backEditor.$data.attributes.background_url) {
+          this.errors.uploadedBackDesign = true 
+        }
+      },
+
+      isFormValid: function() {
+        for (const item in this.errors) {
+          if(this.errors[item]) return false
+        }
       }
     }
   }
@@ -830,5 +849,9 @@
 
   .text-right {
     text-align: right;
+  }
+
+  .invalid {
+    border: 2px solid red;
   }
 </style>
