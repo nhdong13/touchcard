@@ -76,7 +76,7 @@ class Postcard < ApplicationRecord
     self.estimated_arrival = estimated_transit_days.business_days.from_now.end_of_day
     if card_order.has_discount?
       self.discount_pct = -(card_order.discount_pct.abs)
-      self.discount_exp_at = estimated_arrival + card_order.discount_exp.weeks
+      self.discount_exp_at = Time.current.end_of_day + card_order.discount_exp.weeks + 7.days
       if (ENV['APP_URL'] == "https://touchcard-dev.herokuapp.com/") and (card_order.shop.domain != "stagecard.myshopify.com")
         self.discount_code = "SAM-PLE-XXX"
         return
