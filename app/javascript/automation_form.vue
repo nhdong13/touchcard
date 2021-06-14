@@ -337,7 +337,6 @@
       } else {
         const today = new Date()
         const startDate = new Date(this.automation.send_date_start)
-        console.log(startDate.getTime() <= today.getTime())
         if(startDate.getTime() <= today.getTime()) {
           this.isStartDateEqualCurrentDate = true
         } else {
@@ -734,7 +733,7 @@
       },
       saveAndReview: function() {
         this.validateForm()
-        // if(!this.isFormValid()) return
+        if(!this.isFormValid()) return
         if(this.automation.campaign_status != "draft") {
           this.requestSave()  
         }
@@ -766,6 +765,8 @@
       isCampaignNew: function() {
         const createdAt = new Date(this.automation.created_at)
         const updatedAt = new Date(this.automation.updated_at)
+        console.log(this.automation.created_at)
+        console.log(this.automation.updated_at)
         return createdAt.getTime() == updatedAt.getTime() ? true : false
       },
 
@@ -773,6 +774,8 @@
         if(!this.isEditExistCampaign) {
           this.saveAutomation()
           Turbolinks.visit('/automations')
+        } else {
+          this.isCancel = true
         }
       }
     }

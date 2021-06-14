@@ -10,7 +10,7 @@ class CardOrderSerializer < ActiveModel::Serializer
              :enabled,
              :schedule,
              :tokens_used,
-             :credits,
+             :budget_used,
              :campaign_type,
              :send_date_start
              :send_date_end
@@ -34,7 +34,7 @@ class CardOrderSerializer < ActiveModel::Serializer
     when "non_set"
       "-"
     when "monthly"
-      object.credits
+      object.budget_used
     end
   end
 
