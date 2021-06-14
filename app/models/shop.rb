@@ -228,6 +228,7 @@ class Shop < ApplicationRecord
   #   card ? card.enabled : false
   # end
 
+=begin
   def can_afford?(postcard)
     @can_afford ||= credit >= postcard.cost
   end
@@ -242,7 +243,7 @@ class Shop < ApplicationRecord
       return false
     end
   end
-
+=end
   def increment_credit
     increment!(:credit)
   end

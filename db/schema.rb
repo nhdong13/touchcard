@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_07_071226) do
+ActiveRecord::Schema.define(version: 2021_06_14_041852) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -97,7 +97,7 @@ ActiveRecord::Schema.define(version: 2021_06_07_071226) do
     t.datetime "send_date_start"
     t.datetime "send_date_end"
     t.integer "budget_type", default: 0
-    t.integer "credits", default: 0
+    t.integer "budget_used", default: 0
     t.integer "budget_update", default: 0
     t.integer "campaign_type"
     t.integer "limit_cards_per_day"
