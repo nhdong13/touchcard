@@ -14,11 +14,11 @@
 
     <div class="automation-section">
       <strong>Type</strong>
-      <span v-if="automation.campaign_type == null || automation.campaign_type == 'automation'">
+      <span v-if="automation.campaign_status == 'draft' || automation.campaign_type == 'automation'">
         <input type="radio" id="automation" value="automation" v-model="campaign_type" v-on:click="setBudgetType">
         <label for="automation">Automation</label>
       </span>
-      <span v-if="automation.campaign_type == null || automation.campaign_type == 'one_off'">
+      <span v-if="automation.campaign_status == 'draft' || automation.campaign_type == 'one_off'">
         <input type="radio" id="one_off" value="one_off" v-model="campaign_type" v-on:click="setBudgetType">
         <label for="one_off">One-off</label>
       </span>
@@ -280,7 +280,7 @@
     </div>
     <br>
     <div class="text-right">
-      <md-button class="cancel-btn text-white" v-on:click="isCancel = true" v-if="isEditExistCampaign">Cancel</md-button>
+      <md-button class="cancel-btn text-white" v-on:click="cancel" >Cancel</md-button>
       <md-button class="review-and-continue-btn text-white" v-on:click="saveAndReview">Review and continue</md-button>
     </div>
     <div>
@@ -292,6 +292,7 @@
         cancel-text="No, go back"
         @onCancel="onCancel"
         @onConfirm="onConfirm"
+        v-if="isEditExistCampaign"
       />
     </div>
   </div>
@@ -330,6 +331,7 @@
       }
     },
     created() {
+      this.isEditExistCampaign = !this.isCampaignNew()
       if(isEmpty(this.automation.send_date_start)) {
         this.automation.send_date_start = new Date()
       } else {
@@ -344,7 +346,7 @@
           this.disabledDates.to = today
         }
       }
-      this.isEditExistCampaign = this.id ? true : false
+      
     },
     mounted: function() {
       if(this.automation.campaign_status == "draft") {
@@ -679,22 +681,21 @@
         this.isCancel = false
       },
       onConfirm: function() {
-        console.log("the campaign will be deleted and the user will return to the campaigns page")
-        if(this.automation.campaign_status == "draft") {
-          const url = `/automations/${this.id}.json`
-          axios.delete(url).then(function(response) {
-            Turbolinks.clearCache()
-            Turbolinks.visit('/automations', {flush: true, cacheRequest: false});
-          }).catch(function(error) {
-            if(error) console.log(error)
-          })
-        } else {
-          Turbolinks.visit('/automations');  
-        }
+        // if(this.automation.campaign_status == "draft") {
+        //   const url = `/automations/${this.id}.json`
+        //   axios.delete(url).then(function(response) {
+        //   }).catch(function(error) {
+        //     if(error) console.log(error)
+        //   })
+        // } else {
+        //   Turbolinks.visit('/automations');  
+        // }
+        Turbolinks.clearCache()
+        Turbolinks.visit('/automations', {flush: true, cacheRequest: false});
       },
       saveAutomation: function() {
         // This will minimize the overhead of clone the automation
-        if(this.isTwoJsonEqual(this.saved_automation, this.automation)) {
+        if(this.isTwoJsonEqual(this.saved_automation, this.automation) && this.isEditExistCampaign == true) {
           return
         }
         // Get card side data for saving
@@ -722,7 +723,7 @@
         if(this.automation.campaign_status == "draft") {
           axios.put(`/automations/${this.id}.json`, { card_order: this.automation})
             .then(function(response) {
-              console.log(response);
+              // console.log(response);
             }).catch(function (error) {
             ShopifyApp.flashError(error.request.responseText);
           });
@@ -759,6 +760,19 @@
       isFormValid: function() {
         for (const item in this.errors) {
           if(this.errors[item]) return false
+        }
+      },
+      // We can perform this check because autosave every second
+      isCampaignNew: function() {
+        const createdAt = new Date(this.automation.created_at)
+        const updatedAt = new Date(this.automation.updated_at)
+        return createdAt.getTime() == updatedAt.getTime() ? true : false
+      },
+
+      cancel: function() {
+        if(!this.isEditExistCampaign) {
+          this.saveAutomation()
+          Turbolinks.visit('/automations')
         }
       }
     }

@@ -270,9 +270,10 @@
       },
 
       onClickNewCampaign: function() {
+        // Turbolinks.clearCache()
+        // Turbolinks.visit('/automations/new', {flush: true, cacheRequest: false});
         axios.get('/automations/new.json', {})
           .then(function(response) {
-            console.log(response);
             Turbolinks.visit(`/automations/${response.data.id}/edit`);
           }).catch(function (error) {
         });
