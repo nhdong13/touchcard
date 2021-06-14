@@ -4,7 +4,7 @@
             data: {
                 attributes: @json_attributes,
                 discount_pct: @postcard.card_order.has_discount? ? @postcard.discount_pct&.abs : nil,
-                discount_exp: (@postcard.card_order.has_discount? && @postcard.discount_exp_at) ? @postcard.discount_exp_at.strftime("%m/%d/%Y") : nil,
+                discount_exp: (@postcard.card_order.has_discount? && @postcard.discount_exp_at) ? @postcard.discount_exp_at.utc.strftime("%m/%d/%Y") : nil,
                 discount_code: @postcard.discount_code
             }
 %>
