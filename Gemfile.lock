@@ -1454,8 +1454,6 @@ GEM
       activesupport (>= 4.0)
       sprockets (>= 3.0.0)
     ssrf_filter (1.0.7)
-    stripe (3.31.1)
-      faraday (~> 0.10)
     stripe (5.30.0)
     therubyracer (0.12.3)
       libv8 (~> 3.16.14.15)
