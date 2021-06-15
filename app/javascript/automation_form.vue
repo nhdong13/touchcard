@@ -24,10 +24,6 @@
       </span>
     </div>
 
-    <div v-if="campaign_type =='automation'" class="automation-section">
-      <strong>Send card <input type="number" min="0" max="52" v-model="automation.send_delay"> weeks after purchase</strong>
-    </div>
-
     <div class="automation-section" v-if="campaign_type =='automation'">
       <strong>Monthly budget</strong>
       <span v-if="campaign_type =='automation'">
@@ -239,20 +235,10 @@
         <button type="button" class="add-more-filter-btn" id="add-removed-filter" @click="addFilter">Add Filter</button>
         <filter-option :filter="filter" v-for="(filter, index) in removedFilters" :key="index" @filterChange="filterChange" @filterRemove="filterRemove" collection="removed" :index="index" />
       </div>
-      <!-- <span>
-        Minimum $: <input type="number" min="1" max="9999" v-model="automation.filters_attributes[automation.filters_attributes.length-1].filter_data.minimum">
-      </span> -->
-    </div>
-
-    <!-- <div class="automation-section">
-      <input id="automation-filter-checkbox" type="checkbox" v-model="enableFiltering">
-      <label for="automation-filter-checkbox" class="noselect"><strong>Filter by Order Size</strong></label>
-      <div class="filter-config nested-toggle" v-if="enableFiltering">
-      <span>
-          Minimum $: <input type="number" min="1" max="9999" v-model="automation.filters_attributes[automation.filters_attributes.length-1].filter_data.minimum">
-      </span>
+      <div v-if="campaign_type =='automation'" class="automation-section">
+        <strong>Send card <input type="number" min="0" max="52" v-model="automation.send_delay"> weeks after purchase</strong>
       </div>
-    </div>-->
+    </div>
     <hr />
     <h2>Front<small :class="{error: errors.uploadedFrontDesign}" v-if="errors.uploadedFrontDesign">*</small></h2>
     <div :class="{ invalid: errors.uploadedFrontDesign }">
