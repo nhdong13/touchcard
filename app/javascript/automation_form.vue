@@ -4,8 +4,9 @@
     <button v-on:click="requestSave" class="mdc-button mdc-button--raised">Save</button>
     <hr> -->
     <!-- div v-cloak></div -->
-    <h3>{{automation.type}}</h3>
-
+    <h1>New Campaign</h1>
+    <hr/>
+    <h2>Campaign Settings</h2>
     <div class="automation-section">
       <strong>Campaign name </strong>
       <input id="campaign_name" v-model="automation.campaign_name">
@@ -239,6 +240,9 @@
         <strong>Send card <input type="number" min="0" max="52" v-model="automation.send_delay"> weeks after purchase</strong>
       </div>
     </div>
+    <!-- <hr />
+    <h2>Add Contact</h2>
+    <button>Shopify</button> -->
     <hr />
     <h2>Front<small :class="{error: errors.uploadedFrontDesign}" v-if="errors.uploadedFrontDesign">*</small></h2>
     <div :class="{ invalid: errors.uploadedFrontDesign }">
