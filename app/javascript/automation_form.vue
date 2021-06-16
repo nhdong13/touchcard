@@ -27,19 +27,9 @@
 
     <div class="automation-section" v-if="campaign_type =='automation'">
       <strong>Monthly budget</strong>
-      <span v-if="campaign_type =='automation'">
-        <input type="radio" id="non_set_budget" value="non_set" v-model="budget_type">
-        <label for="non_set_budget">Non set</label>
+      <span>
+        <input type="numer" id="budget_limit" v-model="budget"> credits
       </span>
-      <span v-if="campaign_type =='automation'">
-        <input type="radio" id="monthly_budget" value="monthly" v-model="budget_type">
-        <label for="monthly_budget">Monthly</label>
-      </span>
-      <div class="filter-config nested-toggle" v-if="setLimitToKens">
-        <span>
-          Limit: <input type="numer" id="budget_limit" v-model="automation.budget_update"> credits
-        </span>
-      </div>
     </div>
 
     <div class="automation-section" v-if="campaign_type =='one_off'">
@@ -354,7 +344,8 @@
         acceptedFilters: [],
         removedFilters: [],
         sendDate: "",
-        budget_type: this.automation.budget_type,
+        budget_type: this.automation.budget_type ? this.automation.budget_type : "non_set",
+        budget: this.automation.budget_type == "monthly" ? this.automation.budget : null,
         willShowBudgetType: true,
         campaign_type: this.automation.campaign_type ? this.automation.campaign_type : "automation",
         willShowDailySendingSchedule: false,
@@ -379,14 +370,6 @@
         return {to: new Date(new Date(startDate) - 8640000)}
       },
 
-      setLimitToKens: function(){
-        let willSet = true;
-        if(this.budget_type == "non_set"){
-          willSet = false
-        }
-        return willSet
-      },
-
       willCheckDailySendingSchedule: {
         get: function(){
           let willShow = false;
@@ -404,7 +387,7 @@
             this.willShowDailySendingSchedule = false
           }
         }
-      },
+      }
     },
 
     watch: {
@@ -445,6 +428,19 @@
             $("#from_state").parents(".col-6").find("span").hide()
           }
         }
+      },
+
+      budget: function(value) {
+        if(isEmpty(this.budget)) {
+          this.budget_type = "non_set"
+        this.automation.budget_update = 0
+        } else {
+          this.budget_type = "monthly"
+          this.automation.budget_update = value  
+        }
+        console.log(isEmpty(this.budget))
+        console.log(this.budget)
+        console.log(this.automation)
       }
     },
 
@@ -714,7 +710,8 @@
             .then(function(response) {
               // console.log(response);
             }).catch(function (error) {
-            ShopifyApp.flashError(error.request.responseText);
+              console.log(error)
+            // ShopifyApp.flashError(error.request.responseText);
           });
         }
       },
@@ -755,8 +752,6 @@
       isCampaignNew: function() {
         const createdAt = new Date(this.automation.created_at)
         const updatedAt = new Date(this.automation.updated_at)
-        console.log(this.automation.created_at)
-        console.log(this.automation.updated_at)
         return createdAt.getTime() == updatedAt.getTime() ? true : false
       },
 

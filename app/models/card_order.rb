@@ -81,7 +81,6 @@ class CardOrder < ApplicationRecord
   end
 
   def update_budget_type
-    current_credits = credits
     if non_set?
       update_columns(
         budget: 0,
