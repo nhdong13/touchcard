@@ -63,6 +63,7 @@ class AutomationsController < BaseController
     respond_to do |format|
       if @automation.update(automation_params)
         FetchHistoryOrdersJob.perform_now(@current_shop, @current_shop.post_sale_orders.last.send_delay) if @automation.enabled?
+        GeneratePostcardJob.perform_later(@current_shop, @automation) if @automation.enabled?
         SendAllHistoryCardsJob.perform_later(@current_shop) if @automation.enabled?
         flash[:notice] = "Automation successfully updated"
         format.html { redirect_to automations_path }
