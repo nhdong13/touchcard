@@ -17,3 +17,6 @@ staging:
 
 production:
   <<: *default_settings
+
+test:
+  <<: *default_settings

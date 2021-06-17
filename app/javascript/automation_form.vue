@@ -433,7 +433,7 @@
       budget: function(value) {
         if(isEmpty(this.budget)) {
           this.budget_type = "non_set"
-        this.automation.budget_update = 0
+          this.automation.budget_update = 0
         } else {
           this.budget_type = "monthly"
           this.automation.budget_update = value  
