@@ -3,10 +3,10 @@ class GeneratePostcardJob < ActiveJob::Base
 
 	def perform shop, campaign
 
-		campaign.campaign_status = CardOrder.processing
-		campaign.save!
+    campaign.campaign_status = CardOrder.processing
+    campaign.save!
 
-		customers_before = campaign.campaign_type == CardOrder.automation ? Time.new.strftime("%FT%T%:z") : campaign.created_at
+    customers_before = campaign.campaign_type == CardOrder.automation ? Time.new.strftime("%FT%T%:z") : campaign.created_at
 
       customers = ShopifyAPI::Customer.where(
         created_at_max: customers_before,
