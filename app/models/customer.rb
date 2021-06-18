@@ -14,8 +14,8 @@ class Customer < ApplicationRecord
     @default_address ||= addresses.find_by(default: true) || addresses.last
   end
 
-  def new_customer?
-    orders_count.to_i <= 1
+  def new_customer?(shop_id=nil)
+    orders_count.to_i <= 1 && Order.where(shop_id: shop_id, customer_id: id).count <= 1
   end
 
   def full_name
