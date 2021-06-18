@@ -1298,6 +1298,7 @@ GEM
     kaminari-core (1.2.1)
     kgio (2.11.4)
     libv8 (3.16.14.19-x86_64-darwin-18)
+    libv8 (3.16.14.19-x86_64-linux)
     lob (5.2.0)
       rest-client (>= 2.0.1, < 3.0)
     loofah (2.10.0)
@@ -1327,6 +1328,8 @@ GEM
     newrelic_rpm (6.15.0)
     nio4r (2.5.7)
     nokogiri (1.11.7-x86_64-darwin)
+      racc (~> 1.4)
+    nokogiri (1.11.7-x86_64-linux)
       racc (~> 1.4)
     oauth2 (1.4.7)
       faraday (>= 0.8, < 2.0)
@@ -1523,6 +1526,7 @@ GEM
 
 PLATFORMS
   x86_64-darwin-18
+  x86_64-linux
 
 DEPENDENCIES
   active_campaign (= 0.1.16)
