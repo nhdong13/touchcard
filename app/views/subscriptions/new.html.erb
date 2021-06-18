@@ -1,4 +1,5 @@
 <%= tag.div id: "stripe-pub-key", data: { stripe_pub_key: Rails.configuration.stripe[:publishable_key] } %>
+<%= hidden_field_tag 'customer-email', @email %>
 
 <div id="new-subscription-form" class="billing panel">
   <br>

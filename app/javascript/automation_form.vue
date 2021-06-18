@@ -1,11 +1,12 @@
 <template>
   <div class="automation_form">
-    <a :href="backUrl"  class="mdc-button mdc-button--stroked">Cancel</a>
+    <!-- <a :href="backUrl"  class="mdc-button mdc-button--stroked">Cancel</a>
     <button v-on:click="requestSave" class="mdc-button mdc-button--raised">Save</button>
-    <hr>
+    <hr> -->
     <!-- div v-cloak></div -->
-    <h3>{{automation.type}}</h3>
-
+    <h1>New Campaign</h1>
+    <hr/>
+    <h2>Campaign Settings</h2>
     <div class="automation-section">
       <strong>Campaign name </strong>
       <input id="campaign_name" v-model="automation.campaign_name">
@@ -14,35 +15,21 @@
 
     <div class="automation-section">
       <strong>Type</strong>
-      <span v-if="automation.campaign_type == null || automation.campaign_type == 'automation'">
+      <span v-if="automation.campaign_status == 'draft' || automation.campaign_type == 'automation'">
         <input type="radio" id="automation" value="automation" v-model="campaign_type" v-on:click="setBudgetType">
         <label for="automation">Automation</label>
       </span>
-      <span v-if="automation.campaign_type == null || automation.campaign_type == 'one_off'">
+      <span v-if="automation.campaign_status == 'draft' || automation.campaign_type == 'one_off'">
         <input type="radio" id="one_off" value="one_off" v-model="campaign_type" v-on:click="setBudgetType">
         <label for="one_off">One-off</label>
       </span>
     </div>
 
-    <div v-if="campaign_type =='automation'" class="automation-section">
-      <strong>Send card <input type="number" min="0" max="52" v-model="automation.send_delay"> weeks after purchase</strong>
-    </div>
-
     <div class="automation-section" v-if="campaign_type =='automation'">
       <strong>Monthly budget</strong>
-      <span v-if="campaign_type =='automation'">
-        <input type="radio" id="non_set_budget" value="non_set" v-model="budget_type">
-        <label for="non_set_budget">Non set</label>
+      <span>
+        <input type="numer" id="budget_limit" v-model="budget"> credits
       </span>
-      <span v-if="campaign_type =='automation'">
-        <input type="radio" id="monthly_budget" value="monthly" v-model="budget_type">
-        <label for="monthly_budget">Monthly</label>
-      </span>
-      <div class="filter-config nested-toggle" v-if="setLimitToKens">
-        <span>
-          Limit: <input type="numer" id="budget_limit" v-model="automation.budget_update"> credits
-        </span>
-      </div>
     </div>
 
     <div class="automation-section" v-if="campaign_type =='one_off'">
@@ -60,23 +47,9 @@
               name="send_date_start"
               ref="sendDateStart"
               @selected="changeSendDateEnd"
+              :disabled="isStartDateEqualCurrentDate"
             ></datepicker>
             <div class="icon-calendar" v-on:click="openSendDateStartDatePicker">
-              <font-awesome-icon icon="calendar-alt"/>
-            </div>
-          </div>
-        </div>
-        <div class="filter-config nested-toggle">
-          <div class="datepicker-with-icon">
-            <span style="width: 80px">End date:</span>
-            <datepicker
-              v-model="automation.send_date_end"
-              :disabled-dates="disabledEndDates"
-              name="sendDateEnd"
-              ref="sendDateEnd"
-              :disabled="automation.send_continuously"
-            ></datepicker>
-            <div class="icon-calendar" v-on:click="openSendDateEndDatePicker">
               <font-awesome-icon icon="calendar-alt"/>
             </div>
           </div>
@@ -107,6 +80,7 @@
             name="send_date_start"
             ref="sendDateStart"
             @selected="changeSendDateEnd"
+            :disabled="isStartDateEqualCurrentDate"
           ></datepicker>
           <div class="icon-calendar" v-on:click="openSendDateStartDatePicker">
             <font-awesome-icon icon="calendar-alt"/>
@@ -118,16 +92,18 @@
       </div>
       <div class="filter-config nested-toggle">
         <div class="datepicker-with-icon">
-          <span style="width: 80px">End date:</span>
-          <datepicker
-            v-model="automation.send_date_end"
-            :disabled-dates="disabledEndDates"
-            name="sendDateEnd"
-            ref="sendDateEnd"
-            :disabled="automation.send_continuously"
-          ></datepicker>
-          <div class="icon-calendar" v-on:click="openSendDateEndDatePicker">
-            <font-awesome-icon icon="calendar-alt"/>
+          <span style="width: 80px">End date<small :class="{error: errors.endDate}" v-if="errors.endDate">*</small>:</span>
+          <div :class="['datepicker-with-icon', {invalid: errors.endDate}]">
+            <datepicker
+              v-model="automation.send_date_end"
+              :disabled-dates="disabledEndDates"
+              name="sendDateEnd"
+              ref="sendDateEnd"
+              :disabled="automation.send_continuously"
+            ></datepicker>
+            <div class="icon-calendar" v-on:click="openSendDateEndDatePicker">
+              <font-awesome-icon icon="calendar-alt"/>
+            </div>
           </div>
           <div class="send-continuously-option">
             <input id="send-continuously" type="checkbox" v-model="automation.send_continuously"/>
@@ -250,43 +226,55 @@
         <button type="button" class="add-more-filter-btn" id="add-removed-filter" @click="addFilter">Add Filter</button>
         <filter-option :filter="filter" v-for="(filter, index) in removedFilters" :key="index" @filterChange="filterChange" @filterRemove="filterRemove" collection="removed" :index="index" />
       </div>
-      <!-- <span>
-        Minimum $: <input type="number" min="1" max="9999" v-model="automation.filters_attributes[automation.filters_attributes.length-1].filter_data.minimum">
-      </span> -->
-    </div>
-
-    <!-- <div class="automation-section">
-      <input id="automation-filter-checkbox" type="checkbox" v-model="enableFiltering">
-      <label for="automation-filter-checkbox" class="noselect"><strong>Filter by Order Size</strong></label>
-      <div class="filter-config nested-toggle" v-if="enableFiltering">
-      <span>
-          Minimum $: <input type="number" min="1" max="9999" v-model="automation.filters_attributes[automation.filters_attributes.length-1].filter_data.minimum">
-      </span>
+      <div v-if="campaign_type =='automation'" class="automation-section">
+        <strong>Send card <input type="number" min="0" max="52" v-model="automation.send_delay"> weeks after purchase</strong>
       </div>
-    </div>-->
+    </div>
+    <!-- <hr />
+    <h2>Add Contact</h2>
+    <button>Shopify</button> -->
     <hr />
-    <h2>Front</h2>
-    <card-editor
-            ref="frontEditor"
-            :isBack="false"
-            :json="automation.front_json"
-            :discount_pct.sync="automation.discount_pct"
-            :discount_exp.sync="automation.discount_exp"
-            :aws_sign_endpoint="awsSignEndpoint"
-    ></card-editor>
+    <h2>Front<small :class="{error: errors.uploadedFrontDesign}" v-if="errors.uploadedFrontDesign">*</small></h2>
+    <div :class="{ invalid: errors.uploadedFrontDesign }">
+      <card-editor
+              ref="frontEditor"
+              :isBack="false"
+              :json="automation.front_json"
+              :discount_pct.sync="automation.discount_pct"
+              :discount_exp.sync="automation.discount_exp"
+              :aws_sign_endpoint="awsSignEndpoint"
+      ></card-editor>
+    </div>
     <br>
     <hr />
-    <h2>Back</h2>
-    <card-editor
-            ref="backEditor"
-            :isBack="true"
-            :json="automation.back_json"
-            :discount_pct.sync="automation.discount_pct"
-            :discount_exp.sync="automation.discount_exp"
-            :aws_sign_endpoint="awsSignEndpoint"
-    ></card-editor>
+    <h2>Back<small :class="{error: errors.uploadedBackDesign}" v-if="errors.uploadedBackDesign">*</small></h2>
+    <div :class="{ invalid: errors.uploadedBackDesign }">
+      <card-editor
+              ref="backEditor"
+              :isBack="true"
+              :json="automation.back_json"
+              :discount_pct.sync="automation.discount_pct"
+              :discount_exp.sync="automation.discount_exp"
+              :aws_sign_endpoint="awsSignEndpoint"
+      ></card-editor>
+    </div>
     <br>
-
+    <div class="text-right">
+      <md-button class="cancel-btn text-white" v-on:click="cancel" >Cancel</md-button>
+      <md-button class="review-and-continue-btn text-white" v-on:click="saveAndReview">Review and continue</md-button>
+    </div>
+    <div>
+      <cancel-campaign-dialog
+        :md-active.sync="isCancel"
+        title="Cancel?"
+        content="This action can not be undone and you will lose all progress. Are you sure to continue?"
+        confirm-text="Cancel anyway"
+        cancel-text="No, go back"
+        @onCancel="onCancel"
+        @onConfirm="onConfirm"
+        v-if="isEditExistCampaign"
+      />
+    </div>
   </div>
 </template>
 
@@ -297,6 +285,8 @@
   import FilterOption from './components/filter_option.vue'
   import Datepicker from 'vuejs-datepicker';
   import $ from 'jquery'
+  import { isEmpty } from 'lodash'
+  import CancelCampaignDialog from './components/cancel_campaign_dialog.vue'
   window.$ = $
 
   export default {
@@ -320,6 +310,32 @@
         required: true
       }
     },
+    created() {
+      this.isEditExistCampaign = !this.isCampaignNew()
+      if(isEmpty(this.automation.send_date_start)) {
+        this.automation.send_date_start = new Date()
+      } else {
+        const today = new Date()
+        const startDate = new Date(this.automation.send_date_start)
+        if(startDate.getTime() <= today.getTime()) {
+          this.isStartDateEqualCurrentDate = true
+        } else {
+          this.disabledDates.from = new Date(startDate - 8640000)
+          today.setDate(today.getDate() - 1)
+          this.disabledDates.to = today
+        }
+      }
+      
+    },
+    mounted: function() {
+      if(this.automation.campaign_status == "draft") {
+        window.setInterval(() => {
+          this.saveAutomation()
+        }, 1000)
+      } else {
+        this.saveAutomation()
+      }
+    },
     data: function() {
       return {
         onSelectState: this.returnAddress.state,
@@ -328,12 +344,22 @@
         acceptedFilters: [],
         removedFilters: [],
         sendDate: "",
-        budget_type: this.automation.budget_type,
+        budget_type: this.automation.budget_type ? this.automation.budget_type : "non_set",
+        budget: this.automation.budget_type == "monthly" ? this.automation.budget : null,
         willShowBudgetType: true,
         campaign_type: this.automation.campaign_type ? this.automation.campaign_type : "automation",
         willShowDailySendingSchedule: false,
         disabledDates: {
           to: new Date(Date.now() - 8640000)
+        },
+        isCancel: false,
+        isStartDateEqualCurrentDate: false,
+        saved_automation: {}, // Use with autosave, play as backup when user don't want to change campaign any more
+        isEditExistCampaign: true,
+        errors: {
+          endDate: false,
+          uploadedFrontDesign: false,
+          uploadedBackDesign: false,
         }
       }
     },
@@ -342,14 +368,6 @@
       disabledEndDates: function(){
         let startDate = this.automation.send_date_start || new Date()
         return {to: new Date(new Date(startDate) - 8640000)}
-      },
-
-      setLimitToKens: function(){
-        let willSet = true;
-        if(this.budget_type == "non_set"){
-          willSet = false
-        }
-        return willSet
       },
 
       willCheckDailySendingSchedule: {
@@ -369,7 +387,7 @@
             this.willShowDailySendingSchedule = false
           }
         }
-      },
+      }
     },
 
     watch: {
@@ -390,7 +408,6 @@
           }
         }
       },
-
       enableAddReturnAddress: function(enable) {
         if(this.automation.international){
           if (!enable) {
@@ -411,6 +428,19 @@
             $("#from_state").parents(".col-6").find("span").hide()
           }
         }
+      },
+
+      budget: function(value) {
+        if(isEmpty(this.budget)) {
+          this.budget_type = "non_set"
+          this.automation.budget_update = 0
+        } else {
+          this.budget_type = "monthly"
+          this.automation.budget_update = value  
+        }
+        console.log(isEmpty(this.budget))
+        console.log(this.budget)
+        console.log(this.automation)
       }
     },
 
@@ -423,7 +453,8 @@
       FilterOption,
       CardEditor,
       'card-editor': CardEditor,
-      Datepicker
+      Datepicker,
+      CancelCampaignDialog
     },
 
     beforeMount: function() {
@@ -630,6 +661,107 @@
         }).catch(function (error) {
           console.log(error)
         });
+      },
+      onCancel: function() {
+        this.isCancel = false
+      },
+      onConfirm: function() {
+        // if(this.automation.campaign_status == "draft") {
+        //   const url = `/automations/${this.id}.json`
+        //   axios.delete(url).then(function(response) {
+        //   }).catch(function(error) {
+        //     if(error) console.log(error)
+        //   })
+        // } else {
+        //   Turbolinks.visit('/automations');  
+        // }
+        Turbolinks.clearCache()
+        Turbolinks.visit('/automations', {flush: true, cacheRequest: false});
+      },
+      saveAutomation: function() {
+        // This will minimize the overhead of clone the automation
+        if(this.isTwoJsonEqual(this.saved_automation, this.automation) && this.isEditExistCampaign == true) {
+          return
+        }
+        // Get card side data for saving
+        let frontAttrs = this.$refs.frontEditor.$data.attributes;
+        let backAttrs = this.$refs.backEditor.$data.attributes;
+
+        this.automation.front_json = frontAttrs;
+        this.automation.back_json = backAttrs;
+
+        // Null out discount_pct and discount_exp for backwards-compatability (might not be essential)
+        // Using `.showsDiscount` assumes card_editor.vue has created card_attributes objects from json
+        if (!frontAttrs.showsDiscount && !backAttrs.showsDiscount ) {
+          this.automation.discount_pct = null;
+          this.automation.discount_exp = null;
+        }
+
+        this.automation.budget_type = this.budget_type
+        this.automation.campaign_type = this.campaign_type
+        this.automation.return_address_attributes = this.returnAddress;
+        if (this.enableFiltering) this.collectFilters();
+
+        // TODO: Must somehow make sure automation is JSON safe
+        this.saved_automation = JSON.parse(JSON.stringify(this.automation))
+
+        if(this.automation.campaign_status == "draft") {
+          axios.put(`/automations/${this.id}.json`, { card_order: this.automation})
+            .then(function(response) {
+              // console.log(response);
+            }).catch(function (error) {
+              console.log(error)
+            // ShopifyApp.flashError(error.request.responseText);
+          });
+        }
+      },
+      isTwoJsonEqual: function(a, b) {
+        return JSON.stringify(a) === JSON.stringify(b)
+      },
+      saveAndReview: function() {
+        this.validateForm()
+        if(!this.isFormValid()) return
+        if(this.automation.campaign_status != "draft") {
+          this.requestSave()  
+        }
+        console.log("Go to summary page")
+      },
+
+      validateForm: function() {
+        // No need to validate start date and campaign name cus they have default values
+
+        if(!this.automation.send_continuously && isEmpty(this.automation.send_date_end)) {
+          this.errors.endDate = true
+        } 
+
+        if(!this.$refs.frontEditor.$data.attributes.background_url) {
+          this.errors.uploadedFrontDesign = true
+        }
+
+        if(!this.$refs.backEditor.$data.attributes.background_url) {
+          this.errors.uploadedBackDesign = true 
+        }
+      },
+
+      isFormValid: function() {
+        for (const item in this.errors) {
+          if(this.errors[item]) return false
+        }
+      },
+      // We can perform this check because autosave every second
+      isCampaignNew: function() {
+        const createdAt = new Date(this.automation.created_at)
+        const updatedAt = new Date(this.automation.updated_at)
+        return createdAt.getTime() == updatedAt.getTime() ? true : false
+      },
+
+      cancel: function() {
+        if(!this.isEditExistCampaign) {
+          this.saveAutomation()
+          Turbolinks.visit('/automations')
+        } else {
+          this.isCancel = true
+        }
       }
     }
   }
@@ -708,4 +840,30 @@
     display: none;
   }
 
+  .review-and-continue-btn.text-white,
+  .cancel-btn.text-white {
+    color: white;
+  }
+
+  .cancel-btn {
+    background-color: #647786;
+    border-radius: 5px;
+    font-weight: bold;
+    box-shadow: 2px 4px #888888;
+  }
+
+  .review-and-continue-btn {
+    background-color: #0150ee;
+    border-radius: 5px;
+    font-weight: bold;
+    box-shadow: 2px 4px #888888;
+  }
+
+  .text-right {
+    text-align: right;
+  }
+
+  .invalid {
+    border: 2px solid red;
+  }
 </style>

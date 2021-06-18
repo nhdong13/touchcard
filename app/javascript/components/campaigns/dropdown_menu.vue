@@ -8,61 +8,108 @@
       <div class="filter-items">
         <span>Type</span>
         <select v-model="filters.type">
-          <option v-for="item in campaignTypes">{{ item }}</option>
+          <option v-for="item in campaignTypes" :value="item">{{ item }}</option>
         </select>
       </div>
       <div class="filter-items">
         <span>Status</span>
-        <select v-model="filters.status">
-          <option v-for="item in campaignStatuses">{{ item }}</option>
+        <select v-model="filters.status" @change="selectStatus">
+          <option v-for="item in availableStatus" :value="item.content" :class="[item.isHidden ? 'd-none' : '']">{{ item.content }}</option>
         </select>
       </div>
       <div class="filter-items">
         <span>Date Created</span>
-        <datepicker v-model="filters.dateCreated"></datepicker>
+        <select v-model="filters.dateCreated">
+          <option value="Any">Any</option>
+          <option value="Pickdate">Pickdate</option>
+        </select>
+      </div>
+      <div v-if="filters.dateCreated == 'Pickdate'">
+        <date-picker 
+          v-model="range" 
+          type="date" 
+          range placeholder="Select date range" 
+          range-separator=" - " 
+          format="MM-DD-YYYY" 
+          :disabled-date="disableAfterToday"
+          id="date-picker"
+        >
+        </date-picker>
       </div>
       <div class="filter-items">
-        <span>Date Completed</span>
-        <datepicker v-model="filters.dateCompleted"></datepicker>
-      </div>
-      <div class="filter-items">
-        <button v-model="filters.clearAll" @click="onResetFilter" class="margin-0 full-width">All</button>
+        <button v-model="filters.clearAll" @click="onResetFilter" class="margin-0 full-width">Clear all filters</button>
       </div>
       <div class="filter-items">
         <button @click="closeFilters" class="full-width">Cancel</button>
         <button @click="submitFilters" class="full-width margin-0">Save</button>
+      </div>
+      <div v-if="selectedStatuses.length > 0">
+        <md-divider></md-divider>
+        <md-subheader>Status</md-subheader>
+        <md-chip md-deletable v-for="item in selectedStatuses"  @md-delete="removeStatus(item)">{{ item }}</md-chip>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import Datepicker from 'vuejs-datepicker';
 import axios from 'axios'
+import DatePicker from 'vue2-datepicker';
+import 'vue2-datepicker/index.css';
+import _ from 'lodash';
 
 export default {
   name: 'dropdownMenu',
   components: {
-    Datepicker
+    DatePicker
   },
   created() {
     window.addEventListener('click', this.checkClickOn);
+    this.loadFilterSettings()
   },
-  props: ['campaignTypes', 'campaignStatuses'],
   data() {
     return {
       isOpen: false,
       date: new Date(),
       filters: {
-        type: "",
-        status: "",
-        dateCreated: "",
-        dateCompleted: "",
+        type: "Any",
+        status: "Any",
+        dateCreated: "Any",
         clearAll: false,
-      }
+      },
+      campaignTypes: ['Any', 'Automation', 'One-off'],
+      availableStatus: [{
+        content: 'Any',
+        isHidden: false
+      }, {
+        content: 'Processing',
+        isHidden: false
+      }, {
+        content: 'Scheduled',
+        isHidden: false
+      }, {
+        content: 'Sending',
+        isHidden: false
+      }, {
+        content: 'Sent',
+        isHidden: false
+      }, {
+        content: 'Paused',
+        isHidden: false
+      }, {
+        content: 'Draft',
+        isHidden: false
+      }, {
+        content: 'Out of credit',
+        isHidden: false
+      }, {
+        content: 'Error',
+        isHidden: false
+      }],
+      selectedStatuses: [],
+      range: []
     };
   },
-
   methods: {
     checkClickOn(event) {
       if (document.getElementById(this.id) && !document.getElementById(this.id).contains(event.target)) {
@@ -73,11 +120,12 @@ export default {
     submitFilters: function() {
       let target = `/campaigns.json`;
       let _this = this
-      axios.get(target,
+      this.saveFilterSettings()
+      axios.get(`/campaigns.json`,
         {
           params: {
             query: _this.$parent.getParamsQuery(),
-            filters: this.collectParamsFilters(),
+            // filters: this.collectParamsFilters(),
           }
         }
       ).then(function(response) {
@@ -86,15 +134,13 @@ export default {
         }).catch(function (error) {
       });
 
-
     },
 
     collectParamsFilters: function() {
       return {
         type: this.filters.type,
-        status: this.filters.status,
-        created_at: this.filters.dateCreated,
-        date_completed: this.filters.dateCompleted
+        status: this.selectedStatuses.length > 0 ? this.selectedStatuses : [],
+        dateCreated: (this.filters.dateCreated == "Pickdate") ? { created_at: this.range[0], date_completed: this.range[1] } : {},
       }
     },
 
@@ -104,12 +150,73 @@ export default {
 
     onResetFilter: function() {
       this.filters = {
-        type: "",
-        status: "",
-        dateCreated: "",
-        dateCompleted: "",
+        type: "Any",
+        status: "Any",
+        dateCreated: "Any",
         clearAll: false,
       }
+      this.range = []
+      this.selectedStatuses = []
+      for (var i = 0; i < this.availableStatus.length; i++) {
+        this.availableStatus[i].isHidden = false
+      }
+    },
+
+    disableAfterToday: function(date) {
+      const today = new Date()
+      today.setHours(0, 0, 0, 0);
+      return date > today
+    },
+
+    removeStatus: function(status) {
+      this.selectedStatuses = this.selectedStatuses.filter(element => element != status)
+      this.availableStatus.find(element => element.content == status).isHidden = false
+    },
+
+    selectStatus: function() {
+      if(this.filters.status == "Any") {
+        for (var i = 0; i < this.availableStatus.length; i++) {
+          this.availableStatus[i].isHidden = false
+        }
+        this.selectedStatuses = []  
+        return
+      }
+      this.availableStatus.find(element => element.content == this.filters.status).isHidden = true
+      this.selectedStatuses.push(this.filters.status)
+    },
+
+    saveFilterSettings: function() {
+      axios.patch(`/settings/campaign_filter_option`,
+      {
+        filters: this.collectParamsFilters()
+      }).catch(function(error) {
+        console.log(error)
+      })
+    },
+
+    loadFilterSettings: function() {
+      let _this = this
+      axios.get(`/settings/campaign_filter_option.json`).then(function(response) {
+        const filterSetting = response.data.filter
+        _this.filters.type = _.isEmpty(filterSetting.type) ? "Any" : filterSetting.type
+        if(_.isEmpty(filterSetting.status)) {
+          _this.filters.status = "Any"
+        } else {
+          for (var i = 0; i < filterSetting.status.length; i++) {
+            _this.filters.status = filterSetting.status[i]
+            _this.selectStatus()
+          }
+        }
+        if(_.isEmpty(filterSetting.dateCreated) || _.isEmpty(filterSetting.dateCreated.created_at) || _.isEmpty(filterSetting.dateCreated.date_completed)) {
+          _this.filters.dateCreated = "Any"
+        } else {
+          _this.filters.dateCreated = "Pickdate"
+          _this.range.push(new Date(filterSetting.dateCreated.created_at))
+          _this.range.push(new Date(filterSetting.dateCreated.date_completed))
+        }
+      }).catch(function(error) {
+        if(!_.isEmpty(error)) console.log(error)
+      })
     }
   }
 };
@@ -130,6 +237,7 @@ export default {
   position: relative;
   width: fit-content;
   &-list {
+    max-width: 400px;
     padding: 15px;
     background: white;
     margin-top: 5px;
@@ -150,4 +258,13 @@ export default {
     }
   }
 }
+
+#date-picker {
+  margin-bottom: 5px;
+}
+
+.d-none {
+  display: none;
+}
+
 </style>

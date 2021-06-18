@@ -63,6 +63,7 @@ class AutomationsController < BaseController
     respond_to do |format|
       if @automation.update(automation_params)
         FetchHistoryOrdersJob.perform_now(@current_shop, @current_shop.post_sale_orders.last.send_delay) if @automation.enabled?
+        GeneratePostcardJob.perform_later(@current_shop, @automation) if @automation.enabled?
         SendAllHistoryCardsJob.perform_later(@current_shop) if @automation.enabled?
         flash[:notice] = "Automation successfully updated"
         format.html { redirect_to automations_path }
@@ -81,13 +82,19 @@ class AutomationsController < BaseController
 
   # TODO: Re-enable automation destruction
   #
-  # def destroy
-  #   @automation.archive
-  #   @automation.safe_destroy!
-  #   # TODO: Rescue exception
-  # # rescue
-  #   # Catch error from transaction and do something
-  # end
+  def destroy
+    @automation.archive
+    begin
+      @automation.safe_destroy!
+    rescue ActiveRecord::RecordNotFound
+      respond_to do |format|
+        format.json { render json: { message: "Failed to delete" }, status: :internal_server_error }
+      end
+    end
+    respond_to do |format|
+      format.json { render json: { message: "Delete successfully" }, status: :ok }
+    end
+  end
 
   private
 

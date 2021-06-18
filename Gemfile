@@ -28,7 +28,7 @@ gem "json", "~> 2.5.1"
 gem "shopify_app", "~> 12.0.7"
 
 # Stripe
-gem 'stripe', '~> 5.30'
+gem 'stripe', '~> 5.34'
 
 # S3 connection
 gem "aws-sdk", "~> 3.0.2"
@@ -105,6 +105,8 @@ group :development, :test do
   # Call "byebug" anywhere in the code to stop execution and get a debugger console
   gem "byebug"
   gem 'simplecov', :require => false
+
+  gem 'rspec', '~> 3.10'
 end
 
 group :test do

@@ -3,19 +3,14 @@
 
 // Todo: Use Stripe Checkout via NPM
 
-export default function(element, stripePubKey = '') {
+export default function(element ,stripePubKey = '') {
   return {
     el: element,
-    // props: {
-    //   stripe_pub_key: {
-    //     type: String,
-    //     required: true,
-    //   },
-    // },
     data: function() {
       return {
         slider: null,
         quantity: 0,
+        customerEmail: null,
         stripeHandler: StripeCheckout.configure({
           key: stripePubKey,
           locale: 'auto',
@@ -46,6 +41,7 @@ export default function(element, stripePubKey = '') {
         this.updateQuantity();
       });
       this.updateQuantity();
+      this.customerEmail = document.getElementById('customer-email').value
     },
     beforeDestroy: function() {
       this.stripeHandler.close();
@@ -59,7 +55,8 @@ export default function(element, stripePubKey = '') {
       checkoutSubmit: function(event) {
         if (event) event.preventDefault();
         this.stripeHandler.open({
-          amount: this.price * 100
+          amount: this.price * 100,
+          email: this.customerEmail,
         });
 
       }

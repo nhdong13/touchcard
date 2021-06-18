@@ -2,6 +2,26 @@ class ShopsController < BaseController
   before_action :set_shop
 
 
+  # PATCH/PUT /settings/set_campaign_filter_option
+  def set_campaign_filter_option
+    filter = campaign_filter_params
+    if @shop.update(campaign_filter_option: filter)
+      render :json => {:message => "Update campagin filter successfully", :filter => campaign_filter_params}, status: :ok
+    else
+      render :json => {:message => @shop.errors.full_messages.join("\n")}, status: :unprocessable_entity
+    end
+  end
+
+  # GET /settings/set_campaign_filter_option.json
+  def get_campaign_filter_option
+    respond_to do |format|
+      format.html
+      format.json {
+        render :json => {:filter => @shop.campaign_filter_option}, status: :ok
+      }
+    end
+  end
+
   def edit
   end
 
@@ -22,5 +42,10 @@ class ShopsController < BaseController
 
   # def permitted_params
   # end
+
+  private
+    def campaign_filter_params
+      params.require(:filters).permit(:type, {:status => [] }, {:dateCreated => {}})
+    end
 
 end

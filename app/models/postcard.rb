@@ -6,7 +6,7 @@ require "postcard_render_util"
 
 class Postcard < ApplicationRecord
   belongs_to :card_order
-  belongs_to :order
+  belongs_to :order, optional: true
   belongs_to :customer
   belongs_to :postcard_trigger, polymorphic: true
   has_one :shop, through: :card_order
