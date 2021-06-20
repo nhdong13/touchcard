@@ -30,7 +30,7 @@ gem "shopify_app", "~> 12.0.7"
 gem 'stripe', '~> 5.30'
 
 # S3 connection
-gem "aws-sdk", "~> 3.0.2"
+gem "aws-sdk", "~> 2.1"
 
 # Image Manipulation
 gem "rmagick", "~> 2.15"
