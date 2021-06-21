@@ -99,38 +99,16 @@
                 <font-awesome-icon icon="calendar-alt"/>
               </div>
             </div>
-            <div class="send-continuously-option">
-              <!-- <input id="send-continuously" type="checkbox" v-model="automation.send_continuously"/>
-              <label for="send-continuously" class="noselect">Or send continuously?</label> -->
-            </div>
           </div>
         </div>
         <div class="send-continuously-option pt-ongoing-checkbox">
           <input id="send-continuously" type="checkbox" v-model="automation.send_continuously"/>
           <label for="send-continuously" class="noselect">- Ongoing</label>
-          <!-- <span style="margin-left: 7px">- Ongoing</span> -->
         </div>
       </div>
     </div>
 
-    <!-- <div class="automation-section">
-      <input id="automation-international-checkbox" type="checkbox" v-model="automation.international" @change="handleChangeInternationalCheck"/>
-      <label for="automation-international-checkbox" class="noselect"><strong>Send outside USA</strong></label>
-      <div class="attention-note nested-toggle" v-if="automation.international">
-        <div><span><em>Note:</em></span>
-          <ul>
-            <li>
-              <em>International postcards cost two credits.</em>
-            </li>
-            <li>
-              <em>US Return address is required when sending outside USA.</em>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div> -->
     <div :class="[errors.returnAddress ? 'invalid' : '', 'automation-section']">
-      <!-- <input id="return-address-checkbox" type="checkbox" v-model="enableAddReturnAddress"/> -->
       <label for="return-address-checkbox" class="noselect"><strong>Add Return Address</strong></label>
       <button @click="enableAddReturnAddress= !enableAddReturnAddress">Edit</button>
       <div class="nested-toggle return-address" v-if="enableAddReturnAddress">
@@ -527,7 +505,6 @@
 
         this.automation.budget_type = this.budget_type
         this.automation.campaign_type = this.campaign_type
-        // if (this.checkFormReturnAddressIsInvalid()) return;
 
         if (this.checkNameCampaignIsInvalid()) return;
 
@@ -659,7 +636,7 @@
         this.automation.budget_type = this.budget_type
         this.automation.campaign_type = this.campaign_type
         this.automation.return_address_attributes = this.returnAddress;
-
+        if(this.enableFiltering) this.collectFilters()
         // TODO: Must somehow make sure automation is JSON safe
         this.saved_automation = JSON.parse(JSON.stringify(this.automation))
 
@@ -672,8 +649,6 @@
         }
       },
       isTwoJsonEqual: function(a, b) {
-        // console.log(JSON.stringify(a))
-        // console.log(JSON.stringify(b))
         return JSON.stringify(a) === JSON.stringify(b)
       },
       saveAndReview: function() {
