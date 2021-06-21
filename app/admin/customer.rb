@@ -33,7 +33,7 @@ ActiveAdmin.register Customer do
     attributes_table do
       row :shop do |customer|
         order = Order.find_by(shopify_id: customer.last_order_id)
-        order.shop
+        order&.shop
       end
       row :id
       row "Shopify Id", :shopify_id

@@ -48,8 +48,7 @@ class Subscription < ApplicationRecord
       currency: "usd",
       description: "Plan upgrade from #{old_quantity} cards to #{new_quantity} cards adding #{delta_quantity} cards for this month"
     })
-
-    shop.update(budget: shop.budget + delta_quantity)
+    shop.update(credit: shop.credit + delta_quantity)
   end
 
   # Update subscription date to match the stripe dates

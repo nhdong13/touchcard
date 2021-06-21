@@ -64,7 +64,7 @@ ActiveAdmin.register Postcard do
       row :discount_exp_at
       row "Lob Id" do |postcard|
         link_to postcard.postcard_id,
-                "https://dashboard.lob.com/#/postcards/#{postcard.postcard_id}" if postcard.postcard_id
+                "https://dashboard.lob.com/#/postcards/#{postcard.postcard_id}", target: :_blank if postcard.postcard_id
       end
       row :sent
       row :send_date

@@ -9,7 +9,7 @@ class DiscountManager
     @discount_code = generate_code
     @path = path
     @value = value
-    @expire_at = expire_at
+    @expire_at = expire_at.middle_of_day
     @extra_rules = extra_rules || {}
   end
 

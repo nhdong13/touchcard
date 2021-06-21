@@ -57,7 +57,7 @@ ActiveAdmin.register Subscription do
       row :created_at
       row :updated_at
       row :stripe_id do |subscription|
-        link_to subscription.stripe_id, "https://dashboard.stripe.com/subscriptions/#{subscription.stripe_id}"
+        link_to subscription.stripe_id, "https://dashboard.stripe.com/subscriptions/#{subscription.stripe_id}", target: :_blank
       end
     end
   end
