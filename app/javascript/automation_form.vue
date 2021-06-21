@@ -1,9 +1,5 @@
 <template>
   <div class="automation_form">
-    <!-- <a :href="backUrl"  class="mdc-button mdc-button--stroked">Cancel</a>
-    <button v-on:click="requestSave" class="mdc-button mdc-button--raised">Save</button>
-    <hr> -->
-    <!-- div v-cloak></div -->
     <h1>New Campaign</h1>
     <hr/>
     <h2>Campaign Settings</h2>
@@ -70,50 +66,54 @@
 
     <div class="automation-section" v-else>
       <strong>Campaign schedules</strong>
-      <div class="filter-config nested-toggle">
-        <div class="datepicker-with-icon">
-          <span style="width: 80px">Start date:</span>
-          <datepicker
-            v-model="automation.send_date_start"
-            :disabled-dates="disabledDates"
-            :open-date="new Date()"
-            name="send_date_start"
-            ref="sendDateStart"
-            @selected="changeSendDateEnd"
-            :disabled="isStartDateEqualCurrentDate"
-          ></datepicker>
-          <div class="icon-calendar" v-on:click="openSendDateStartDatePicker">
-            <font-awesome-icon icon="calendar-alt"/>
-          </div>
-          <div v-if="automation.send_continuously">
-            <span style="margin-left: 7px">- Ongoing</span>
-          </div>
-        </div>
-      </div>
-      <div class="filter-config nested-toggle">
-        <div class="datepicker-with-icon">
-          <span style="width: 80px">End date<small :class="{error: errors.endDate}" v-if="errors.endDate">*</small>:</span>
-          <div :class="['datepicker-with-icon', {invalid: errors.endDate}]">
+      <div class="flex-center">
+        <div class="campaign-section nested-toggle">
+          <div class="datepicker-with-icon">
+            <span style="width: 80px">Start date:</span>
             <datepicker
-              v-model="automation.send_date_end"
-              :disabled-dates="disabledEndDates"
-              name="sendDateEnd"
-              ref="sendDateEnd"
-              :disabled="automation.send_continuously"
+              v-model="automation.send_date_start"
+              :disabled-dates="disabledDates"
+              :open-date="new Date()"
+              name="send_date_start"
+              ref="sendDateStart"
+              @selected="changeSendDateEnd"
+              :disabled="isStartDateEqualCurrentDate"
             ></datepicker>
-            <div class="icon-calendar" v-on:click="openSendDateEndDatePicker">
+            <div class="icon-calendar" v-on:click="openSendDateStartDatePicker">
               <font-awesome-icon icon="calendar-alt"/>
             </div>
           </div>
-          <div class="send-continuously-option">
-            <input id="send-continuously" type="checkbox" v-model="automation.send_continuously"/>
-            <label for="send-continuously" class="noselect">Or send continuously?</label>
+        </div>
+        <div class="campaign-section nested-toggle" v-if="!automation.send_continuously">
+          <div class="datepicker-with-icon">
+            <span style="width: 80px">End date<small :class="{error: errors.endDate}" v-if="errors.endDate">*</small>:</span>
+            <div :class="['datepicker-with-icon', {invalid: errors.endDate}]">
+              <datepicker
+                v-model="automation.send_date_end"
+                :disabled-dates="disabledEndDates"
+                name="sendDateEnd"
+                ref="sendDateEnd"
+                :disabled="automation.send_continuously"
+              ></datepicker>
+              <div class="icon-calendar" v-on:click="openSendDateEndDatePicker">
+                <font-awesome-icon icon="calendar-alt"/>
+              </div>
+            </div>
+            <div class="send-continuously-option">
+              <!-- <input id="send-continuously" type="checkbox" v-model="automation.send_continuously"/>
+              <label for="send-continuously" class="noselect">Or send continuously?</label> -->
+            </div>
           </div>
+        </div>
+        <div class="send-continuously-option pt-ongoing-checkbox">
+          <input id="send-continuously" type="checkbox" v-model="automation.send_continuously"/>
+          <label for="send-continuously" class="noselect">- Ongoing</label>
+          <!-- <span style="margin-left: 7px">- Ongoing</span> -->
         </div>
       </div>
     </div>
 
-    <div class="automation-section">
+    <!-- <div class="automation-section">
       <input id="automation-international-checkbox" type="checkbox" v-model="automation.international" @change="handleChangeInternationalCheck"/>
       <label for="automation-international-checkbox" class="noselect"><strong>Send outside USA</strong></label>
       <div class="attention-note nested-toggle" v-if="automation.international">
@@ -128,10 +128,11 @@
           </ul>
         </div>
       </div>
-    </div>
-    <div class="automation-section">
-      <input id="return-address-checkbox" type="checkbox" v-model="enableAddReturnAddress"/>
+    </div> -->
+    <div :class="[errors.returnAddress ? 'invalid' : '', 'automation-section']">
+      <!-- <input id="return-address-checkbox" type="checkbox" v-model="enableAddReturnAddress"/> -->
       <label for="return-address-checkbox" class="noselect"><strong>Add Return Address</strong></label>
+      <button @click="enableAddReturnAddress= !enableAddReturnAddress">Edit</button>
       <div class="nested-toggle return-address" v-if="enableAddReturnAddress">
         <div class="row">
           <div class="col-8">
@@ -340,7 +341,7 @@
       return {
         onSelectState: this.returnAddress.state,
         enableFiltering: (this.automation.filters_attributes.length > 0),
-        enableAddReturnAddress: this.automation.international,
+        enableAddReturnAddress: false,
         acceptedFilters: [],
         removedFilters: [],
         sendDate: "",
@@ -355,11 +356,13 @@
         isCancel: false,
         isStartDateEqualCurrentDate: false,
         saved_automation: {}, // Use with autosave, play as backup when user don't want to change campaign any more
+        saved_filters: [],
         isEditExistCampaign: true,
         errors: {
           endDate: false,
           uploadedFrontDesign: false,
           uploadedBackDesign: false,
+          returnAddress: false
         }
       }
     },
@@ -408,15 +411,6 @@
           }
         }
       },
-      enableAddReturnAddress: function(enable) {
-        if(this.automation.international){
-          if (!enable) {
-            this.enableAddReturnAddress = true
-            $(".return-address-general-error").show();
-            $("#return-address-checkbox").prop("checked", true);
-          }
-        }
-      },
 
       onSelectState: function() {
         let state = $("#from_state").val()
@@ -438,9 +432,6 @@
           this.budget_type = "monthly"
           this.automation.budget_update = value  
         }
-        console.log(isEmpty(this.budget))
-        console.log(this.budget)
-        console.log(this.automation)
       }
     },
 
@@ -477,31 +468,6 @@
           } else{
             $(target).parents(".col-6").find("span").hide()
           }
-        }
-      },
-
-      handleChangeInternationalCheck: function() {
-        if(!this.automation.international){
-          $(".return-address-general-error").hide();
-          $(".error").hide();
-        } else {
-          this.enableAddReturnAddress = true
-        }
-      },
-
-      checkFormReturnAddressIsInvalid: function() {
-        if(this.automation.international){
-          if(!this.returnAddress.name ||
-            !this.returnAddress.address_line1 ||
-            !this.returnAddress.city ||
-            !this.returnAddress.state ||
-            !this.returnAddress.zip) {
-              $(".return-address-general-error").show()
-              return true;
-            }
-        } else {
-          $(".return-address-general-error").hide()
-          return false;
         }
       },
 
@@ -561,20 +527,11 @@
 
         this.automation.budget_type = this.budget_type
         this.automation.campaign_type = this.campaign_type
-        if (this.checkFormReturnAddressIsInvalid()) return;
+        // if (this.checkFormReturnAddressIsInvalid()) return;
 
         if (this.checkNameCampaignIsInvalid()) return;
 
         this.postOrPutForm();
-
-        // // Ask the CardEditor to finish its uploads, serialization, etc
-        // this.$refs.cardEditor.requestSave()
-        //   .then((results) => {
-        //     console.log(results)
-        //     this.postOrPutForm()
-        //   }).catch(function (err) {
-        //   console.log(err)
-        // })
       },
       postOrPutForm: function() {
         if (this.id) {
@@ -606,9 +563,15 @@
         list == "accepted" ? this.acceptedFilters.push(defaultValue) : this.removedFilters.push(defaultValue);
       },
       filterChange(filter, collection, index) {
+        if(filter.selectedFilter == "shipping_country" && filter.selectedCondition == "from" && collection == "accepted") {
+          this.automation.international = true
+        }
         collection == "accepted" ? this.acceptedFilters[index] = filter : this.removedFilters[index] = filter;
       },
       filterRemove(filter, collection, index) {
+        if(filter.selectedFilter == "shipping_country" && filter.selectedCondition == "from" && collection == "accepted") {
+          this.automation.international = false
+        }
         collection == "accepted" ? this.acceptedFilters.splice(index, 1) : this.removedFilters.splice(index, 1);
       },
       removeEmptyFilter() {
@@ -634,7 +597,10 @@
       },
       convertFiltersToParams() {
         let res = {};
-        [this.acceptedFilters, this.removedFilters].forEach((collection, index) => {
+        // Prevent error
+        // Cannot read property '[object Array]' of undefined
+        const filters = [this.acceptedFilters, this.removedFilters].filter(Boolean)
+        filters.forEach((collection, index) => {
           let tmp = this.generateFilterToObject(collection);
           index == 0 ? res["accepted"] = tmp : res["removed"] = tmp;
         })
@@ -642,7 +608,7 @@
       },
       generateFilterToObject(list) {
         let tmp = {};
-        list.forEach(item => {
+        list.forEach((item) => {
           if (item["value"] == null) return;
           tmp[item["selectedFilter"]] = {condition: item["selectedCondition"], value: item["value"]};
         });
@@ -666,23 +632,16 @@
         this.isCancel = false
       },
       onConfirm: function() {
-        // if(this.automation.campaign_status == "draft") {
-        //   const url = `/automations/${this.id}.json`
-        //   axios.delete(url).then(function(response) {
-        //   }).catch(function(error) {
-        //     if(error) console.log(error)
-        //   })
-        // } else {
-        //   Turbolinks.visit('/automations');  
-        // }
         Turbolinks.clearCache()
         Turbolinks.visit('/automations', {flush: true, cacheRequest: false});
       },
       saveAutomation: function() {
+        if (this.enableFiltering && this.automation.campaign_status == "draft") this.collectFilters();
         // This will minimize the overhead of clone the automation
         if(this.isTwoJsonEqual(this.saved_automation, this.automation) && this.isEditExistCampaign == true) {
           return
         }
+
         // Get card side data for saving
         let frontAttrs = this.$refs.frontEditor.$data.attributes;
         let backAttrs = this.$refs.backEditor.$data.attributes;
@@ -700,7 +659,6 @@
         this.automation.budget_type = this.budget_type
         this.automation.campaign_type = this.campaign_type
         this.automation.return_address_attributes = this.returnAddress;
-        if (this.enableFiltering) this.collectFilters();
 
         // TODO: Must somehow make sure automation is JSON safe
         this.saved_automation = JSON.parse(JSON.stringify(this.automation))
@@ -708,14 +666,14 @@
         if(this.automation.campaign_status == "draft") {
           axios.put(`/automations/${this.id}.json`, { card_order: this.automation})
             .then(function(response) {
-              // console.log(response);
             }).catch(function (error) {
               console.log(error)
-            // ShopifyApp.flashError(error.request.responseText);
           });
         }
       },
       isTwoJsonEqual: function(a, b) {
+        // console.log(JSON.stringify(a))
+        // console.log(JSON.stringify(b))
         return JSON.stringify(a) === JSON.stringify(b)
       },
       saveAndReview: function() {
@@ -740,6 +698,17 @@
 
         if(!this.$refs.backEditor.$data.attributes.background_url) {
           this.errors.uploadedBackDesign = true 
+        }
+
+        if(this.automation.international) {
+          if(!isEmpty(this.returnAddress.name) ||
+            !isEmpty(this.returnAddress.address_line1) ||
+            !isEmpty(this.returnAddress.city) ||
+            !isEmpty(this.returnAddress.zip) ||
+            !isEmpty(this.returnAddress.state)) {
+            this.errors.returnAddress = true
+            $(".return-address-general-error").show();
+          }
         }
       },
 
@@ -811,10 +780,18 @@
     display: inline-block;
   }
 
-
+  .flex-center,
   .send-continuously-option{
     display: flex;
     align-items: center;
+  }
+
+  .pt-ongoing-checkbox {
+    padding-top: 10px;
+  }
+
+  .campaign-section {
+    width: 300px;
   }
 
   .datepicker-with-icon{
