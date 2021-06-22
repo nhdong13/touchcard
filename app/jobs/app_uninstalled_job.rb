@@ -3,7 +3,9 @@ require "active_campaign_logger"
 
 class AppUninstalledJob < ActiveJob::Base
 
-  def perform(shop_domain:, webhook:)
+  def perform(params)
+    shop_domain = params[:shop_domain]
+    webhook = params[:webhook]
     shop = Shop.find_by(domain: shop_domain)
     shop.with_shopify_session do
       shop.subscriptions.each { |s| s.destroy }

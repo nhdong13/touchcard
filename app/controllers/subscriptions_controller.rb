@@ -4,6 +4,7 @@ class SubscriptionsController < BaseController
   def new
     @subscription = Subscription.new
     @subscription.coupon = params[:coupon] if params[:coupon]
+    @email = @current_shop.customer_email # OR @current_shop.email
   end
 
   def create

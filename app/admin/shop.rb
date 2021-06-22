@@ -58,7 +58,7 @@ ActiveAdmin.register Shop do
     attributes_table do
       row :id
       row "Website Link" do |shop|
-        link_to "https://#{shop.domain}", "https://#{shop.domain}"
+        link_to "https://#{shop.domain}", "https://#{shop.domain}", target: :_blank
       end
       row :name
       row :owner
@@ -70,7 +70,7 @@ ActiveAdmin.register Shop do
         link_to "edit", adjust_credits_admin_shop_path(shop)
       end
       row :stripe_customer_id do |shop|
-        link_to shop.stripe_customer_id, "https://dashboard.stripe.com/customers/#{shop.stripe_customer_id}" if shop.stripe_customer_id
+        link_to shop.stripe_customer_id, "https://dashboard.stripe.com/customers/#{shop.stripe_customer_id}", target: :_blank if shop.stripe_customer_id
       end
       row :approval_state
       row :plan_name
@@ -107,7 +107,7 @@ ActiveAdmin.register Shop do
         column :created_at
         column :updated_at
         column :stripe_id do |subscription|
-          link_to subscription.stripe_id, "https://dashboard.stripe.com/subscriptions/#{subscription.stripe_id}" if subscription.stripe_id
+          link_to subscription.stripe_id, "https://dashboard.stripe.com/subscriptions/#{subscription.stripe_id}", target: :_blank if subscription.stripe_id
         end
       end
     end

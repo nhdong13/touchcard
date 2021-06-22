@@ -14,7 +14,7 @@
             CSV
             <font-awesome-icon icon="long-arrow-alt-down"/>
            </button>
-          <DropdownMenu :campaignTypes="campaignTypes" :campaignStatuses="campaignStatuses" ref="DropdownMenu"></DropdownMenu>
+          <DropdownMenu ref="DropdownMenu"></DropdownMenu>
           <input :placeholder="'Search'" v-model="searchQuery" @input="debounceSearch" />
         </div>
       </div>
@@ -24,6 +24,7 @@
             <th>
               <input id="campaign-check-all" type="checkbox" v-model="selectAll"/>
             </th>
+            <th></th>
             <th></th>
             <th v-on:click="onSortByAlphabetically('sortByName', 'campaign_name')">
               Name
@@ -67,6 +68,12 @@
                 <md-switch v-model="campaignActive" :value="item.id" class="md-primary" @change="value => onChangeCampaignActive(value, item.id)"></md-switch>
               </span>
             </td>
+            <td>
+              <PreviewImage
+                :front-image="item.front_json.background_url"
+                :back-image="item.back_json.background_url"
+              />
+            </td>
             <td v-on:click="onEditCampaign(item.id)" class="campaign-name-style">{{ item.campaign_name }}</td>
             <td>{{ item.campaign_type }}</td>
             <td>{{ item.campaign_status}}</td>
@@ -79,16 +86,18 @@
           </tr>
         </table>
       </div>
-      <paginate
-        v-model="currentPage"
-        :page-count="thisTotalPages"
-        :click-handler="changePagination"
-        :prev-text="'Prev'"
-        :next-text="'Next'"
-        :container-class="'pagination'"
-        :page-class="'page-item'">
-      </paginate>
+      <div id="pagination">
+        <CustomePagination
+          v-model="currentPage"
+          :total-page="thisTotalPages"
+          :page-range="5"
+          :container-class="'pagination'"
+          :page-class="'page-item'"
+          :click-handler="changePagination"
+        > 
+        </CustomePagination>
       </div>
+    </div>
       <campaignModal name="duplicateModal" :classes="'duplicate-modal'" :width="450" :height="200">
         <div>
           <div>
@@ -126,13 +135,17 @@
   import { MdSwitch } from 'vue-material/dist/components'
   import _ from 'lodash'
   import VModal from 'vue-js-modal'
+  import CustomePagination from './pagination.vue'
+  import PreviewImage from './campaign_index_preview_image.vue'
 
   Vue.use(VModal, { componentName: 'campaignModal'})
   Vue.use(MdSwitch)
 
   export default {
     components: {
-      DropdownMenu
+      DropdownMenu,
+      CustomePagination,
+      PreviewImage
     },
     props: {
       campaigns: {
@@ -152,10 +165,8 @@
         required: true
       },
     },
-
     mounted () {
     },
-
     data: function() {
        return {
         thisCampaigns: this.campaigns,
@@ -166,13 +177,12 @@
         searchQuery: null,
         debounce: null,
         campaignActive: [],
-        campaignType: ['Automation', 'One-off'],
         sortBy: ['sortByName', 'sortByType'],
         sortByName: true,
         sortByType: true,
         sortByStatus: true,
         sortBySendDateStart: true,
-        duplicateCampaignName: ""
+        duplicateCampaignName: "",
       }
     },
 
@@ -271,7 +281,6 @@
       onClickNewCampaign: function() {
         axios.get('/automations/new.json', {})
           .then(function(response) {
-            console.log(response);
             Turbolinks.visit(`/automations/${response.data.id}/edit`);
           }).catch(function (error) {
         });
@@ -335,14 +344,6 @@
             _this.updateState(response.data)
           }).catch(function (error) {
         });
-      },
-
-      campaignStatus: function(enabled){
-        if (enabled) {
-          return "Sending"
-        } else {
-          return "Paused"
-        }
       },
 
       changePagination: function(pageNum){
@@ -452,6 +453,8 @@
     }
   }
 
+
+
   .campaign-name-style{
     color: #6baafc;
     cursor: pointer;
@@ -475,14 +478,17 @@
     margin: 3px;
   }
 
-  .pagination{
-    display: flex;
-    justify-content: center;
+  #pagination .page-item {
+    display: inline-block;
+  }
+
+  #pagination .pagination{
+    text-align: center;
     list-style: none;
     li{
       padding: 5px;
       &.active{
-        background: darkgray;
+        background: #f4f4f4;
       }
       &.disabled{
         color: gray;
@@ -490,6 +496,14 @@
       a:focus{
         outline: none;
         box-shadow: none;
+      }
+      a {
+        text-decoration: none;
+        font-size: 18px;
+        color: #6a6a6a;
+      }
+      svg {
+        color: #676766;
       }
     }
   }

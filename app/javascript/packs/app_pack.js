@@ -3,11 +3,22 @@ import AutomationForm from '../automation_form.vue'
 import SubscriptionForm from '../subscription_form'
 import TurbolinksAdapter from 'vue-turbolinks'
 Vue.use(TurbolinksAdapter);
+
 import axios from 'axios'
+
 import vueCountryRegionSelect from 'vue-country-region-select'
 Vue.use(vueCountryRegionSelect)
+
 import 'vue-material/dist/vue-material.min.css'
 import 'vue-material/dist/theme/default.css'
+import { MdDivider, MdChips, MdSubheader, MdButton,
+  MdDialog
+} from 'vue-material/dist/components'
+Vue.use(MdDivider)
+Vue.use(MdChips)
+Vue.use(MdSubheader)
+Vue.use(MdButton)
+Vue.use(MdDialog)
 
 import campaignDashboard from '../components/campaigns/index'
 
@@ -15,9 +26,13 @@ import Paginate from 'vuejs-paginate'
 Vue.component('paginate', Paginate)
 
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faCaretDown, faCaretUp, faLongArrowAltDown, faCalendarAlt } from '@fortawesome/free-solid-svg-icons'
+import { 
+  faCaretDown, faCaretUp, faLongArrowAltDown, faCalendarAlt,
+  faCaretRight, faCaretLeft 
+} from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-library.add(faCaretDown, faCaretUp, faLongArrowAltDown, faCalendarAlt)
+library.add(faCaretDown, faCaretUp, faLongArrowAltDown, faCalendarAlt,
+  faCaretRight, faCaretLeft)
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 
 // To get Turbolinks working it helped to put the javascript pack tag in the <head>

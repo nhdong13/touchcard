@@ -5,7 +5,7 @@ RSpec.describe DiscountManager do
   let(:card_order) { create(:card_order, { discount_pct: -15, discount_exp: 2 }) }
   let(:path) { card_order.shop.shopify_api_path }
   let(:value) { card_order.discount_pct }
-  let(:expire_at) { card_order.discount_exp }
+  let(:expire_at) { Time.current.end_of_day + card_order.discount_exp.weeks + 7.days }
   let(:shop) { card_order.shop }
   let(:discount_manager) { DiscountManager.new(path, value, expire_at) }
 

@@ -27,7 +27,7 @@ class OrdersCreateJob < ActiveJob::Base
       # # cards for a triggered purchase unless a retailer absolutely wants that
 
       # Currently only new customers receive postcards
-      return puts "customer already exists" unless order.customer.new_customer?
+      return puts "customer already exists" unless order.customer.new_customer?(shop.id)
 
       default_address = shopify_order.customer.default_address
       international = default_address.country_code != "US"

@@ -39,7 +39,7 @@
       debug: Rails.env.development?
     } ) %>
 
-<%= render partial: 'layouts/reamaze', locals: { shop: @current_shop } unless Rails.env.development? %>
+<%= render partial: 'layouts/groove', locals: { shop: @current_shop } unless Rails.env.development? %>
 
 <% if content_for?(:javascript) %>
   <div id="ContentForJavascript" data-turbolinks-temporary>

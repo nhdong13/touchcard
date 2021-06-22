@@ -65,8 +65,8 @@ class CardOrder < ApplicationRecord
 
   before_create :add_default_params
   after_update :update_campaign_status, if: :saved_change_to_enabled?
-  after_update :update_credits, if: :saved_change_to_budget_update?
-  after_update :update_budget, if: :saved_change_to_budget_type?
+  after_update :update_budget, if: :saved_change_to_budget_update?
+  after_update :update_budget_type, if: :saved_change_to_budget_type?
 
   def add_default_params
     self.campaign_name = "My campaign" unless self.campaign_name.present?
@@ -80,41 +80,24 @@ class CardOrder < ApplicationRecord
     end
   end
 
-  def update_budget
-    current_credits = credits
+  def update_budget_type
     if non_set?
       update_columns(
         budget: 0,
-        credits: 0,
+        budget_used: 0,
         budget_update: 0
       )
     end
   end
 
-  def update_credits
-    if budget.zero? && credits.zero?
+  def update_budget
+    if budget_update < budget_used
       update(
         budget: budget_update,
-        credits: budget_update
-        )
+        campaign_status: CardOrder.paused
+      )
     else
-      if budget_update >= budget
-        new_credits = credits + (budget_update - budget)
-        update(
-          budget: budget_update,
-          credits: new_credits
-        )
-      else
-        new_credits = credits - (budget - budget_update)
-        if new_credits < 0
-          raise "the budget is lower than credits used."
-        else
-          update(
-            budget: budget_update,
-            credits: new_credits
-          )
-        end
-      end
+      update(budget: budget_update)
     end
   end
 
@@ -172,6 +155,10 @@ class CardOrder < ApplicationRecord
     front_json['background_url'] if front_json
   end
 
+  def back_background_url
+    back_json['background_url'] if back_json
+  end
+
   # def discount?
   #   !discount_exp.nil? && !discount_pct.nil?
   # end
@@ -186,12 +173,12 @@ class CardOrder < ApplicationRecord
   end
 
   def send_date
-    return Date.today + send_delay.weeks
+    return send_delay == 0 ? Time.now : Time.now.beginning_of_day + send_delay.weeks
     # 4-6 business days delivery according to lob
     # TODO: handle international + 5 to 7 business days
     #send_date = arrive_by - 1.week
   end
-
+=begin
   def can_afford?(postcard)
     @can_afford ||= credits >= postcard.cost
   end
@@ -206,6 +193,7 @@ class CardOrder < ApplicationRecord
       return false
     end
   end
+=end
 
   def prepare_for_sending(postcard_trigger, data_status="normal")
     # This method can get called from a delayed_job, which does not allow for standard logging

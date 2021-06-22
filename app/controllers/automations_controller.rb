@@ -17,9 +17,6 @@ class AutomationsController < BaseController
   def show
   end
 
-  # def select_type
-  # end
-
   # TODO: Re-enable automation creation
   #
   def new
@@ -37,6 +34,16 @@ class AutomationsController < BaseController
 
   def edit
     @return_address =  @automation.return_address || ReturnAddress.new
+    if @return_address.new_record?
+      # This shop is retrieved directly from Shopify instead of from database in order to get address
+      shop = ShopifyAPI::Shop.current
+      @return_address.address_line1 = shop.address1
+      @return_address.city = shop.city
+      @return_address.state = shop.province
+      @return_address.zip = shop.zip
+      @return_address.country_code = shop.country_code
+      @return_address.name = shop.name
+    end
   end
 
   # POST /automations
@@ -63,6 +70,7 @@ class AutomationsController < BaseController
     respond_to do |format|
       if @automation.update(automation_params)
         FetchHistoryOrdersJob.perform_now(@current_shop, @current_shop.post_sale_orders.last.send_delay) if @automation.enabled?
+        GeneratePostcardJob.perform_later(@current_shop, @automation) if @automation.enabled?
         SendAllHistoryCardsJob.perform_later(@current_shop) if @automation.enabled?
         flash[:notice] = "Automation successfully updated"
         format.html { redirect_to automations_path }
@@ -81,13 +89,19 @@ class AutomationsController < BaseController
 
   # TODO: Re-enable automation destruction
   #
-  # def destroy
-  #   @automation.archive
-  #   @automation.safe_destroy!
-  #   # TODO: Rescue exception
-  # # rescue
-  #   # Catch error from transaction and do something
-  # end
+  def destroy
+    @automation.archive
+    begin
+      @automation.safe_destroy!
+    rescue ActiveRecord::RecordNotFound
+      respond_to do |format|
+        format.json { render json: { message: "Failed to delete" }, status: :internal_server_error }
+      end
+    end
+    respond_to do |format|
+      format.json { render json: { message: "Delete successfully" }, status: :ok }
+    end
+  end
 
   private
 
