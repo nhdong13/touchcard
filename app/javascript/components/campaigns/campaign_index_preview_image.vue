@@ -5,13 +5,13 @@
 <div class="flip-card">
   <div class="flip-card-inner">
     <div class="flip-card-front">
-      <img width="60" hieght="40" v-if="frontImage">
+      <img width="60" hieght="40" :src="frontImage" v-if="frontImage">
       <div class="center" v-else>
         <strong>NO PREVIEW AVAILABLE</strong>
       </div>
     </div>
     <div class="flip-card-back">
-      <img width="60" hieght="40" v-if="backImage">
+      <img width="60" hieght="40" :src="backImage" v-if="backImage">
       <div class="center" v-else>
         <strong>NO PREVIEW AVAILABLE</strong>
       </div>
