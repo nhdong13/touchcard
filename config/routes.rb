@@ -2,7 +2,7 @@ Rails.application.routes.draw do
   # Shopify Engine
   mount ShopifyApp::Engine, at: '/'
 
-  root 'automations#index' # See comments in controller
+  root 'campaigns#index' # See comments in controller
 
   # Stripe wobhook routes
   post '/stripe/events', to: 'stripe_webhook#hook'
