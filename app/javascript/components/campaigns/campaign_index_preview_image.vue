@@ -5,13 +5,13 @@
 <div class="flip-card">
   <div class="flip-card-inner">
     <div class="flip-card-front">
-      <img width="220" hieght="150" v-if="frontImage">
+      <img width="60" hieght="40" v-if="frontImage">
       <div class="center" v-else>
         <strong>NO PREVIEW AVAILABLE</strong>
       </div>
     </div>
     <div class="flip-card-back">
-      <img width="220" hieght="150" v-if="backImage">
+      <img width="60" hieght="40" v-if="backImage">
       <div class="center" v-else>
         <strong>NO PREVIEW AVAILABLE</strong>
       </div>
@@ -36,8 +36,8 @@
 </script>
 <style lang="scss" scoped>
 .flip-card {
-  width: 220px;
-  height: 150px;
+  width: 60px;
+  height: 40px;
   border: 1px solid #f1f1f1;
   perspective: 1000px;
 }
