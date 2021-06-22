@@ -4,17 +4,22 @@
     <select class="filter-dropdown" v-model="selectedFilter" @change="detectFilter">
       <option v-for="option in availableFilter" :key="option[1]" :value="option[1]">{{option[0]}}</option>
     </select>
-    <div class="date-options" v-if="selectedFilter == 'order_date'">
+    <div class="switcher-options" v-if="selectedFilter == 'order_date'">
       <span>First order date</span>
       <switcher :value="switcherValue" @toggle="switcherToggle" />
       <span>Last order date</span>
+    </div>
+    <div class="switcher-options" v-if="['order_tag', 'discount_code'].includes(selectedFilter)">
+      <span>Any orders</span>
+      <switcher :value="switcherValue" @toggle="switcherToggle2" />
+      <span>Last order</span>
     </div>
     <select class="option-dropdown" v-if="filter.selectedFilter != ''" v-model="filter.selectedCondition" @change="optionChange">
       <option v-for="condition in filterConditions" v-if="showOption(condition[1])" :key="condition[1]" :value="condition[1]" :disabled="condition[1].includes('disable_display') || condition[1] == '' ? true : false">{{condition[0]}}</option>
     </select>
     <div class="f-value" v-if="showSecondInput()">
-      <datepicker class="valueInput" v-model="value1" v-if="showDateInput()" :input="combineValue()" /><!--  :disabled-dates="datePickerOptions()" /> -->
-      <datepicker class="valueInput" v-model="value2" v-if="showDateInput()" :input="combineValue()" /><!--  :disabled-dates="datePickerOptions2()" /> -->
+      <datepicker class="valueInput" v-model="value1" v-if="showDateInput()" :input="combineValue()" use-utc="true" /><!--  :disabled-dates="datePickerOptions()" /> -->
+      <datepicker class="valueInput" v-model="value2" v-if="showDateInput()" :input="combineValue()" use-utc="true" /><!--  :disabled-dates="datePickerOptions2()" /> -->
 
       <input type="number" class="valueInput" v-model="value1" v-if="showNumberInput()" @change="combineValue()" />
       <input type="number" class="valueInput" v-model="value2" v-if="showNumberInput()" @change="combineValue()" />
@@ -22,7 +27,7 @@
     <div class="f-value" v-else>
       <input type="text" class="valueInput" v-model="filter.value" v-if="showTextInput()" @change="filterChange" />
       <input type="number" class="valueInput" v-model="filter.value" v-else-if="showNumberInput()" @change="filterChange" />
-      <datepicker class="valueInput" v-model="filter.value" v-if="showDateInput()" @change="filterChange" />
+      <datepicker class="valueInput" v-model="filter.value" v-if="showDateInput()" @change="filterChange" use-utc="true" />
       <treeselect class="valueInput" v-model="filter.value" v-if="showCountrySelect()" :multiple="true" :options="countriesList" placeholder="Any country" />
 
       <div class="f-value" v-if="showStateSelect()">
@@ -59,6 +64,10 @@
         this.selectedFilter = "order_date";
         this.selectedDateOption = this.filter.selectedFilter.split("order_date")[0];
         this.switcherValue = this.selectedDateOption == "first_" ? false : true;
+      } else if (this.filter.selectedFilter.includes("any_") || this.filter.selectedFilter.includes("last_")) {
+        this.switcherToggle2(this.filter.selectedFilter.includes("last_"), false);
+        this.selectedOrderCollectionOption = this.filter.selectedFilter.includes("last_") ? "last_" : "any_";
+        this.selectedFilter = this.filter.selectedFilter.split(this.selectedOrderCollectionOption)[1];
       } else {
         this.selectedFilter = this.filter.selectedFilter;
       }
@@ -69,7 +78,7 @@
       if (this.filter.selectedFilter == "shipping_state" && this.filter.selectedCondition == "from") {
         this.getSelectedCountryByState();
       }
-      if ((this.filter.selectedFilter == "shipping_city" && this.filter.selectedCondition == "from") || (this.filter.selectedFilter == "order_tags")) {
+      if ((this.filter.selectedFilter == "shipping_city" && this.filter.selectedCondition == "from") || this.selectedFilter == "order_tag" || this.selectedFilter == "discount_code") {
         this.tags = this.filter.value.map(value => {return {text: value, tiClasses: ["ti-valid"]}});
       }
       this.getAllFilterValues();
@@ -84,6 +93,7 @@
         value1: null,
         value2: null,
         selectedDateOption: "first_",
+        selectedOrderCollectionOption: "any_",
         DATE_OPTIONS: [["First order date", "first_"], ["Last order date", "last_"]],
         filterOptions: [],
         filterConditions: [],
@@ -98,8 +108,8 @@
     methods: {
       getAllFilterValues() {
         axios.get("/targeting/get_filters").then((response) => {
-          response.data.filters.forEach(filter => this.filterOptions.push(filter));
-          response.data.conditions.forEach(condition => this.filterConditions.push(condition));
+          this.filterOptions = response.data.filters;
+          this.filterConditions = response.data.conditions;
           this.resetAvailableFilter();
         });
       },
@@ -117,11 +127,11 @@
         this.value2 = null;
       },
       showNumberInput() {
-        return ['number_of_order', 'total_spend', 'last_order_total', 'referring_site', 'landing_site', 'order_tag', 'discount_code_used'].indexOf(this.filter.selectedFilter) > -1 ||
+        return ['number_of_order', 'total_spend', 'last_order_total', 'referring_site', 'landing_site'].indexOf(this.filter.selectedFilter) > -1 ||
                (this.selectedFilter == "order_date" && ["between_number", "matches_number"].indexOf(this.filter.selectedCondition) > -1);
       },
       showTextInput() {
-        return ['referring_site', 'landing_site', 'order_tag', 'discount_code_used'].indexOf(this.filter.selectedFilter) > -1;
+        return ['referring_site', 'landing_site'].indexOf(this.filter.selectedFilter) > -1;
       },
       showDateInput() {
         return this.selectedFilter == "order_date" && (["between_date", "before", "after"].indexOf(this.filter.selectedCondition) > -1);
@@ -137,15 +147,22 @@
         return this.filter.selectedFilter == "shipping_state" && this.filter.selectedCondition == "from";
       },
       showCityOrTagsInput() {
-        return (this.filter.selectedFilter == "shipping_city" && this.filter.selectedCondition == "from") || ('order_tags' == this.filter.selectedFilter && ["tag_is", "tag_contain"].indexOf(this.filter.selectedCondition) > -1);  
+        return (this.filter.selectedFilter == "shipping_city" && this.filter.selectedCondition == "from") ||
+               (this.isFilter(['order_tag']) && ["tag_is", "tag_contain"].indexOf(this.filter.selectedCondition) > -1) ||
+               (this.isFilter(['discount_code']) && ["tag_is", "tag_contain"].indexOf(this.filter.selectedCondition) > -1);  
       },
       showOption(option) {
         return option == "" ||
               (this.selectedFilter == "order_date" && ["before", "between_date", "after", "between_number", "matches_number", "disable_display_1", "disable_display_2"].indexOf(option) > -1) ||
               ((['number_of_order', 'total_spend', 'last_order_total'].indexOf(this.filter.selectedFilter) > -1) && ["matches_number", "between_number"].indexOf(option) > -1) ||
               (['shipping_country', 'shipping_state', 'shipping_city'].indexOf(this.filter.selectedFilter) > -1 && option == "from") ||
-              ('order_tags' == this.filter.selectedFilter && ["tag_is", "tag_contain"].indexOf(option) > -1);
+              (this.isFilter(['order_tag', 'discount_code']) && ["tag_is", "tag_contain"].indexOf(option) > -1);
               // (['order_tag', 'discount_code_used'].indexOf(this.filter.selectedFilter) > -1 && option == "find_value")
+      },
+      isFilter(filterNames) {
+        let correctFilter = false;
+        filterNames.forEach(name => {if (this.filter.selectedFilter.indexOf(name) > -1) correctFilter = true});
+        return correctFilter;
       },
       removeFilter() {
         this.$emit('filterRemove', this.filter, this.collection, this.index);
@@ -158,9 +175,21 @@
         this.filterChange();
       },
       detectFilter() {
-        this.filter.selectedFilter = this.selectedFilter == "order_date" ? this.selectedDateOption + this.selectedFilter : this.selectedFilter;
+        this.filter.selectedFilter = this.fullfillFilter();
         this.resetInputValue(true);
         this.filterChange();
+      },
+      fullfillFilter() {
+        switch (this.selectedFilter) {
+          case "order_date":
+            return this.selectedDateOption + this.selectedFilter
+          case "order_tag":
+            return this.selectedOrderCollectionOption + this.selectedFilter
+          case "discount_code":
+            return this.selectedOrderCollectionOption + this.selectedFilter
+          default:
+            return this.selectedFilter;
+        }
       },
       combineValue() {
         if (this.value1 == null || this.value1 < 0) {
@@ -182,6 +211,13 @@
         this.selectedDateOption = switcherValue ? "last_" : "first_"
         this.switcherValue = switcherValue;
         this.detectFilter();
+      },
+      switcherToggle2(switcherValue, valueChange=true) {
+        this.switcherValue = switcherValue;
+        if (valueChange) {
+          this.selectedOrderCollectionOption = switcherValue ? "last_" : "any_";
+          this.detectFilter();
+        }
       },
       getAllCountries() {
         axios.get("/targeting/get_countries").then((response) => {
@@ -260,14 +296,14 @@
   cursor: pointer;
 }
 
-.date-options {
+.switcher-options {
   margin-right: 10px;
   display: flex;
   align-items: center;
   width: 272px;
 }
 
-.date-options span {
+.switcher-options span {
   margin-left: 10px;
   margin-right: 10px;
   width: 100px;
