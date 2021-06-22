@@ -12,8 +12,10 @@ class CardOrderSerializer < ActiveModel::Serializer
              :tokens_used,
              :budget_used,
              :campaign_type,
-             :send_date_start
-             :send_date_end
+             :send_date_start,
+             :send_date_end,
+             :front_json,
+             :back_json
 
 
   def campaign_status

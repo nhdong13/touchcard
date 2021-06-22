@@ -25,6 +25,7 @@
               <input id="campaign-check-all" type="checkbox" v-model="selectAll"/>
             </th>
             <th></th>
+            <th></th>
             <th v-on:click="onSortByAlphabetically('sortByName', 'campaign_name')">
               Name
               <span>
@@ -66,6 +67,12 @@
               <span v-else>
                 <md-switch v-model="campaignActive" :value="item.id" class="md-primary" @change="value => onChangeCampaignActive(value, item.id)"></md-switch>
               </span>
+            </td>
+            <td>
+              <PreviewImage
+                :front-image="item.front_json.background_url"
+                :back-image="item.back_json.background_url"
+              />
             </td>
             <td v-on:click="onEditCampaign(item.id)" class="campaign-name-style">{{ item.campaign_name }}</td>
             <td>{{ item.campaign_type }}</td>
@@ -129,6 +136,7 @@
   import _ from 'lodash'
   import VModal from 'vue-js-modal'
   import CustomePagination from './pagination.vue'
+  import PreviewImage from './campaign_index_preview_image.vue'
 
   Vue.use(VModal, { componentName: 'campaignModal'})
   Vue.use(MdSwitch)
@@ -136,7 +144,8 @@
   export default {
     components: {
       DropdownMenu,
-      CustomePagination
+      CustomePagination,
+      PreviewImage
     },
     props: {
       campaigns: {
@@ -179,6 +188,7 @@
 
     created() {
       this.listcampaignActive()
+      console.log(this.thisCampaigns)
     },
 
     computed: {
@@ -270,8 +280,6 @@
       },
 
       onClickNewCampaign: function() {
-        // Turbolinks.clearCache()
-        // Turbolinks.visit('/automations/new', {flush: true, cacheRequest: false});
         axios.get('/automations/new.json', {})
           .then(function(response) {
             Turbolinks.visit(`/automations/${response.data.id}/edit`);
@@ -338,14 +346,6 @@
           }).catch(function (error) {
         });
       },
-
-      // campaignStatus: function(enabled){
-      //   if (enabled) {
-      //     return "Sending"
-      //   } else {
-      //     return "Paused"
-      //   }
-      // },
 
       changePagination: function(pageNum){
         let _this = this
