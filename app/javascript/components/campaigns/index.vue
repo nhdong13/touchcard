@@ -188,7 +188,6 @@
 
     created() {
       this.listcampaignActive()
-      console.log(this.thisCampaigns)
     },
 
     computed: {
