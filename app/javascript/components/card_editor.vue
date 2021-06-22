@@ -193,10 +193,8 @@
           console.log(error ? error : result);
           if (result) {
             this.alertNonOptimalImageDimensions(result);
-
-              this.$emit('update:attributes', Object.assign(this.attributes, {background_url: result}));
-              this.isUploading = false;
-
+            this.$emit('update:attributes', Object.assign(this.attributes, {background_url: result}));
+            this.isUploading = false;
           }
         });
       }
