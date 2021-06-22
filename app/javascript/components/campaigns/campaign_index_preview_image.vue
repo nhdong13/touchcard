@@ -49,6 +49,10 @@
   text-align: center;
   transition: transform 0.8s;
   transform-style: preserve-3d;
+  img {
+    max-width: 100%;
+    max-height: 100%;
+  }
 }
 
 .flip-card:hover .flip-card-inner {
