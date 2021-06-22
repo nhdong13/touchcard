@@ -496,11 +496,11 @@
         this.automation.front_json = frontAttrs;
         this.automation.back_json = backAttrs;
 
-        // Null out discount_pct and discount_exp for backwards-compatability (might not be essential)
         // Using `.showsDiscount` assumes card_editor.vue has created card_attributes objects from json
         if (!frontAttrs.showsDiscount && !backAttrs.showsDiscount ) {
-          this.automation.discount_pct = null;
-          this.automation.discount_exp = null;
+          // Fallback to default
+          this.automation.discount_pct = 20;
+          this.automation.discount_exp = 7;
         }
 
         this.automation.budget_type = this.budget_type
@@ -626,11 +626,11 @@
         this.automation.front_json = frontAttrs;
         this.automation.back_json = backAttrs;
 
-        // Null out discount_pct and discount_exp for backwards-compatability (might not be essential)
         // Using `.showsDiscount` assumes card_editor.vue has created card_attributes objects from json
         if (!frontAttrs.showsDiscount && !backAttrs.showsDiscount ) {
-          this.automation.discount_pct = null;
-          this.automation.discount_exp = null;
+          // Fallback to default
+          this.automation.discount_pct = 20;
+          this.automation.discount_exp = 7;
         }
 
         this.automation.budget_type = this.budget_type

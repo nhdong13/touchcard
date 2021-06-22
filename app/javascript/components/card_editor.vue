@@ -83,10 +83,12 @@
         required: true,
       },
       discount_pct: {
-        type: Number
+        type: Number,
+        default: 20
       },
       discount_exp: {
-        type: Number
+        type: Number,
+        default: 7
       },
       aws_sign_endpoint: {
         type: String,
@@ -113,6 +115,7 @@
       }
     },
     mounted: function() {
+      console.log(this.json)
       console.log('CardEditor Mounted')
       // this.$nextTick(function () {
       // code that assumes this.$el is in-document
