@@ -17,9 +17,6 @@ class AutomationsController < BaseController
   def show
   end
 
-  # def select_type
-  # end
-
   # TODO: Re-enable automation creation
   #
   def new

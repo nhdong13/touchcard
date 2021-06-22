@@ -17,7 +17,6 @@ class CampaignSearchService
     # END
     # 0 ==> draft
     campaigns = campaigns.where("CASE WHEN campaign_status = 0 THEN updated_at BETWEEN :start_date AND :end_date ELSE created_at BETWEEN :start_date AND :end_date END",{start_date: filter_base_on_date_created, end_date: filter_base_on_date_completed})
-    # campaigns = campaigns.where(created_at: filter_base_on_date_created..filter_base_on_date_completed)
     campaigns = campaigns.page(page).order(created_at: :desc)
     total_pages = campaigns.total_pages
     return {
@@ -38,11 +37,6 @@ class CampaignSearchService
 
   def filter_base_on_campaign_type
     @filters["type"] ? @filters["type"].downcase.split("-").join("_") : "any"
-    # if @filters["type"]
-    #   return @filters["type"].downcase.split("-").join("_")
-    # else
-    #   return "any"
-    # end
   end
 
   def filter_base_on_status

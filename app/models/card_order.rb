@@ -99,29 +99,6 @@ class CardOrder < ApplicationRecord
     else
       update(budget: budget_update)
     end
-=begin    
-    if budget.zero?
-      update(budget: budget_update)
-    else
-      if budget_update >= budget
-        new_credits = credits + (budget_update - budget)
-        update(
-          budget: budget_update,
-          credits: new_credits
-        )
-      else
-        new_credits = credits - (budget - budget_update)
-        if new_credits < 0
-          raise "the budget is lower than credits used."
-        else
-          update(
-            budget: budget_update,
-            credits: new_credits
-          )
-        end
-      end
-    end
-=end
   end
 
   def update_campaign_status
@@ -179,6 +156,10 @@ class CardOrder < ApplicationRecord
 
   def front_background_url
     front_json['background_url'] if front_json
+  end
+
+  def back_background_url
+    back_json['background_url'] if back_json
   end
 
   # def discount?
