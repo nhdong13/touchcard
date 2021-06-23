@@ -5,14 +5,12 @@ class TargetingController < BaseController
   def index; end
 
   def get
-    service = CustomerTargetingService.new(@current_shop)
     @accepted_attrs = params[:accepted]&.permit!
     @removed_attrs = params[:removed]&.permit!
-    @customers = service.find(@accepted_attrs, @removed_attrs)
-    @titles = @accepted_attrs.present? ? CSV_TITLE + @accepted_attrs.keys : CSV_TITLE
-    @csv = service.build_csv(@customers, @titles)
+    service = CustomerTargetingService.new({shop: @current_shop}, @accepted_attrs, @removed_attrs)
+    csv = service.export_customer_list
     respond_to do |f|
-      f.csv { send_data @csv, filename: "customers.csv" }
+      f.csv { send_data csv, filename: "customers.csv" }
       f.html { render "customer_list" }
     end
   end
