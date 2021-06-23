@@ -3,8 +3,8 @@
     <h1>New Campaign</h1>
     <hr/>
     <h2>Campaign Settings</h2>
-    <div class="automation-section">
-      <strong>Campaign name </strong>
+    <div :class="[errors.campaignName ? 'invalid' : '', 'automation-section']">
+      <strong><small :class="{error: errors.campaignName}" v-if="errors.campaignName">*</small> Campaign name</strong>
       <input id="campaign_name" v-model="automation.campaign_name">
       <span class="error campaign-name-error">This field is required.</span>
     </div>
@@ -86,7 +86,7 @@
         </div>
         <div class="campaign-section nested-toggle" v-if="!automation.send_continuously">
           <div class="datepicker-with-icon">
-            <span style="width: 80px">End date<small :class="{error: errors.endDate}" v-if="errors.endDate">*</small>:</span>
+            <span style="width: 80px"><small :class="{error: errors.endDate}" v-if="errors.endDate">*</small> End date:</span>
             <div :class="['datepicker-with-icon', {invalid: errors.endDate}]">
               <datepicker
                 v-model="automation.send_date_end"
@@ -194,7 +194,7 @@
     <input id="automation-filter-checkbox" type="checkbox" v-model="enableFiltering">
     <label for="automation-filter-checkbox" class="noselect"><strong>Enable Filter</strong></label>
     <button @click="downloadCSV"> CSV </button>
-    <div class="filter-config nested-toggle row" v-if="enableFiltering">
+    <div :class="[errors.filters ? 'invalid' : '' ,'filter-config nested-toggle row']" v-if="enableFiltering">
       <div id="accepted-section">
         <div class="filter-section-title">Include these customers</div>
         <button type="button" class="add-more-filter-btn" id="add-accepted-filter" @click="addFilter('accepted')">Add Filter</button>
@@ -213,7 +213,7 @@
     <h2>Add Contact</h2>
     <button>Shopify</button> -->
     <hr />
-    <h2>Front<small :class="{error: errors.uploadedFrontDesign}" v-if="errors.uploadedFrontDesign">*</small></h2>
+    <h2><small :class="{error: errors.uploadedFrontDesign}" v-if="errors.uploadedFrontDesign">*</small> Front</h2>
     <div :class="{ invalid: errors.uploadedFrontDesign }">
       <card-editor
               ref="frontEditor"
@@ -226,7 +226,7 @@
     </div>
     <br>
     <hr />
-    <h2>Back<small :class="{error: errors.uploadedBackDesign}" v-if="errors.uploadedBackDesign">*</small></h2>
+    <h2><small :class="{error: errors.uploadedBackDesign}" v-if="errors.uploadedBackDesign">*</small> Back</h2>
     <div :class="{ invalid: errors.uploadedBackDesign }">
       <card-editor
               ref="backEditor"
@@ -340,7 +340,9 @@
           endDate: false,
           uploadedFrontDesign: false,
           uploadedBackDesign: false,
-          returnAddress: false
+          returnAddress: false,
+          campaignName: false,
+          filters: false
         }
       }
     },
@@ -620,7 +622,6 @@
         if(this.isTwoJsonEqual(this.saved_automation, this.automation) && this.isEditExistCampaign == true) {
           return
         }
-
         // Get card side data for saving
         let frontAttrs = this.$refs.frontEditor.$data.attributes;
         let backAttrs = this.$refs.backEditor.$data.attributes;
@@ -663,18 +664,29 @@
       },
 
       validateForm: function() {
-        // No need to validate start date and campaign name cus they have default values
+        // No need to validate start date cus they have default values
 
         if(!this.automation.send_continuously && isEmpty(this.automation.send_date_end)) {
           this.errors.endDate = true
         } 
 
-        if(!this.$refs.frontEditor.$data.attributes.background_url) {
+        if(!this.$refs.frontEditor.$data.attributes.background_url ||
+          this.$refs.frontEditor.$data.attributes.discount_x == 0 ||
+          this.$refs.frontEditor.$data.attributes.discount_y == 0) {
           this.errors.uploadedFrontDesign = true
         }
 
-        if(!this.$refs.backEditor.$data.attributes.background_url) {
+        if(!this.$refs.backEditor.$data.attributes.background_url ||
+          this.$refs.backEditor.$data.attributes.discount_x == 0 ||
+          this.$refs.backEditor.$data.attributes.discount_y == 0) {
           this.errors.uploadedBackDesign = true 
+        }
+
+        if(isEmpty(this.automation.campaign_name)) {
+          this.errors.campaignName = true
+        }
+        if(this.isFilterIncomplete() && this.enableFiltering) {
+          this.errors.filters = true
         }
 
         if(this.automation.international) {
@@ -687,6 +699,25 @@
             $(".return-address-general-error").show();
           }
         }
+      },
+
+      isFilterIncomplete: function() {
+        let result = false
+        this.acceptedFilters.forEach((element) => {
+          for(const item in element) {
+            if(result) return
+            if(isEmpty(element[item])) result = true
+          }
+        })
+
+        this.removedFilters.forEach((element) => {
+          for(const item in element) {
+            if(result) return
+            if(isEmpty(element[item])) result = true
+          }
+        })
+
+        return result
       },
 
       isFormValid: function() {
@@ -818,6 +849,6 @@
   }
 
   .invalid {
-    border: 2px solid red;
+    border: 1px solid red;
   }
 </style>
