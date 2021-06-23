@@ -45,7 +45,7 @@ class CampaignSearchService
         e.downcase
       end
     else
-      return nil
+      return []
     end    
   end
 
