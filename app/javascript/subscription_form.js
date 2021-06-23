@@ -32,7 +32,7 @@ export default function(element ,stripePubKey = '') {
     },
     computed: {
       price: function() {
-        return this.quantity * 0.99;
+        return this.quantity * 0.89;
       }
     },
     mounted: function() {
