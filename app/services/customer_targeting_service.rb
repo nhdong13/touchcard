@@ -72,7 +72,7 @@ class CustomerTargetingService
   def select_field_to_filter field, order=nil, customer_id=nil
     filter_customer_id = customer_id || order.customer&.id
     if filter_customer_id
-      customer = Customer.find_by(filter_customer_id)
+      customer = Customer.find_by_id(filter_customer_id)
       user_orders = Order.where(customer_id: filter_customer_id, shop_id: current_shop.id)
     end
     filter_order = order || user_orders.last
