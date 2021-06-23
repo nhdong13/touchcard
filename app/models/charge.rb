@@ -20,7 +20,7 @@ class Charge < ApplicationRecord
   end
 
   def price
-    (amount.to_i * 0.99).round(2)
+    (amount.to_i * 0.89).round(2)
   end
 
   def price_cents
