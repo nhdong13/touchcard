@@ -52,11 +52,11 @@ class CustomerTargetingService
   def filtered_orders
     orders.select do |order|
       result = true
-      accepted_attrs&.each do |k, v|
+      accepted_attrs.as_json&.each do |k, v|
         field_to_filter = select_field_to_filter(k, order)
         result = result && compare_field(field_to_filter, v["condition"], v["value"])
       end
-      removed_attrs&.each do |k, v|
+      removed_attrs.as_json&.each do |k, v|
         field_to_filter = select_field_to_filter(k, order)
         result = result && !compare_field(field_to_filter, v["condition"], v["value"])
       end
@@ -70,9 +70,11 @@ class CustomerTargetingService
   end
 
   def select_field_to_filter field, order=nil, customer_id=nil
-    filter_customer_id = customer_id || order.customer.id
-    customer = Customer.find(filter_customer_id)
-    user_orders = Order.where(customer_id: filter_customer_id, shop_id: current_shop.id)
+    filter_customer_id = customer_id || order.customer&.id
+    if filter_customer_id
+      customer = Customer.find_by(filter_customer_id)
+      user_orders = Order.where(customer_id: filter_customer_id, shop_id: current_shop.id)
+    end
     filter_order = order || user_orders.last
 
     case field.to_s
@@ -84,11 +86,11 @@ class CustomerTargetingService
     when "number_of_order"
       user_orders.count
     when "shipping_country"
-      customer.default_address.country_code
+      customer&.default_address.country_code
     when "shipping_state"
-      customer.default_address.province_code
+      customer&.default_address.province_code
     when "shipping_city"
-      customer.default_address.city
+      customer&.default_address.city
     # end
     # ongoing
     when "last_order_tag"
