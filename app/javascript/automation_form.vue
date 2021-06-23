@@ -612,7 +612,7 @@
       },
       onConfirm: function() {
         Turbolinks.clearCache()
-        Turbolinks.visit('/automations', {flush: true, cacheRequest: false});
+        Turbolinks.visit('/campaigns', {flush: true, cacheRequest: false});
       },
       saveAutomation: function() {
         if (this.enableFiltering && this.automation.campaign_status == "draft") this.collectFilters();
@@ -704,7 +704,7 @@
       cancel: function() {
         if(!this.isEditExistCampaign) {
           this.saveAutomation()
-          Turbolinks.visit('/automations')
+          Turbolinks.visit('/campaigns')
         } else {
           this.isCancel = true
         }
