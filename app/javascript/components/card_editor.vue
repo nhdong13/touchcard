@@ -88,7 +88,7 @@
       },
       discount_exp: {
         type: Number,
-        default: 7
+        default: 2
       },
       aws_sign_endpoint: {
         type: String,
@@ -115,7 +115,8 @@
       }
     },
     mounted: function() {
-      console.log(this.json)
+      // console.log(this.json)
+
       console.log('CardEditor Mounted')
       // this.$nextTick(function () {
       // code that assumes this.$el is in-document
@@ -135,6 +136,7 @@
       discount_exp_string: function() {
         let exp = new Date();
         exp.setDate(exp.getUTCDate() + (7 * this.discount_exp + 7));
+        console.log(exp)
         return `${exp.getMonth()+1}/${exp.getDate()}/${exp.getFullYear()}`;
       },
     },

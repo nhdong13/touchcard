@@ -500,7 +500,7 @@
         if (!frontAttrs.showsDiscount && !backAttrs.showsDiscount ) {
           // Fallback to default
           this.automation.discount_pct = 20;
-          this.automation.discount_exp = 7;
+          this.automation.discount_exp = 2;
         }
 
         this.automation.budget_type = this.budget_type
@@ -630,7 +630,7 @@
         if (!frontAttrs.showsDiscount && !backAttrs.showsDiscount ) {
           // Fallback to default
           this.automation.discount_pct = 20;
-          this.automation.discount_exp = 7;
+          this.automation.discount_exp = 2;
         }
 
         this.automation.budget_type = this.budget_type
