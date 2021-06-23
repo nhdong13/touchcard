@@ -136,7 +136,6 @@
       discount_exp_string: function() {
         let exp = new Date();
         exp.setDate(exp.getUTCDate() + (7 * this.discount_exp + 7));
-        console.log(exp)
         return `${exp.getMonth()+1}/${exp.getDate()}/${exp.getFullYear()}`;
       },
     },
