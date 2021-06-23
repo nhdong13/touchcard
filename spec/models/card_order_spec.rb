@@ -6,7 +6,7 @@ RSpec.describe CardOrder, type: :model do
     it "returns false if total amount is insufficient regardless of line items price" do
       filter = create(:filter)
       # filter.filter_data["minimum"] = 50
-      filter.filter_data[:accepted] = {order_total: {condition: "between_number", value: "100&9999999"}}
+      filter.filter_data[:accepted] = {"order_total": {"condition": "between_number", "value": "100&9999999"}}
 
       card_order = setup_card_order
       card_order.filters = [filter]
@@ -20,7 +20,7 @@ RSpec.describe CardOrder, type: :model do
     it "returns true if total_price is high enough" do
       filter = create(:filter)
       # filter.filter_data["minimum"] = 50
-      filter.filter_data[:accepted] = {order_total: {condition: "between_number", value: "50&9999999"}}
+      filter.filter_data[:accepted] = {"order_total": {"condition": "between_number", "value": "50&9999999"}}
 
       card_order = setup_card_order
       card_order.filters = [filter]
@@ -35,7 +35,7 @@ RSpec.describe CardOrder, type: :model do
     it "returns false when the order cost does not exceed the filter cost" do
       filter = create(:filter)
       # filter.filter_data["minimum"] = 10.00
-      filter.filter_data[:accepted] = {order_total: {condition: "between_number", value: "10&100"}}
+      filter.filter_data[:accepted] = {"order_total": {"condition": "between_number", "value": "10&100"}}
       card_order = setup_card_order
       card_order.filters = [filter]
       order = create(:order)
@@ -56,7 +56,7 @@ RSpec.describe CardOrder, type: :model do
       filter = create(:filter)
       # filter.filter_data["minimum"] = 10.00
       # filter.filter_data["maximum"] = 100.00
-      filter.filter_data[:accepted] = {order_total: {condition: "between_number", value: "1&10"}}
+      filter.filter_data[:accepted] = {"order_total": {"condition": "between_number", "value": "1&10"}}
       card_order = setup_card_order
       card_order.filters = [filter]
       order = create(:order)
@@ -69,7 +69,7 @@ RSpec.describe CardOrder, type: :model do
       filter = create(:filter)
       # filter.filter_data["minimum"] = 10.00
       # filter.filter_data["maximum"] = 100.00
-      filter.filter_data[:accepted] = {order_total: {condition: "between_number", value: "1&10"}}
+      filter.filter_data[:accepted] = {"order_total": {"condition": "between_number", "value": "1&10"}}
       card_order = setup_card_order
       card_order.filters = [filter]
       order = create(:order)

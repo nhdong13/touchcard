@@ -432,8 +432,10 @@
       this.automation.discount_exp = this.automation.discount_exp || 3;
       // console.log(this.automation);
       let last_index = this.automation.filters_attributes.length-1;
-      let filters = this.automation.filters_attributes[last_index].filter_data;
-      this.convertRawFilters(filters);
+      if (this.automation.filters_attributes[last_index]) {
+        let filters = this.automation.filters_attributes[last_index].filter_data;
+        this.convertRawFilters(filters);
+      }
       this.automation.send_date_end = this.automation.send_date_end || new Date()
       this.automation.send_date_start = this.automation.send_date_start || new Date()
     },
