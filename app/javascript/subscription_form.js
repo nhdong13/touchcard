@@ -32,7 +32,8 @@ export default function(element ,stripePubKey = '') {
     },
     computed: {
       price: function() {
-        return this.quantity * 0.99;
+        let pricePerCard = parseFloat(document.getElementById('price-per-card').value);
+        return this.quantity * pricePerCard;
       }
     },
     mounted: function() {
