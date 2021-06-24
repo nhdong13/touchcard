@@ -115,7 +115,6 @@
       }
     },
     mounted: function() {
-      // console.log(this.json)
 
       console.log('CardEditor Mounted')
       // this.$nextTick(function () {
