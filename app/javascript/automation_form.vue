@@ -656,6 +656,12 @@
       },
       saveAndReview: function() {
         this.validateForm()
+        this.$nextTick(() => {
+          $(".invalid")[0].scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+          })
+        })
         if(!this.isFormValid()) return
         if(this.automation.campaign_status != "draft") {
           this.requestSave()  
@@ -666,27 +672,38 @@
       validateForm: function() {
         // No need to validate start date cus they have default values
 
-        if(!this.automation.send_continuously && isEmpty(this.automation.send_date_end)) {
+        if(!this.automation.send_continuously && !this.automation.send_date_end) {
           this.errors.endDate = true
-        } 
+        } else {
+          this.errors.endDate = false
+        }
 
         if(!this.$refs.frontEditor.$data.attributes.background_url ||
           this.$refs.frontEditor.$data.attributes.discount_x == 0 ||
           this.$refs.frontEditor.$data.attributes.discount_y == 0) {
           this.errors.uploadedFrontDesign = true
+        } else {
+          this.errors.uploadedFrontDesign = false
         }
 
         if(!this.$refs.backEditor.$data.attributes.background_url ||
           this.$refs.backEditor.$data.attributes.discount_x == 0 ||
           this.$refs.backEditor.$data.attributes.discount_y == 0) {
           this.errors.uploadedBackDesign = true 
+        } else {
+          this.errors.uploadedBackDesign = false
         }
 
         if(isEmpty(this.automation.campaign_name)) {
           this.errors.campaignName = true
+        } else {
+          this.errors.campaignName = false
         }
+
         if(this.isFilterIncomplete() && this.enableFiltering) {
           this.errors.filters = true
+        } else {
+          this.errors.filters = false
         }
 
         if(this.automation.international) {
@@ -697,6 +714,8 @@
             !isEmpty(this.returnAddress.state)) {
             this.errors.returnAddress = true
             $(".return-address-general-error").show();
+          } else {
+            this.errors.returnAddress = false
           }
         }
       },
