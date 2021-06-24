@@ -239,7 +239,7 @@
     </div>
     <br>
     <div class="text-right">
-      <md-button class="cancel-btn text-white" v-on:click="cancel" >Cancel</md-button>
+      <md-button class="cancel-btn text-white" v-on:click="cancel" >Save and Exit</md-button>
       <md-button class="review-and-continue-btn text-white" v-on:click="saveAndReview">Review and continue</md-button>
     </div>
     <div>
@@ -434,7 +434,6 @@
       // Set defaults in case these props are passed as 'null'
       this.automation.discount_pct = this.automation.discount_pct || 20;
       this.automation.discount_exp = this.automation.discount_exp || 3;
-      // console.log(this.automation);
       let last_index = this.automation.filters_attributes.length-1;
       if (this.automation.filters_attributes[last_index]) {
         let filters = this.automation.filters_attributes[last_index].filter_data;
@@ -619,7 +618,7 @@
         Turbolinks.visit('/campaigns', {flush: true, cacheRequest: false});
       },
       saveAutomation: function() {
-        if (this.enableFiltering && this.automation.campaign_status == "draft") this.collectFilters();
+        if (this.enableFiltering) this.collectFilters();
         // This will minimize the overhead of clone the automation
         if(this.isTwoJsonEqual(this.saved_automation, this.automation)) {
           return
@@ -641,7 +640,6 @@
         this.automation.budget_type = this.budget_type
         this.automation.campaign_type = this.campaign_type
         this.automation.return_address_attributes = this.returnAddress;
-        if(this.enableFiltering) this.collectFilters()
         // TODO: Must somehow make sure automation is JSON safe
         this.saved_automation = JSON.parse(JSON.stringify(this.automation))
 
