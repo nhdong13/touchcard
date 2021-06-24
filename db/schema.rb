@@ -390,6 +390,7 @@ ActiveRecord::Schema.define(version: 2021_06_23_162836) do
     t.string "stripe_id", null: false
     t.index ["plan_id"], name: "index_subscriptions_on_plan_id"
     t.index ["shop_id"], name: "index_subscriptions_on_shop_id"
+    t.index ["stripe_id"], name: "index_subscriptions_on_stripe_id"
   end
 
   add_foreign_key "addresses", "customers"

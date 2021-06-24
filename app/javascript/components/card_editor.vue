@@ -71,6 +71,7 @@
   import { Api } from '../api';
   import CardSide from './card_side.vue';
   import { CardAttributes } from './card_attributes';
+  import { DEFAULT_DISCOUNT_PERCENTAGE, DEFAULT_WEEK_BEFORE_DISCOUNT_EXPIRE } from '../config';
 
   export default {
     props: {
@@ -83,10 +84,12 @@
         required: true,
       },
       discount_pct: {
-        type: Number
+        type: Number,
+        default: DEFAULT_DISCOUNT_PERCENTAGE
       },
       discount_exp: {
-        type: Number
+        type: Number,
+        default: DEFAULT_WEEK_BEFORE_DISCOUNT_EXPIRE
       },
       aws_sign_endpoint: {
         type: String,
@@ -113,6 +116,7 @@
       }
     },
     mounted: function() {
+
       console.log('CardEditor Mounted')
       // this.$nextTick(function () {
       // code that assumes this.$el is in-document
