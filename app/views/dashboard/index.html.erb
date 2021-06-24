@@ -80,7 +80,7 @@
               </button>
             </td>
 
-            <td><%= postcard.customer.full_name %></td>
+            <td><%= postcard.customer&.full_name %></td>
             <td><%= postcard.city %>, <%= postcard.state %>, <%= postcard.country %></td>
             <td>
               <% unless postcard.canceled || postcard.sent %>

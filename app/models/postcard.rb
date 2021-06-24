@@ -29,7 +29,7 @@ class Postcard < ApplicationRecord
   end
 
   def address
-    customer.default_address
+    customer&.default_address
   end
 
   def international?
@@ -184,15 +184,15 @@ class Postcard < ApplicationRecord
   end
 
   def city
-    address.city
+    address&.city
   end
 
   def state
-    address.province
+    address&.province
   end
 
   def country
-    address.country
+    address&.country
   end
 
 end

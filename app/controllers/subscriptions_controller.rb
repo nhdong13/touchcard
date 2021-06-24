@@ -11,7 +11,7 @@ class SubscriptionsController < BaseController
     quantity = create_params[:subscription][:quantity] # TODO: Handle missing quantity
     coupon = create_params[:subscription][:coupon]
 
-    stripe_params = {shop: @current_shop, plan: Plan.first, quantity: quantity}
+    stripe_params = {shop: @current_shop, plan: Plan.last, quantity: quantity}
     stripe_params.merge!({coupon: coupon}) if !coupon.blank?
 
     @current_shop.create_stripe_customer(create_params[:stripeToken]) unless @current_shop.is_card_registered
