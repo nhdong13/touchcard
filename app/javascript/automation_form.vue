@@ -309,7 +309,7 @@
       
     },
     mounted: function() {
-      if(this.automation.campaign_status == "draft") {
+      if(this.automation.campaign_status == "draft" && !this.isEditExistCampaign) {
         window.setInterval(() => {
           this.saveAutomation()
         }, 1000)
@@ -621,7 +621,7 @@
       saveAutomation: function() {
         if (this.enableFiltering && this.automation.campaign_status == "draft") this.collectFilters();
         // This will minimize the overhead of clone the automation
-        if(this.isTwoJsonEqual(this.saved_automation, this.automation) && this.isEditExistCampaign == true) {
+        if(this.isTwoJsonEqual(this.saved_automation, this.automation)) {
           return
         }
         // Get card side data for saving
