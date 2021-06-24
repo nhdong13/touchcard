@@ -71,6 +71,7 @@
   import { Api } from '../api';
   import CardSide from './card_side.vue';
   import { CardAttributes } from './card_attributes';
+  import { DEFAULT_DISCOUNT_PERCENTAGE, DEFAULT_WEEK_BEFORE_DISCOUNT_EXPIRE } from '../config';
 
   export default {
     props: {
@@ -84,11 +85,11 @@
       },
       discount_pct: {
         type: Number,
-        default: 20
+        default: DEFAULT_DISCOUNT_PERCENTAGE
       },
       discount_exp: {
         type: Number,
-        default: 2
+        default: DEFAULT_WEEK_BEFORE_DISCOUNT_EXPIRE
       },
       aws_sign_endpoint: {
         type: String,

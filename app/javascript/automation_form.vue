@@ -266,7 +266,9 @@
   import $ from 'jquery'
   import { isEmpty } from 'lodash'
   import CancelCampaignDialog from './components/cancel_campaign_dialog.vue'
+  import { DEFAULT_DISCOUNT_PERCENTAGE, DEFAULT_WEEK_BEFORE_DISCOUNT_EXPIRE } from './config'
   window.$ = $
+
 
   export default {
     props: {
@@ -503,8 +505,8 @@
         // Using `.showsDiscount` assumes card_editor.vue has created card_attributes objects from json
         if (!frontAttrs.showsDiscount && !backAttrs.showsDiscount ) {
           // Fallback to default
-          this.automation.discount_pct = 20;
-          this.automation.discount_exp = 2;
+          this.automation.discount_pct = DEFAULT_DISCOUNT_PERCENTAGE;
+          this.automation.discount_exp = DEFAULT_WEEK_BEFORE_DISCOUNT_EXPIRE;
         }
 
         this.automation.budget_type = this.budget_type
@@ -632,8 +634,8 @@
         // Using `.showsDiscount` assumes card_editor.vue has created card_attributes objects from json
         if (!frontAttrs.showsDiscount && !backAttrs.showsDiscount ) {
           // Fallback to default
-          this.automation.discount_pct = 20;
-          this.automation.discount_exp = 2;
+          this.automation.discount_pct = DEFAULT_DISCOUNT_PERCENTAGE;
+          this.automation.discount_exp = DEFAULT_WEEK_BEFORE_DISCOUNT_EXPIRE;
         }
 
         this.automation.budget_type = this.budget_type
