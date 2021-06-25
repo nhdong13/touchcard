@@ -1,5 +1,5 @@
 <%= currently_at "Settings" %>
-
+<%= hidden_field_tag 'price-per-card', Plan.last.amount.to_f/100 %>
 
 <%= tag.div id: "stripe-pub-key", data: { stripe_pub_key: Rails.configuration.stripe[:publishable_key] } %>
 
