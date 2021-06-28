@@ -239,10 +239,16 @@
     </div>
     <br>
     <div class="text-right">
-      <md-button class="cancel-btn text-white" v-on:click="cancel" >Save and Exit</md-button>
-      <md-button class="review-and-continue-btn text-white" v-on:click="saveAndReview">Review and continue</md-button>
+      <div v-if="isEditExistCampaign">
+        <md-button class="cancel-btn text-white" v-on:click="returnToCampaignList" >Discard</md-button>
+        <md-button class="review-and-continue-btn text-white" v-on:click="saveAndReturn">Save Changes</md-button>
+      </div>
+      <div v-else>
+        <md-button class="cancel-btn text-white" v-on:click="cancel" >Cancel</md-button>
+        <md-button class="review-and-continue-btn text-white" v-on:click="saveAndReview">Review and continue</md-button>
+      </div>
     </div>
-    <div>
+    <!-- <div>
       <cancel-campaign-dialog
         :md-active.sync="isCancel"
         title="Cancel?"
@@ -253,7 +259,7 @@
         @onConfirm="onConfirm"
         v-if="isEditExistCampaign"
       />
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -306,7 +312,7 @@
           this.disabledDates.to = today
         }
       }
-      
+
     },
     mounted: function() {
       if(this.automation.campaign_status == "draft" && !this.isEditExistCampaign) {
@@ -412,7 +418,7 @@
           this.automation.budget_update = 0
         } else {
           this.budget_type = "monthly"
-          this.automation.budget_update = value  
+          this.automation.budget_update = value
         }
       }
     },
@@ -654,7 +660,8 @@
       isTwoJsonEqual: function(a, b) {
         return JSON.stringify(a) === JSON.stringify(b)
       },
-      saveAndReview: function() {
+
+      save: function() {
         this.validateForm()
         this.$nextTick(() => {
           $(".invalid")[0].scrollIntoView({
@@ -662,10 +669,26 @@
             block: "start"
           })
         })
-        if(!this.isFormValid()) return
+        if(!this.isFormValid()) return false
         if(this.automation.campaign_status != "draft") {
-          this.requestSave()  
+          this.requestSave()
         }
+        return true
+      },
+
+      saveAndReturn: function() {
+        // If there're some errors in save process => return
+        if(!this.save()) return
+
+        this.returnToCampaignList()
+      },
+
+
+      // NOTE: This likely change in future
+      saveAndReview: function() {
+        // If there're some errors in save process => return
+        if(!this.save()) return
+
         console.log("Go to summary page")
       },
 
@@ -689,7 +712,7 @@
         if(!this.$refs.backEditor.$data.attributes.background_url ||
           this.$refs.backEditor.$data.attributes.discount_x == 0 ||
           this.$refs.backEditor.$data.attributes.discount_y == 0) {
-          this.errors.uploadedBackDesign = true 
+          this.errors.uploadedBackDesign = true
         } else {
           this.errors.uploadedBackDesign = false
         }
@@ -751,6 +774,11 @@
         return createdAt.getTime() == updatedAt.getTime() ? true : false
       },
 
+      returnToCampaignList: function() {
+        Turbolinks.visit('/campaigns')
+      },
+
+      // NOTE: This likely change in future
       cancel: function() {
         if(!this.isEditExistCampaign) {
           this.saveAutomation()
