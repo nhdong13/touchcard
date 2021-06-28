@@ -11,12 +11,31 @@ FILTER_OPTIONS =[["Select a filter"   , ""                  ],
                 #  ["Referring site"    , "referring_site"    ],
                 #  ["Landing site"      , "landing_site"      ],
                  ["Order tag"        , "order_tag"        ],
-                 ["Discount code used", "discount_code"]
+                 ["Discount code used", "discount_code"],
+                 ["Shipping company exists", "shipping_company"],
+                 ["Shipping zip code", "zip_code"]
                 ]
-CONDITIONS = [["Select a filter" , ""], ["is", "0"], ["is greater than", "1"], ["is less than", "2"],
-              ["Absolute", "disable_display_1"], ["before", "before"], ["between", "between_date"], ["after", "after"], 
-              ["Relative", "disable_display_2"], ["between", "between_number"], ["matches", "matches_number"],
-              ["between", "between_string"], ["matches", "matches_string"], ["from", "from"], ["is", "tag_is"], ["contains", "tag_contain"]
+CONDITIONS = [["Select a filter" , ""],
+              ["is", "0"],
+              ["is greater than", "1"],
+              ["is less than", "2"],
+              ["Absolute", "disable_display_1"],
+              ["before", "before"],
+              ["between", "between_date"],
+              ["after", "after"],
+              ["Relative", "disable_display_2"],
+              ["between", "between_number"],
+              ["matches", "matches_number"],
+              ["between", "between_string"],
+              ["matches", "matches_string"],
+              ["from", "from"],
+              ["is", "tag_is"],
+              ["contains", "tag_contain"],
+              ["Begins with", "begin_with"],
+              ["Ends with", "end_with"],
+              ["No", "no"],
+              ["Yes", "yes"]
+
              ]
 CSV_TITLE = [ "Fullame",
               "Email",
