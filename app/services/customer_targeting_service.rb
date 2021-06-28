@@ -7,30 +7,111 @@ class CustomerTargetingService
     @removed_attrs = removed_attrs
   end
 
-  def build_csv list, titles
-    @csv = CustomersExportService.new(list, titles).perform
+  def build_csv list
+    @csv = CustomersExportService.new(list, accepted_attrs&.keys).create_xlsx
   end
 
   def export_customer_list
     filtered_customer_ids = get_list_customer_ids
     customer_data = build_export_data(filtered_customer_ids)
     titles = accepted_attrs.present? ? ["customer_id"] + CSV_TITLE + accepted_attrs.keys : ["customer_id"] + CSV_TITLE
-    build_csv(customer_data, titles)
+    build_csv(customer_data)
   end
 
+  # Build export data
   def build_export_data customer_ids
     response = []
     customer_ids.each do |id|
-      mark_passed_filters = Array.new(accepted_attrs&.keys.size).insert(0, id)
-      accepted_attrs&.each.with_index(1) do |(k, v), index|
-        field_to_filter = select_field_to_filter(k, nil, id)
-        mark_passed_filters[index] = "X" if compare_field(field_to_filter, v["condition"], v["value"])
+      response.push(customer_line_data(Customer.find(id)))
+      Order.where(customer_id: id, shop_id: current_shop.id)&.each do |order|
+        response.push(order_line_data(order))
+        order.line_items&.each do |item|
+          response.push(item_line_data(item))
+        end
       end
-      mark_passed_filters.insert(1, get_customer_detail(Customer.find(id))).flatten!
-      response.push(mark_passed_filters)
     end
+    # customer_ids.each do |id|
+    #   mark_passed_filters = Array.new(accepted_attrs&.keys.size).insert(0, id)
+    #   accepted_attrs&.each.with_index(1) do |(k, v), index|
+    #     field_to_filter = select_field_to_filter(k, nil, id)
+    #     mark_passed_filters[index] = "X" if compare_field(field_to_filter, v["condition"], v["value"])
+    #   end
+    #   mark_passed_filters.insert(1, get_customer_detail(Customer.find(id))).flatten!
+    #   response.push(mark_passed_filters)
+    # end
     response
   end
+
+  def customer_line_data customer
+    [ customer.id, "Customer", customer.first_name, customer.last_name,
+      customer.default_address&.address1, customer.default_address&.city,
+      customer.default_address&.province_code, customer.default_address&.country_code,
+      customer.default_address&.zip, customer.default_address&.company, "",
+      "", "", "", "", "", customer.orders_count, "", "$#{customer.total_spent}", customer.tags,
+      "", "", "", "", customer.postcards.count, customer.postcards.last&.processed_at&.strftime("%d-%b-%y"),
+      customer.accepts_marketing ? "Y" : "N", "", ""
+    ] + filter_passed_by_customer(customer.id)
+  end
+
+  def filter_passed_by_customer customer_id
+    filters_passed_render = []
+    accepted_attrs&.as_json&.each do |k, v|
+      if ["shipping_country", "shipping_state", "shipping_city", "number_of_order"].include?(k)
+        field_to_filter = select_field_to_filter(k, nil, customer_id)
+        result = compare_field(field_to_filter, v["condition"], v["value"]) ? "X" : ""
+      else
+        result = ""
+      end
+      filters_passed_render << result
+    end
+    filters_passed_render
+  end
+
+  def order_line_data order
+    [ order.customer&.id, "Order", order.customer&.first_name, order.customer&.last_name,
+      order.customer&.default_address&.address1, order.customer&.default_address&.city,
+      order.customer&.default_address&.province_code, order.customer&.default_address&.country_code,
+      order.customer&.default_address&.zip, order.customer&.default_address&.company, "",
+      order.id, order.processed_at&.strftime("%d-%b-%y"), "", "", "", "", order.line_items&.count,
+      order.total_price, order.tags, order.referring_site, order.landing_site, order.discount_codes.map{|code| code['code']}.join(", "),
+      order.total_discounts, "", "", "", order.financial_status, order.fulfillment_status
+    ] + filter_passed_by_order(order)
+  end
+
+  def filter_passed_by_order order
+    filters_passed_render = []
+    accepted_attrs&.as_json&.each do |k, v|
+      if ["last_order_date", "first_order_date", "last_order_tag", "any_order_tag", "last_discount_code", "any_discount_code"].include?(k)
+        if (k.include?("last") && !is_last_order?(order)) || (k.include?("first") && !is_first_order?(order))
+          result = ""
+        else
+          filter = k.gsub("any", "last")
+          field_to_filter = select_field_to_filter(filter, order)
+          result = compare_field(field_to_filter, v["condition"], v["value"]) ? "X" : ""
+        end
+      else
+        result = ""
+      end
+      filters_passed_render << result
+    end
+    filters_passed_render
+  end
+
+  def is_last_order? order
+    Order.where(customer_id: order.customer_id, shop_id: current_shop.id).last == order
+  end
+
+  def is_first_order? order
+    Order.where(customer_id: order.customer_id, shop_id: current_shop.id).first == order
+  end
+
+  def item_line_data item
+    [ item.order&.customer&.id, "Order Item", "", "", "", "", "", "", "", "", "",
+      item.order&.id, item.order&.processed_at&.strftime("%d-%b-%y"), item.title, item.vendor,
+      item.variant_title, "", item.quantity, "", "", "", "", "", "", "", "", "", "", ""
+    ] + Array.new(accepted_attrs&.keys&.length, "")
+  end
+  # End build export data section
 
   def get_list_customer_ids
     all_customer_ids = current_shop.orders.where.not(customer_id: nil).pluck(:customer_id).uniq
@@ -49,8 +130,9 @@ class CustomerTargetingService
     true
   end
 
-  def filtered_orders
-    orders.select do |order|
+  def filtered_orders filter_order=nil
+    orders_to_filter = filter_order.present? ? [filter_order] : orders
+    orders_to_filter.select do |order|
       result = true
       accepted_attrs.as_json&.each do |k, v|
         field_to_filter = select_field_to_filter(k, order)
@@ -209,162 +291,5 @@ class CustomerTargetingService
       customer.accepts_marketing,
       customer.verified_email ? "Email verified" : "Not verified"
     ]
-  end
-
-  def user_orders_count
-    orders.group(:customer_id).count
-  end
-
-  def user_total_spents
-    orders.group(:customer_id).sum(:total_line_items_price)
-  end
-
-  def user_last_orders
-    orders.group(:customer_id).maximum(:processed_at)
-  end
-
-  def user_first_orders
-    orders.group(:customer_id).minimum(:processed_at)
-  end
-
-  def user_last_order_totals
-    res = {}
-    orders.filter do |order|
-      processed_time = user_last_orders[order.customer_id]
-      processed_time.present? && processed_time == order.processed_at
-    end.each{|i| res[i.customer_id] = i.total_line_items_price}
-    res
-  end
-
-  def user_shipping_countries
-    res = {}
-    orders.each{|order| res[order.customer_id] = order.customer&.default_address.country_code}
-    res
-  end
-
-  def user_shipping_states
-    res = {}
-    orders.each{|order| res[order.customer_id] = order.customer&.default_address.province_code}
-    res
-  end
-
-  def user_shipping_cities
-    res = {}
-    orders.each{|order| res[order.customer_id] = order.customer&.default_address.city}
-    res
-  end
-
-  def user_referring_sites
-    res = {}
-    orders.each{|order| res[order.customer_id] = order.referring_site}
-    res
-  end
-
-  def user_landing_sites
-    res = {}
-    orders.each{|order| res[order.customer_id] = order.landing_site}
-    res
-  end
-
-  def user_order_tag
-    res = {}
-    orders.each{|order| res[order.customer_id] = order.tags}
-    res
-  end
-
-  def user_discount_codes
-    res = {}
-    orders.each{|order| res[order.customer_id] = order.discount_codes.map{|item| item['code']} if order.discount_codes.class == Array}
-    res
-  end
-
-  # Remove soon
-  # export csv service
-  def find
-    @user_orders_count = orders.group(:customer_id).count
-    @user_spends_count = orders.group(:customer_id).sum(:total_line_items_price)
-    @user_last_order_totals = {}
-    orders.filter do |order|
-      processed_time = user_last_orders[order.customer_id]
-      processed_time.present? && processed_time == order.processed_at
-    end.each{|i| @user_last_order_totals[i.customer_id] = i.total_line_items_price}
-    @user_referring_sites = {}
-    orders.each{|order| @user_referring_sites[order.customer_id] = order.referring_site}
-    @user_landing_sites = {}
-    orders.each{|order| @user_landing_sites[order.customer_id] = order.landing_site}
-    @user_discount_codes = {}
-    orders.each{|order| @user_discount_codes[order.customer_id] = order.discount_codes.map{|item| item['code']} if order.discount_codes.class == Array}
-
-    build_list
-  end
-
-  def build_list
-    accepted_user_ids = {}
-    removed_user_ids = []
-
-    unless accepted_attrs.present?
-      orders.pluck(:customer_id).each{|id| accepted_user_ids[id] = []}
-    else
-      accepted_attrs.as_json.each_with_index do |(k, v), i|
-        ids = get_customer_ids(k, v["condition"], v["value"])
-        ids.each do |id|
-          accepted_user_ids[id] = Array.new(accepted_attrs.keys.size) unless accepted_user_ids[id].present?
-          accepted_user_ids[id][i] = "X"
-        end
-      end
-    end
-
-    removed_attrs.as_json.each_with_index do |(k, v), i|
-      removed_user_ids += get_customer_ids(k, v["condition"], v["value"])
-    end if removed_attrs.present?
-    removed_user_ids.each{|remove_id| accepted_user_ids.delete(remove_id)}
-    Customer.includes(:orders, :postcards, :addresses).find(accepted_user_ids.keys).each do |customer|
-      get_customer_detail(customer).each{|item| accepted_user_ids[customer.id].unshift(item)}
-    end
-    accepted_user_ids
-  end
-
-  def get_customer_ids filter, condition, value
-    collection = select_collection(filter)
-    filter_by(collection, condition, value)
-  end
-
-  def select_collection filter
-    case filter
-    # completed
-    when "last_order_date"
-      user_last_orders
-    when "first_order_date"
-      user_first_orders
-    when "number_of_order"
-      user_orders_count
-    when "shipping_country"
-      user_shipping_countries
-    when "shipping_state"
-      user_shipping_states
-    when "shipping_city"
-      user_shipping_cities
-    # end
-    when "total_spend"
-      @user_spends_count
-    when "last_order_total"
-      @user_last_order_totals
-    when "referring_site"
-      @user_referring_sites
-    when "landing_site"
-      @user_landing_sites
-    # when "any_order_tag"
-    #   user_order_tag
-    # when "last_order_tag"
-    #   user_order_tag
-    # when "discount_code_used"
-    #   user_discount_codes
-    else
-      []
-    end
-  end
-
-  def filter_by collection, filter_type, raw_value
-    collection.filter{|k,v| compare_field(v, filter_type, raw_value) if v}.keys
   end
 end
