@@ -33,7 +33,7 @@
                 <font-awesome-icon icon="caret-up" v-else/>
               </span>
             </th>
-            <th v-on:click="onSortByAlphabetically('sortByType', 'type')">
+            <th v-on:click="onSortByAlphabetically('sortByType', 'campaign_type')">
               Type
               <span>
                 <font-awesome-icon icon="caret-down" v-if="sortByType"/>

@@ -10,7 +10,7 @@ class CampaignSearchService
     campaigns = @current_shop.card_orders
     campaigns = campaigns.where("lower(card_orders.campaign_name) LIKE ?", "%#{@params[:query]}%") if @params[:query].present?
     campaigns = campaigns.where(campaign_type: filter_base_on_campaign_type) if filter_base_on_campaign_type != "any"
-    campaigns = campaigns.where(campaign_status: filter_base_on_status) if !filter_base_on_status.nil?
+    campaigns = campaigns.where(campaign_status: filter_base_on_status) if !filter_base_on_status.empty?
     # CASE 
     #   WHEN campaign_status = 0 THEN updated_at BETWEEN :start_date AND :end_date
     #   ELSE created_at BETWEEN :start_date AND :end_date
@@ -45,17 +45,17 @@ class CampaignSearchService
         e.downcase
       end
     else
-      return nil
+      return []
     end    
   end
 
   def filter_base_on_date_created
-    return @current_shop.created_at unless @filters["dateCreated"]
+    return @current_shop.created_at if @filters["dateCreated"].blank?
     date = @filters["dateCreated"]["created_at"].to_time
   end
 
   def filter_base_on_date_completed
-    return Time.now.utc unless @filters["dateCreated"]
+    return Time.now.utc if @filters["dateCreated"].blank?
     date = @filters["dateCreated"]["date_completed"].to_time
   end
 

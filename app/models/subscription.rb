@@ -69,7 +69,7 @@ class Subscription < ApplicationRecord
       # TODO return a better error it will currently show all the missing stripe fields too
       return super(params) unless shop && plan
       subscription = shop.stripe_customer.subscriptions.create(
-        plan: plan.id,
+        plan: plan.stripe_plan_id || '1',
         quantity: params[:quantity],
         coupon: params[:coupon])
       instance = super(params.merge(

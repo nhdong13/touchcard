@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_14_041852) do
+ActiveRecord::Schema.define(version: 2021_06_23_162836) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -102,7 +102,7 @@ ActiveRecord::Schema.define(version: 2021_06_14_041852) do
     t.integer "campaign_type"
     t.integer "limit_cards_per_day"
     t.integer "card_order_parent_id"
-    t.boolean "send_continuously", default: false
+    t.boolean "send_continuously", default: true
     t.integer "campaign_status", default: 0
   end
 
@@ -289,6 +289,7 @@ ActiveRecord::Schema.define(version: 2021_06_14_041852) do
     t.text "statement_descriptor"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "stripe_plan_id"
   end
 
   create_table "post_card_infos", force: :cascade do |t|

@@ -1,5 +1,6 @@
 <%= tag.div id: "stripe-pub-key", data: { stripe_pub_key: Rails.configuration.stripe[:publishable_key] } %>
 <%= hidden_field_tag 'customer-email', @email %>
+<%= hidden_field_tag 'price-per-card', Plan.last.amount.to_f/100 %>
 
 <div id="new-subscription-form" class="billing panel">
   <br>
@@ -12,8 +13,8 @@
     <br>
     <div class="jumbotron">
       <div class="container">
-        <div class="f-s-300"><i class="material-icons">print</i> + <i class="material-icons">email</i> = 99&cent;</div>
-        <div><strong>PRINT</strong> and <strong>MAIL</strong> cards for just <strong>99&cent;</strong> in the USA</div>
+        <div class="f-s-300"><i class="material-icons">print</i> + <i class="material-icons">email</i> = <%= Plan.last.amount %>&cent;</div>
+        <div><strong>PRINT</strong> and <strong>MAIL</strong> cards for just <strong><%= Plan.last.amount %>&cent;</strong> in the USA</div>
       </div>
     </div>
 
