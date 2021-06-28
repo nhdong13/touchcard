@@ -597,13 +597,13 @@
         return tmp;
       },
       downloadCSV() {
-        let url = `/targeting/get.csv`;
+        let url = `/targeting/get.xlsx`;
         let body = this.convertFiltersToParams();
-        axios.post(url, body).then(function(response) {
-          const url = window.URL.createObjectURL(new Blob([response.data]))
+        axios.post(url, body, {responseType: 'blob'}).then(function(response) {
+          const url = window.URL.createObjectURL(new Blob([response.data], {type: 'application/vnd.ms-excel'}))
           const link = document.createElement('a')
           link.href = url
-          link.setAttribute('download', 'customers.csv')
+          link.setAttribute('download', 'customers.xlsx')
           document.body.appendChild(link)
           link.click()
         }).catch(function (error) {

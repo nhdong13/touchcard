@@ -1,6 +1,7 @@
 class TargetingController < BaseController
   before_action :read_file, only: [:get_countries, :get_states, :get_country_by_state]
   attr_accessor :data
+  require "axlsx"
 
   def index; end
 
@@ -9,8 +10,9 @@ class TargetingController < BaseController
     @removed_attrs = params[:removed]&.permit!
     service = CustomerTargetingService.new({shop: @current_shop}, @accepted_attrs, @removed_attrs)
     csv = service.export_customer_list
+
     respond_to do |f|
-      f.csv { send_data csv, filename: "customers.csv" }
+      f.xlsx { send_data csv, filename: "customers.xlsx" }
       f.html { render "customer_list" }
     end
   end
