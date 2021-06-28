@@ -161,7 +161,7 @@
               ((['number_of_order', 'total_spend', 'last_order_total'].indexOf(this.filter.selectedFilter) > -1) && ["matches_number", "between_number"].indexOf(option) > -1) ||
               (['shipping_country', 'shipping_state', 'shipping_city'].indexOf(this.filter.selectedFilter) > -1 && option == "from") ||
               (this.isFilter(['order_tag', 'discount_code']) && ["tag_is", "tag_contain"].indexOf(option) > -1) ||
-              (this.selectedFilter == "zip_code" && ["tag_is", "begin_with", "end_with"].indexOf(option) > -1) ||
+              (this.selectedFilter == "zip_code" && ["equal", "begin_with", "end_with"].indexOf(option) > -1) ||
               (this.selectedFilter == "shipping_company" && ["no", "yes"].indexOf(option) > -1)
       },
       isFilter(filterNames) {
@@ -251,9 +251,6 @@
       },
       showShippingCompanyInput() {
         return this.filter.selectedFilter == "shipping_company"
-      },
-      toggleShippingCompanyOption() {
-        this.filter.selectedCondition = this.filter.value
       }
     }
   }

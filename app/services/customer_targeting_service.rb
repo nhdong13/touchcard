@@ -192,6 +192,10 @@ class CustomerTargetingService
       filter_order.total_price
     when "referring_site"
       filter_order.landing_site
+    when "shipping_company"
+      customer&.default_address.company
+    when "zip_code"
+      customer&.default_address.zip
     else
       []
     end
@@ -245,6 +249,18 @@ class CustomerTargetingService
       when "tag_contain"
         value.each{|item| return true if field.include?(item)}
         false
+      # This is for filter shipping company
+      when "no"
+        false
+      when "yes"
+        true
+      # This is for filter zip code
+      when "equal"
+        return false unless field == value
+      when "begin_with"
+        return false if (/^#{value}/ =~ field).nil?
+      when "end_with"
+        return false if (/#{value}$/ =~ field).nil?
       else
         false
     end
