@@ -2,8 +2,9 @@ class GeneratePostcardJob < ActiveJob::Base
 	queue_as :default
 
 	def perform shop, campaign
+    shop.new_sess
 
-    campaign.campaign_status = CardOrder.processing
+    campaign.processing!
     campaign.save!
 
     customers_before = campaign.campaign_type == CardOrder.automation ? Time.new.strftime("%FT%T%:z") : campaign.created_at

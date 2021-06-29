@@ -103,9 +103,9 @@ class CardOrder < ApplicationRecord
 
   def update_campaign_status
     if enabled
-      self.sending!
+      update(campaign_status: :sending)
     else
-      self.paused!
+      update(campaign_status: :paused)
     end
   end
 
