@@ -312,8 +312,25 @@
           this.disabledDates.to = today
         }
       }
+      let t = this.automation
+      window.addEventListener("beforeunload", function (e) {
+        console.log(t.campaign_type)
+      });
+
+      // window.addEventListener('beforeunload', (event) => {
+      //   // Cancel the event as stated by the standard.
+      //   console.log(event)
+      //   event.preventDefault();
+      //   // Chrome requires returnValue to be set.
+      //   event.returnValue = '';
+      // });
 
     },
+
+    beforeDestroy: function() {
+      console.log("test")
+    },
+
     mounted: function() {
       if(this.automation.campaign_status == "draft" && !this.isEditExistCampaign) {
         window.setInterval(() => {
