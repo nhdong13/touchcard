@@ -312,23 +312,18 @@
           this.disabledDates.to = today
         }
       }
-      let t = this.automation
-      window.addEventListener("beforeunload", function (e) {
-        console.log(t.campaign_type)
-      });
 
-      // window.addEventListener('beforeunload', (event) => {
-      //   // Cancel the event as stated by the standard.
-      //   console.log(event)
-      //   event.preventDefault();
-      //   // Chrome requires returnValue to be set.
-      //   event.returnValue = '';
-      // });
+      // Handling event where the user exit page without click Discard or Save Changes button
+      if(this.isEditExistCampaign) {
+        const _this = this
+        window.addEventListener("beforeunload", function (e) {
+          _this.disableCampaign(_this.automation.id)
+        });
+        window.addEventListener("popstate", function (e) {
+          _this.disableCampaign(_this.automation.id)
+        });
+      }
 
-    },
-
-    beforeDestroy: function() {
-      console.log("test")
     },
 
     mounted: function() {
@@ -547,7 +542,7 @@
           axios.put(target, { card_order: this.automation})
             .then(function(response) {
               console.log(response);
-              Turbolinks.visit('/automations');
+              Turbolinks.visit('/campaigns');
             }).catch(function (error) {
             ShopifyApp.flashError(error.request.responseText);
           });
@@ -556,7 +551,7 @@
           axios.post('/automations.json', { card_order: this.automation})
             .then(function(response) {
               console.log(response);
-              Turbolinks.visit('/automations');
+              Turbolinks.visit('/campaigns');
             }).catch(function (error) {
             ShopifyApp.flashError(error.request.responseText);
           });
@@ -803,6 +798,13 @@
         } else {
           this.isCancel = true
         }
+      },
+
+      disableCampaign: function(campaign_id) {
+        const _this = this
+        axios.put(`/automations/${campaign_id}.json`, { card_order: {enabled: false} }).then(function(response) {
+          _this.$forceUpdate()
+        })
       }
     }
   }
