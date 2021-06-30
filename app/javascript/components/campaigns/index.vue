@@ -47,7 +47,13 @@
                 <font-awesome-icon icon="caret-up" v-else/>
               </span>
             </th>
-            <th>Monthly budget</th>
+            <th v-on:click="onSortByAlphabetically('sortByMonthlyBudget', 'budget')">
+              Monthly budget
+              <span>
+                <font-awesome-icon icon="caret-down" v-if="sortByMonthlyBudget"/>
+                <font-awesome-icon icon="caret-up" v-else/>
+              </span>
+            </th>
             <th v-on:click="onSortByAlphabetically('sortBySendDateStart', 'send_date_start')">
               Schedule
               <span>
@@ -74,7 +80,8 @@
                 :back-image="item.back_json.background_url"
               />
             </td>
-            <td v-on:click="onEditCampaign(item.id)" class="campaign-name-style">{{ item.campaign_name }}</td>
+            <!-- The maximum of character to display is 45 -->
+            <td v-on:click="onEditCampaign(item.id)" class="campaign-name-style">{{ item.campaign_name | truncate(45) }}</td>
             <td>{{ item.campaign_type }}</td>
             <td>{{ item.campaign_status}}</td>
             <td>
@@ -182,6 +189,7 @@
         sortByType: true,
         sortByStatus: true,
         sortBySendDateStart: true,
+        sortByMonthlyBudget: true,
         duplicateCampaignName: "",
       }
     },
@@ -385,6 +393,20 @@
         }
       }
     },
+
+    filters: {
+      truncate: function(data, num) {
+        const truncatedStr = []
+        let characterCount = 0
+        data.split(" ").slice(0, data.length).forEach((element) => {
+          if(element.length + characterCount > num) return
+          truncatedStr.push(element)
+        })
+        let result = truncatedStr.join(" ")
+        if(data != result) result += " ..."
+        return result
+      }
+    }
   }
 
 </script>
@@ -438,7 +460,7 @@
     button{
       font-size: 16px;
       border: 1px solid #9900ff;
-      background: #9900ff;
+      background: #5b3e82;
       color: white;
     }
   }
