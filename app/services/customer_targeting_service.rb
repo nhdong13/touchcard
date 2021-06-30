@@ -56,7 +56,7 @@ class CustomerTargetingService
   def filter_passed_by_customer customer_id
     filters_passed_render = []
     accepted_attrs&.as_json&.each do |k, v|
-      if ["shipping_country", "shipping_state", "shipping_city", "number_of_order"].include?(k)
+      if ["shipping_country", "shipping_state", "shipping_city", "number_of_order", "zip_code"].include?(k)
         field_to_filter = select_field_to_filter(k, nil, customer_id)
         result = compare_field(field_to_filter, v["condition"], v["value"]) ? "X" : ""
       else
