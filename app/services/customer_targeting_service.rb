@@ -127,7 +127,7 @@ class CustomerTargetingService
     end
     accepted_attrs&.each do |k, v|
       field_to_filter = select_field_to_filter(k, nil, customer_id)
-      return false if !compare_field(field_to_filter, v["condition"], v["value"])
+      return true if compare_field(field_to_filter, v["condition"], v["value"])
     end
     true
   end
