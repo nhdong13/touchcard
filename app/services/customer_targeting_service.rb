@@ -48,7 +48,7 @@ class CustomerTargetingService
       customer.default_address&.province_code, customer.default_address&.country_code,
       customer.default_address&.zip, customer.default_address&.company, "",
       "", "", "", "", "", customer.orders_count, "", "$#{customer.total_spent}", customer.tags,
-      "", "", "", "", customer.postcards.count, customer.postcards.last&.processed_at&.strftime("%d-%b-%y"),
+      "", "", "", "", customer.postcards.count, customer.postcards.last&.date_sent&.strftime("%d-%b-%y"),
       customer.accepts_marketing ? "Y" : "N", "", ""
     ] + filter_passed_by_customer(customer.id)
   end
