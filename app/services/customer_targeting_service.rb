@@ -123,11 +123,11 @@ class CustomerTargetingService
   def customer_pass_filter? customer_id
     removed_attrs&.each do |k, v|
       field_to_filter = select_field_to_filter(k, nil, customer_id)
-      return !compare_field(field_to_filter, v["condition"], v["value"])
+      return false if compare_field(field_to_filter, v["condition"], v["value"])
     end
     accepted_attrs&.each do |k, v|
       field_to_filter = select_field_to_filter(k, nil, customer_id)
-      return compare_field(field_to_filter, v["condition"], v["value"])
+      return false if !compare_field(field_to_filter, v["condition"], v["value"])
     end
     true
   end
@@ -253,16 +253,16 @@ class CustomerTargetingService
         false
       # This is for filter shipping company
       when "no"
-        return field.blank?
+        field.blank?
       when "yes"
-        return !field.blank?
+        !field.blank?
       # This is for filter zip code
       when "equal"
-        return false unless field == value
+        field == value
       when "begin_with"
-        return false if (/^#{value}/ =~ field).nil?
+        field&.start_with?(value)
       when "end_with"
-        return false if (/#{value}$/ =~ field).nil?
+        field&.end_with?(value)
       else
         false
     end
