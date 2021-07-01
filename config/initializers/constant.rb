@@ -3,7 +3,7 @@ TEST_ADDRESS_TO = "adr_8769d8839f5c16c4"
 FILTER_OPTIONS =[["Number of orders"  , "number_of_order"   ],
                  ["First order date"  , "first_order_date"  ],
                  ["Last order date"   , "last_order_date"   ],
-                #  ["Total Spend"       , "total_spend"       ],
+                 ["Order total"       , "order_total"       ],
                 #  ["Last order total"  , "last_order_total"  ],
                 #  ["Shipping country"  , "shipping_country"  ],
                 #  ["Shipping state"    , "shipping_state"    ],

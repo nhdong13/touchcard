@@ -5,7 +5,7 @@
       <option v-for="option in filterOptions" :key="option[1]" :value="option[1]">{{option[0]}}</option>
     </select>
 
-    <div class="switcher-options" v-if="['order_tag', 'discount_code'].includes(selectedFilter)">
+    <div class="switcher-options" v-if="['order_tag', 'discount_code', 'order_total'].includes(selectedFilter)">
       <span>Any orders</span>
       <switcher :value="switcherValue" @toggle="switcherToggle2" />
       <span>Last order</span>
@@ -15,7 +15,7 @@
       <option v-for="condition in filterConditions" v-if="showOption(condition[1])" :key="condition[1]" :value="condition[1]" :disabled="condition[1].includes('disable_display') || condition[1] == '' ? true : false">{{condition[0]}}</option>
     </select>
 
-    <div class="f-value" v-if="showSecondInput()">
+    <div :class="['order_tag', 'discount_code', 'order_total'].includes(selectedFilter) ? 'f-value-2' : 'f-value'" v-if="showSecondInput()">
       <datepicker class="valueInput" v-model="value1" v-if="showDateInput()" :input="combineValue()" :use-utc="true" /><!--  :disabled-dates="datePickerOptions()" /> -->
       <font-awesome-icon icon="caret-down" v-if="showDateInput()" @click="triggerDatepicker" class="datepicker-arrow middle-arrow" />
 
@@ -33,7 +33,7 @@
     <div class="f-value" v-else-if="showZipCodeInput()">
       <input type="number" class="valueInput" v-model="value1" v-if="showNumberInput()" @change="filter.value = `${value1}`" />
     </div>
-    <div class="f-value" v-else>
+    <div :class="['order_tag', 'discount_code', 'order_total'].includes(selectedFilter) ? 'f-value-2' : 'f-value'" v-else>
       <input type="text" class="valueInput" v-model="filter.value" v-if="showTextInput()" @change="filterChange" />
       <input type="number" class="valueInput" v-model="filter.value" v-else-if="showNumberInput()" @change="filterChange" @keypress="if ((filter.selectedFilter.includes('order_date') && $event.key==='.') || $event.key==='-' || $event.key==='+') $event.preventDefault()" min=0 />
 
@@ -126,8 +126,8 @@
         return this.filter.selectedCondition.toString().includes("between");
       },
       showNumberInput() {
-        return ['number_of_order', 'total_spend', 'last_order_total', 'referring_site', 'landing_site'].indexOf(this.filter.selectedFilter) > -1 ||
-               (this.selectedFilter.includes("order_date") && ["between_number", "matches_number"].indexOf(this.filter.selectedCondition) > -1) ||
+        return ['number_of_order', 'total_spend', 'referring_site', 'landing_site'].includes(this.filter.selectedFilter) ||
+               (["order_date", "order_total"].includes(this.selectedFilter) && ["between_number", "matches_number"].includes(this.filter.selectedCondition)) ||
                (this.selectedFilter == "zip_code" && ["tag_is", "begin_with", "end_with"].indexOf(this.filter.selectedCondition) > -1);
       },
       showTextInput() {
@@ -150,7 +150,7 @@
       showOption(option) {
         return option == "" ||
               (this.selectedFilter.includes("order_date") && ["before", "between_date", "after", "between_number", "matches_number", "disable_display_1", "disable_display_2"].indexOf(option) > -1) ||
-              ((['number_of_order', 'total_spend', 'last_order_total'].indexOf(this.filter.selectedFilter) > -1) && ["matches_number", "between_number"].indexOf(option) > -1) ||
+              (['number_of_order', 'last_order_total', 'any_order_total'].includes(this.filter.selectedFilter) && ["matches_number", "between_number"].includes(option)) ||
               (['shipping_country', 'shipping_state', 'shipping_city'].indexOf(this.filter.selectedFilter) > -1 && option == "from") ||
               (this.isFilter(['order_tag', 'discount_code']) && ["tag_is", "tag_contain"].indexOf(option) > -1) ||
               (this.selectedFilter == "zip_code" && ["equal", "begin_with", "end_with"].indexOf(option) > -1) ||
@@ -182,8 +182,8 @@
       fullfillFilter() {
         switch (this.selectedFilter) {
           case "order_tag":
-            return this.selectedOrderCollectionOption + this.selectedFilter
           case "discount_code":
+          case "order_total":
             return this.selectedOrderCollectionOption + this.selectedFilter
           default:
             return this.selectedFilter;
@@ -288,7 +288,7 @@
   margin-right: 10px;
   display: flex;
   align-items: center;
-  width: 272px;
+  width: 220px;
 }
 
 .switcher-options span {
@@ -303,6 +303,11 @@
 
 .f-value {
   width: 540px;
+  display: flex;
+}
+
+.f-value-2 {
+  width: 310px;
   display: flex;
 }
 

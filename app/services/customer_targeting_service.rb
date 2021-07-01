@@ -56,7 +56,7 @@ class CustomerTargetingService
   def filter_passed_by_customer customer_id
     filters_passed_render = []
     accepted_attrs&.as_json&.each do |k, v|
-      if ["shipping_country", "shipping_state", "shipping_city", "shipping_company", "number_of_order", "zip_code"].include?(k)
+      if ["shipping_country", "shipping_state", "shipping_city", "shipping_company", "number_of_order", "zip_code", "any_order_total"].include?(k)
         field_to_filter = select_field_to_filter(k, nil, customer_id)
         result = compare_field(field_to_filter, v["condition"], v["value"]) ? "X" : ""
       else
@@ -81,7 +81,7 @@ class CustomerTargetingService
   def filter_passed_by_order order
     filters_passed_render = []
     accepted_attrs&.as_json&.each do |k, v|
-      if ["last_order_date", "first_order_date", "last_order_tag", "any_order_tag", "last_discount_code", "any_discount_code"].include?(k)
+      if ["last_order_date", "first_order_date", "last_order_tag", "any_order_tag", "last_discount_code", "any_discount_code", "last_order_total"].include?(k)
         if (k.include?("last") && !is_last_order?(order)) || (k.include?("first") && !is_first_order?(order))
           result = ""
         else
@@ -129,7 +129,7 @@ class CustomerTargetingService
       field_to_filter = select_field_to_filter(k, nil, customer_id)
       return true if compare_field(field_to_filter, v["condition"], v["value"])
     end
-    true
+    false
   end
 
   def filtered_orders filter_order=nil
@@ -185,13 +185,15 @@ class CustomerTargetingService
       filter_order.discount_codes.map{|item| item['code']}
     when "any_discount_code"
       user_orders.map{|order| order.discount_codes.map{|item| item['code']}}.select{|order|order.class == Array}.flatten
+    when "last_order_total"
+      filter_order.total_price
+    when "any_order_total"
+      user_orders.sum(:total_price)
     # end
     when "total_spend"
       user_orders.sum(:total_line_items_price)
     when "last_order_total"
       user_orders.order(:processed_at).last.total_line_items_price
-    when "order_total"
-      filter_order.total_price
     when "referring_site"
       filter_order.landing_site
     when "shipping_company"
