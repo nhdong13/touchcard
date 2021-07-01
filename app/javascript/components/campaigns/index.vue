@@ -25,7 +25,7 @@
               <input id="campaign-check-all" type="checkbox" v-model="selectAll"/>
             </th>
             <th></th>
-            <th></th>
+            <th>Design</th>
             <th v-on:click="onSortByAlphabetically('sortByName', 'campaign_name')">
               Name
               <span>
