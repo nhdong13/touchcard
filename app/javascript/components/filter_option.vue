@@ -6,7 +6,8 @@
     </select>
 
     <div class="switcher-options" v-if="['order_tag', 'discount_code', 'order_total'].includes(selectedFilter)">
-      <span>Any orders</span>
+      <span v-if="selectedFilter == 'order_total'">All orders</span>
+      <span v-else>Any orders</span>
       <switcher :value="switcherValue" @toggle="switcherToggle2" />
       <span>Last order</span>
     </div>
