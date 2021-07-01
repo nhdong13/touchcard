@@ -191,19 +191,19 @@
         </div>
       </div>
     </div>
-    <input id="automation-filter-checkbox" type="checkbox" v-model="enableFiltering">
-    <label for="automation-filter-checkbox" class="noselect"><strong>Enable Filter</strong></label>
+    <!-- <input id="automation-filter-checkbox" type="checkbox" v-model="enableFiltering"> -->
+    <label for="automation-filter-checkbox" class="noselect"><strong>Customer Filters</strong></label>
     <button @click="downloadCSV"> CSV </button>
-    <div :class="[errors.filters ? 'invalid' : '' ,'filter-config nested-toggle row']" v-if="enableFiltering">
+    <div :class="[errors.filters ? 'invalid' : '' ,'filter-config nested-toggle row']">
       <div id="accepted-section">
         <div class="filter-section-title">Include these customers</div>
+        <filter-option :filter="filter" v-for="(filter, index) in acceptedFilters" :key="index" @filterChange="filterChange" @filterRemove="filterRemove" collection="accepted" :index="index" :filterConditions="filterConditions" :filterOptions="availableFilters('accepted', index)" />
         <button type="button" class="add-more-filter-btn" id="add-accepted-filter" @click="addFilter('accepted')">Add Filter</button>
-        <filter-option :filter="filter" v-for="(filter, index) in acceptedFilters" :key="index" @filterChange="filterChange" @filterRemove="filterRemove" collection="accepted" :index="index" />
       </div>
       <div id="removed-section">
         <div class="filter-section-title">Exclude these customers</div>
+        <filter-option :filter="filter" v-for="(filter, index) in removedFilters" :key="index" @filterChange="filterChange" @filterRemove="filterRemove" collection="removed" :index="index" :filterConditions="filterConditions" :filterOptions="availableFilters('removed', index)" />
         <button type="button" class="add-more-filter-btn" id="add-removed-filter" @click="addFilter">Add Filter</button>
-        <filter-option :filter="filter" v-for="(filter, index) in removedFilters" :key="index" @filterChange="filterChange" @filterRemove="filterRemove" collection="removed" :index="index" />
       </div>
       <div v-if="campaign_type =='automation'" class="automation-section">
         <strong>Send card <input type="number" min="0" max="52" v-model="automation.send_delay"> weeks after purchase</strong>
@@ -345,7 +345,9 @@
           returnAddress: false,
           campaignName: false,
           filters: false
-        }
+        },
+        filterConditions: [],
+        filterOptions: []
       }
     },
 
@@ -442,6 +444,7 @@
       }
       this.automation.send_date_end = this.automation.send_date_end || new Date()
       this.automation.send_date_start = this.automation.send_date_start || new Date()
+      this.getAllFilterValues();
     },
 
     methods: {
@@ -540,10 +543,27 @@
           });
         }
       },
+      // Get all filters and conditions
+      getAllFilterValues() {
+        axios.get("/targeting/get_filters").then((response) => {
+          this.filterOptions = response.data.filters;
+          this.filterConditions = response.data.conditions;
+        });
+      },
+      // Remove selected filters
+      availableFilters(collection, index) {
+        let filters = collection == "accepted" ? this.acceptedFilters : this.removedFilters;
+        let selectedFilters = filters.map(filter => filter.selectedFilter);
+        return this.filterOptions.filter(item => !(selectedFilters.includes(item[1]) && selectedFilters.indexOf(item[1]) != index));
+      },
       addFilter(list) {
         let defaultValue = {selectedFilter: "", selectedCondition: 0, value: null};
         this.removeEmptyFilter();
-        list == "accepted" ? this.acceptedFilters.push(defaultValue) : this.removedFilters.push(defaultValue);
+        if (list == "accepted") {
+          if (this.acceptedFilters.length < this.filterOptions.length) this.acceptedFilters.push(defaultValue);
+        } else {
+          if (this.removedFilters.length < this.filterOptions.length) this.removedFilters.push(defaultValue);
+        }
       },
       filterChange(filter, collection, index) {
         if(filter.selectedFilter == "shipping_country" && filter.selectedCondition == "from" && collection == "accepted") {
