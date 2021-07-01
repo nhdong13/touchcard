@@ -56,7 +56,7 @@ class CustomerTargetingService
   def filter_passed_by_customer customer_id
     filters_passed_render = []
     accepted_attrs&.as_json&.each do |k, v|
-      if ["shipping_country", "shipping_state", "shipping_city", "number_of_order"].include?(k)
+      if ["shipping_country", "shipping_state", "shipping_city", "shipping_company", "number_of_order", "zip_code"].include?(k)
         field_to_filter = select_field_to_filter(k, nil, customer_id)
         result = compare_field(field_to_filter, v["condition"], v["value"]) ? "X" : ""
       else
@@ -115,7 +115,9 @@ class CustomerTargetingService
 
   def get_list_customer_ids
     all_customer_ids = current_shop.orders.where.not(customer_id: nil).pluck(:customer_id).uniq
-    fit_customer_ids = all_customer_ids.filter{|id| customer_pass_filter?(id)}
+    fit_customer_ids = all_customer_ids.filter{|id|
+      customer_pass_filter?(id)
+    }
   end
 
   def customer_pass_filter? customer_id
@@ -192,6 +194,10 @@ class CustomerTargetingService
       filter_order.total_price
     when "referring_site"
       filter_order.landing_site
+    when "shipping_company"
+      customer&.default_address.company
+    when "zip_code"
+      customer&.default_address.zip
     else
       []
     end
@@ -245,6 +251,18 @@ class CustomerTargetingService
       when "tag_contain"
         value.each{|item| return true if field.include?(item)}
         false
+      # This is for filter shipping company
+      when "no"
+        field.blank?
+      when "yes"
+        !field.blank?
+      # This is for filter zip code
+      when "equal"
+        field == value
+      when "begin_with"
+        field&.start_with?(value)
+      when "end_with"
+        field&.end_with?(value)
       else
         false
     end

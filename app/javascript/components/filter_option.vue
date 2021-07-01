@@ -30,7 +30,9 @@
 
       <span class="middle-text" v-if="filter.selectedCondition == 'between_number' && filter.selectedFilter.includes('order_date')">days ago</span>
     </div>
-
+    <div class="f-value" v-else-if="showZipCodeInput()">
+      <input type="number" class="valueInput" v-model="value1" v-if="showNumberInput()" @change="filter.value = `${value1}`" />
+    </div>
     <div class="f-value" v-else>
       <input type="text" class="valueInput" v-model="filter.value" v-if="showTextInput()" @change="filterChange" />
       <input type="number" class="valueInput" v-model="filter.value" v-else-if="showNumberInput()" @change="filterChange" @keypress="if ((filter.selectedFilter.includes('order_date') && $event.key==='.') || $event.key==='-' || $event.key==='+') $event.preventDefault()" min=0 />
@@ -125,7 +127,8 @@
       },
       showNumberInput() {
         return ['number_of_order', 'total_spend', 'last_order_total', 'referring_site', 'landing_site'].indexOf(this.filter.selectedFilter) > -1 ||
-               (this.selectedFilter.includes("order_date") && ["between_number", "matches_number"].indexOf(this.filter.selectedCondition) > -1);
+               (this.selectedFilter.includes("order_date") && ["between_number", "matches_number"].indexOf(this.filter.selectedCondition) > -1) ||
+               (this.selectedFilter == "zip_code" && ["tag_is", "begin_with", "end_with"].indexOf(this.filter.selectedCondition) > -1);
       },
       showTextInput() {
         return ['referring_site', 'landing_site'].indexOf(this.filter.selectedFilter) > -1;
@@ -149,8 +152,9 @@
               (this.selectedFilter.includes("order_date") && ["before", "between_date", "after", "between_number", "matches_number", "disable_display_1", "disable_display_2"].indexOf(option) > -1) ||
               ((['number_of_order', 'total_spend', 'last_order_total'].indexOf(this.filter.selectedFilter) > -1) && ["matches_number", "between_number"].indexOf(option) > -1) ||
               (['shipping_country', 'shipping_state', 'shipping_city'].indexOf(this.filter.selectedFilter) > -1 && option == "from") ||
-              (this.isFilter(['order_tag', 'discount_code']) && ["tag_is", "tag_contain"].indexOf(option) > -1);
-              // (['order_tag', 'discount_code_used'].indexOf(this.filter.selectedFilter) > -1 && option == "find_value")
+              (this.isFilter(['order_tag', 'discount_code']) && ["tag_is", "tag_contain"].indexOf(option) > -1) ||
+              (this.selectedFilter == "zip_code" && ["equal", "begin_with", "end_with"].indexOf(option) > -1) ||
+              (this.selectedFilter == "shipping_company" && ["no", "yes"].indexOf(option) > -1)
       },
       isFilter(filterNames) {
         let correctFilter = false;
@@ -166,6 +170,8 @@
       optionChange() {
         this.resetInputValue(false);
         this.filterChange();
+        if(this.filter.selectedFilter == "shipping_company") this.filter.value = this.filter.selectedCondition
+
       },
       detectFilter() {
         this.filter.selectedFilter = this.fullfillFilter();
@@ -239,6 +245,12 @@
             return;
           }
         };
+      },
+      showZipCodeInput() {
+        return this.filter.selectedFilter == "zip_code"
+      },
+      showShippingCompanyInput() {
+        return this.filter.selectedFilter == "shipping_company"
       }
     }
   }

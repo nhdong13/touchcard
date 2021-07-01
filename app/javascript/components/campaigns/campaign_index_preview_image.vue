@@ -17,9 +17,13 @@
       </div>
     </div>
   </div>
+  <div class="flip-button" v-if="!isImagesNotAvailable">
+    <font-awesome-icon icon="reply" class="fa-flip-vertical fa-2x mt-20"/>
+  </div>
 </div>
 </template>
 <script>
+  import { isEmpty } from 'lodash'
   export default {
     name: "PreviewImage",
     props: {
@@ -31,6 +35,26 @@
         type: String,
         default: null
       }
+    },
+
+    data: function() {
+      return {
+        isFlipped: false
+      }
+    },
+
+    mounted() {
+      const _this = this
+      $(".flip-button").on("click", function() {
+        _this.isFlipped = !_this.isFlipped
+        $(this).siblings(".flip-card .flip-card-inner").toggleClass("flipped", _this.isFlipped)
+      })
+    },
+
+    methods: {
+      isImagesNotAvailable: function() {
+        return isEmpty(this.frontImage) && isEmpty(this.backImage)
+      }
     }
   }
 </script>
@@ -40,6 +64,7 @@
   height: 60px;
   border: 1px solid #f1f1f1;
   perspective: 1000px;
+  position: relative;
 }
 
 .flip-card-inner {
@@ -55,7 +80,7 @@
   }
 }
 
-.flip-card:hover .flip-card-inner {
+.flip-card .flip-card-inner.flipped {
   transform: rotateY(180deg);
 }
 
@@ -78,5 +103,19 @@
   display: flex;
   align-items: center;
   justify-content: center
+}
+
+.flip-button {
+  position: absolute;
+  top: 75%;
+  left: 85%;
+  background: rgba(255, 255, 255, 0.3);
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+
+.mt-20 {
+  margin-top: 20%;
 }
 </style>
