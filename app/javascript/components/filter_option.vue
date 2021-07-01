@@ -20,14 +20,14 @@
       <datepicker class="valueInput" v-model="value1" v-if="showDateInput()" :input="combineValue()" :use-utc="true" /><!--  :disabled-dates="datePickerOptions()" /> -->
       <font-awesome-icon icon="caret-down" v-if="showDateInput()" @click="triggerDatepicker" class="datepicker-arrow middle-arrow" />
 
-      <input type="number" class="valueInput" v-model="value1" v-if="showNumberInput()" @change="combineValue()" :placeholder="filter.selectedFilter.includes('order_date') ? 'Min. days ago' : ''" />
+      <input type="number" class="valueInput" v-model="value1" v-if="showNumberInput()" @change="combineValue()" :placeholder="numberInputPlaceholder('Min. ')" />
 
       <span class="middle-text">and</span>
 
       <datepicker class="valueInput" v-model="value2" v-if="showDateInput()" :input="combineValue()" :use-utc="true" /><!--  :disabled-dates="datePickerOptions2()" /> -->
       <font-awesome-icon icon="caret-down" v-if="showDateInput()" @click="triggerDatepicker" class="datepicker-arrow" />
 
-      <input type="number" class="valueInput" v-model="value2" v-if="showNumberInput()" @change="combineValue()" :placeholder="filter.selectedFilter.includes('order_date') ? 'Max. days ago' : ''" />
+      <input type="number" class="valueInput" v-model="value2" v-if="showNumberInput()" @change="combineValue()" :placeholder="numberInputPlaceholder('Max. ')" />
 
       <span class="middle-text" v-if="filter.selectedCondition == 'between_number' && filter.selectedFilter.includes('order_date')">days ago</span>
     </div>
@@ -128,7 +128,7 @@
       },
       showNumberInput() {
         return ['number_of_order', 'total_spend', 'referring_site', 'landing_site'].includes(this.filter.selectedFilter) ||
-               (["order_date", "order_total"].includes(this.selectedFilter) && ["between_number", "matches_number"].includes(this.filter.selectedCondition)) ||
+               (["first_order_date", "last_order_date", "order_total"].includes(this.selectedFilter) && ["between_number", "matches_number"].includes(this.filter.selectedCondition)) ||
                (this.selectedFilter == "zip_code" && ["tag_is", "begin_with", "end_with"].indexOf(this.filter.selectedCondition) > -1);
       },
       showTextInput() {
@@ -239,6 +239,11 @@
         this.filterChange();
       },
       selectFirstConditionOption() {
+        if (this.filter.selectedFilter.includes("order_total")) {
+          this.filter.selectedCondition = "between_number";
+          this.optionChange();
+          return;
+        }
         for (let condition of this.filterConditions) {
           if (this.showOption(condition[1]) && !condition[1].includes('disable_display')) {
             this.filter.selectedCondition = condition[1];
@@ -252,6 +257,17 @@
       },
       showShippingCompanyInput() {
         return this.filter.selectedFilter == "shipping_company"
+      },
+      numberInputPlaceholder(side) {
+        switch (this.selectedFilter) {
+          case 'first_order_date':
+          case 'last_order_date':
+            return side + 'days ago';
+          case 'order_total':
+            return side + 'amount';
+          default:
+            return '';
+        }
       }
     }
   }
