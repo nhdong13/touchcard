@@ -67,7 +67,7 @@
               <input id="campaign-check-all" type="checkbox" v-model="selected" :value="item.id" number/>
             </td>
             <td>
-              <span v-if="['Out of credit', 'Error'].includes(item.campaign_status)">
+              <span v-if="['Out of credit', 'Error', 'Draft'].includes(item.campaign_status)">
                 <md-switch v-model="campaignActive" class="md-primary" disabled></md-switch>
               </span>
               <span v-else>

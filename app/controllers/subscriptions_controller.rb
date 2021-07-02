@@ -27,6 +27,15 @@ class SubscriptionsController < BaseController
     end
   end
 
+  def check_user_subscription
+    respond_to do |format|
+      result = Subscription.exists?(shop_id: @current_shop.id)
+      format.html { redirect_to root_path }
+      format.json { render json: { message: result }, status: :ok }
+    end
+  end
+
+
   def show
   end
 
@@ -69,5 +78,4 @@ class SubscriptionsController < BaseController
   def update_params
     params.require(:subscription).permit(:quantity)
   end
-
 end

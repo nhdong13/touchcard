@@ -51,7 +51,9 @@ Rails.application.routes.draw do
     end
   end
 
-  resource :subscriptions, only: [:new, :create, :show, :edit, :update, :destroy]
+  resource :subscriptions, only: [:new, :create, :show, :edit, :update, :destroy] do
+    get 'check_user_subscription', on: :member
+  end
 
   resource :shops, only: [:edit, :update], path: 'settings'
   patch '/settings/campaign_filter_option', to: 'shops#set_campaign_filter_option'

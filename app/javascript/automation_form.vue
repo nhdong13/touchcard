@@ -244,22 +244,12 @@
         <md-button class="review-and-continue-btn text-white" v-on:click="saveAndReturn">Save Changes</md-button>
       </div>
       <div v-else>
-        <md-button class="cancel-btn text-white" v-on:click="cancel" >Cancel</md-button>
-        <md-button class="review-and-continue-btn text-white" v-on:click="saveAndReview">Review and continue</md-button>
+        <md-button class="cancel-btn text-white" v-on:click="returnToCampaignList" >Save and exits</md-button>
+
+        <md-button class="review-and-continue-btn text-white" v-on:click="saveAndReview" v-if="isUserHasPaymentMethod">Start Sending</md-button>
+        <md-button class="review-and-continue-btn text-white" v-on:click="goToCheckoutPage" v-else>Add Payment</md-button>
       </div>
     </div>
-    <!-- <div>
-      <cancel-campaign-dialog
-        :md-active.sync="isCancel"
-        title="Cancel?"
-        content="This action can not be undone and you will lose all progress. Are you sure to continue?"
-        confirm-text="Cancel anyway"
-        cancel-text="No, go back"
-        @onCancel="onCancel"
-        @onConfirm="onConfirm"
-        v-if="isEditExistCampaign"
-      />
-    </div> -->
   </div>
 </template>
 
@@ -314,20 +304,19 @@
       }
 
       // Handling event where the user exit page without click Discard or Save Changes button
+      const _this = this
       if(this.isEditExistCampaign) {
-        const _this = this
         window.addEventListener("beforeunload", function (e) {
           _this.disableCampaign(_this.automation.id)
-        });
+        })
         window.addEventListener("popstate", function (e) {
           _this.disableCampaign(_this.automation.id)
-        });
+        })
       }
-
     },
 
     mounted: function() {
-      if(this.automation.campaign_status == "draft" && !this.isEditExistCampaign) {
+      if(!this.isEditExistCampaign) {
         window.setInterval(() => {
           this.saveAutomation()
         }, 1000)
@@ -354,8 +343,8 @@
         isCancel: false,
         isStartDateEqualCurrentDate: false,
         saved_automation: {}, // Use with autosave, play as backup when user don't want to change campaign any more
-        saved_filters: [],
         isEditExistCampaign: true,
+        isUserHasPaymentMethod: false,
         errors: {
           endDate: false,
           uploadedFrontDesign: false,
@@ -628,13 +617,6 @@
           console.log(error)
         });
       },
-      onCancel: function() {
-        this.isCancel = false
-      },
-      onConfirm: function() {
-        Turbolinks.clearCache()
-        Turbolinks.visit('/campaigns', {flush: true, cacheRequest: false});
-      },
       saveAutomation: function() {
         if (this.enableFiltering) this.collectFilters();
         // This will minimize the overhead of clone the automation
@@ -673,7 +655,7 @@
         return JSON.stringify(a) === JSON.stringify(b)
       },
 
-      save: function() {
+      saveWithValidation: function() {
         this.validateForm()
         this.$nextTick(() => {
           $(".invalid")[0].scrollIntoView({
@@ -688,9 +670,13 @@
         return true
       },
 
+      saveWithoutValidation: function() {
+        this.requestSave()
+      },
+
       saveAndReturn: function() {
         // If there're some errors in save process => return
-        if(!this.save()) return
+        if(!this.saveWithValidation()) return
 
         this.returnToCampaignList()
       },
@@ -699,7 +685,7 @@
       // NOTE: This likely change in future
       saveAndReview: function() {
         // If there're some errors in save process => return
-        if(!this.save()) return
+        if(!this.saveWithValidation()) return
 
         console.log("Go to summary page")
       },
@@ -781,23 +767,11 @@
       },
       // We can perform this check because autosave every second
       isCampaignNew: function() {
-        const createdAt = new Date(this.automation.created_at)
-        const updatedAt = new Date(this.automation.updated_at)
-        return createdAt.getTime() == updatedAt.getTime() ? true : false
+        return this.automation.campaign_status == "draft"
       },
 
       returnToCampaignList: function() {
         Turbolinks.visit('/campaigns')
-      },
-
-      // NOTE: This likely change in future
-      cancel: function() {
-        if(!this.isEditExistCampaign) {
-          this.saveAutomation()
-          Turbolinks.visit('/campaigns')
-        } else {
-          this.isCancel = true
-        }
       },
 
       disableCampaign: function(campaign_id) {
@@ -805,6 +779,10 @@
         axios.put(`/automations/${campaign_id}.json`, { card_order: {enabled: false} }).then(function(response) {
           _this.$forceUpdate()
         })
+      },
+
+      goToCheckoutPage: function() {
+        Turbolinks.visit('/subscriptions/new')
       }
     }
   }
