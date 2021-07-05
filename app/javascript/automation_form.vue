@@ -246,8 +246,8 @@
       <div v-else>
         <md-button class="cancel-btn text-white" v-on:click="returnToCampaignList" >Save and exits</md-button>
 
-        <md-button class="review-and-continue-btn text-white" v-on:click="saveAndReview" v-if="isUserHasPaymentMethod">Start Sending</md-button>
-        <md-button class="review-and-continue-btn text-white" v-on:click="goToCheckoutPage" v-else>Add Payment</md-button>
+        <md-button class="review-and-continue-btn text-white" v-on:click="saveAndStartSending" v-if="isUserHasPaymentMethod">Start Sending</md-button>
+        <md-button class="review-and-continue-btn text-white" v-on:click="saveAndCheckout" v-else>Add Payment</md-button>
       </div>
     </div>
   </div>
@@ -285,6 +285,9 @@
       backUrl: {
         type: String,
         required: true
+      },
+      isUserHasPaymentMethod: {
+        type: Boolean
       }
     },
     created() {
@@ -302,7 +305,6 @@
           this.disabledDates.to = today
         }
       }
-
       // Handling event where the user exit page without click Discard or Save Changes button
       const _this = this
       if(this.isEditExistCampaign) {
@@ -313,6 +315,8 @@
           _this.disableCampaign(_this.automation.id)
         })
       }
+
+      console.log(this.id)
     },
 
     mounted: function() {
@@ -344,7 +348,6 @@
         isStartDateEqualCurrentDate: false,
         saved_automation: {}, // Use with autosave, play as backup when user don't want to change campaign any more
         isEditExistCampaign: true,
-        isUserHasPaymentMethod: false,
         errors: {
           endDate: false,
           uploadedFrontDesign: false,
@@ -681,13 +684,20 @@
         this.returnToCampaignList()
       },
 
-
-      // NOTE: This likely change in future
-      saveAndReview: function() {
+      saveAndStartSending: function() {
         // If there're some errors in save process => return
         if(!this.saveWithValidation()) return
 
-        console.log("Go to summary page")
+        axios.get(`/automations/${this.id}/start_sending`).then(function(response) {
+          Turbolinks.visit('/campaigns')
+        })
+      },
+
+      saveAndCheckout: function() {
+        // If there're some errors in save process => return
+        if(!this.saveWithValidation()) return
+
+        this.goToCheckoutPage()
       },
 
       validateForm: function() {

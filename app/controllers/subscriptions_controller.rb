@@ -1,5 +1,5 @@
 class SubscriptionsController < BaseController
-  before_action :set_subscription, only: [:show, :edit, :update, :destroy]
+  before_action :set_subscription, only: [:show, :edit, :update, :destroy, :check_user_subscription]
 
   def new
     @subscription = Subscription.new
@@ -20,7 +20,7 @@ class SubscriptionsController < BaseController
     if @subscription.save
       @subscription.shop.top_up
       flash[:notice] = "Subscription successfully created"
-      render :create
+      redirect_to automations_path
     else
       flash[:error] = @subscription.errors.full_messages.join("\n")
       render :new
@@ -29,7 +29,7 @@ class SubscriptionsController < BaseController
 
   def check_user_subscription
     respond_to do |format|
-      result = Subscription.exists?(shop_id: @current_shop.id)
+      result = @subscription.nil?
       format.html { redirect_to root_path }
       format.json { render json: { message: result }, status: :ok }
     end

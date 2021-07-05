@@ -1,6 +1,6 @@
 class PaymentService
 	def self.pay_postcard_for_campaign_monthly shop, card_order, postcard
-		return false if postcard.paid?
+		return false if postcard.paid
 		
 		if shop.credit < postcard.cost 
 			card_order.out_of_credit!
@@ -18,8 +18,9 @@ class PaymentService
 			card_order.budget_used += postcard.cost
 			card_order.save!
 		end
-
 		shop.credit -= postcard.cost
+    postcard.paid = true
+    postcard.save!
 		shop.save!
 		return true
 	end

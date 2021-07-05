@@ -50,7 +50,6 @@ document.addEventListener('turbolinks:load', () => {
   var editSubscriptionElement = document.getElementById('edit-subscription-form');
 
   if (automationElement != null) {
-
     const automationVueApp = new Vue({
       el: automationElement,
       data: function() {
@@ -62,10 +61,11 @@ document.addEventListener('turbolinks:load', () => {
           automation: tmp_automation,
           returnAddress: JSON.parse(automationElement.dataset.returnAddress),
           awsSignEndpoint: automationElement.dataset.awsSignEndpoint,
-          backUrl: automationElement.dataset.backUrl
+          backUrl: automationElement.dataset.backUrl,
+          isUserHasPaymentMethod: automationElement.dataset.isUserHasPaymentMethod == "true"
         }
       },
-      template: '<automation-form :id="id" :automation="automation" :return-address="returnAddress" :aws-sign-endpoint="awsSignEndpoint" :back-url="backUrl"></automation-form>',
+      template: '<automation-form :id="id" :automation="automation" :return-address="returnAddress" :aws-sign-endpoint="awsSignEndpoint" :back-url="backUrl" :is-user-has-payment-method="isUserHasPaymentMethod"></automation-form>',
       components: {
         'automation-form': AutomationForm
       }
