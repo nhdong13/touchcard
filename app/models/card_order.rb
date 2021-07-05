@@ -106,8 +106,6 @@ class CardOrder < ApplicationRecord
       if !self.previous_campaign_status.nil?
         previous_campaign_status = self.previous_campaign_status
         update(campaign_status: previous_campaign_status)
-      else
-        update(campaign_status: :sending)
       end
     else
       # must convert enum value to integer to persist it

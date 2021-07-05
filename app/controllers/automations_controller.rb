@@ -1,5 +1,5 @@
 class AutomationsController < BaseController
-  before_action :set_automation, only: [:edit, :update, :show, :destroy]
+  before_action :set_automation, only: [:edit, :update, :show, :destroy, :start_sending]
   before_action :set_aws_sign_endpoint, only: [:new, :edit]
 
   def index
@@ -70,7 +70,6 @@ class AutomationsController < BaseController
     respond_to do |format|
       if @automation.update(automation_params)
         FetchHistoryOrdersJob.perform_now(@current_shop, @current_shop.post_sale_orders.last.send_delay) if @automation.enabled?
-        GeneratePostcardJob.perform_later(@current_shop, @automation) if @automation.enabled?
         SendAllHistoryCardsJob.perform_later(@current_shop) if @automation.enabled?
         flash[:notice] = "Automation successfully updated"
         format.html { redirect_to automations_path }
@@ -101,6 +100,13 @@ class AutomationsController < BaseController
     respond_to do |format|
       format.json { render json: { message: "Delete successfully" }, status: :ok }
     end
+  end
+
+  def start_sending
+    @automation.update(enabled: true)
+    GeneratePostcardJob.perform_later(@current_shop, @automation)
+    SchedulingPostcardJob.perform_later(@automation)
+    SendAllCardsJob.perform_later(@automation)
   end
 
   private

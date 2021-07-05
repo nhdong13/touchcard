@@ -61,6 +61,7 @@ Rails.application.routes.draw do
 
   resources :automations, only: [:new, :index, :show, :edit, :update, :destroy] do
     # get 'select_type', :on => :collection
+    get 'start_sending', :on => :member
   end
 
   resources :targeting, only: [:index] do
