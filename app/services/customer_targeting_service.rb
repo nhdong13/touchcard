@@ -8,7 +8,9 @@ class CustomerTargetingService
   end
 
   def build_csv list
-    @csv = CustomersExportService.new(list, accepted_attrs&.keys).create_xlsx
+    accepted_attrs_shorthand = []
+    accepted_attrs&.each{|k, v| accepted_attrs_shorthand << shorthand(k, v)}
+    @csv = CustomersExportService.new(list, accepted_attrs_shorthand).create_xlsx
   end
 
   def export_customer_list
@@ -47,16 +49,16 @@ class CustomerTargetingService
       customer.default_address&.address1, customer.default_address&.city,
       customer.default_address&.province_code, customer.default_address&.country_code,
       customer.default_address&.zip, customer.default_address&.company, "",
-      "", "", "", "", "", customer.orders_count, "", "$#{customer.total_spent}", customer.tags,
+      "", "", "", "", "", customer.orders_count, "", "$#{customer.total_spent * 100}", customer.tags,
       "", "", "", "", customer.postcards.count, customer.postcards.last&.date_sent&.strftime("%d-%b-%y"),
-      customer.accepts_marketing ? "Y" : "N", "", ""
+      customer.accepts_marketing ? "Y" : "N", "", "", ""
     ] + filter_passed_by_customer(customer.id)
   end
 
   def filter_passed_by_customer customer_id
     filters_passed_render = []
     accepted_attrs&.as_json&.each do |k, v|
-      if ["shipping_country", "shipping_state", "shipping_city", "shipping_company", "number_of_order", "zip_code", "any_order_total"].include?(k)
+      if ["shipping_country", "shipping_state", "shipping_city", "shipping_company", "number_of_order", "zip_code", "all_order_total"].include?(k)
         field_to_filter = select_field_to_filter(k, nil, customer_id)
         result = compare_field(field_to_filter, v["condition"], v["value"]) ? "X" : ""
       else
@@ -73,8 +75,8 @@ class CustomerTargetingService
       order.customer&.default_address&.province_code, order.customer&.default_address&.country_code,
       order.customer&.default_address&.zip, order.customer&.default_address&.company, "",
       order.id, order.processed_at&.strftime("%d-%b-%y"), "", "", "", "", order.line_items&.count,
-      order.total_price, order.tags, order.referring_site, order.landing_site, order.discount_codes.map{|code| code['code']}.join(", "),
-      order.total_discounts, "", "", "", order.financial_status, order.fulfillment_status
+      "$#{order.total_price}", order.tags, order.referring_site, order.landing_site, order.discount_codes.map{|code| code['code']}.join(", "),
+      order.total_discounts, "", "", "", order.financial_status, order.fulfillment_status, ""
     ] + filter_passed_by_order(order)
   end
 
@@ -108,7 +110,7 @@ class CustomerTargetingService
   def item_line_data item
     [ item.order&.customer&.id, "Order Item", "", "", "", "", "", "", "", "", "",
       item.order&.id, item.order&.processed_at&.strftime("%d-%b-%y"), item.title, item.vendor,
-      item.variant_title, "", item.quantity, "", "", "", "", "", "", "", "", "", "", ""
+      item.variant_title, "", item.quantity, "", "", "", "", "", "", "", "", "", "", "", ""
     ] + Array.new(accepted_attrs&.keys&.length, "")
   end
   # End build export data section
@@ -175,26 +177,24 @@ class CustomerTargetingService
       customer&.default_address.province_code
     when "shipping_city"
       customer&.default_address.city
-    # end
-    # ongoing
     when "last_order_tag"
-      filter_order.tags.split(", ")
+      filter_order.tags&.split(", ")
     when "any_order_tag"
       user_orders.map{|order| order.tags&.split(', ')}.flatten
     when "last_discount_code"
-      filter_order.discount_codes.map{|item| item['code']}
+      filter_order.discount_codes.map{|item| item['code']} if filter_order.discount_codes.class == Array
     when "any_discount_code"
-      user_orders.map{|order| order.discount_codes.map{|item| item['code']}}.select{|order|order.class == Array}.flatten
+      user_orders.map{|order| order.discount_codes.map{|item| item['code']} if order.discount_codes.class == Array}.select{|order|order.class == Array}.flatten
     when "last_order_total"
       filter_order.total_price
-    when "any_order_total"
+    when "all_order_total"
       user_orders.sum(:total_price)
     # end
-    when "total_spend"
-      user_orders.sum(:total_line_items_price)
-    when "last_order_total"
-      user_orders.order(:processed_at).last.total_line_items_price
+    # ongoing
+    # end
     when "referring_site"
+      filter_order.referring_site
+    when "landing_site"
       filter_order.landing_site
     when "shipping_company"
       customer&.default_address.company
@@ -279,6 +279,48 @@ class CustomerTargetingService
     #   )
   end
 
+  def shorthand key, value
+    shorthand = case key.to_s
+    when "number_of_order"
+      "ORD"
+    when "last_order_date"
+      "LST-ORD-DATE"
+    when "first_order_date"
+      "FST-ORD-DATE"
+    when "last_order_total"
+      "LST-ORD-TTL"
+    when "all_order_total"
+      "TTL-SPND"
+    else
+      ""
+    end
+    shorthand += ": " + case value["condition"]
+    when "before"
+      "<" + value["value"].to_date.strftime("%d-%b-%y")
+    when "after"
+      ">" + value["value"].to_date.strftime("%d-%b-%y")
+    when "between_date"
+      date_1 = value["value"].split("&")[0].to_date.strftime("%d-%b-%y")
+      date_2 = value["value"].split("&")[1].to_date.strftime("%d-%b-%y")
+      date_1 + " - " + date_2
+    when "matches_number"
+      if key.include?("order_date")
+        value["value"].to_s + " days"
+      else
+        value["value"].to_s
+      end
+    when "between_number"
+      value_1 = value["value"].split("&")[0]
+      value_2 = value["value"].split("&")[1]
+      if key.include?("order_date")
+        value_1 + "-" + value_2 + " days"
+      else
+        value_1 + "-" + value_2
+      end
+    else
+      ""
+    end
+  end
   # get customer field for csv export
   def get_customer_detail customer
     customer_detail = customer.default_address

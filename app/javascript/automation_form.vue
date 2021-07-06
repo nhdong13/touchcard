@@ -192,7 +192,7 @@
       </div>
     </div>
     <!-- <input id="automation-filter-checkbox" type="checkbox" v-model="enableFiltering"> -->
-    <label for="automation-filter-checkbox" class="noselect"><strong>Customer Filters</strong></label>
+    <h2 class="d-inline-block">Customer Filters</h2>
     <button @click="downloadCSV"> CSV </button>
     <div :class="[errors.filters ? 'invalid' : '' ,'filter-config nested-toggle row']">
       <div id="accepted-section">
@@ -330,7 +330,7 @@
     data: function() {
       return {
         onSelectState: this.returnAddress.state,
-        enableFiltering: (this.automation.filters_attributes.length > 0),
+        enableFiltering: true,
         enableAddReturnAddress: false,
         acceptedFilters: [],
         removedFilters: [],
@@ -389,12 +389,12 @@
     watch: {
       enableFiltering: function(enable) {
         if (enable) {
-          const default_min_max = {minimum: 10, maximum: 99999};
+          const default_value = {accepted: {}, removed: {}};
           if (this.automation.filters_attributes.length > 0) {
             let last_index = this.automation.filters_attributes.length-1;
-            this.automation.filters_attributes[last_index].filter_data = default_min_max;
+            this.automation.filters_attributes[last_index].filter_data = default_value;
           } else {
-            this.automation.filters_attributes = [{ filter_data: default_min_max}];
+            this.automation.filters_attributes = [{ filter_data: default_value}];
           }
         } else {
           if (this.automation.filters_attributes.length > 0) {
@@ -924,5 +924,9 @@
 
   .invalid {
     border: 1px solid red;
+  }
+  
+  .d-inline-block {
+    display: inline-block;
   }
 </style>
