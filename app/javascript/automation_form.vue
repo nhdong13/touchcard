@@ -316,7 +316,6 @@
         })
       }
 
-      console.log(this.id)
     },
 
     mounted: function() {
@@ -685,6 +684,7 @@
             behavior: "smooth",
             block: "start"
           })
+          console.log($(".invalid"))
         })
         if(!this.isFormValid()) return false
         if(this.automation.campaign_status != "draft") {
