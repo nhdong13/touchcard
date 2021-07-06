@@ -6,7 +6,7 @@ class SchedulingPostcardJob < ActiveJob::Base
     begin
       result = true
       # Get postcard paid
-      campaign.postcards.each do |postcard|
+      campaign.postcards.find_each do |postcard|
         result = PaymentService.pay_postcard_for_campaign_monthly campaign.shop, campaign, postcard
         break if !result
       end
