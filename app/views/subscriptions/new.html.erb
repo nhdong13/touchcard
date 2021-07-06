@@ -45,7 +45,7 @@
       <% end %>
 
       <% if @current_shop.is_card_registered %>
-        <%= form.submit value: "Submit", class: "mdc-button mdc-button--raised" %>
+        <%= form.submit value: "Buy Now", class: "mdc-button mdc-button--raised" %>
       <% else %>
         <%= hidden_field_tag(:stripeToken) %>
         <button class="mdc-button mdc-button--raised" @click="checkoutSubmit">Buy Now</button>

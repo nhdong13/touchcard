@@ -103,9 +103,17 @@ class CardOrder < ApplicationRecord
 
   def update_campaign_status
     if enabled
-      self.sending!
+      if !self.previous_campaign_status.nil?
+        previous_campaign_status = self.previous_campaign_status
+        update(campaign_status: previous_campaign_status)
+      end
     else
-      self.paused!
+      # must convert enum value to integer to persist it
+      saved_campaign_status = CardOrder.campaign_statuses[self.campaign_status]
+      update(
+        previous_campaign_status: saved_campaign_status,
+        campaign_status: :paused
+      )
     end
   end
 

@@ -8,7 +8,7 @@ class Postcard < ApplicationRecord
   belongs_to :card_order
   belongs_to :order, optional: true
   belongs_to :customer
-  belongs_to :postcard_trigger, polymorphic: true
+  belongs_to :postcard_trigger, polymorphic: true # Use Postcard's card_order
   has_one :shop, through: :card_order
   has_many :orders
 
@@ -62,7 +62,7 @@ class Postcard < ApplicationRecord
         next
       end
     end
-    todays_cards.size - num_failed
+    {card_sent_amount: todays_cards.size - num_failed, total_card: todays_cards.size}
   end
 
   def self.send_all_history_cards(shop)
@@ -168,6 +168,7 @@ class Postcard < ApplicationRecord
   def return_address
     if card_order.international
       return_address = card_order.return_address
+
       return {} unless return_address
       {
         name: return_address.name[0...40],
