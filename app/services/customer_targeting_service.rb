@@ -8,7 +8,9 @@ class CustomerTargetingService
   end
 
   def build_csv list
-    @csv = CustomersExportService.new(list, accepted_attrs&.keys).create_xlsx
+    accepted_attrs_shorthand = []
+    accepted_attrs&.each{|k, v| accepted_attrs_shorthand << shorthand(k, v)}
+    @csv = CustomersExportService.new(list, accepted_attrs_shorthand).create_xlsx
   end
 
   def export_customer_list
@@ -49,7 +51,7 @@ class CustomerTargetingService
       customer.default_address&.zip, customer.default_address&.company, "",
       "", "", "", "", "", customer.orders_count, "", "$#{customer.total_spent}", customer.tags,
       "", "", "", "", customer.postcards.count, customer.postcards.last&.date_sent&.strftime("%d-%b-%y"),
-      customer.accepts_marketing ? "Y" : "N", "", ""
+      customer.accepts_marketing ? "Y" : "N", "", "", ""
     ] + filter_passed_by_customer(customer.id)
   end
 
@@ -74,7 +76,7 @@ class CustomerTargetingService
       order.customer&.default_address&.zip, order.customer&.default_address&.company, "",
       order.id, order.processed_at&.strftime("%d-%b-%y"), "", "", "", "", order.line_items&.count,
       order.total_price, order.tags, order.referring_site, order.landing_site, order.discount_codes.map{|code| code['code']}.join(", "),
-      order.total_discounts, "", "", "", order.financial_status, order.fulfillment_status
+      order.total_discounts, "", "", "", order.financial_status, order.fulfillment_status, ""
     ] + filter_passed_by_order(order)
   end
 
@@ -108,7 +110,7 @@ class CustomerTargetingService
   def item_line_data item
     [ item.order&.customer&.id, "Order Item", "", "", "", "", "", "", "", "", "",
       item.order&.id, item.order&.processed_at&.strftime("%d-%b-%y"), item.title, item.vendor,
-      item.variant_title, "", item.quantity, "", "", "", "", "", "", "", "", "", "", ""
+      item.variant_title, "", item.quantity, "", "", "", "", "", "", "", "", "", "", "", ""
     ] + Array.new(accepted_attrs&.keys&.length, "")
   end
   # End build export data section
@@ -279,6 +281,48 @@ class CustomerTargetingService
     #   )
   end
 
+  def shorthand key, value
+    shorthand = case key.to_s
+    when "number_of_order"
+      "ORD"
+    when "last_order_date"
+      "LST-ORD-DATE"
+    when "first_order_date"
+      "FST-ORD-DATE"
+    when "last_order_total"
+      "LST-ORD-TTL"
+    when "any_order_total"
+      "TTL-SPND"
+    else
+      ""
+    end
+    shorthand += ": " + case value["condition"]
+    when "before"
+      "<" + value["value"].to_date.strftime("%d-%b-%y")
+    when "after"
+      ">" + value["value"].to_date.strftime("%d-%b-%y")
+    when "between_date"
+      date_1 = value["value"].split("&")[0].to_date.strftime("%d-%b-%y")
+      date_2 = value["value"].split("&")[1].to_date.strftime("%d-%b-%y")
+      date_1 + " - " + date_2
+    when "matches_number"
+      if key.include?("order_date")
+        value["value"] + " days"
+      else
+        value["value"]
+      end
+    when "between_number"
+      value_1 = value["value"].split("&")[0]
+      value_2 = value["value"].split("&")[1]
+      if key.include?("order_date")
+        value_1 + "-" + value_2 + " days"
+      else
+        value_1 + "-" + value_2
+      end
+    else
+      ""
+    end
+  end
   # get customer field for csv export
   def get_customer_detail customer
     customer_detail = customer.default_address

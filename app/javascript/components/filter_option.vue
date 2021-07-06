@@ -17,14 +17,14 @@
     </select>
 
     <div :class="['order_tag', 'discount_code', 'order_total'].includes(selectedFilter) ? 'f-value-2' : 'f-value'" v-if="showSecondInput()">
-      <datepicker class="valueInput" v-model="value1" v-if="showDateInput()" :input="combineValue()" :use-utc="true" /><!--  :disabled-dates="datePickerOptions()" /> -->
+      <datepicker class="valueInput" v-model="value1" v-if="showDateInput()" @input="combineValue()" :use-utc="true" /><!--  :disabled-dates="datePickerOptions()" /> -->
       <font-awesome-icon icon="caret-down" v-if="showDateInput()" @click="triggerDatepicker" class="datepicker-arrow middle-arrow" />
 
       <input type="number" class="valueInput" v-model="value1" v-if="showNumberInput()" @change="combineValue()" :placeholder="numberInputPlaceholder('Min. ')" />
 
       <span class="middle-text">and</span>
 
-      <datepicker class="valueInput" v-model="value2" v-if="showDateInput()" :input="combineValue()" :use-utc="true" /><!--  :disabled-dates="datePickerOptions2()" /> -->
+      <datepicker class="valueInput" v-model="value2" v-if="showDateInput()" @input="combineValue()" :use-utc="true" /><!--  :disabled-dates="datePickerOptions2()" /> -->
       <font-awesome-icon icon="caret-down" v-if="showDateInput()" @click="triggerDatepicker" class="datepicker-arrow" />
 
       <input type="number" class="valueInput" v-model="value2" v-if="showNumberInput()" @change="combineValue()" :placeholder="numberInputPlaceholder('Max. ')" />
