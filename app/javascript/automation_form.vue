@@ -680,11 +680,11 @@
       saveWithValidation: function() {
         this.validateForm()
         this.$nextTick(() => {
+          if(isEmpty($(".invalid"))) return
           $(".invalid")[0].scrollIntoView({
             behavior: "smooth",
             block: "start"
           })
-          console.log($(".invalid"))
         })
         if(!this.isFormValid()) return false
         if(this.automation.campaign_status != "draft") {
