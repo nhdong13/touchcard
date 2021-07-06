@@ -2,7 +2,7 @@ class SendAllCardsJob < ActiveJob::Base
   queue_as :default
 
   def perform campaign
-    return if campaign.out_of_credit? || campaign.error? || campaign.paused?
+    return unless (campaign.scheduled? || campaign.sending?)
     campaign.sending!
     campaign.save!
     result = Postcard.send_all

@@ -2,6 +2,8 @@ class GeneratePostcardJob < ActiveJob::Base
 	queue_as :default
 
 	def perform shop, campaign
+    return unless (campaign.draft? || campaign.processing?)
+
     shop.new_sess
 
     campaign.processing!
@@ -26,9 +28,10 @@ class GeneratePostcardJob < ActiveJob::Base
       customers.each do |c|
         customer = Customer.from_shopify!(c)
         # If customer don't pass filter then skip
-        next unless customer_targeting_service.customer_pass_filter? customer.id ||
+        next unless (customer_targeting_service.customer_pass_filter? customer.id ||
                     !(customer.international? ^ campaign.international) ||
                     !existing_customers.exists?(customer_id: customer.id)
+                    )
 
         postcard = Postcard.new
         # postcard.card_order = campaign
