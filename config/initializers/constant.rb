@@ -1,10 +1,10 @@
 LOB_API_VER = "2020-02-11"
 TEST_ADDRESS_TO = "adr_8769d8839f5c16c4"
-FILTER_OPTIONS =[["Number of orders"  , "number_of_order"   ],
-                 ["First order date"  , "first_order_date"  ],
-                 ["Last order date"   , "last_order_date"   ],
-                 ["Order total"       , "order_total"       ],
-                #  ["Last order total"  , "last_order_total"  ],
+FILTER_OPTIONS =[["Number of orders"         , "number_of_order"   ],
+                 ["First order date"         , "first_order_date"  ],
+                 ["Last order date"          , "last_order_date"   ],
+                 ["Total spent on last order", "last_order_total"  ],
+                 ["Total spent on all order" , "all_order_total"  ],
                 #  ["Shipping country"  , "shipping_country"  ],
                 #  ["Shipping state"    , "shipping_state"    ],
                 #  ["Shipping city"     , "shipping_city"     ],

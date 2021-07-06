@@ -192,7 +192,7 @@
       </div>
     </div>
     <!-- <input id="automation-filter-checkbox" type="checkbox" v-model="enableFiltering"> -->
-    <label for="automation-filter-checkbox" class="noselect"><strong>Customer Filters</strong></label>
+    <h2 class="d-inline-block">Customer Filters</h2>
     <button @click="downloadCSV"> CSV </button>
     <div :class="[errors.filters ? 'invalid' : '' ,'filter-config nested-toggle row']">
       <div id="accepted-section">
@@ -889,5 +889,9 @@
 
   .invalid {
     border: 1px solid red;
+  }
+  
+  .d-inline-block {
+    display: inline-block;
   }
 </style>

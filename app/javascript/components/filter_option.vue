@@ -5,9 +5,8 @@
       <option v-for="option in filterOptions" :key="option[1]" :value="option[1]">{{option[0]}}</option>
     </select>
 
-    <div class="switcher-options" v-if="['order_tag', 'discount_code', 'order_total'].includes(selectedFilter)">
-      <span v-if="selectedFilter == 'order_total'">All orders</span>
-      <span v-else>Any orders</span>
+    <div class="switcher-options" v-if="['order_tag', 'discount_code'].includes(selectedFilter)">
+      <span>Any orders</span>
       <switcher :value="switcherValue" @toggle="switcherToggle2" />
       <span>Last order</span>
     </div>
@@ -16,30 +15,30 @@
       <option v-for="condition in filterConditions" v-if="showOption(condition[1])" :key="condition[1]" :value="condition[1]" :disabled="condition[1].includes('disable_display') || condition[1] == '' ? true : false">{{condition[0]}}</option>
     </select>
 
-    <div :class="['order_tag', 'discount_code', 'order_total'].includes(selectedFilter) ? 'f-value-2' : 'f-value'" v-if="showSecondInput()">
+    <div :class="['order_tag', 'discount_code'].includes(selectedFilter) ? 'f-value-2' : 'f-value'" v-if="showSecondInput()">
       <datepicker class="valueInput" v-model="value1" v-if="showDateInput()" @input="combineValue()" :use-utc="true" /><!--  :disabled-dates="datePickerOptions()" /> -->
-      <font-awesome-icon icon="caret-down" v-if="showDateInput()" @click="triggerDatepicker" class="datepicker-arrow middle-arrow" />
+      <font-awesome-icon icon="chevron-down" v-if="showDateInput()" @click="triggerDatepicker" class="datepicker-arrow middle-arrow" />
 
-      <input type="number" class="valueInput" v-model="value1" v-if="showNumberInput()" @change="combineValue()" :placeholder="numberInputPlaceholder('Min. ')" />
+      <input type="number" class="valueInput" v-model="value1" v-if="showNumberInput()" @change="combineValue()" :placeholder="numberInputPlaceholder('Min. ')" @keypress="preventDecimal($event)" min=0 />
 
       <span class="middle-text">and</span>
 
       <datepicker class="valueInput" v-model="value2" v-if="showDateInput()" @input="combineValue()" :use-utc="true" /><!--  :disabled-dates="datePickerOptions2()" /> -->
-      <font-awesome-icon icon="caret-down" v-if="showDateInput()" @click="triggerDatepicker" class="datepicker-arrow" />
+      <font-awesome-icon icon="chevron-down" v-if="showDateInput()" @click="triggerDatepicker" class="datepicker-arrow" />
 
-      <input type="number" class="valueInput" v-model="value2" v-if="showNumberInput()" @change="combineValue()" :placeholder="numberInputPlaceholder('Max. ')" />
+      <input type="number" class="valueInput" v-model="value2" v-if="showNumberInput()" @change="combineValue()" :placeholder="numberInputPlaceholder('Max. ')" @keypress="preventDecimal($event)" min=0 />
 
       <span class="middle-text" v-if="filter.selectedCondition == 'between_number' && filter.selectedFilter.includes('order_date')">days ago</span>
     </div>
     <div class="f-value" v-else-if="showZipCodeInput()">
       <input type="number" class="valueInput" v-model="value1" v-if="showNumberInput()" @change="filter.value = `${value1}`" />
     </div>
-    <div :class="['order_tag', 'discount_code', 'order_total'].includes(selectedFilter) ? 'f-value-2' : 'f-value'" v-else>
+    <div :class="['order_tag', 'discount_code'].includes(selectedFilter) ? 'f-value-2' : 'f-value'" v-else>
       <input type="text" class="valueInput" v-model="filter.value" v-if="showTextInput()" @change="filterChange" />
-      <input type="number" class="valueInput" v-model="filter.value" v-else-if="showNumberInput()" @change="filterChange" @keypress="if ((filter.selectedFilter.includes('order_date') && $event.key==='.') || $event.key==='-' || $event.key==='+') $event.preventDefault()" min=0 />
+      <input type="number" class="valueInput" v-model="filter.value" v-else-if="showNumberInput()" @change="filterChange" @keypress="preventDecimal($event)" min=0 />
 
       <datepicker class="valueInput" v-model="filter.value" v-if="showDateInput()" @change="filterChange" :use-utc="true" />
-      <font-awesome-icon icon="caret-down" v-if="showDateInput()" @click="triggerDatepicker" class="datepicker-arrow" />
+      <font-awesome-icon icon="chevron-down" v-if="showDateInput()" @click="triggerDatepicker" class="datepicker-arrow" />
 
       <treeselect class="valueInput" v-model="filter.value" v-if="showCountrySelect()" :multiple="true" :options="countriesList" placeholder="Any country" />
 
@@ -127,8 +126,8 @@
         return this.filter.selectedCondition.toString().includes("between");
       },
       showNumberInput() {
-        return ['number_of_order', 'total_spend', 'referring_site', 'landing_site'].includes(this.filter.selectedFilter) ||
-               (["first_order_date", "last_order_date", "order_total"].includes(this.selectedFilter) && ["between_number", "matches_number"].includes(this.filter.selectedCondition)) ||
+        return ['number_of_order', 'total_spend', 'referring_site', 'landing_site', 'last_order_total', 'all_order_total'].includes(this.filter.selectedFilter) ||
+               (["first_order_date", "last_order_date"].includes(this.selectedFilter) && ["between_number", "matches_number"].includes(this.filter.selectedCondition)) ||
                (this.selectedFilter == "zip_code" && ["tag_is", "begin_with", "end_with"].indexOf(this.filter.selectedCondition) > -1);
       },
       showTextInput() {
@@ -151,7 +150,7 @@
       showOption(option) {
         return option == "" ||
               (this.selectedFilter.includes("order_date") && ["before", "between_date", "after", "between_number", "matches_number", "disable_display_1", "disable_display_2"].indexOf(option) > -1) ||
-              (['number_of_order', 'last_order_total', 'any_order_total'].includes(this.filter.selectedFilter) && ["matches_number", "between_number"].includes(option)) ||
+              (['number_of_order', 'last_order_total', 'all_order_total'].includes(this.filter.selectedFilter) && ["matches_number", "between_number"].includes(option)) ||
               (['shipping_country', 'shipping_state', 'shipping_city'].indexOf(this.filter.selectedFilter) > -1 && option == "from") ||
               (this.isFilter(['order_tag', 'discount_code']) && ["tag_is", "tag_contain"].indexOf(option) > -1) ||
               (this.selectedFilter == "zip_code" && ["equal", "begin_with", "end_with"].indexOf(option) > -1) ||
@@ -184,19 +183,18 @@
         switch (this.selectedFilter) {
           case "order_tag":
           case "discount_code":
-          case "order_total":
             return this.selectedOrderCollectionOption + this.selectedFilter
           default:
             return this.selectedFilter;
         }
       },
       combineValue() {
-        if (this.value1 == null || this.value1 < 0) {
-          this.value1 = 0;
-        }
-        if (this.value2 == null) {
-          this.value2 = this.value1;
-        }
+        // if (this.value1 == null || this.value1 < 0) {
+        //   this.value1 = 0;
+        // }
+        // if (this.value2 == null) {
+        //   this.value2 = this.value1;
+        // }
         this.filter.value = this.value1 && this.value2 ? `${this.value1}&${this.value2}` : null;
         this.filterChange();
       },
@@ -239,7 +237,7 @@
         this.filterChange();
       },
       selectFirstConditionOption() {
-        if (this.filter.selectedFilter.includes("order_total")) {
+        if (['last_order_total', 'all_order_total'].includes(this.filter.selectedFilter)) {
           this.filter.selectedCondition = "between_number";
           this.optionChange();
           return;
@@ -263,11 +261,15 @@
           case 'first_order_date':
           case 'last_order_date':
             return side + 'days ago';
-          case 'order_total':
+          case 'last_order_total':
+          case 'all_order_total':
             return side + 'amount';
           default:
             return '';
         }
+      },
+      preventDecimal(e) {
+        if ((! this.selectedFilter.includes('order_total') && e.key==='.') || e.key==='-' || e.key==='+') {e.preventDefault()};
       }
     }
   }
@@ -378,7 +380,9 @@ input[type=number] {
 .datepicker-arrow {
   position: absolute;
   left: 830px;
-  margin-top: 9px;  
+  margin-top: 9px; 
+  filter: brightness(0%); 
+  width: 0.75em !important;
 }
 
 .datepicker-arrow.middle-arrow {
