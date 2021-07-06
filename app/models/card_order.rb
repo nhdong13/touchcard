@@ -72,6 +72,7 @@ class CardOrder < ApplicationRecord
     self.campaign_name = "My campaign" unless self.campaign_name.present?
     self.type = "PostSaleOrder" if self.type.nil?
     self.campaign_status = "draft"
+    self.filters << Filter.new(filter_data: {:accepted => {}, :removed => {}})
   end
 
   class << self

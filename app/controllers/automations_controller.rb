@@ -111,6 +111,10 @@ class AutomationsController < BaseController
     GeneratePostcardJob.perform_later(@current_shop, @automation)
     SchedulingPostcardJob.perform_later(@automation)
     SendAllCardsJob.perform_later(@automation)
+    respond_to do |format|
+      format.html { redirect_to root_path }
+      format.json { render json: { message: "OK" }, status: :ok }
+    end
   end
 
   private

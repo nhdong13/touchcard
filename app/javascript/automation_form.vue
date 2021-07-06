@@ -708,9 +708,8 @@
         // If there're some errors in save process => return
         if(!this.saveWithValidation()) return
 
-        axios.get(`/automations/${this.id}/start_sending`).then(function(response) {
-          Turbolinks.visit('/campaigns')
-        })
+        axios.get(`/automations/${this.id}/start_sending.json`)
+        Turbolinks.visit('/campaigns')
       },
 
       saveAndCheckout: function() {

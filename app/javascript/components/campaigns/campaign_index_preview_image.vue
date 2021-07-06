@@ -17,8 +17,8 @@
       </div>
     </div>
   </div>
-  <div class="flip-button" v-if="!isImagesNotAvailable">
-    <font-awesome-icon icon="reply" class="fa-flip-vertical fa-2x mt-20"/>
+  <div class="flip-button" v-if="isShowFlipButton">
+    <font-awesome-icon icon="reply" class="fa-flip-vertical mt-20"/>
   </div>
 </div>
 </template>
@@ -39,13 +39,13 @@
 
     data: function() {
       return {
-        isFlipped: false
+        isFlipped: false,
+        isShowFlipButton: this.isImagesAvailable()
       }
     },
 
     mounted() {
-      console.log(this.frontImage)
-      console.log(this.backImage)
+
       const _this = this
       $(".flip-button").on("click", function() {
         _this.isFlipped = !_this.isFlipped
@@ -54,8 +54,8 @@
     },
 
     methods: {
-      isImagesNotAvailable: function() {
-        return isEmpty(this.frontImage) && isEmpty(this.backImage)
+      isImagesAvailable: function() {
+        return !(isEmpty(this.frontImage) && isEmpty(this.backImage))
       }
     }
   }
@@ -109,11 +109,11 @@
 
 .flip-button {
   position: absolute;
-  top: 75%;
-  left: 85%;
+  top: 60%;
+  left: 75%;
   background: rgba(255, 255, 255, 0.3);
-  width: 50px;
-  height: 50px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
 }
 
