@@ -177,26 +177,24 @@ class CustomerTargetingService
       customer&.default_address.province_code
     when "shipping_city"
       customer&.default_address.city
-    # end
-    # ongoing
     when "last_order_tag"
-      filter_order.tags.split(", ")
+      filter_order.tags&.split(", ")
     when "any_order_tag"
       user_orders.map{|order| order.tags&.split(', ')}.flatten
     when "last_discount_code"
-      filter_order.discount_codes.map{|item| item['code']}
+      filter_order.discount_codes.map{|item| item['code']} if filter_order.discount_codes.class == Array
     when "any_discount_code"
-      user_orders.map{|order| order.discount_codes.map{|item| item['code']}}.select{|order|order.class == Array}.flatten
+      user_orders.map{|order| order.discount_codes.map{|item| item['code']} if order.discount_codes.class == Array}.select{|order|order.class == Array}.flatten
     when "last_order_total"
       filter_order.total_price
     when "all_order_total"
       user_orders.sum(:total_price)
     # end
-    when "total_spend"
-      user_orders.sum(:total_line_items_price)
-    when "last_order_total"
-      user_orders.order(:processed_at).last.total_line_items_price
+    # ongoing
+    # end
     when "referring_site"
+      filter_order.referring_site
+    when "landing_site"
       filter_order.landing_site
     when "shipping_company"
       customer&.default_address.company
