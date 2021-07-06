@@ -49,7 +49,7 @@ class CustomerTargetingService
       customer.default_address&.address1, customer.default_address&.city,
       customer.default_address&.province_code, customer.default_address&.country_code,
       customer.default_address&.zip, customer.default_address&.company, "",
-      "", "", "", "", "", customer.orders_count, "", "$#{customer.total_spent}", customer.tags,
+      "", "", "", "", "", customer.orders_count, "", "$#{customer.total_spent * 100}", customer.tags,
       "", "", "", "", customer.postcards.count, customer.postcards.last&.date_sent&.strftime("%d-%b-%y"),
       customer.accepts_marketing ? "Y" : "N", "", "", ""
     ] + filter_passed_by_customer(customer.id)
@@ -58,7 +58,7 @@ class CustomerTargetingService
   def filter_passed_by_customer customer_id
     filters_passed_render = []
     accepted_attrs&.as_json&.each do |k, v|
-      if ["shipping_country", "shipping_state", "shipping_city", "shipping_company", "number_of_order", "zip_code", "any_order_total"].include?(k)
+      if ["shipping_country", "shipping_state", "shipping_city", "shipping_company", "number_of_order", "zip_code", "all_order_total"].include?(k)
         field_to_filter = select_field_to_filter(k, nil, customer_id)
         result = compare_field(field_to_filter, v["condition"], v["value"]) ? "X" : ""
       else
@@ -75,7 +75,7 @@ class CustomerTargetingService
       order.customer&.default_address&.province_code, order.customer&.default_address&.country_code,
       order.customer&.default_address&.zip, order.customer&.default_address&.company, "",
       order.id, order.processed_at&.strftime("%d-%b-%y"), "", "", "", "", order.line_items&.count,
-      order.total_price, order.tags, order.referring_site, order.landing_site, order.discount_codes.map{|code| code['code']}.join(", "),
+      "$#{order.total_price}", order.tags, order.referring_site, order.landing_site, order.discount_codes.map{|code| code['code']}.join(", "),
       order.total_discounts, "", "", "", order.financial_status, order.fulfillment_status, ""
     ] + filter_passed_by_order(order)
   end
@@ -189,7 +189,7 @@ class CustomerTargetingService
       user_orders.map{|order| order.discount_codes.map{|item| item['code']}}.select{|order|order.class == Array}.flatten
     when "last_order_total"
       filter_order.total_price
-    when "any_order_total"
+    when "all_order_total"
       user_orders.sum(:total_price)
     # end
     when "total_spend"
@@ -291,7 +291,7 @@ class CustomerTargetingService
       "FST-ORD-DATE"
     when "last_order_total"
       "LST-ORD-TTL"
-    when "any_order_total"
+    when "all_order_total"
       "TTL-SPND"
     else
       ""
@@ -307,9 +307,9 @@ class CustomerTargetingService
       date_1 + " - " + date_2
     when "matches_number"
       if key.include?("order_date")
-        value["value"] + " days"
+        value["value"].to_s + " days"
       else
-        value["value"]
+        value["value"].to_s
       end
     when "between_number"
       value_1 = value["value"].split("&")[0]
