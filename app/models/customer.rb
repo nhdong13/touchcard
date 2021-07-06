@@ -18,6 +18,10 @@ class Customer < ApplicationRecord
     orders_count.to_i <= 1 && Order.where(shop_id: shop_id, customer_id: id).count <= 1
   end
 
+  def international?
+    default_address.country_code != "US"
+  end
+
   def full_name
     "#{first_name} #{last_name}"
   end

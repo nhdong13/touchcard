@@ -38,7 +38,7 @@ class Address < ApplicationRecord
       address_city: city,
       address_state: province_code,
       address_country: country_code,
-      address_zip: zip
+      address_zip: zip.blank? ? nil : zip
     }
   end
 
