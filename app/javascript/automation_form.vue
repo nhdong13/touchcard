@@ -602,9 +602,7 @@
       },
       collectFilters() {
         let collectedFilters = this.convertFiltersToParams();
-        let last_index = this.automation.filters_attributes.length-1;
-        this.automation.filters_attributes[last_index].filter_data = collectedFilters;
-        return this.automation.filters_attributes[last_index].filter_data;
+        this.automation.filters_attributes = [{ filter_data: collectedFilters}];
       },
       convertFiltersToParams() {
         let res = {};

@@ -7,7 +7,7 @@
 
     <div class="switcher-options" v-if="['order_tag', 'discount_code'].includes(selectedFilter)">
       <span>Any orders</span>
-      <switcher :value="switcherValue" @toggle="switcherToggle2" />
+      <switcher :value="switcherValue" @toggle="switcherToggle" />
       <span>Last order</span>
     </div>
 
@@ -80,13 +80,13 @@
       // Initialize variable for selected filter
       if (this.filter.selectedFilter.includes("any_") || (this.filter.selectedFilter.includes("last_") && !["last_order_date", "last_order_total"].includes(this.filter.selectedFilter))) {
         // Define any/last order filter
-        this.switcherToggle2(this.filter.selectedFilter.includes("last_"), false);
+        this.switcherToggle(this.filter.selectedFilter.includes("last_"), false);
         this.selectedOrderCollectionOption = this.filter.selectedFilter.includes("last_") ? "last_" : "any_";
         this.selectedFilter = this.filter.selectedFilter.split(this.selectedOrderCollectionOption)[1];
       } else {
         this.selectedFilter = this.filter.selectedFilter;
       }
-      if (this.filter.selectedCondition.toString().includes("between")) {
+      if (this.filter.value && this.filter.selectedCondition.toString().includes("between")) {
         this.value1 = this.filter.value.split("&")[0];
         this.value2 = this.filter.value.split("&")[1];
       }
@@ -198,7 +198,7 @@
         this.filter.value = this.value1 && this.value2 ? `${this.value1}&${this.value2}` : null;
         this.filterChange();
       },
-      switcherToggle2(switcherValue, valueChange=true) {
+      switcherToggle(switcherValue, valueChange=true) {
         this.switcherValue = switcherValue;
         if (valueChange) {
           this.selectedOrderCollectionOption = switcherValue ? "last_" : "any_";
