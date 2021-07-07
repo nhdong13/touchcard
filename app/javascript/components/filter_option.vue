@@ -195,7 +195,8 @@
         // if (this.value2 == null) {
         //   this.value2 = this.value1;
         // }
-        this.filter.value = this.value1 && this.value2 ? `${this.value1}&${this.value2}` : null;
+        // this.filter.value = this.value1 && this.value2 ? `${this.value1}&${this.value2}` : null;
+        this.filter.value = (this.value1 && this.value1 != "") || (this.value2 && this.value2 != "") ? `${this.value1 || ''}&${this.value2 || ''}` : null;
         this.filterChange();
       },
       switcherToggle(switcherValue, valueChange=true) {
@@ -264,6 +265,8 @@
           case 'last_order_total':
           case 'all_order_total':
             return side + 'amount';
+          case 'number_of_order':
+            return side + 'number of orders';
           default:
             return '';
         }
@@ -381,14 +384,14 @@ input[type=number] {
 
 .datepicker-arrow {
   position: absolute;
-  left: 830px;
+  left: 835px;
   margin-top: 9px; 
   filter: brightness(0%); 
   width: 0.75em !important;
 }
 
 .datepicker-arrow.middle-arrow {
-  left: 540px;
+  left: 570px;
 }
 
 .datepicker-arrow path {

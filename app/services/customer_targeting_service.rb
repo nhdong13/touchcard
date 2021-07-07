@@ -3,8 +3,25 @@ class CustomerTargetingService
   def initialize(params, accepted_attrs, removed_attrs)
     @current_shop = params[:shop] ? params[:shop] : params[:order].shop_id
     @orders = params[:order] ? [params[:order]] : get_orders_in_campaign
-    @accepted_attrs = accepted_attrs
-    @removed_attrs = removed_attrs
+    @accepted_attrs = finalize_atrrs(accepted_attrs)
+    @removed_attrs = finalize_atrrs(removed_attrs)
+  end
+
+  def finalize_atrrs attrs
+    attrs&.select{|k,v|!(v["condition"] == "between_number" && v["value"] == "&")}&.each.with_index do |(k, v), index|
+      if v["condition"] == "between_number"
+        splited_value = v["value"].to_s.split("&")
+        if splited_value.empty?
+          attrs.delete_at(index)
+        elsif splited_value[0] == ""
+          v["condition"] = "smaller_number"
+          v["value"] = splited_value[1]
+        elsif splited_value[1].nil?
+          v["condition"] = "greater_number"
+          v["value"] = splited_value[0]
+        end
+      end
+    end
   end
 
   def build_csv list
@@ -227,6 +244,10 @@ class CustomerTargetingService
         field.to_time > value.to_time.end_of_day
       when "matches_number"
         calculate_compare_number_field(field) == value.to_i
+      when "smaller_number"
+        calculate_compare_number_field(field) <= value.to_i
+      when "greater_number"
+        calculate_compare_number_field(field) >= value.to_i
       when "between_number"
         splited_value = value.split("&")
         begin_value = splited_value[0].to_i
@@ -311,6 +332,10 @@ class CustomerTargetingService
       else
         value["value"].to_s
       end
+    when "smaller_number"
+      "<=" + value["value"].to_s
+    when "greater_number"
+      ">=" + value["value"].to_s
     when "between_number"
       value_1 = value["value"].split("&")[0]
       value_2 = value["value"].split("&")[1]
