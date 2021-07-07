@@ -699,6 +699,7 @@
 
       saveAndReturn: function() {
         // If there're some errors in save process => return
+
         if(!this.saveWithValidation()) return
 
         this.returnToCampaignList()
@@ -793,6 +794,7 @@
         for (const item in this.errors) {
           if(this.errors[item]) return false
         }
+        return true
       },
       // We can perform this check because autosave every second
       isCampaignNew: function() {
