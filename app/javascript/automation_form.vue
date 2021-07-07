@@ -316,7 +316,6 @@
         })
       }
 
-      console.log(this.id)
     },
 
     mounted: function() {
@@ -681,6 +680,7 @@
       saveWithValidation: function() {
         this.validateForm()
         this.$nextTick(() => {
+          if(isEmpty($(".invalid"))) return
           $(".invalid")[0].scrollIntoView({
             behavior: "smooth",
             block: "start"
@@ -699,6 +699,7 @@
 
       saveAndReturn: function() {
         // If there're some errors in save process => return
+
         if(!this.saveWithValidation()) return
 
         this.returnToCampaignList()
@@ -708,9 +709,8 @@
         // If there're some errors in save process => return
         if(!this.saveWithValidation()) return
 
-        axios.get(`/automations/${this.id}/start_sending`).then(function(response) {
-          Turbolinks.visit('/campaigns')
-        })
+        axios.get(`/automations/${this.id}/start_sending.json`)
+        Turbolinks.visit('/campaigns')
       },
 
       saveAndCheckout: function() {
@@ -794,6 +794,7 @@
         for (const item in this.errors) {
           if(this.errors[item]) return false
         }
+        return true
       },
       // We can perform this check because autosave every second
       isCampaignNew: function() {
