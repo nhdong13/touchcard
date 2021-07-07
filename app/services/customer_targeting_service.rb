@@ -235,6 +235,8 @@ class CustomerTargetingService
         (calculated_field >= begin_value) && (calculated_field <= end_value)
       when "matches_string"
         field.to_s.casecmp?(value.to_s)
+      when "contain_string"
+        field.to_s.upcase.include?(value.to_s.upcase)
       when "1"
         field.to_i > value.to_i
       when "2"
