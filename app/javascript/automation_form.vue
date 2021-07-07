@@ -197,12 +197,12 @@
     <div :class="[errors.filters ? 'invalid' : '' ,'filter-config nested-toggle row']">
       <div id="accepted-section">
         <div class="filter-section-title">Include these customers</div>
-        <filter-option :filter="filter" v-for="(filter, index) in acceptedFilters" :key="index" @filterChange="filterChange" @filterRemove="filterRemove" collection="accepted" :index="index" :filterConditions="filterConditions" :filterOptions="availableFilters('accepted', index)" />
+        <filter-option :filter="filter" v-for="(filter, index) in acceptedFilters" :key="filter.selectedFilter" @filterChange="filterChange" @filterRemove="filterRemove" collection="accepted" :index="index" :filterConditions="filterConditions" :filterOptions="availableFilters('accepted', index)" />
         <button type="button" class="add-more-filter-btn" id="add-accepted-filter" @click="addFilter('accepted')">Add Filter</button>
       </div>
       <div id="removed-section">
         <div class="filter-section-title">Exclude these customers</div>
-        <filter-option :filter="filter" v-for="(filter, index) in removedFilters" :key="index" @filterChange="filterChange" @filterRemove="filterRemove" collection="removed" :index="index" :filterConditions="filterConditions" :filterOptions="availableFilters('removed', index)" />
+        <filter-option :filter="filter" v-for="(filter, index) in removedFilters" :key="filter.selectedFilter" @filterChange="filterChange" @filterRemove="filterRemove" collection="removed" :index="index" :filterConditions="filterConditions" :filterOptions="availableFilters('removed', index)" />
         <button type="button" class="add-more-filter-btn" id="add-removed-filter" @click="addFilter">Add Filter</button>
       </div>
       <div v-if="campaign_type =='automation'" class="automation-section">

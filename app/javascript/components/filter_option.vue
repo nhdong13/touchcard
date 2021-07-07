@@ -78,7 +78,7 @@
       }
 
       // Initialize variable for selected filter
-      if (this.filter.selectedFilter.includes("any_") || (this.filter.selectedFilter.includes("last_") && this.filter.selectedFilter != "last_order_date")) {
+      if (this.filter.selectedFilter.includes("any_") || (this.filter.selectedFilter.includes("last_") && !["last_order_date", "last_order_total"].includes(this.filter.selectedFilter))) {
         // Define any/last order filter
         this.switcherToggle2(this.filter.selectedFilter.includes("last_"), false);
         this.selectedOrderCollectionOption = this.filter.selectedFilter.includes("last_") ? "last_" : "any_";
@@ -270,6 +270,8 @@
       },
       preventDecimal(e) {
         if ((! this.selectedFilter.includes('order_total') && e.key==='.') || e.key==='-' || e.key==='+') {e.preventDefault()};
+        if (e.currentTarget.value.split(".")[1] && e.currentTarget.value.split(".")[1].length == 2) {e.preventDefault()};
+        if (e.currentTarget.value == "" && e.key==='.') {e.preventDefault()};
       }
     }
   }
@@ -288,7 +290,7 @@
 }
 
 .filter-dropdown {
-  width: 140px;
+  width: 180px;
   margin-right: 10px;
 }
 
@@ -321,12 +323,12 @@
 }
 
 .f-value {
-  width: 540px;
+  width: 500px;
   display: flex;
 }
 
 .f-value-2 {
-  width: 310px;
+  width: 270px;
   display: flex;
 }
 
