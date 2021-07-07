@@ -37,7 +37,7 @@ class GeneratePostcardJob < ActiveJob::Base
         # postcard.card_order = campaign
         postcard.customer = customer
         postcard.postcard_trigger = campaign
-        postcard.send_date = campaign.send_delay.blank? ? campaign.send_date_start : campaign.send_date_start + campaign.send_delay.weeks
+        postcard.send_date = campaign.send_date
 
         campaign.postcards << postcard
 

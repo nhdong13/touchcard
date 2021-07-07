@@ -3,10 +3,12 @@
     <h1>New Campaign</h1>
     <hr/>
     <h2>Campaign Settings</h2>
-    <div :class="[errors.campaignName ? 'invalid' : '', 'automation-section']">
-      <strong><small :class="{error: errors.campaignName}" v-if="errors.campaignName">*</small> Campaign name</strong>
-      <input id="campaign_name" v-model="automation.campaign_name">
-      <span class="error campaign-name-error">This field is required.</span>
+    <div class="automation-section">
+      <span :class="[errors.campaignName ? 'invalid' : '', 'error-wrapper']">
+        <strong><small :class="{error: errors.campaignName}" v-if="errors.campaignName">*</small> Campaign name</strong>
+        <input id="campaign_name" v-model="automation.campaign_name">
+        <span class="error campaign-name-error">This field is required.</span>
+      </span>
     </div>
 
     <div class="automation-section">
@@ -102,7 +104,9 @@
           </div>
         </div>
         <div class="send-continuously-option pt-ongoing-checkbox">
-          <input id="send-continuously" type="checkbox" v-model="automation.send_continuously"/>
+          <span :class="{invalid: errors.endDate}">
+            <input id="send-continuously" type="checkbox" v-model="automation.send_continuously"/>
+          </span>
           <label for="send-continuously" class="noselect">- Ongoing</label>
         </div>
       </div>
@@ -191,7 +195,6 @@
         </div>
       </div>
     </div>
-    <!-- <input id="automation-filter-checkbox" type="checkbox" v-model="enableFiltering"> -->
     <h2 class="d-inline-block">Customer Filters</h2>
     <button @click="downloadCSV"> CSV </button>
     <div :class="[errors.filters ? 'invalid' : '' ,'filter-config nested-toggle row']">
@@ -204,9 +207,6 @@
         <div class="filter-section-title">Exclude these customers</div>
         <filter-option :filter="filter" v-for="(filter, index) in removedFilters" :key="index" @filterChange="filterChange" @filterRemove="filterRemove" collection="removed" :index="index" :filterConditions="filterConditions" :filterOptions="availableFilters('removed', index)" />
         <button type="button" class="add-more-filter-btn" id="add-removed-filter" @click="addFilter">Add Filter</button>
-      </div>
-      <div v-if="campaign_type =='automation'" class="automation-section">
-        <strong>Send card <input type="number" min="0" max="52" v-model="automation.send_delay"> weeks after purchase</strong>
       </div>
     </div>
     <!-- <hr />
@@ -318,9 +318,13 @@
 
     },
 
+    beforeDestroy: function() {
+      window.clearInterval(this.interval)
+    },
+
     mounted: function() {
       if(!this.isEditExistCampaign) {
-        window.setInterval(() => {
+        this.interval = window.setInterval(() => {
           this.saveAutomation()
         }, 1000)
       } else {
@@ -356,7 +360,8 @@
           filters: false
         },
         filterConditions: [],
-        filterOptions: []
+        filterOptions: [],
+        interval: null
       }
     },
 
@@ -450,7 +455,6 @@
         let filters = this.automation.filters_attributes[last_index].filter_data;
         this.convertRawFilters(filters);
       }
-      this.automation.send_date_end = this.automation.send_date_end || new Date()
       this.automation.send_date_start = this.automation.send_date_start || new Date()
       this.getAllFilterValues();
     },
@@ -927,5 +931,11 @@
   
   .d-inline-block {
     display: inline-block;
+  }
+
+  .error-wrapper {
+    padding-left: 2px;
+    padding-top: 2px;
+    padding-bottom: 2px;
   }
 </style>
