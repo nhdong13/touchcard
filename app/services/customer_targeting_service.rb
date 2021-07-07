@@ -8,7 +8,7 @@ class CustomerTargetingService
   end
 
   def finalize_atrrs attrs
-    attrs&.select{|k,v|!(v["condition"] == "between_number" && v["value"] == "&")}&.each.with_index do |(k, v), index|
+    attrs&.select{|k,v|!(v["condition"] == "between_number" && v["value"] == "&")}&.each&.with_index do |(k, v), index|
       if v["condition"] == "between_number"
         splited_value = v["value"].to_s.split("&")
         if splited_value.empty?
