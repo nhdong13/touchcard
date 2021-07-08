@@ -1,6 +1,6 @@
 <template>
   <div class="automation_form">
-    <h1>New Campaign</h1>
+    <h1>{{ automation.campaign_name }}</h1>
     <hr/>
     <h2>Campaign Settings</h2>
     <div class="automation-section">
@@ -244,10 +244,10 @@
         <md-button class="review-and-continue-btn text-white" v-on:click="saveAndReturn">Save Changes</md-button>
       </div>
       <div v-else>
-        <md-button class="cancel-btn text-white" v-on:click="returnToCampaignList" >Save and exits</md-button>
+        <a class="mdc-button mdc-button--stroked mdc-button--dense" v-on:click="returnToCampaignList" >Save and exit</a>
 
-        <md-button class="review-and-continue-btn text-white" v-on:click="saveAndStartSending" v-if="isUserHasPaymentMethod">Start Sending</md-button>
-        <md-button class="review-and-continue-btn text-white" v-on:click="saveAndCheckout" v-else>Add Payment</md-button>
+        <a class="mdc-button mdc-button--stroked mdc-button--dense" v-on:click="saveAndStartSending" v-if="isUserHasPaymentMethod">Start Sending</a>
+        <a class="mdc-button mdc-button--stroked mdc-button--dense" v-on:click="saveAndCheckout" v-else>Add Payment</a>
       </div>
     </div>
   </div>

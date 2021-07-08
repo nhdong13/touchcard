@@ -34,10 +34,9 @@ class GeneratePostcardJob < ActiveJob::Base
                     )
 
         postcard = Postcard.new
-        # postcard.card_order = campaign
         postcard.customer = customer
         postcard.postcard_trigger = campaign
-        postcard.send_date = campaign.send_date
+        postcard.send_date = Time.now
 
         campaign.postcards << postcard
 

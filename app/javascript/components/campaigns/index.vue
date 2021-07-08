@@ -1,7 +1,7 @@
 <template>
   <div class="campaign-tab">
     <div :class="'new-campaign-btn'">
-      <button @click="onClickNewCampaign"> New Campaign </button>
+      <button @click="onClickNewCampaign" class="mdc-button mdc-button--raised"> New Campaign </button>
     </div>
     <div class="campaign-tab-content">
       <div :class="'action'">
@@ -398,6 +398,7 @@
 
     filters: {
       truncate: function(data, num) {
+        if(isEmpty(data)) return data
         const truncatedStr = []
         let characterCount = 0
         data.split(" ").slice(0, data.length).forEach((element) => {
@@ -459,12 +460,6 @@
   .new-campaign-btn{
     text-align: right;
     margin-bottom: 5px;
-    button{
-      font-size: 16px;
-      border: 1px solid #9900ff;
-      background: #5b3e82;
-      color: white;
-    }
   }
 
   .campaign-dashboard, .campaign-dashboard th, .campaign-dashboard td {
