@@ -760,11 +760,11 @@
         }
 
         if(this.automation.international) {
-          if(!isEmpty(this.returnAddress.name) ||
-            !isEmpty(this.returnAddress.address_line1) ||
-            !isEmpty(this.returnAddress.city) ||
-            !isEmpty(this.returnAddress.zip) ||
-            !isEmpty(this.returnAddress.state)) {
+          if(isEmpty(this.returnAddress.name) ||
+            isEmpty(this.returnAddress.address_line1) ||
+            isEmpty(this.returnAddress.city) ||
+            isEmpty(this.returnAddress.zip) ||
+            isEmpty(this.returnAddress.state)) {
             this.errors.returnAddress = true
             $(".return-address-general-error").show();
           } else {
