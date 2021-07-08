@@ -398,7 +398,7 @@
 
     filters: {
       truncate: function(data, num) {
-        if(isEmpty(data)) return data
+        if(_.isEmpty(data)) return data
         const truncatedStr = []
         let characterCount = 0
         data.split(" ").slice(0, data.length).forEach((element) => {
