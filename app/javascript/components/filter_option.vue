@@ -16,14 +16,14 @@
     </select>
 
     <div :class="['order_tag', 'discount_code'].includes(selectedFilter) ? 'f-value-2' : 'f-value'" v-if="showSecondInput()">
-      <datepicker class="valueInput" v-model="value1" v-if="showDateInput()" @input="combineValue()" :use-utc="true" /><!--  :disabled-dates="datePickerOptions()" /> -->
+      <datepicker class="valueInput" v-model="value1" v-if="showDateInput()" @input="combineValue()" :use-utc="true" :disabled-dates="datePickerDisabledDates(true)" />
       <font-awesome-icon icon="chevron-down" v-if="showDateInput()" @click="triggerDatepicker" class="datepicker-arrow middle-arrow" />
 
       <input type="number" class="valueInput" v-model="value1" v-if="showNumberInput()" @change="combineValue()" :placeholder="numberInputPlaceholder('Min. ')" @keypress="preventDecimal($event)" min=0 />
 
       <span class="middle-text">and</span>
 
-      <datepicker class="valueInput" v-model="value2" v-if="showDateInput()" @input="combineValue()" :use-utc="true" /><!--  :disabled-dates="datePickerOptions2()" /> -->
+      <datepicker class="valueInput" v-model="value2" v-if="showDateInput()" @input="combineValue()" :use-utc="true" :disabled-dates="datePickerDisabledDates(false)" />
       <font-awesome-icon icon="chevron-down" v-if="showDateInput()" @click="triggerDatepicker" class="datepicker-arrow" />
 
       <input type="number" class="valueInput" v-model="value2" v-if="showNumberInput()" @change="combineValue()" :placeholder="numberInputPlaceholder('Max. ')" @keypress="preventDecimal($event)" min=0 />
@@ -275,6 +275,10 @@
         if ((! this.selectedFilter.includes('order_total') && e.key==='.') || e.key==='-' || e.key==='+') {e.preventDefault()};
         if (e.currentTarget.value.split(".")[1] && e.currentTarget.value.split(".")[1].length == 2) {e.preventDefault()};
         if (e.currentTarget.value == "" && e.key==='.') {e.preventDefault()};
+      },
+      datePickerDisabledDates(isMinInput = true) {
+        if (isMinInput && this.value2) return {from: new Date(this.value2)};
+        if (!isMinInput && this.value1) return {to: new Date(this.value1)};
       }
     }
   }
