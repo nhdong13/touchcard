@@ -236,7 +236,9 @@
       },
       setDefaultInputValue() {
         if (this.filter.selectedFilter.includes("order_date")) {
-          this.filter.value = new Date();
+          this.filter.value = null;
+          this.value1 = null;
+          this.value2 = null;
         } else if (this.filter.selectedFilter == "number_of_order" && this.filter.selectedCondition == "matches_number") {
           this.filter.value = 1;
         }
