@@ -45,7 +45,8 @@
     },
 
     mounted() {
-
+      console.log(this.frontImage, this.backImage)
+      console.log(this.isShowFlipButton())
       const _this = this
       $(".flip-button").on("click", function() {
         _this.isFlipped = !_this.isFlipped
