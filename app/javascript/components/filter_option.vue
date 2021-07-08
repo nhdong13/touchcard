@@ -17,14 +17,14 @@
 
     <div :class="['order_tag', 'discount_code'].includes(selectedFilter) ? 'f-value-2' : 'f-value'" v-if="showSecondInput()">
       <datepicker class="valueInput" v-model="value1" v-if="showDateInput()" @input="combineValue()" :use-utc="true" :disabled-dates="datePickerDisabledDates(true)" />
-      <font-awesome-icon icon="chevron-down" v-if="showDateInput()" @click="triggerDatepicker" class="datepicker-arrow middle-arrow" />
+      <font-awesome-icon icon="chevron-down" v-if="showDateInput()" @click="triggerDatepicker(1)" class="datepicker-arrow middle-arrow" />
 
       <input type="number" class="valueInput" v-model="value1" v-if="showNumberInput()" @change="combineValue()" :placeholder="numberInputPlaceholder('Min. ')" @keypress="preventDecimal($event)" min=0 />
 
       <span class="middle-text">and</span>
 
       <datepicker class="valueInput" v-model="value2" v-if="showDateInput()" @input="combineValue()" :use-utc="true" :disabled-dates="datePickerDisabledDates(false)" />
-      <font-awesome-icon icon="chevron-down" v-if="showDateInput()" @click="triggerDatepicker" class="datepicker-arrow" />
+      <font-awesome-icon icon="chevron-down" v-if="showDateInput()" @click="triggerDatepicker(2)" class="datepicker-arrow" />
 
       <input type="number" class="valueInput" v-model="value2" v-if="showNumberInput()" @change="combineValue()" :placeholder="numberInputPlaceholder('Max. ')" @keypress="preventDecimal($event)" min=0 />
 
@@ -38,7 +38,7 @@
       <input type="number" class="valueInput" v-model="filter.value" v-else-if="showNumberInput()" @change="filterChange" @keypress="preventDecimal($event)" min=0 />
 
       <datepicker class="valueInput" v-model="filter.value" v-if="showDateInput()" @change="filterChange" :use-utc="true" />
-      <font-awesome-icon icon="chevron-down" v-if="showDateInput()" @click="triggerDatepicker" class="datepicker-arrow" />
+      <font-awesome-icon icon="chevron-down" v-if="showDateInput()" @click="triggerDatepicker(1)" class="datepicker-arrow" />
 
       <treeselect class="valueInput" v-model="filter.value" v-if="showCountrySelect()" :multiple="true" :options="countriesList" placeholder="Any country" />
 
@@ -231,8 +231,8 @@
         this.tags = newTags;
         this.filter.value = newTags.map(tag => tag.text);
       },
-      triggerDatepicker() {
-        this.$el.getElementsByTagName("input")[1].click();
+      triggerDatepicker(el) {
+        this.$el.getElementsByTagName("input")[el].click();
       },
       setDefaultInputValue() {
         if (this.filter.selectedFilter.includes("order_date")) {
