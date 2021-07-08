@@ -393,6 +393,7 @@
         if(willReturnToFisrtPage){
           this.currentPage = 1
         }
+        this.$forceUpdate()
       }
     },
 
