@@ -196,6 +196,11 @@
         //   this.value2 = this.value1;
         // }
         // this.filter.value = this.value1 && this.value2 ? `${this.value1}&${this.value2}` : null;
+        if (this.selectedFilter.includes("order_date") && this.filter.selectedCondition == "between_date") {
+          let date1 = new Date(this.value1);
+          let date2 = new Date(this.value2);
+          if (date1 > date2) this.value1 = null;
+        }
         this.filter.value = (this.value1 && this.value1 != "") || (this.value2 && this.value2 != "") ? `${this.value1 || ''}&${this.value2 || ''}` : null;
         this.filterChange();
       },
