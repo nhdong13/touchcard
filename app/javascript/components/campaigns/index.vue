@@ -75,7 +75,11 @@
               </span>
             </td>
             <td>
+              <!--
+                key attribute is used to make Vue re-render PreviewImage component when the campaign is changed
+              -->
               <PreviewImage
+                :key="item.id"
                 :front-image="item.front_json.background_url"
                 :back-image="item.back_json.background_url"
               />
@@ -393,7 +397,6 @@
         if(willReturnToFisrtPage){
           this.currentPage = 1
         }
-        this.$forceUpdate()
       }
     },
 
