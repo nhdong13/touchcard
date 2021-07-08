@@ -1,13 +1,13 @@
 <template>
   <div class="campaign-tab">
     <div :class="'new-campaign-btn'">
-      <button @click="onClickNewCampaign"> New Campaign </button>
+      <button @click="onClickNewCampaign" class="mdc-button mdc-button--raised"> New Campaign </button>
     </div>
     <div class="campaign-tab-content">
       <div :class="'action'">
         <div :class="'action'">
-          <button v-on:click="showModalConfirmDuplicate" :disabled="selected.length > 1 || selected.length < 1"> Duplicate </button>
-          <button v-on:click="showModalConfirmDeleteCampaign" :disabled="selected.length < 1"> Delete </button>
+          <button v-on:click="showModalConfirmDuplicate" :disabled="selected.length > 1 || selected.length < 1" :class="['managing-button', (selected.length > 1) ? 'no-hover' : '']"> Duplicate </button>
+          <button v-on:click="showModalConfirmDeleteCampaign" :disabled="selected.length < 1" class="managing-button"> Delete </button>
         </div>
         <div :class="'search-action'">
           <button v-on:click="exportCsv">
@@ -105,7 +105,7 @@
         </CustomePagination>
       </div>
     </div>
-      <campaignModal name="duplicateModal" :classes="'duplicate-modal'" :width="450" :height="200">
+      <campaignModal name="duplicateModal" :classes="'duplicate-modal'" :width="450" :height="200" :clickToClose="false">
         <div>
           <div>
             <strong><h3>What do you want to name this campaign?</h3></strong>
@@ -115,7 +115,8 @@
           </div>
           <br/>
           <div>
-            <button v-on:click="duplicateCampaign"> Save </button>
+            <button v-on:click="closeModalConfirmDuplicateCampaign" class="mdc-button mdc-button--stroked mdc-button--dense"> Cancel </button>
+            <button v-on:click="duplicateCampaign" class="mdc-button mdc-button--stroked mdc-button--dense"> Save </button>
           </div>
         </div>
       </campaignModal>
@@ -264,7 +265,7 @@
         this.$modal.show('duplicateModal')
       },
 
-      closeModalConfirmDuplicate: function() {
+      closeModalConfirmDuplicateCampaign: function() {
         this.$modal.hide('duplicateModal')
       },
 
@@ -275,6 +276,7 @@
       closeModalConfirmDeleteCampaign: function() {
         this.$modal.hide('deleteCampaignModal')
       },
+
 
       duplicateCampaign: function() {
         let _this = this
@@ -396,6 +398,7 @@
 
     filters: {
       truncate: function(data, num) {
+        if(isEmpty(data)) return data
         const truncatedStr = []
         let characterCount = 0
         data.split(" ").slice(0, data.length).forEach((element) => {
@@ -457,12 +460,6 @@
   .new-campaign-btn{
     text-align: right;
     margin-bottom: 5px;
-    button{
-      font-size: 16px;
-      border: 1px solid #9900ff;
-      background: #5b3e82;
-      color: white;
-    }
   }
 
   .campaign-dashboard, .campaign-dashboard th, .campaign-dashboard td {
@@ -539,5 +536,20 @@
       width:100%;
       height: 35px;
     }
+  }
+
+  .action .managing-button {
+    border-radius: 2px;
+    border: 2px solid #5b4181;
+    color: #5b4181;
+    background-color: white;
+  }
+
+  .action .managing-button:hover {
+    background-color: rgba(128, 128, 128, 0.2);
+  }
+
+  .no-hover {
+    pointer-events: none;
   }
 </style>

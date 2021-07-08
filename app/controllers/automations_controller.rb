@@ -70,9 +70,8 @@ class AutomationsController < BaseController
     respond_to do |format|
       if @automation.update(automation_params)
         if @automation.enabled?
-          FetchHistoryOrdersJob.perform_now(@current_shop, @current_shop.post_sale_orders.last.send_delay)
+          send_postcard
           SendAllHistoryCardsJob.perform_later(@current_shop)
-          start_sending
         end
 
         flash[:notice] = "Automation successfully updated"
@@ -108,9 +107,7 @@ class AutomationsController < BaseController
 
   def start_sending
     @automation.update(enabled: true)
-    GeneratePostcardJob.perform_later(@current_shop, @automation)
-    SchedulingPostcardJob.perform_later(@automation)
-    SendAllCardsJob.perform_later(@automation)
+    send_postcard
     respond_to do |format|
       format.html { redirect_to root_path }
       format.json { render json: { message: "OK" }, status: :ok }
@@ -118,6 +115,13 @@ class AutomationsController < BaseController
   end
 
   private
+
+  def send_postcard
+    FetchHistoryOrdersJob.perform_now(@current_shop, @current_shop.post_sale_orders.last.send_delay)
+    GeneratePostcardJob.perform_later(@current_shop, @automation)
+    SchedulingPostcardJob.perform_later(@automation)
+    SendAllCardsJob.perform_later(@automation)
+  end
 
   def set_automation
     @automation = @current_shop.card_orders.find(params[:id])

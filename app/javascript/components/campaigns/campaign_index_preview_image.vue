@@ -67,6 +67,7 @@
   border: 1px solid #f1f1f1;
   perspective: 1000px;
   position: relative;
+  margin: auto;
 }
 
 .flip-card-inner {
