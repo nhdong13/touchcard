@@ -9,10 +9,10 @@
   <%= link_to 'Back', 'javascript:history.back()', class: "mdc-button mdc-button--stroked" %>
   <section class="text-center">
 
-    You're currently subscribed to <strong><%= @current_shop.current_subscription.quantity %></strong> cards per month. Change to:
+    You're currently subscribed to <strong>$<%= @current_credit %></strong> per month. Change to:
 
     <br>
-    <div><span v-cloak class="checkout-quantity-display f-s-300">{{ quantity || <%= update_quantity(@current_shop) %> }}</span><span class="f-s-200"> cards / month</span></div>
+    <div><span v-cloak class="checkout-quantity-display f-s-300">${{ this.price.toFixed(2) }}</span><span class="f-s-200"> / month</span></div>
 
     <%= render 'slider', slider_index: update_index(@current_shop) %>
 

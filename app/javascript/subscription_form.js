@@ -2,6 +2,7 @@
 /* global StripeCheckout */
 
 // Todo: Use Stripe Checkout via NPM
+import { isEmpty } from 'lodash'
 
 export default function(element ,stripePubKey = '') {
   return {
@@ -42,7 +43,9 @@ export default function(element ,stripePubKey = '') {
         this.updateQuantity();
       });
       this.updateQuantity();
-      this.customerEmail = document.getElementById('customer-email').value
+      if(!isEmpty(document.getElementById('customer-email'))) {
+        this.customerEmail = document.getElementById('customer-email').value
+      }
     },
     beforeDestroy: function() {
       this.stripeHandler.close();

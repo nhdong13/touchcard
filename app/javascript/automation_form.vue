@@ -111,7 +111,8 @@
         </div>
       </div>
     </div>
-    <!--
+    <!-- Comment this piece of code according to Customer's requirement
+
     <div :class="[errors.returnAddress ? 'invalid' : '', 'automation-section']">
       <label for="return-address-checkbox" class="noselect"><strong>Add Return Address</strong></label>
       <button @click="enableAddReturnAddress= !enableAddReturnAddress">Edit</button>
@@ -244,7 +245,7 @@
       <div v-else>
         <a class="mdc-button mdc-button--stroked mdc-button--dense" v-on:click="returnToCampaignList" >Save and exit</a>
 
-        <a class="mdc-button mdc-button--stroked mdc-button--dense" v-on:click="saveAndStartSending" v-if="isUserHasPaymentMethod">Start Sending</a>
+        <button class="mdc-button mdc-button--raised" v-on:click="saveAndStartSending" v-if="isUserHasPaymentMethod">Start Sending</button>
         <a class="mdc-button mdc-button--stroked mdc-button--dense" v-on:click="saveAndCheckout" v-else>Add Payment</a>
       </div>
     </div>
@@ -307,10 +308,6 @@
       const _this = this
       if(this.isEditExistCampaign) {
         window.addEventListener("beforeunload", function (e) {
-          _this.disableCampaign(_this.automation.id)
-        })
-        window.addEventListener("popstate", function (e) {
-          console.log(e)
           _this.disableCampaign(_this.automation.id)
         })
       }
@@ -804,7 +801,8 @@
 
       goToCheckoutPage: function() {
         Turbolinks.visit('/subscriptions/new')
-      }
+      },
+
     }
   }
 </script>

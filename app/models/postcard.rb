@@ -84,8 +84,10 @@ class Postcard < ApplicationRecord
     cards.size - num_failed
   end
 
+  # 1 token = 0.89$
+  # 2 tokens = 1.78$
   def cost
-    international? ? 2 : 1
+    international? ? 1.78 : 0.89
   end
 
   class DiscountCreationError < StandardError
