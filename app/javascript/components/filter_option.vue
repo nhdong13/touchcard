@@ -118,6 +118,7 @@
     methods: {
       resetInputValue(filterChange = false) {
         if (filterChange) this.selectFirstConditionOption();
+        this.filter.value = null;
         this.value = null;
         this.value1 = null;
         this.value2 = null;

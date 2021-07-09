@@ -775,22 +775,10 @@
       },
 
       isFilterIncomplete: function() {
-        let result = false
-        this.acceptedFilters.forEach((element) => {
-          for(const item in element) {
-            if(result) return
-            if(isEmpty(element[item])) result = true
-          }
-        })
-
-        this.removedFilters.forEach((element) => {
-          for(const item in element) {
-            if(result) return
-            if(isEmpty(element[item])) result = true
-          }
-        })
-
-        return result
+        for (let element of this.acceptedFilters.concat(this.removedFilters))
+          for(let item in element)
+            if (!element[item] || isEmpty(element[item].toString())) return true;
+        return false;
       },
 
       isFormValid: function() {
