@@ -493,6 +493,7 @@
           this.budget_type = this.automation.budget_type
           this.willShowBudgetType = true
         }
+        this.automation.campaign_type = campaign_type
       },
 
       checkNameCampaignIsInvalid: function() {
