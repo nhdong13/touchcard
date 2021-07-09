@@ -111,7 +111,7 @@
         </div>
       </div>
     </div>
-
+    <!--
     <div :class="[errors.returnAddress ? 'invalid' : '', 'automation-section']">
       <label for="return-address-checkbox" class="noselect"><strong>Add Return Address</strong></label>
       <button @click="enableAddReturnAddress= !enableAddReturnAddress">Edit</button>
@@ -195,6 +195,7 @@
         </div>
       </div>
     </div>
+    -->
     <h2 class="d-inline-block">Customer Filters</h2>
     <button @click="downloadCSV"> CSV </button>
     <div :class="[errors.filters ? 'invalid' : '' ,'filter-config nested-toggle row']">
@@ -209,9 +210,6 @@
         <button type="button" class="add-more-filter-btn" id="add-removed-filter" @click="addFilter">Add Filter</button>
       </div>
     </div>
-    <!-- <hr />
-    <h2>Add Contact</h2>
-    <button>Shopify</button> -->
     <hr />
     <h2><small :class="{error: errors.uploadedFrontDesign}" v-if="errors.uploadedFrontDesign">*</small> Front</h2>
     <div :class="{ invalid: errors.uploadedFrontDesign }">
@@ -312,6 +310,7 @@
           _this.disableCampaign(_this.automation.id)
         })
         window.addEventListener("popstate", function (e) {
+          console.log(e)
           _this.disableCampaign(_this.automation.id)
         })
       }
