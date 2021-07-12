@@ -94,6 +94,7 @@ class AutomationsController < BaseController
   def destroy
     @automation.archive
     begin
+      PaymentService.refund_cards_when_cancelled @current_shop, @automation
       @automation.safe_destroy!
     rescue ActiveRecord::RecordNotFound
       respond_to do |format|
@@ -108,8 +109,9 @@ class AutomationsController < BaseController
   def start_sending
     @automation.update(enabled: true)
     send_postcard
+    # PaymentService.refund_cards_when_cancelled @current_shop, @automation
     respond_to do |format|
-      format.html { redirect_to root_path }
+      format.html { render plain: "OK" }
       format.json { render json: { message: "OK" }, status: :ok }
     end
   end
@@ -117,10 +119,8 @@ class AutomationsController < BaseController
   private
 
   def send_postcard
-    FetchHistoryOrdersJob.perform_now(@current_shop, @current_shop.post_sale_orders.last.send_delay)
-    GeneratePostcardJob.perform_later(@current_shop, @automation)
-    SchedulingPostcardJob.perform_later(@automation)
-    SendAllCardsJob.perform_later(@automation)
+    FetchHistoryOrdersJob.perform_now(@current_shop, @current_shop.post_sale_orders.last.send_delay, @automation)
+    # GeneratePostcardJob.perform_later(@current_shop, @automation)
   end
 
   def set_automation

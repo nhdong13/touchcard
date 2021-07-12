@@ -1,7 +1,13 @@
 class FetchHistoryOrdersJob < ActiveJob::Base
   queue_as :default
 
-  def perform(shop, time_delay)
+  after_perform do |job|
+    # job.arguments[0] => shop instance
+    # job.arguments[2] => card order instance
+    GeneratePostcardJob.perform_later(job.arguments[0], job.arguments[2])
+  end
+
+  def perform(shop, time_delay, campaign)
     return if shop.shopify_history_data_imported.present?
     processed_at_max = DateTime.now
     processed_at_min = processed_at_max - time_delay.weeks
