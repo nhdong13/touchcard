@@ -4,7 +4,7 @@ FILTER_OPTIONS =[["Number of orders"         , "number_of_order"   ],
                  ["First order date"         , "first_order_date"  ],
                  ["Last order date"          , "last_order_date"   ],
                  ["Total spent on last order", "last_order_total"  ],
-                 ["Total spent on all order" , "all_order_total"  ],
+                 ["Total spent on all orders" , "all_order_total"  ],
                 #  ["Shipping country"  , "shipping_country"  ],
                 #  ["Shipping state"    , "shipping_state"    ],
                 #  ["Shipping city"     , "shipping_city"     ],
@@ -37,7 +37,7 @@ CONDITIONS = [["Date range", "disable_display_1"],
               ["is", "equal"]
              ]
 EXPORT_FILE_SECTIONS = [["CUSTOMER", 11, "000000"], ["ORDERS", 9, "ed7d31"], ["MARKETING", 4, "ffc000"], ["POSTCARDS", 2, "5b9bd5"], ["STATUS", 3, "70ad47"]]
-EXPORT_FILE_COLUMNS = ["Customer_ID", "Type", "F. Name", "L. Name", "Street", "City", "State", "Country", "Zip", "Company", "Abandon checkout", "Order_ID", "Order Date", "Prod. Name", "SKU", "Collection", "Order Quantity", "Item Quantity", "Order Total", "Tags", "Ref. Site", "Land. Site", "Disc. Usage", "Disc. Amount", "Postcard", "Last Postcard", "Marketing", "Fin. Status", "Order Ful. status", "And/Or"]
+EXPORT_FILE_COLUMNS = ["Customer_ID", "Type", "F. Name", "L. Name", "Street", "City", "State", "Country", "Zip", "Company", "Abandon chkt", "Order_ID", "Order Date", "Prod. Name", "SKU", "Collection", "Order Qty", "Item Quantity", "Order Total", "Tags", "Ref. Site", "Land. Site", "Disc. Usage", "Disc. Amount", "Postcard Qty", "Last Postcard Rcvd", "Marketing", "Fin. Status", "Order Ful. status", "And/Or"]
 CSV_TITLE = [ "Fullame",
               "Email",
               "Shipping Company",
