@@ -16,11 +16,12 @@ class CampaignsController < BaseController
     return unless params[:campaign_ids]
     campaign_ids = params[:campaign_ids]
     campaign_ids.each do |campaign_id|
-      CardOrder.find_by(id: campaign_id).archive
+      campaign = CardOrder.find_by(id: campaign_id)
+      PaymentService.refund_cards_when_cancelled @current_shop, campaign
+      campaign.archive
     end
     @campaigns = @current_shop.card_orders.page(1)
     @total_pages = @campaigns.total_pages
-
     respond_to do |format|
       format.html {}
       format.json { render json: {

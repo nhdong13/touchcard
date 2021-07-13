@@ -33,7 +33,7 @@ class PaymentService
   	end
 
     def refund_cards_when_cancelled shop, card_order
-      paid_postcards = Postcard.where(card_order_id: card_order.id, paid: true)
+      paid_postcards = Postcard.where(card_order_id: card_order.id, paid: true, sent: false)
       paid_postcards.find_each do |postcard|
         shop.credit += postcard.cost
         postcard.paid = false

@@ -170,7 +170,6 @@ class Postcard < ApplicationRecord
   def return_address
     if card_order.international
       return_address = card_order.return_address
-
       return {} unless return_address
       {
         name: return_address.name[0...40],

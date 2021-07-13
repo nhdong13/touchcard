@@ -1,8 +1,20 @@
 class SendAllCardsJob < ActiveJob::Base
   queue_as :default
 
+  after_perform do |job|
+    # After finish job => checking if this campaign is satisfy conditions to stop
+    # Conditions to stop:
+    #   + Reach end date
+    # NOTE: one-off campaign only do one
+
+    # job.arguments[0] => shop instance
+    # job.arguments[1] => card order instance
+    unless (reach_end_date(job.arguments[1]) || job.arguments[1].one_off?)
+      FetchHistoryOrdersJob.set(wait: 1.day).perform_later(job.arguments[0], job.arguments[0].post_sale_orders.last.send_delay, job.arguments[1])
+    end
+  end
+
   def perform shop, campaign
-    return unless (campaign.scheduled? || campaign.sending?)
     campaign.sending!
     campaign.save!
     result = Postcard.send_all
@@ -12,14 +24,6 @@ class SendAllCardsJob < ActiveJob::Base
       campaign.sent!
     end
     campaign.save!
-
-    # After finish job => checking if this campaign is satisfy conditions to stop
-    # Conditions to stop:
-    #   + Reach end date
-    # NOTE: one-off campaign only do one
-    return if reach_end_date(campaign) || campaign.one_off?
-
-    # FetchHistoryOrdersJob.set(wait: 1.day).perform_later(shop, shop.post_sale_orders.last.send_delay, campaign)
   end
 
   private

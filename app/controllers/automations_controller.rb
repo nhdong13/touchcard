@@ -68,12 +68,13 @@ class AutomationsController < BaseController
   # PATCH/PUT /automations/1.json
   def update
     respond_to do |format|
+      toggle_from_off_to_on = (!@automation.enabled? && automation_params[:enabled] )
+
       if @automation.update(automation_params)
-        if @automation.enabled?
-          send_postcard
+        if toggle_from_off_to_on
+          resume_sending_postcard
           SendAllHistoryCardsJob.perform_later(@current_shop)
         end
-
         flash[:notice] = "Automation successfully updated"
         format.html { redirect_to automations_path }
         format.json { render json: {
@@ -94,7 +95,6 @@ class AutomationsController < BaseController
   def destroy
     @automation.archive
     begin
-      PaymentService.refund_cards_when_cancelled @current_shop, @automation
       @automation.safe_destroy!
     rescue ActiveRecord::RecordNotFound
       respond_to do |format|
@@ -109,7 +109,6 @@ class AutomationsController < BaseController
   def start_sending
     @automation.update(enabled: true)
     send_postcard
-    # PaymentService.refund_cards_when_cancelled @current_shop, @automation
     respond_to do |format|
       format.html { render plain: "OK" }
       format.json { render json: { message: "OK" }, status: :ok }
@@ -120,7 +119,17 @@ class AutomationsController < BaseController
 
   def send_postcard
     FetchHistoryOrdersJob.perform_now(@current_shop, @current_shop.post_sale_orders.last.send_delay, @automation)
-    # GeneratePostcardJob.perform_later(@current_shop, @automation)
+  end
+
+  def resume_sending_postcard
+    FetchHistoryOrdersJob.perform_now(@current_shop, @current_shop.post_sale_orders.last.send_delay, @automation)
+    if @automation.processing?
+      GeneratePostcardJob.perform_now(@current_shop, @automation)
+    elsif @automation.scheduled?
+      SchedulingPostcardJob.perform_now(@current_shop, @automation)
+    elsif @automation.sending?
+      SendAllCardsJob.perform_now(@current_shop, @automation)
+    end
   end
 
   def set_automation
