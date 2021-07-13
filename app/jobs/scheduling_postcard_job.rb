@@ -1,8 +1,13 @@
 class SchedulingPostcardJob < ActiveJob::Base
   queue_as :default
 
-  def perform campaign
-    return unless campaign.processing?
+  after_perform do |job|
+    # job.arguments[0] => shop instance
+    # job.arguments[1] => card order instance
+    SendAllCardsJob.set(wait: 1.minutes).perform_later(job.arguments[0], job.arguments[1]) unless (job.arguments[1].error? || job.arguments[1].paused?)
+  end
+
+  def perform shop, campaign
     begin
       result = true
       # Get postcard paid
@@ -15,5 +20,6 @@ class SchedulingPostcardJob < ActiveJob::Base
       campaign.error!
     end
     campaign.save
+
   end
 end

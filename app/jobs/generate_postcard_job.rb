@@ -1,9 +1,13 @@
 class GeneratePostcardJob < ActiveJob::Base
 	queue_as :default
 
-	def perform shop, campaign
-    return unless (campaign.draft? || campaign.processing?)
+  after_perform do |job|
+    # job.arguments[0] => shop instance
+    # job.arguments[1] => card order instance
+    SchedulingPostcardJob.set(wait: 1.minutes).perform_later(job.arguments[0], job.arguments[1]) unless (job.arguments[1].error? || job.arguments[1].paused?)
+  end
 
+	def perform shop, campaign
     shop.new_sess
 
     campaign.processing!
@@ -22,20 +26,17 @@ class GeneratePostcardJob < ActiveJob::Base
 
     # Get already exisiting customer in postcard list => 1 customer only sent 1 postcard
     # This is for use case when we go from paused status to processing
-    existing_customers = Postcard.joins(:card_order).where(card_order_id: campaign.id)
-
+    existing_customers = campaign.postcards
     while true
       customers.each do |c|
         customer = Customer.from_shopify!(c)
         # If customer don't pass filter then skip
-        next unless (customer_targeting_service.customer_pass_filter? customer.id ||
-                    !(customer.international? ^ campaign.international) ||
+        next unless (customer_targeting_service.customer_pass_filter?(customer.id) &&
+                    !(customer.international? ^ campaign.international) &&
                     !existing_customers.exists?(customer_id: customer.id)
                     )
-
         postcard = Postcard.new
         postcard.customer = customer
-        postcard.postcard_trigger = campaign
         postcard.send_date = Time.now
 
         campaign.postcards << postcard

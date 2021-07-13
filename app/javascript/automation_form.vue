@@ -111,6 +111,7 @@
         </div>
       </div>
     </div>
+    <!-- Comment this piece of code according to Customer's requirement
 
     <div :class="[errors.returnAddress ? 'invalid' : '', 'automation-section']">
       <label for="return-address-checkbox" class="noselect"><strong>Add Return Address</strong></label>
@@ -195,6 +196,7 @@
         </div>
       </div>
     </div>
+    -->
     <h2 class="d-inline-block">Customer Filters</h2>
     <button @click="downloadCSV"> CSV </button>
     <div :class="[errors.filters ? 'invalid' : '' ,'filter-config nested-toggle row']">
@@ -209,9 +211,6 @@
         <button type="button" class="add-more-filter-btn" id="add-removed-filter" @click="addFilter">Add Filter</button>
       </div>
     </div>
-    <!-- <hr />
-    <h2>Add Contact</h2>
-    <button>Shopify</button> -->
     <hr />
     <h2><small :class="{error: errors.uploadedFrontDesign}" v-if="errors.uploadedFrontDesign">*</small> Front</h2>
     <div :class="{ invalid: errors.uploadedFrontDesign }">
@@ -246,7 +245,7 @@
       <div v-else>
         <a class="mdc-button mdc-button--stroked mdc-button--dense" v-on:click="returnToCampaignList" >Save and exit</a>
 
-        <a class="mdc-button mdc-button--stroked mdc-button--dense" v-on:click="saveAndStartSending" v-if="isUserHasPaymentMethod">Start Sending</a>
+        <button class="mdc-button mdc-button--raised" v-on:click="saveAndStartSending" v-if="isUserHasPaymentMethod">Start Sending</button>
         <a class="mdc-button mdc-button--stroked mdc-button--dense" v-on:click="saveAndCheckout" v-else>Add Payment</a>
       </div>
     </div>
@@ -309,9 +308,6 @@
       const _this = this
       if(this.isEditExistCampaign) {
         window.addEventListener("beforeunload", function (e) {
-          _this.disableCampaign(_this.automation.id)
-        })
-        window.addEventListener("popstate", function (e) {
           _this.disableCampaign(_this.automation.id)
         })
       }
@@ -805,7 +801,8 @@
 
       goToCheckoutPage: function() {
         Turbolinks.visit('/subscriptions/new')
-      }
+      },
+
     }
   }
 </script>

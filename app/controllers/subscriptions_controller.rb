@@ -40,6 +40,7 @@ class SubscriptionsController < BaseController
   end
 
   def edit
+    @current_credit = @current_shop.current_subscription.quantity * (Plan.last.amount.to_f/100)
   end
 
   def update

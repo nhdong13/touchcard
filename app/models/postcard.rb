@@ -84,8 +84,10 @@ class Postcard < ApplicationRecord
     cards.size - num_failed
   end
 
+  # 1 token = 0.89$
+  # 2 tokens = 1.78$
   def cost
-    international? ? 2 : 1
+    international? ? 1.78 : 0.89
   end
 
   class DiscountCreationError < StandardError
@@ -168,7 +170,6 @@ class Postcard < ApplicationRecord
   def return_address
     if card_order.international
       return_address = card_order.return_address
-
       return {} unless return_address
       {
         name: return_address.name[0...40],

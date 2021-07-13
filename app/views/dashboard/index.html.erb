@@ -36,14 +36,9 @@
           <i class="material-icons mdc-card__media-item" style="font-size: 300%;">monetization_on</i>
         </div>
         <section class="mdc-card__primary">
-          <h2 class="mdc-card__subtitle">Credits</h2>
+          <h2 class="mdc-card__subtitle">Credit</h2>
           <h1 class="mdc-card__title mdc-card__title--large">
-            <%= @current_shop.credit %> /
-            <% if @current_shop.current_subscription %>
-              <%= @current_shop.current_subscription.quantity %>
-            <% else %>
-              0
-            <% end %>
+            $<%= @current_shop.credit %>
           </h1>
         </section>
       </div>

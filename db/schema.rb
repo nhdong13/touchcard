@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_29_095706) do
+ActiveRecord::Schema.define(version: 2021_07_09_073130) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -93,12 +93,12 @@ ActiveRecord::Schema.define(version: 2021_06_29_095706) do
     t.json "back_json", default: {}
     t.json "price_rules", default: {}
     t.string "campaign_name"
-    t.integer "budget", default: 0
+    t.float "budget", default: 0.0
     t.datetime "send_date_start"
     t.datetime "send_date_end"
     t.integer "budget_type", default: 0
-    t.integer "budget_used", default: 0
-    t.integer "budget_update", default: 0
+    t.float "budget_used", default: 0.0
+    t.float "budget_update", default: 0.0
     t.integer "campaign_type"
     t.integer "limit_cards_per_day"
     t.integer "card_order_parent_id"
@@ -345,7 +345,7 @@ ActiveRecord::Schema.define(version: 2021_06_29_095706) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.bigint "shopify_id"
-    t.integer "credit", default: 0
+    t.float "credit", default: 0.0
     t.bigint "webhook_id"
     t.bigint "uninstall_id"
     t.integer "charge_amount", default: 0
@@ -391,6 +391,7 @@ ActiveRecord::Schema.define(version: 2021_06_29_095706) do
     t.string "stripe_id", null: false
     t.index ["plan_id"], name: "index_subscriptions_on_plan_id"
     t.index ["shop_id"], name: "index_subscriptions_on_shop_id"
+    t.index ["stripe_id"], name: "index_subscriptions_on_stripe_id"
   end
 
   add_foreign_key "addresses", "customers"
