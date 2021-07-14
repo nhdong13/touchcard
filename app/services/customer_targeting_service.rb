@@ -422,6 +422,10 @@ class CustomerTargetingService
       else
         value_1 + "-" + value_2
       end
+    when "discount_amount_between"
+      value["value"].to_s.sub("&", "-")
+    when "discount_amount_matches"
+      value["value"].to_s
     else
       ""
     end
