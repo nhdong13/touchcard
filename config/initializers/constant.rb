@@ -5,7 +5,7 @@ FILTER_OPTIONS =[["Number of orders"         , "number_of_order"   ],
                  ["Last order date"          , "last_order_date"   ],
                  ["Total spent on last order", "last_order_total"  ],
                  ["Total spent on all orders", "all_order_total"   ],
-                 ["Discount amount received" , "discount_amount"   ]
+                #  ["Discount amount received" , "discount_amount"   ]
                 #  ["Shipping country"  , "shipping_country"  ],
                 #  ["Shipping state"    , "shipping_state"    ],
                 #  ["Shipping city"     , "shipping_city"     ],
