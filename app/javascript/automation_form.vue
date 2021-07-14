@@ -672,9 +672,18 @@
       },
 
       saveAndReturn: function() {
-        if(this.isCampaignNew() && isEmpty(this.automation.campaign_name)) {
-          this.automation.campaign_name = "New campaign"
-          this.sendingSaveRequest()
+        if(this.isCampaignNew()) {
+          if(isEmpty(this.automation.campaign_name)) {
+            this.automation.campaign_name = "New campaign"
+            const _this = this
+            axios.put(`/automations/${this.id}.json`, { card_order: this.automation})
+              .then(function(response) {
+                _this.returnToCampaignList()
+              }).catch(function (error) {
+                console.log(error)
+            });
+          }
+          this.returnToCampaignList()
         }
 
         // If there're some errors in save process => return
@@ -683,12 +692,15 @@
         this.returnToCampaignList()
       },
 
+
+
       saveAndStartSending: function() {
         // If there're some errors in save process => return
         if(!this.saveWithValidation()) return
 
-        axios.get(`/automations/${this.id}/start_sending.json`)
-        Turbolinks.visit('/campaigns')
+        axios.get(`/automations/${this.id}/start_sending.json`).then((response) => {
+          Turbolinks.visit('/campaigns')
+        })
       },
 
       saveAndCheckout: function() {
@@ -707,21 +719,21 @@
           this.errors.endDate = false
         }
 
-        if(!this.$refs.frontEditor.$data.attributes.background_url ||
-          this.$refs.frontEditor.$data.attributes.discount_x == 0 ||
-          this.$refs.frontEditor.$data.attributes.discount_y == 0) {
-          this.errors.uploadedFrontDesign = true
-        } else {
-          this.errors.uploadedFrontDesign = false
-        }
+        // if(!this.$refs.frontEditor.$data.attributes.background_url ||
+        //   this.$refs.frontEditor.$data.attributes.discount_x == 0 ||
+        //   this.$refs.frontEditor.$data.attributes.discount_y == 0) {
+        //   this.errors.uploadedFrontDesign = true
+        // } else {
+        //   this.errors.uploadedFrontDesign = false
+        // }
 
-        if(!this.$refs.backEditor.$data.attributes.background_url ||
-          this.$refs.backEditor.$data.attributes.discount_x == 0 ||
-          this.$refs.backEditor.$data.attributes.discount_y == 0) {
-          this.errors.uploadedBackDesign = true
-        } else {
-          this.errors.uploadedBackDesign = false
-        }
+        // if(!this.$refs.backEditor.$data.attributes.background_url ||
+        //   this.$refs.backEditor.$data.attributes.discount_x == 0 ||
+        //   this.$refs.backEditor.$data.attributes.discount_y == 0) {
+        //   this.errors.uploadedBackDesign = true
+        // } else {
+        //   this.errors.uploadedBackDesign = false
+        // }
 
         if(isEmpty(this.automation.campaign_name)) {
           this.errors.campaignName = true
