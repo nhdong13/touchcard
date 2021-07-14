@@ -1,5 +1,14 @@
 class CustomerTargetingService
   attr_accessor :orders, :current_shop, :accepted_attrs, :removed_attrs
+  ACTIVE_FILTERS = ["last_order_date",
+                    "first_order_date",
+                    "last_order_tag",
+                    "any_order_tag",
+                    "last_discount_code",
+                    "any_discount_code",
+                    "last_order_total",
+                    "discount_amount"
+                  ]
   def initialize(params, accepted_attrs, removed_attrs)
     @current_shop = params[:shop] ? params[:shop] : params[:order].shop_id
     @orders = params[:order] ? [params[:order]] : get_orders_in_campaign
@@ -100,7 +109,7 @@ class CustomerTargetingService
   def filter_passed_by_order order
     filters_passed_render = []
     accepted_attrs&.as_json&.each do |k, v|
-      if ["last_order_date", "first_order_date", "last_order_tag", "any_order_tag", "last_discount_code", "any_discount_code", "last_order_total"].include?(k)
+      if ACTIVE_FILTERS.include?(k)
         if (k.include?("last") && !is_last_order?(order)) || (k.include?("first") && !is_first_order?(order))
           result = ""
         else
@@ -207,6 +216,8 @@ class CustomerTargetingService
       filter_order.total_price.to_f / 100
     when "all_order_total"
       user_orders.sum(:total_price).to_f / 100
+    when "discount_amount"
+      filter_order.discount_codes
     # end
     # ongoing
     # end
@@ -289,6 +300,18 @@ class CustomerTargetingService
         field&.start_with?(value)
       when "end_with"
         field&.end_with?(value)
+      when "discount_amount_between"
+        return false if field.class != Array || !field[0].present?
+        currency_type = value[0] == "%" ? "percentage" : "fixed_amount"
+        splited_value = value[1..-1]
+        value_1 = splited_value.split("&")[0].to_f
+        value_2 = splited_value.split("&")[1].to_f
+
+        field[0]["type"] == currency_type && field[0]["amount"].to_f >= value_1 && field[0]["amount"].to_f <= value_2
+      when "discount_amount_matches"
+        return false if field.class != Array || !field[0].present?
+        currency_type = value[0] == "%" ? "percentage" : "fixed_amount"
+        field[0]["type"] == currency_type && value[1..-1].to_f == field[0]["amount"].to_f
       else
         false
     end
@@ -315,6 +338,60 @@ class CustomerTargetingService
       "LST-ORD-TTL"
     when "all_order_total"
       "TTL-SPND"
+    when "shipping_country"
+      "COUNTRY"
+    when "shipping_state"
+      "STATE"
+    when "shipping_city"
+      "CITY"
+    when "shipping_company"
+      "COMPANY"
+    when "customer_tag"
+      "CUST-TAG"
+    when "last_referring_site"
+      "LST-REF-SITE"
+    when "any_referring_site"
+      "ANY-REF-SITE"
+    when "last_landing_site"
+      "LST-LND-SITE"
+    when "any_landing_site"
+      "ANY-LND-SITE"
+    when "last_order_tag"
+      "LST-ORD-TAG"
+    when "any_order_tag"
+      "ANY-ORD-TAG"
+    when "last_product_name"
+      "LST-PROD-NAME"
+    when "any_product_name"
+      "ANY-PROD-NAME"
+    when "last_product_sku"
+      "LST-PROD-SKU"
+    when "any_product_sku"
+      "ANY-PROD-SKU"
+    when "last_product_collection"
+      "LST-PROD-COLL"
+    when "any_product_collection"
+      "ANY-PROD-COLL"
+    when "last_discount_code"
+      "LST-DSCNT-CODE"
+    when "any_discount_code"
+      "ANY-DSCNT-CODE"
+    when "discount_amount"
+      "DSCNT"
+    when "number_postcard_received"
+      "PSTCRD"
+    when "last_postcard_received"
+      "LST-PSTCRD"
+    when "accept_marketing"
+      "MARKETING"
+    when "last_financial_status"
+      "LST-FIN-STS"
+    when "any_financial_status"
+      "ANY-FIN-STS"
+    when "last_order_fulfillment_status"
+      "LST-FUL-STS"
+    when "any_order_fulfillment_status"
+      "ANY-FUL-STS"
     else
       ""
     end
@@ -345,6 +422,10 @@ class CustomerTargetingService
       else
         value_1 + "-" + value_2
       end
+    when "discount_amount_between"
+      value["value"].to_s.sub("&", "-")
+    when "discount_amount_matches"
+      value["value"].to_s
     else
       ""
     end

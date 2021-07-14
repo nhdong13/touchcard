@@ -15,7 +15,8 @@
       <option v-for="condition in filterConditions" v-if="showOption(condition[1])" :key="condition[1]" :value="condition[1]" :disabled="condition[1].includes('disable_display') || condition[1] == '' ? true : false">{{condition[0]}}</option>
     </select>
 
-    <div :class="['order_tag', 'discount_code'].includes(selectedFilter) ? 'f-value-2' : 'f-value'" v-if="showSecondInput()">
+    <!-- Common 2 input fields -->
+    <div :class="['order_tag', 'discount_code'].includes(selectedFilter) ? 'f-value-2' : 'f-value'" v-if="showSecondInput() && !showDiscountAmountInput()">
       <datepicker class="valueInput" v-model="value1" v-if="showDateInput()" @input="combineValue()" :use-utc="true" :disabled-dates="datePickerDisabledDates(true)" />
       <font-awesome-icon icon="chevron-down" v-if="showDateInput()" @click="triggerDatepicker(1)" class="datepicker-arrow middle-arrow" />
 
@@ -30,9 +31,31 @@
 
       <span class="middle-text" v-if="filter.selectedCondition == 'between_number' && filter.selectedFilter.includes('order_date')">days ago</span>
     </div>
+    <!---->
+
+    <!-- Zipcode filter -->
     <div class="f-value" v-else-if="showZipCodeInput()">
       <input type="number" class="valueInput" v-model="value1" v-if="showNumberInput()" @change="filter.value = `${value1}`" />
     </div>
+    <!---->
+
+    <!-- Discount amount filter -->
+    <div class="f-value" v-else-if="showDiscountAmountInput()">
+      <!-- switcher currency type for discount amount filter -->
+      <div class="switcher-small-options">
+        <span>$</span>
+        <switcher :value="currencySwitcherValue" @toggle="currencySwitcherToggle" />
+        <span>%</span>
+      </div>
+      <!---->
+      <input type="number" class="valueInput" v-model="value1" v-if="showSecondInput()" @change="changeCurrencyValue()" :placeholder="numberInputPlaceholder('Min. ')" @keypress="preventDecimal($event)" min=0 />
+      <input type="number" class="valueInput" v-model="value2" v-if="showSecondInput()" @change="changeCurrencyValue()" :placeholder="numberInputPlaceholder('Max. ')" @keypress="preventDecimal($event)" min=0 />
+
+      <input type="number" class="valueInput" v-model="value1" @change="changeCurrencyValue" @keypress="preventDecimal($event)" min=0 v-else />
+    </div>
+    <!---->
+
+    <!-- common single filter -->
     <div :class="['order_tag', 'discount_code'].includes(selectedFilter) ? 'f-value-2' : 'f-value'" v-else>
       <input type="text" class="valueInput" v-model="filter.value" v-if="showTextInput()" @change="filterChange" />
       <input type="number" class="valueInput" v-model="filter.value" v-else-if="showNumberInput()" @change="filterChange" @keypress="preventDecimal($event)" min=0 />
@@ -52,6 +75,7 @@
 
       <span class="middle-text" v-if="filter.selectedCondition == 'matches_number' && filter.selectedFilter.includes('order_date')">days ago</span>
     </div>
+    <!---->
 
     <font-awesome-icon icon="trash-alt" class="remove-filter-icon" v-if="filter.selectedFilter != ''" @click="removeFilter" />
 
@@ -86,10 +110,20 @@
       } else {
         this.selectedFilter = this.filter.selectedFilter;
       }
+
+      // Set 2 inputs value for between input
       if (this.filter.value && this.filter.selectedCondition.toString().includes("between")) {
         this.value1 = this.filter.value.split("&")[0];
         this.value2 = this.filter.value.split("&")[1];
+
+        // Separate if discount amount selected
+        if (this.filter.selectedFilter == "discount_amount") {
+          this.currencySwitcherValue = this.filter.value.substr(0, 1) == "%";
+          this.value1 = this.value1.substr(1);
+        }
       }
+
+      // get values for address input
       if (this.filter.selectedFilter == "shipping_state" && this.filter.selectedCondition == "from") {
         this.getSelectedCountryByState();
       }
@@ -113,6 +147,7 @@
         selectedCountry: "USA",
         newtag: '',
         tags: [],
+        currencySwitcherValue: false,
       }
     },
     methods: {
@@ -127,7 +162,7 @@
         return this.filter.selectedCondition.toString().includes("between");
       },
       showNumberInput() {
-        return ['number_of_order', 'total_spend', 'referring_site', 'landing_site', 'last_order_total', 'all_order_total'].includes(this.filter.selectedFilter) ||
+        return ['number_of_order', 'total_spend', 'referring_site', 'landing_site', 'last_order_total', 'all_order_total', 'discount_amount'].includes(this.filter.selectedFilter) ||
                (["first_order_date", "last_order_date"].includes(this.selectedFilter) && ["between_number", "matches_number"].includes(this.filter.selectedCondition)) ||
                (this.selectedFilter == "zip_code" && ["tag_is", "begin_with", "end_with"].indexOf(this.filter.selectedCondition) > -1);
       },
@@ -148,14 +183,18 @@
                (this.isFilter(['order_tag']) && ["tag_is", "tag_contain"].indexOf(this.filter.selectedCondition) > -1) ||
                (this.isFilter(['discount_code']) && ["tag_is", "tag_contain"].indexOf(this.filter.selectedCondition) > -1);  
       },
+      showDiscountAmountInput() {
+        return this.filter.selectedFilter == 'discount_amount';
+      },
       showOption(option) {
         return option == "" ||
-              (this.selectedFilter.includes("order_date") && ["before", "between_date", "after", "between_number", "matches_number", "disable_display_1", "disable_display_2"].indexOf(option) > -1) ||
+              (this.selectedFilter.includes("order_date") && ["before", "between_date", "after", "between_number", "matches_number", "disable_display_1", "disable_display_2"].includes(option)) ||
               (['number_of_order', 'last_order_total', 'all_order_total'].includes(this.filter.selectedFilter) && ["matches_number", "between_number"].includes(option)) ||
               (['shipping_country', 'shipping_state', 'shipping_city'].indexOf(this.filter.selectedFilter) > -1 && option == "from") ||
               (this.isFilter(['order_tag', 'discount_code']) && ["tag_is", "tag_contain"].indexOf(option) > -1) ||
               (this.selectedFilter == "zip_code" && ["equal", "begin_with", "end_with"].indexOf(option) > -1) ||
-              (this.selectedFilter == "shipping_company" && ["no", "yes"].indexOf(option) > -1)
+              (this.selectedFilter == "shipping_company" && ["no", "yes"].indexOf(option) > -1) ||
+              (this.selectedFilter == 'discount_amount' && ["discount_amount_matches", "discount_amount_between"].includes(option));
       },
       isFilter(filterNames) {
         let correctFilter = false;
@@ -211,6 +250,27 @@
           this.selectedOrderCollectionOption = switcherValue ? "last_" : "any_";
           this.detectFilter();
         }
+      },
+      currencySwitcherToggle(value) {
+        this.currencySwitcherValue = value;
+        this.changeCurrencyValue();
+      },
+      changeCurrencyValue() {
+        let currencyType = this.currencySwitcherValue ? "%" : "$";
+        if (this.filter.selectedCondition.includes("between")) {
+          if ((this.value1 && this.value1 != "") || (this.value2 && this.value2 != "")) {
+            this.filter.value = currencyType + (this.value1 || "") + "&" + (this.value2 || "");
+          } else {
+            this.filter.value = null;
+          }
+        } else {
+          if (this.value1 && this.value1 != "") {
+            this.filter.value = currencyType + this.value1;
+          } else {
+            this.filter.value = null;
+          }
+        }
+        this.filterChange();
       },
       getAllCountries() {
         axios.get("/targeting/get_countries").then((response) => {
@@ -275,12 +335,14 @@
             return side + 'amount';
           case 'number_of_order':
             return side + 'number of orders';
+          case 'discount_amount':
+            return side + 'discount';
           default:
             return '';
         }
       },
       preventDecimal(e) {
-        if ((! this.selectedFilter.includes('order_total') && e.key==='.') || e.key==='-' || e.key==='+') {e.preventDefault()};
+        if ((! ['order_total', 'discount_amount'].includes(this.selectedFilter) && e.key==='.') || e.key==='-' || e.key==='+') {e.preventDefault()};
         if (e.currentTarget.value.split(".")[1] && e.currentTarget.value.split(".")[1].length == 2) {e.preventDefault()};
         if (e.currentTarget.value == "" && e.key==='.') {e.preventDefault()};
       },
@@ -320,11 +382,21 @@
   height: 30px;
 }
 
-.switcher-options {
+.switcher-options, .switcher-small-options {
   margin-right: 10px;
   display: flex;
   align-items: center;
   width: 220px;
+}
+
+.switcher-small-options {
+  width: 85px;
+  margin-right: 0;
+}
+
+.switcher-small-options span {
+  margin-left: 5px;
+  margin-right: 5px;
 }
 
 .switcher-options span {
