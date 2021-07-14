@@ -9,7 +9,7 @@ class SendAllCardsJob < ActiveJob::Base
 
     # job.arguments[0] => shop instance
     # job.arguments[1] => card order instance
-    unless (reach_end_date(job.arguments[1]) || job.arguments[1].one_off?)
+    unless (reach_end_date(job.arguments[1]) || job.arguments[1].one_off? || !job.arguments[1].enabled)
       FetchHistoryOrdersJob.set(wait: 1.day).perform_later(job.arguments[0], job.arguments[0].post_sale_orders.last.send_delay, job.arguments[1])
     end
   end

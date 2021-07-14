@@ -4,7 +4,7 @@ class FetchHistoryOrdersJob < ActiveJob::Base
   after_perform do |job|
     # job.arguments[0] => shop instance
     # job.arguments[2] => card order instance
-    GeneratePostcardJob.perform_later(job.arguments[0], job.arguments[2]) if job.arguments[2].draft?
+    GeneratePostcardJob.perform_later(job.arguments[0], job.arguments[2]) if job.arguments[2].draft? && job.arguments[2].enabled
   end
 
   def perform(shop, time_delay, campaign)
