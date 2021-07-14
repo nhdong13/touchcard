@@ -26,12 +26,12 @@
     <div class="automation-section" v-if="campaign_type =='automation'">
       <strong>Monthly budget</strong>
       <span>
-        <input type="numer" id="budget_limit" v-model="budget"> credits
+        <input type="numer" v-on:keypress="restrictToNumber($event)" id="budget_limit" v-model="budget"> credits
       </span>
     </div>
 
-    <div class="automation-section" v-if="campaign_type =='one_off'">
-      <div>
+    <div class="automation-section d-flex" v-if="campaign_type =='one_off'">
+      <div class="align-self-center">
         <strong>Campaign schedule</strong>
       </div>
       <div>
@@ -45,7 +45,7 @@
               name="send_date_start"
               ref="sendDateStart"
               @selected="changeSendDateEnd"
-              :disabled="isStartDateEqualCurrentDate"
+              :disabled="isStartDateDisable"
             ></datepicker>
             <div class="icon-calendar" v-on:click="openSendDateStartDatePicker">
               <font-awesome-icon icon="calendar-alt"/>
@@ -66,8 +66,10 @@
       </div>
     </div>
 
-    <div class="automation-section" v-else>
-      <strong>Campaign schedules</strong>
+    <div class="automation-section d-flex" v-else>
+      <div class="align-self-center">
+        <strong class="f-14">Campaign schedule</strong>
+      </div>
       <div class="flex-center">
         <div class="campaign-section nested-toggle">
           <div class="datepicker-with-icon">
@@ -79,7 +81,7 @@
               name="send_date_start"
               ref="sendDateStart"
               @selected="changeSendDateEnd"
-              :disabled="isStartDateEqualCurrentDate"
+              :disabled="isStartDateDisable"
             ></datepicker>
             <div class="icon-calendar" v-on:click="openSendDateStartDatePicker">
               <font-awesome-icon icon="calendar-alt"/>
@@ -103,7 +105,7 @@
             </div>
           </div>
         </div>
-        <div class="send-continuously-option pt-ongoing-checkbox">
+        <div class="send-continuously-option align-self-center">
           <span :class="{invalid: errors.endDate}">
             <input id="send-continuously" type="checkbox" v-model="automation.send_continuously"/>
           </span>
@@ -243,7 +245,7 @@
         <md-button class="review-and-continue-btn text-white" v-on:click="saveAndReturn">Save Changes</md-button>
       </div>
       <div v-else>
-        <a class="mdc-button mdc-button--stroked mdc-button--dense" v-on:click="returnToCampaignList" >Save and exit</a>
+        <a class="mdc-button mdc-button--stroked mdc-button--dense" v-on:click="saveAndReturn" >Save and exit</a>
 
         <button class="mdc-button mdc-button--raised" v-on:click="saveAndStartSending" v-if="isUserHasPaymentMethod">Start Sending</button>
         <a class="mdc-button mdc-button--stroked mdc-button--dense" v-on:click="saveAndCheckout" v-else>Add Payment</a>
@@ -291,26 +293,21 @@
     },
     created() {
       this.isEditExistCampaign = !this.isCampaignNew()
-      if(isEmpty(this.automation.send_date_start)) {
-        this.automation.send_date_start = new Date()
-      } else {
-        const today = new Date()
-        const startDate = new Date(this.automation.send_date_start)
-        if(startDate.getTime() <= today.getTime()) {
-          this.isStartDateEqualCurrentDate = true
-        } else {
-          this.disabledDates.from = new Date(startDate - 8640000)
-          today.setDate(today.getDate() - 1)
-          this.disabledDates.to = today
-        }
-      }
+      this.isStartDateDisable = this.disableStartDate()
+
       // Handling event where the user exit page without click Discard or Save Changes button
       const _this = this
-      if(this.isEditExistCampaign) {
-        window.addEventListener("beforeunload", function (e) {
+      window.addEventListener("beforeunload", function (e) {
+        if(_this.isEditExistCampaign) {
           _this.disableCampaign(_this.automation.id)
-        })
-      }
+        } else {
+          if(isEmpty(_this.automation.campaign_name)) {
+            _this.automation.campaign_name = "New campaign"
+            _this.sendingSaveRequest()
+          }
+        }
+      })
+
 
     },
 
@@ -340,11 +337,9 @@
         willShowBudgetType: true,
         campaign_type: this.automation.campaign_type ? this.automation.campaign_type : "automation",
         willShowDailySendingSchedule: false,
-        disabledDates: {
-          to: new Date(Date.now() - 8640000)
-        },
+        disabledDates: {},
         isCancel: false,
-        isStartDateEqualCurrentDate: false,
+        isStartDateDisable: false,
         saved_automation: {}, // Use with autosave, play as backup when user don't want to change campaign any more
         isEditExistCampaign: true,
         errors: {
@@ -523,34 +518,18 @@
 
         this.automation.budget_type = this.budget_type
         this.automation.campaign_type = this.campaign_type
+        this.automation.return_address_attributes = this.returnAddress
 
         if (this.checkNameCampaignIsInvalid()) return;
 
-        this.postOrPutForm();
+        this.sendingSaveRequest();
       },
-      postOrPutForm: function() {
-        if (this.id) {
-          // Edit existing automation (PUT)
-          let target = `/automations/${this.id}.json`;
-          this.automation.return_address_attributes = this.returnAddress;
-          if (this.enableFiltering) this.collectFilters();
-          axios.put(target, { card_order: this.automation})
-            .then(function(response) {
-              console.log(response);
-              Turbolinks.visit('/campaigns');
-            }).catch(function (error) {
-            ShopifyApp.flashError(error.request.responseText);
-          });
-        } else {
-          // Create a new automation (POST)
-          axios.post('/automations.json', { card_order: this.automation})
-            .then(function(response) {
-              console.log(response);
-              Turbolinks.visit('/campaigns');
-            }).catch(function (error) {
-            ShopifyApp.flashError(error.request.responseText);
-          });
-        }
+      sendingSaveRequest: function() {
+        axios.put(`/automations/${this.id}.json`, { card_order: this.automation})
+          .then(function(response) {
+          }).catch(function (error) {
+            console.log(error)
+        });
       },
       // Get all filters and conditions
       getAllFilterValues() {
@@ -664,12 +643,8 @@
         // TODO: Must somehow make sure automation is JSON safe
         this.saved_automation = JSON.parse(JSON.stringify(this.automation))
 
-        if(this.automation.campaign_status == "draft") {
-          axios.put(`/automations/${this.id}.json`, { card_order: this.automation})
-            .then(function(response) {
-            }).catch(function (error) {
-              console.log(error)
-          });
+        if(this.isCampaignNew()) {
+          this.sendingSaveRequest()
         }
       },
       isTwoJsonEqual: function(a, b) {
@@ -697,8 +672,12 @@
       },
 
       saveAndReturn: function() {
-        // If there're some errors in save process => return
+        if(this.isCampaignNew() && isEmpty(this.automation.campaign_name)) {
+          this.automation.campaign_name = "New campaign"
+          this.sendingSaveRequest()
+        }
 
+        // If there're some errors in save process => return
         if(!this.saveWithValidation()) return
 
         this.returnToCampaignList()
@@ -783,13 +762,14 @@
         }
         return true
       },
-      // We can perform this check because autosave every second
+
       isCampaignNew: function() {
         return this.automation.campaign_status == "draft"
       },
 
       returnToCampaignList: function() {
-        Turbolinks.visit('/campaigns')
+        Turbolinks.clearCache()
+        Turbolinks.visit('/campaigns', {flush: true})
       },
 
       disableCampaign: function(campaign_id) {
@@ -803,6 +783,28 @@
         Turbolinks.visit('/subscriptions/new')
       },
 
+      restrictToNumber: function(e) {
+        if(e.charCode === 0 || /\d/.test(String.fromCharCode(e.charCode))) return true
+        e.preventDefault()
+      },
+
+      disableStartDate: function() {
+        if(isEmpty(this.automation.send_date_start)) {
+          this.automation.send_date_start = new Date()
+        } else {
+          const today = new Date()
+          today.setDate(today.getDate() - 1)
+          this.disabledDates.to = today
+        }
+
+        if(this.automation.campaign_status == "sending" ||
+          this.automation.campaign_status == "sent" ||
+          this.automation.campaign_status == "out of order" ||
+          this.automation.campaign_status == "error" ||
+          this.automation.campaign_status == "paused") return true
+
+        return false
+      }
     }
   }
 </script>
@@ -815,7 +817,6 @@
     margin: 16px 0
   }
   .nested-toggle {
-    padding-top: 10px;
     padding-left: 10px;
   }
 
@@ -829,7 +830,6 @@
 
   .filter-config {
     display: block;
-    width: 850px;
   }
 
   .filter-section-title {
@@ -923,5 +923,17 @@
     padding-left: 2px;
     padding-top: 2px;
     padding-bottom: 2px;
+  }
+
+  .d-flex {
+    display: flex;
+  }
+
+  .align-self-center {
+    align-self: center;
+  }
+
+  .f-14 {
+    font-size: 14px;
   }
 </style>

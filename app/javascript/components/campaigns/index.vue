@@ -85,7 +85,9 @@
               />
             </td>
             <!-- The maximum of character to display is 45 -->
-            <td v-on:click="onEditCampaign(item.id)" class="campaign-name-style">{{ item.campaign_name | truncate(45) }}</td>
+            <td>
+              <span v-on:click="onEditCampaign(item.id)" class="campaign-name-style">{{ item.campaign_name | truncate(30) }}</span>
+            </td>
             <td>{{ item.campaign_type }}</td>
             <td>{{ item.campaign_status}}</td>
             <td>
@@ -406,8 +408,9 @@
         const truncatedStr = []
         let characterCount = 0
         data.split(" ").slice(0, data.length).forEach((element) => {
-          if(element.length + characterCount > num) return
+          if((element.length + characterCount) > num) return
           truncatedStr.push(element)
+          characterCount += (element.length + 1) // 1 is for space " "
         })
         let result = truncatedStr.join(" ")
         if(data != result) result += " ..."
@@ -475,8 +478,6 @@
       padding: 16px 0;
     }
   }
-
-
 
   .campaign-name-style{
     color: #6baafc;

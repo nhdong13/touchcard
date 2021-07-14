@@ -69,7 +69,7 @@ class CardOrder < ApplicationRecord
   after_update :update_budget_type, if: :saved_change_to_budget_type?
 
   def add_default_params
-    self.campaign_name = "My campaign" unless self.campaign_name.present?
+    self.campaign_name = "New campaign" unless self.campaign_name.present?
     self.type = "PostSaleOrder" if self.type.nil?
     self.campaign_status = "draft"
     self.filters << Filter.new(filter_data: {:accepted => {}, :removed => {}})
