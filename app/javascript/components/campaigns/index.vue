@@ -117,7 +117,7 @@
             <strong><h3>What do you want to name this campaign?</h3></strong>
           </div>
           <div>
-            <input id="campaign_name" v-model="duplicateCampaignName">
+            <input id="campaign_name" v-model="duplicateCampaignName" class="border-theme">
           </div>
           <br/>
           <div>
@@ -289,7 +289,7 @@
         axios.get('/campaigns/duplicate_campaign.json', { params: { campaign_id: this.selected, campaign_name: this.duplicateCampaignName } })
           .then(function(response) {
             _this.updateState(response.data)
-            _this.closeModalConfirmDuplicate()
+            _this.closeModalConfirmDuplicateCampaign()
           }).catch(function (error) {
         });
       },
@@ -556,5 +556,9 @@
 
   .no-hover {
     pointer-events: none;
+  }
+
+  .border-theme {
+    border: 2px solid #5b3e82;
   }
 </style>
