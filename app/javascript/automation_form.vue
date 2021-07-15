@@ -1,6 +1,8 @@
 <template>
   <div class="automation_form">
-    <h1>{{ automation.campaign_name }}</h1>
+    <div class="h-32">
+      <h1>{{ automation.campaign_name }}</h1>
+    </div>
     <hr/>
     <h2>Campaign Settings</h2>
     <div class="automation-section">
@@ -947,5 +949,9 @@
 
   .f-14 {
     font-size: 14px;
+  }
+
+  .h-32 {
+    height: 32px;
   }
 </style>

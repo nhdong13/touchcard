@@ -15,7 +15,9 @@
             <font-awesome-icon icon="long-arrow-alt-down"/>
            </button>
           <DropdownMenu ref="DropdownMenu"></DropdownMenu>
+          <!-- Hide this according to customer's requirement
           <input :placeholder="'Search'" v-model="searchQuery" @input="debounceSearch" />
+          -->
         </div>
       </div>
       <div>
@@ -63,7 +65,7 @@
             </th>
           </tr>
           <tr v-for="item in thisCampaigns">
-            <td>
+            <td class="checkbox-cell" @click="selectCampaign">
               <input id="campaign-check-all" type="checkbox" v-model="selected" :value="item.id" number/>
             </td>
             <td>
@@ -248,7 +250,7 @@
     watch: {
       thisCampaigns: function(){
         this.listcampaignActive()
-      },
+      }
     },
 
     methods: {
@@ -398,6 +400,18 @@
         this.selected = []
         if(willReturnToFisrtPage){
           this.currentPage = 1
+        }
+      },
+
+      selectCampaign: function(e) {
+        if(_.isEmpty(e.target.children[0])) return
+        const campaignId = Number(e.target.children[0].defaultValue)
+        if(e.target.children[0].checked) {
+          e.target.children[0].checked = false
+          this.selected = this.selected.filter(element => element != campaignId)
+        } else {
+          e.target.children[0].checked = true
+          this.selected.push(campaignId)
         }
       }
     },
