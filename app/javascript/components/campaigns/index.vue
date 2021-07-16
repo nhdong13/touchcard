@@ -119,8 +119,8 @@
           </div>
           <br/>
           <div>
-            <button v-on:click="closeModalConfirmDuplicateCampaign" class="mdc-button mdc-button--stroked mdc-button--dense"> Cancel </button>
-            <button v-on:click="duplicateCampaign" class="mdc-button mdc-button--stroked mdc-button--dense"> Save </button>
+            <button v-on:click="closeModalConfirmDuplicateCampaign" class="mdc-button mdc-button--stroked"> Cancel </button>
+            <button v-on:click="duplicateCampaign" class="mdc-button mdc-button--stroked"> Save </button>
           </div>
         </div>
       </campaignModal>

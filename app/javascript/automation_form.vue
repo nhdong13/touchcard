@@ -241,11 +241,11 @@
     <br>
     <div class="text-right">
       <div v-if="isEditExistCampaign">
-        <button class="mdc-button" v-on:click="returnToCampaignList" >Discard</button>
+        <button class="mdc-button mdc-button--stroked" v-on:click="returnToCampaignList" >Discard</button>
         <button class="mdc-button mdc-button--raised" @click="saveAndReturn">Save Changes</button>
       </div>
       <div v-else>
-        <a class="mdc-button mdc-button--stroked mdc-button--dense" v-on:click="returnToCampaignList" >Save and exit</a>
+        <a class="mdc-button mdc-button--stroked" v-on:click="returnToCampaignList" >Save and exit</a>
 
         <button class="mdc-button mdc-button--raised" v-on:click="saveAndStartSending" v-if="isUserHasPaymentMethod">Start Sending</button>
         <button class="mdc-button mdc-button--raised" v-on:click="saveAndCheckout" v-else>Add Payment</button>
