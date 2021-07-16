@@ -27,7 +27,7 @@ RSpec.describe CardOrder, type: :model do
       order = create(:order)
 
       order.total_line_items_price = 6000 # $60.00
-      order.total_price = 51 # $50.01
+      order.total_price = 5100 # $50.01
 
       expect(card_order.send_postcard?(order)).to eq true
     end
@@ -60,7 +60,7 @@ RSpec.describe CardOrder, type: :model do
       card_order = setup_card_order
       card_order.filters = [filter]
       order = create(:order)
-      order.total_price = 110 # $500.00
+      order.total_price = 11000 # $500.00
 
       expect(card_order.send_postcard?(order)).to eq false
     end
@@ -73,7 +73,7 @@ RSpec.describe CardOrder, type: :model do
       card_order = setup_card_order
       card_order.filters = [filter]
       order = create(:order)
-      order.total_price = 5 # $500.00
+      order.total_price = 500 # $500.00
 
       expect(card_order.send_postcard?(order)).to eq true
     end
