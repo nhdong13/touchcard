@@ -26,7 +26,7 @@
     <div class="automation-section" v-if="campaign_type =='automation'">
       <strong>Monthly budget</strong>
       <span>
-        <input type="numer" id="budget_limit" v-model="budget"> credits
+        $ <input type="numer" id="budget_limit" v-model="budget">
       </span>
     </div>
 
