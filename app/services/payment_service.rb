@@ -1,7 +1,7 @@
 class PaymentService
   class << self
   	def pay_postcard_for_campaign_monthly shop, card_order, postcard
-  		return false if postcard.paid
+  		return true if postcard.paid
 
   		if shop.credit < postcard.cost
         card_order.previous_campaign_status = CardOrder.campaign_statuses[card_order.campaign_status]

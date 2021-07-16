@@ -8,13 +8,19 @@ class SchedulingPostcardJob < ActiveJob::Base
   end
 
   def perform shop, campaign
-    return unless (campaign.enabled? && (campaign.processing? || campaign.scheduled?) && !campaign.archived)
+    if campaign.out_of_credit?
+      campaign.processing! if shop.credit > 0.0
+    end
+
+    return unless (campaign.enabled? &&
+      (campaign.processing? || campaign.scheduled?) &&
+      !campaign.archived)
     begin
       result = true
       # Get postcard paid
       campaign.postcards.find_each do |postcard|
         result = PaymentService.pay_postcard_for_campaign_monthly campaign.shop, campaign, postcard
-        break if !result
+        break unless result
       end
       campaign.scheduled! if result
     rescue

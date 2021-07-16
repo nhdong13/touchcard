@@ -106,6 +106,13 @@ class CardOrder < ApplicationRecord
     if enabled
       if !self.previous_campaign_status.nil?
         previous_campaign_status = self.previous_campaign_status
+
+        # This is for a bug happen in old campaign where
+        # campaign_status: paused
+        # previous_campaign_status: paused
+        #
+        # NOTE: If in the future, this bug doesn't happen again. We can delete this line
+        previous_campaign_status = CardOrder.processing if previous_campaign_status == CardOrder.campaign_statuses[:paused]
         update(campaign_status: previous_campaign_status)
       end
     else
