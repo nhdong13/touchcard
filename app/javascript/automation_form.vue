@@ -17,10 +17,10 @@
         <input type="radio" id="automation" value="automation" v-model="campaign_type" v-on:click="setBudgetType">
         <label for="automation">Automation</label>
       </span>
-      <span v-if="automation.campaign_status == 'draft' || automation.campaign_type == 'one_off'">
+      <!-- <span v-if="automation.campaign_status == 'draft' || automation.campaign_type == 'one_off'">
         <input type="radio" id="one_off" value="one_off" v-model="campaign_type" v-on:click="setBudgetType">
         <label for="one_off">One-off</label>
-      </span>
+      </span> -->
     </div>
 
     <div class="automation-section" v-if="campaign_type =='automation'">
@@ -30,7 +30,7 @@
       </span>
     </div>
 
-    <div class="automation-section" v-if="campaign_type =='one_off'">
+    <!-- <div class="automation-section" v-if="campaign_type =='one_off'">
       <div>
         <strong>Campaign schedule</strong>
       </div>
@@ -53,9 +53,9 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
 
-    <div class="automation-section" v-if="campaign_type =='one_off'">
+    <!-- <div class="automation-section" v-if="campaign_type =='one_off'">
       <div>
         <input id="daily-schedule-checkbox" type="checkbox" v-model="willCheckDailySendingSchedule">
         <label for="daily-schedule-checkbox" class="noselect"><strong>Daily schedule and limits</strong></label>
@@ -64,7 +64,7 @@
         <span>Limit per day:</span>
         <input type="numer" id="budget_limit" v-model="automation.limit_cards_per_day"> postcards
       </div>
-    </div>
+    </div> -->
 
     <div class="automation-section" v-else>
       <strong>Campaign schedules</strong>
