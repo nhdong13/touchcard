@@ -11,7 +11,7 @@
   <% end %>
   <section class="text-center">
 
-    You're currently subscribed to <strong>$<%= @current_credit %></strong> per month. Change to:
+    You're currently subscribed to <strong><%= number_to_currency(@current_credit) %></strong> per month. Change to:
 
     <br>
     <div><span v-cloak class="checkout-quantity-display f-s-300">${{ this.price.toFixed(2) }}</span><span class="f-s-200"> / month</span></div>

@@ -38,7 +38,7 @@
         <section class="mdc-card__primary">
           <h2 class="mdc-card__subtitle">Credit</h2>
           <h1 class="mdc-card__title mdc-card__title--large">
-            $<%= @current_shop.credit %>
+            <%= number_to_currency(@current_shop.credit) %>
           </h1>
         </section>
       </div>
