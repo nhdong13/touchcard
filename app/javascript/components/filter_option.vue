@@ -1,9 +1,12 @@
 <template>
   <div class="filter-line">
     <input v-model="filter.selectedFilter" @change="filterChange" class="d-none filter-value" />
-    <select class="filter-dropdown" v-model="selectedFilter" @change="detectFilter">
-      <option v-for="option in filterOptions" :key="option[1]" :value="option[1]">{{option[0]}}</option>
-    </select>
+    <div class="position-relative">
+      <select class="filter-dropdown" v-model="selectedFilter" @change="detectFilter">
+        <option v-for="option in filterOptions" :key="option[1]" :value="option[1]">{{option[0]}}</option>
+      </select>
+      <font-awesome-icon icon="chevron-down" class="select-dropdown-arrow" />
+    </div>
 
     <div class="switcher-options" v-if="['order_tag', 'discount_code'].includes(selectedFilter)">
       <span>Any orders</span>
@@ -11,9 +14,12 @@
       <span>Last order</span>
     </div>
 
-    <select class="option-dropdown" v-if="filter.selectedFilter != ''" v-model="filter.selectedCondition" @change="optionChange">
-      <option v-for="condition in filterConditions" v-if="showOption(condition[1])" :key="condition[1]" :value="condition[1]" :disabled="condition[1].includes('disable_display') || condition[1] == '' ? true : false">{{condition[0]}}</option>
-    </select>
+    <div class="position-relative">
+      <select class="option-dropdown" v-if="filter.selectedFilter != ''" v-model="filter.selectedCondition" @change="optionChange">
+        <option v-for="condition in filterConditions" v-if="showOption(condition[1])" :key="condition[1]" :value="condition[1]" :disabled="condition[1].includes('disable_display') || condition[1] == '' ? true : false">{{condition[0]}}</option>
+      </select>
+      <font-awesome-icon icon="chevron-down" class="select-dropdown-arrow" />
+    </div>
 
     <!-- Common 2 input fields -->
     <div :class="['order_tag', 'discount_code'].includes(selectedFilter) ? 'f-value-2' : 'f-value'" v-if="showSecondInput() && !showDiscountAmountInput()">
@@ -66,9 +72,12 @@
       <treeselect class="valueInput" v-model="filter.value" v-if="showCountrySelect()" :multiple="true" :options="countriesList" placeholder="Any country" />
 
       <div class="f-value" v-if="showStateSelect()">
-        <select class="valueInput" v-model="selectedCountry" @change="countrySelected">
-          <option v-for="country in countriesList" :key="country.id" :value="country.id">{{country.label}}</option>
-        </select>
+        <div class="position-relative">
+          <select class="valueInput" v-model="selectedCountry" @change="countrySelected">
+            <option v-for="country in countriesList" :key="country.id" :value="country.id">{{country.label}}</option>
+          </select>
+          <font-awesome-icon icon="chevron-down" class="select-dropdown-arrow" />
+        </div>
         <treeselect class="valueInput" v-model="filter.value" :options="statesList" :multiple="true" placeholder="Any state" />
       </div>
       <vue-tags-input v-model="newtag" :tags="tags" @tags-changed="newTags => tagsChanged(newTags)" v-if="showCityOrTagsInput()" class="valueInput" />
@@ -491,5 +500,25 @@ input[type=number] {
 .remove-filter-icon {
   margin: auto;
   cursor: pointer;
+}
+
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  padding: 0 2px;
+}
+
+.position-relative {
+  position: relative;
+}
+
+.select-dropdown-arrow {
+  position: absolute;
+  right: 15px;
+  margin-top: 9px;
+  width: 0.75em !important;
+  filter: brightness(0%); 
+  top: 0;
 }
 </style>
