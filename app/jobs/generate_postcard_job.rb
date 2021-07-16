@@ -4,18 +4,12 @@ class GeneratePostcardJob < ActiveJob::Base
   after_perform do |job|
     # job.arguments[0] => shop instance
     # job.arguments[1] => card order instance
-    if job.arguments[1].enabled
-      SchedulingPostcardJob.set(wait: 1.minutes).perform_later(job.arguments[0], job.arguments[1])
-    else
-      job.arguments[1].paused!
-    end
+    SchedulingPostcardJob.set(wait: 1.minutes).perform_later(job.arguments[0], job.arguments[1]) unless job.arguments[1].archived
   end
 
 	def perform shop, campaign
+    return unless (campaign.enabled? && campaign.processing?  && !campaign.archived)
     shop.new_sess
-
-    campaign.processing!
-    campaign.save!
 
     # Get customer from shopify
     customers_before = campaign.automation? ? Time.new.strftime("%FT%T%:z") : campaign.created_at

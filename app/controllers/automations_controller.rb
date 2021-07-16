@@ -72,7 +72,6 @@ class AutomationsController < BaseController
 
       if @automation.update(automation_params)
         if toggle_from_off_to_on
-          resume_sending_postcard
           SendAllHistoryCardsJob.perform_later(@current_shop)
         end
         flash[:notice] = "Automation successfully updated"
@@ -119,17 +118,6 @@ class AutomationsController < BaseController
 
   def send_postcard
     FetchHistoryOrdersJob.perform_now(@current_shop, @current_shop.post_sale_orders.last.send_delay, @automation)
-  end
-
-  def resume_sending_postcard
-    FetchHistoryOrdersJob.perform_now(@current_shop, @current_shop.post_sale_orders.last.send_delay, @automation)
-    if @automation.processing?
-      GeneratePostcardJob.perform_now(@current_shop, @automation)
-    elsif @automation.scheduled?
-      SchedulingPostcardJob.perform_now(@current_shop, @automation)
-    elsif @automation.sending?
-      SendAllCardsJob.perform_now(@current_shop, @automation)
-    end
   end
 
   def set_automation

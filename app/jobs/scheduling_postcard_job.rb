@@ -4,14 +4,11 @@ class SchedulingPostcardJob < ActiveJob::Base
   after_perform do |job|
     # job.arguments[0] => shop instance
     # job.arguments[1] => card order instance
-    if job.arguments[1].enabled
-      SendAllCardsJob.set(wait: 1.minutes).perform_later(job.arguments[0], job.arguments[1])
-    else
-      job.arguments[1].paused!
-    end
+    SendAllCardsJob.set(wait: 1.minutes).perform_later(job.arguments[0], job.arguments[1]) unless job.arguments[1].archived
   end
 
   def perform shop, campaign
+    return unless (campaign.enabled? && (campaign.processing? || campaign.scheduled?) && !campaign.archived)
     begin
       result = true
       # Get postcard paid
