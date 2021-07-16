@@ -32,7 +32,7 @@ class CampaignsController < BaseController
   end
 
   def export_csv
-    card_oders = ActiveModelSerializers::SerializableResource.new(CardOrder.all, {each_serializer: CardOrderSerializer}).to_json
+    card_oders = ActiveModelSerializers::SerializableResource.new(@current_shop.card_orders, {each_serializer: CardOrderSerializer}).to_json
     csv = ExportCsvService.new card_oders, CardOrder::CSV_ATTRIBUTES
     respond_to do |format|
       format.json { render json: {

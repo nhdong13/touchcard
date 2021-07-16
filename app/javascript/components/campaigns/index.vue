@@ -6,14 +6,14 @@
     <div class="campaign-tab-content">
       <div :class="'action'">
         <div :class="'action'">
-          <button v-on:click="showModalConfirmDuplicate" :disabled="selected.length > 1 || selected.length < 1" :class="['managing-button', (selected.length > 1) ? 'no-hover' : '']"> Duplicate </button>
-          <button v-on:click="showModalConfirmDeleteCampaign" :disabled="selected.length < 1" class="managing-button"> Delete </button>
+          <button v-on:click="showModalConfirmDuplicate" :disabled="selected.length > 1 || selected.length < 1" class="mdc-button mdc-button--stroked"> Duplicate </button>
+          <button v-on:click="showModalConfirmDeleteCampaign" :disabled="selected.length < 1" class="mdc-button mdc-button--stroked"> Delete </button>
         </div>
         <div :class="'search-action'">
-          <button v-on:click="exportCsv">
+          <!-- <button v-on:click="exportCsv">
             CSV
             <font-awesome-icon icon="long-arrow-alt-down"/>
-           </button>
+           </button> -->
           <DropdownMenu ref="DropdownMenu"></DropdownMenu>
           <input :placeholder="'Search'" v-model="searchQuery" @input="debounceSearch" />
         </div>
@@ -119,8 +119,8 @@
           </div>
           <br/>
           <div>
-            <button v-on:click="closeModalConfirmDuplicateCampaign" class="mdc-button mdc-button--stroked mdc-button--dense"> Cancel </button>
-            <button v-on:click="duplicateCampaign" class="mdc-button mdc-button--stroked mdc-button--dense"> Save </button>
+            <button v-on:click="closeModalConfirmDuplicateCampaign" class="mdc-button mdc-button--stroked"> Cancel </button>
+            <button v-on:click="duplicateCampaign" class="mdc-button mdc-button--stroked"> Save </button>
           </div>
         </div>
       </campaignModal>
@@ -131,8 +131,8 @@
             <strong><h3>This action cannot be undone. Are you sure you want to delete the campaign(s)?</h3></strong>
           </div>
           <div>
-            <button v-on:click="closeModalConfirmDeleteCampaign"> Cancel </button>
-            <button v-on:click="deleteCampaigns"> Delete </button>
+            <button v-on:click="closeModalConfirmDeleteCampaign" class="mdc-button mdc-button--stroked"> Cancel </button>
+            <button v-on:click="deleteCampaigns" class="mdc-button mdc-button--stroked"> Delete </button>
           </div>
         </div>
       </campaignModal>
@@ -300,19 +300,19 @@
         });
       },
 
-      exportCsv: function(){
-        let target = `/campaigns/export_csv.json`;
-        axios.get(target, {})
-          .then(function(response) {
-            const url = window.URL.createObjectURL(new Blob([JSON.parse(response.data.csv_data)]));
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', response.data.filename); //or any other extension
-            document.body.appendChild(link);
-            link.click();
-          }).catch(function (error) {
-        });
-      },
+      // exportCsv: function(){
+      //   let target = `/campaigns/export_csv.json`;
+      //   axios.get(target, {})
+      //     .then(function(response) {
+      //       const url = window.URL.createObjectURL(new Blob([JSON.parse(response.data.csv_data)]));
+      //       const link = document.createElement('a');
+      //       link.href = url;
+      //       link.setAttribute('download', response.data.filename); //or any other extension
+      //       document.body.appendChild(link);
+      //       link.click();
+      //     }).catch(function (error) {
+      //   });
+      // },
 
       onChangeCampaignActive: function(event, campaign_id){
         let _this = this
