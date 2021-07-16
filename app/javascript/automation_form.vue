@@ -80,6 +80,7 @@
               ref="sendDateStart"
               @selected="changeSendDateEnd"
               :disabled="isStartDateEqualCurrentDate"
+              format="MMM dd yyyy"
             ></datepicker>
             <div class="icon-calendar" v-on:click="openSendDateStartDatePicker">
               <font-awesome-icon icon="calendar-alt"/>
@@ -96,6 +97,7 @@
                 name="sendDateEnd"
                 ref="sendDateEnd"
                 :disabled="automation.send_continuously"
+                format="MMM dd yyyy"
               ></datepicker>
               <div class="icon-calendar" v-on:click="openSendDateEndDatePicker">
                 <font-awesome-icon icon="calendar-alt"/>
@@ -239,14 +241,14 @@
     <br>
     <div class="text-right">
       <div v-if="isEditExistCampaign">
-        <md-button class="cancel-btn text-white" v-on:click="returnToCampaignList" >Discard</md-button>
-        <md-button class="review-and-continue-btn text-white" v-on:click="saveAndReturn">Save Changes</md-button>
+        <button class="mdc-button" v-on:click="returnToCampaignList" >Discard</button>
+        <button class="mdc-button mdc-button--raised" @click="saveAndReturn">Save Changes</button>
       </div>
       <div v-else>
         <a class="mdc-button mdc-button--stroked mdc-button--dense" v-on:click="returnToCampaignList" >Save and exit</a>
 
         <button class="mdc-button mdc-button--raised" v-on:click="saveAndStartSending" v-if="isUserHasPaymentMethod">Start Sending</button>
-        <a class="mdc-button mdc-button--stroked mdc-button--dense" v-on:click="saveAndCheckout" v-else>Add Payment</a>
+        <button class="mdc-button mdc-button--raised" v-on:click="saveAndCheckout" v-else>Add Payment</button>
       </div>
     </div>
   </div>
