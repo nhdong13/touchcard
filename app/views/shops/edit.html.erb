@@ -6,7 +6,9 @@
     <% if @shop.current_subscription %>
       <p>
       You are subscribed to <strong>$<%= @current_credit %></strong> per month. &nbsp
-      <%= link_to 'Edit', edit_subscriptions_path, class: "mdc-button mdc-button--stroked mdc-button--dense" %>
+      <%= link_to edit_subscriptions_path do %>
+        <button class="mdc-button mdc-button--stroked">Edit</button>
+      <% end %>
       </p>
       <p>
         Your next billing date is on <strong><%= @current_shop.current_subscription.current_period_end.to_date %></strong>

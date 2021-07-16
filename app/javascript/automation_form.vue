@@ -245,7 +245,7 @@
         <button class="mdc-button mdc-button--raised" @click="saveAndReturn">Save Changes</button>
       </div>
       <div v-else>
-        <a class="mdc-button mdc-button--stroked" v-on:click="returnToCampaignList" >Save and exit</a>
+        <button class="mdc-button mdc-button--stroked" v-on:click="returnToCampaignList" >Save and exit</button>
 
         <button class="mdc-button mdc-button--raised" v-on:click="saveAndStartSending" v-if="isUserHasPaymentMethod">Start Sending</button>
         <button class="mdc-button mdc-button--raised" v-on:click="saveAndCheckout" v-else>Add Payment</button>

@@ -6,8 +6,8 @@
     <div class="campaign-tab-content">
       <div :class="'action'">
         <div :class="'action'">
-          <button v-on:click="showModalConfirmDuplicate" :disabled="selected.length > 1 || selected.length < 1" :class="['managing-button', (selected.length > 1) ? 'no-hover' : '']"> Duplicate </button>
-          <button v-on:click="showModalConfirmDeleteCampaign" :disabled="selected.length < 1" class="managing-button"> Delete </button>
+          <button v-on:click="showModalConfirmDuplicate" :disabled="selected.length > 1 || selected.length < 1" class="mdc-button mdc-button--stroked"> Duplicate </button>
+          <button v-on:click="showModalConfirmDeleteCampaign" :disabled="selected.length < 1" class="mdc-button mdc-button--stroked"> Delete </button>
         </div>
         <div :class="'search-action'">
           <!-- <button v-on:click="exportCsv">
@@ -131,8 +131,8 @@
             <strong><h3>This action cannot be undone. Are you sure you want to delete the campaign(s)?</h3></strong>
           </div>
           <div>
-            <button v-on:click="closeModalConfirmDeleteCampaign"> Cancel </button>
-            <button v-on:click="deleteCampaigns"> Delete </button>
+            <button v-on:click="closeModalConfirmDeleteCampaign" class="mdc-button mdc-button--stroked"> Cancel </button>
+            <button v-on:click="deleteCampaigns" class="mdc-button mdc-button--stroked"> Delete </button>
           </div>
         </div>
       </campaignModal>

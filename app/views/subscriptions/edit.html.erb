@@ -6,7 +6,9 @@
 <div id="edit-subscription-form" class="billing panel">
   <br>
 
-  <%= link_to 'Back', 'javascript:history.back()', class: "mdc-button mdc-button--stroked" %>
+  <%= link_to 'javascript:history.back()' do %>
+    <button class="mdc-button mdc-button--stroked">Back</button>
+  <% end %>
   <section class="text-center">
 
     You're currently subscribed to <strong>$<%= @current_credit %></strong> per month. Change to:
