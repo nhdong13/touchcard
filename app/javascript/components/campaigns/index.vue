@@ -10,10 +10,10 @@
           <button v-on:click="showModalConfirmDeleteCampaign" :disabled="selected.length < 1" class="managing-button"> Delete </button>
         </div>
         <div :class="'search-action'">
-          <button v-on:click="exportCsv">
+          <!-- <button v-on:click="exportCsv">
             CSV
             <font-awesome-icon icon="long-arrow-alt-down"/>
-           </button>
+           </button> -->
           <DropdownMenu ref="DropdownMenu"></DropdownMenu>
           <input :placeholder="'Search'" v-model="searchQuery" @input="debounceSearch" />
         </div>
@@ -300,19 +300,19 @@
         });
       },
 
-      exportCsv: function(){
-        let target = `/campaigns/export_csv.json`;
-        axios.get(target, {})
-          .then(function(response) {
-            const url = window.URL.createObjectURL(new Blob([JSON.parse(response.data.csv_data)]));
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', response.data.filename); //or any other extension
-            document.body.appendChild(link);
-            link.click();
-          }).catch(function (error) {
-        });
-      },
+      // exportCsv: function(){
+      //   let target = `/campaigns/export_csv.json`;
+      //   axios.get(target, {})
+      //     .then(function(response) {
+      //       const url = window.URL.createObjectURL(new Blob([JSON.parse(response.data.csv_data)]));
+      //       const link = document.createElement('a');
+      //       link.href = url;
+      //       link.setAttribute('download', response.data.filename); //or any other extension
+      //       document.body.appendChild(link);
+      //       link.click();
+      //     }).catch(function (error) {
+      //   });
+      // },
 
       onChangeCampaignActive: function(event, campaign_id){
         let _this = this
