@@ -9,14 +9,18 @@ class SendAllCardsJob < ActiveJob::Base
 
     # job.arguments[0] => shop instance
     # job.arguments[1] => card order instance
-    unless (reach_end_date(job.arguments[1]) || job.arguments[1].one_off? || !job.arguments[1].enabled)
-      FetchHistoryOrdersJob.set(wait: 1.day).perform_later(job.arguments[0], job.arguments[0].post_sale_orders.last.send_delay, job.arguments[1])
+    if (job.arguments[1].enabled && job.arguments[1].sent?)
+      unless (reach_end_date(job.arguments[1]) || job.arguments[1].one_off? || job.arguments[1].archived)
+        FetchHistoryOrdersJob.set(wait: 1.day).perform_later(job.arguments[0], job.arguments[0].post_sale_orders.last.send_delay, job.arguments[1])
+      end
+    else
+      FetchHistoryOrdersJob.set(wait: 1.minutes).perform_later(job.arguments[0], job.arguments[0].post_sale_orders.last.send_delay, job.arguments[1])
     end
   end
 
   def perform shop, campaign
+    return unless (campaign.enabled? && (campaign.sending? || campaign.scheduled?) && !campaign.archived)
     campaign.sending!
-    campaign.save!
     result = Postcard.send_all
     if result[:card_sent_amount] < result[:total_card]
       campaign.error!
