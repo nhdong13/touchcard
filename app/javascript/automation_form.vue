@@ -66,7 +66,7 @@
       </div>
     </div> -->
 
-    <div class="automation-section" v-else>
+    <div class="automation-section">
       <strong>Campaign schedules</strong>
       <div class="flex-center">
         <div class="campaign-section nested-toggle">
