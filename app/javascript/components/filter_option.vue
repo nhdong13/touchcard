@@ -238,19 +238,13 @@
         }
       },
       combineValue() {
-        // if (this.value1 == null || this.value1 < 0) {
-        //   this.value1 = 0;
-        // }
-        // if (this.value2 == null) {
-        //   this.value2 = this.value1;
-        // }
-        // this.filter.value = this.value1 && this.value2 ? `${this.value1}&${this.value2}` : null;
         if (this.value1 && this.value2 && this.selectedFilter.includes("order_date") && this.filter.selectedCondition == "between_date") {
           let date1 = new Date(this.value1);
           let date2 = new Date(this.value2);
           if (date1 > date2) this.value1 = null;
         }
-        this.filter.value = (this.value1 && this.value1 != "") || (this.value2 && this.value2 != "") ? `${this.value1 || ''}&${this.value2 || ''}` : null;
+
+        this.filter.value = this.isValidInputNumber() ? `${this.value1 || ''}&${this.value2 || ''}` : null;
         this.filterChange();
       },
       switcherToggle(switcherValue, valueChange=true) {
@@ -267,19 +261,22 @@
       changeCurrencyValue() {
         let currencyType = this.currencySwitcherValue ? "%" : "$";
         if (this.filter.selectedCondition.includes("between")) {
-          if ((this.value1 && this.value1 != "") || (this.value2 && this.value2 != "")) {
-            this.filter.value = currencyType + (this.value1 || "") + "&" + (this.value2 || "");
-          } else {
-            this.filter.value = null;
-          }
+            this.filter.value = this.isValidInputNumber() ? currencyType + (this.value1 || "") + "&" + (this.value2 || "") : null;
         } else {
-          if (this.value1 && this.value1 != "") {
-            this.filter.value = currencyType + this.value1;
-          } else {
-            this.filter.value = null;
-          }
+          this.filter.value = this.value1 && this.value1 != "" ? currencyType + this.value1 : null;
         }
         this.filterChange();
+      },
+      isValidInputNumber() {
+        if ((!this.value1 || this.value1 =='') && (!this.value2 && this.value2 == '')) {
+          return false;
+        } else {
+          if ((this.value1 && this.value1 != "") && (this.value2 && this.value2 != "")
+              && (parseFloat(this.value1) > parseFloat(this.value2))) {
+            return false;
+          }
+        }
+        return true;
       },
       getAllCountries() {
         axios.get("/targeting/get_countries").then((response) => {
