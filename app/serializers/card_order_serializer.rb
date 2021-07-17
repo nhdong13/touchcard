@@ -20,7 +20,7 @@ class CardOrderSerializer < ActiveModel::Serializer
 
   def campaign_status
     return unless object.campaign_status
-    object.campaign_status.capitalize
+    object.campaign_status.capitalize.split("_").join(" ")
   end
 
   def tokens_used
