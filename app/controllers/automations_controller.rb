@@ -35,14 +35,16 @@ class AutomationsController < BaseController
   def edit
     @return_address =  @automation.return_address || ReturnAddress.new
     if @return_address.new_record?
-      # This shop is retrieved directly from Shopify instead of from database in order to get address
-      shop = ShopifyAPI::Shop.current
-      @return_address.address_line1 = shop.address1
-      @return_address.city = shop.city
-      @return_address.state = shop.province
-      @return_address.zip = shop.zip
-      @return_address.country_code = shop.country_code
-      @return_address.name = shop.name
+      @current_shop.with_shopify_session do
+        # This shop is retrieved directly from Shopify instead of from database in order to get address
+        shop = ShopifyAPI::Shop.current
+        @return_address.address_line1 = shop.address1
+        @return_address.city = shop.city
+        @return_address.state = shop.province
+        @return_address.zip = shop.zip
+        @return_address.country_code = shop.country_code
+        @return_address.name = shop.name
+      end
     end
   end
 
