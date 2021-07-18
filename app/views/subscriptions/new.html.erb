@@ -18,11 +18,11 @@
       </div>
     </div>
 
-    <h3>How many customers do you want to reach this month?</h3>
+    <h3>How many postcards would you like to send this month?</h3>
 
     <div><span v-cloak class="checkout-quantity-display f-s-400">{{ quantity || <%= checkout_quantity(@current_shop) %> }}</span><span class="f-s-200">&nbsp</span></div>
 
-    Last Month: <%= @current_shop.last_month %>
+    Order last Month: <%= @current_shop.last_month %>
 
     <%= render 'slider', slider_index: checkout_index(@current_shop) %>
 

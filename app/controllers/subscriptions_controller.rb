@@ -20,7 +20,7 @@ class SubscriptionsController < BaseController
     if @subscription.save
       @subscription.shop.top_up
       flash[:notice] = "Subscription successfully created"
-      redirect_to automations_path
+      redirect_to root_path
     else
       flash[:error] = @subscription.errors.full_messages.join("\n")
       render :new
