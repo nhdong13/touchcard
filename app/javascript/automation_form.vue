@@ -300,13 +300,9 @@
       // Handling event where the user exit page without click Discard or Save Changes button
       const _this = this
       window.addEventListener("beforeunload", function (e) {
-        if(_this.isEditExistCampaign) {
-          _this.disableCampaign(_this.automation.id)
-        } else {
-          if(isEmpty(_this.automation.campaign_name)) {
-            _this.automation.campaign_name = "New campaign"
-            _this.sendingSaveRequest()
-          }
+        if(isEmpty(_this.automation.campaign_name)) {
+          _this.automation.campaign_name = "New campaign"
+          _this.sendingSaveRequest()
         }
       })
 
@@ -322,8 +318,6 @@
         this.interval = window.setInterval(() => {
           this.saveAutomation()
         }, 1000)
-      } else {
-        this.saveAutomation()
       }
     },
     data: function() {
