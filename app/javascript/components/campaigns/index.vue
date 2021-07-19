@@ -15,7 +15,9 @@
             <font-awesome-icon icon="long-arrow-alt-down"/>
            </button> -->
           <DropdownMenu ref="DropdownMenu"></DropdownMenu>
+          <!-- Hide this according to customer's requirement
           <input :placeholder="'Search'" v-model="searchQuery" @input="debounceSearch" />
+          -->
         </div>
       </div>
       <div>
@@ -63,7 +65,7 @@
             </th>
           </tr>
           <tr v-for="item in thisCampaigns">
-            <td>
+            <td class="checkbox-cell" @click="selectCampaign">
               <input id="campaign-check-all" type="checkbox" v-model="selected" :value="item.id" number/>
             </td>
             <td>
@@ -85,7 +87,9 @@
               />
             </td>
             <!-- The maximum of character to display is 45 -->
-            <td v-on:click="onEditCampaign(item.id)" class="campaign-name-style">{{ item.campaign_name | truncate(45) }}</td>
+            <td>
+              <span v-on:click="onEditCampaign(item.id)" class="campaign-name-style">{{ item.campaign_name | truncate(30) }}</span>
+            </td>
             <td>{{ item.campaign_type }}</td>
             <td>{{ item.campaign_status}}</td>
             <td>
@@ -115,7 +119,7 @@
             <strong><h3>What do you want to name this campaign?</h3></strong>
           </div>
           <div>
-            <input id="campaign_name" v-model="duplicateCampaignName">
+            <input id="campaign_name" v-model="duplicateCampaignName" class="border-theme">
           </div>
           <br/>
           <div>
@@ -246,7 +250,7 @@
     watch: {
       thisCampaigns: function(){
         this.listcampaignActive()
-      },
+      }
     },
 
     methods: {
@@ -287,7 +291,7 @@
         axios.get('/campaigns/duplicate_campaign.json', { params: { campaign_id: this.selected, campaign_name: this.duplicateCampaignName } })
           .then(function(response) {
             _this.updateState(response.data)
-            _this.closeModalConfirmDuplicate()
+            _this.closeModalConfirmDuplicateCampaign()
           }).catch(function (error) {
         });
       },
@@ -397,6 +401,18 @@
         if(willReturnToFisrtPage){
           this.currentPage = 1
         }
+      },
+
+      selectCampaign: function(e) {
+        if(_.isEmpty(e.target.children[0])) return
+        const campaignId = Number(e.target.children[0].defaultValue)
+        if(e.target.children[0].checked) {
+          e.target.children[0].checked = false
+          this.selected = this.selected.filter(element => element != campaignId)
+        } else {
+          e.target.children[0].checked = true
+          this.selected.push(campaignId)
+        }
       }
     },
 
@@ -406,8 +422,9 @@
         const truncatedStr = []
         let characterCount = 0
         data.split(" ").slice(0, data.length).forEach((element) => {
-          if(element.length + characterCount > num) return
+          if((element.length + characterCount) > num) return
           truncatedStr.push(element)
+          characterCount += (element.length + 1) // 1 is for space " "
         })
         let result = truncatedStr.join(" ")
         if(data != result) result += " ..."
@@ -475,8 +492,6 @@
       padding: 16px 0;
     }
   }
-
-
 
   .campaign-name-style{
     color: #6baafc;
@@ -555,5 +570,9 @@
 
   .no-hover {
     pointer-events: none;
+  }
+
+  .border-theme {
+    border: 2px solid #5b3e82;
   }
 </style>
