@@ -112,7 +112,7 @@ class CardOrder < ApplicationRecord
         # previous_campaign_status: paused
         #
         # NOTE: If in the future, this bug doesn't happen again. We can delete this line
-        previous_campaign_status = CardOrder.processing if previous_campaign_status == CardOrder.campaign_statuses[:paused]
+        previous_campaign_status = CardOrder.campaign_statuses[:processing] if previous_campaign_status == CardOrder.campaign_statuses[:paused]
         update(campaign_status: previous_campaign_status)
       end
     else

@@ -26,7 +26,7 @@
             <th>
               <input id="campaign-check-all" type="checkbox" v-model="selectAll"/>
             </th>
-            <th></th>
+            <th>Active</th>
             <th>Design</th>
             <th v-on:click="onSortByAlphabetically('sortByName', 'campaign_name')">
               Name
@@ -73,7 +73,7 @@
                 <md-switch v-model="campaignActive" class="md-primary" disabled></md-switch>
               </span>
               <span v-else>
-                <md-switch v-model="campaignActive" :value="item.id" class="md-primary" @change="value => onChangeCampaignActive(value, item.id)"></md-switch>
+                <md-switch v-model="campaignActive" :value="item.id" class="md-primary" @change="value => onChangeCampaignActive(value, item.id)" :disabled="disableToggle(item)"></md-switch>
               </span>
             </td>
             <td>
@@ -208,14 +208,6 @@
     },
 
     computed: {
-
-      disablePauseToggle: function (){
-        if(['draft', 'sent'].includes(campaign.id)){
-          return true
-        }
-        return false;
-      },
-
       selectAll: {
         get() {
           if (this.thisCampaigns && this.thisCampaigns.length > 0) {
@@ -413,6 +405,12 @@
           e.target.children[0].checked = true
           this.selected.push(campaignId)
         }
+      },
+
+      // User can't interact with toggle when campaign is in status sending and have type one-off
+      disableToggle: function(campaign) {
+        if(campaign.campaign_type == "One-off" && campaign.campaign_status == "Sending") true
+        return false
       }
     },
 
