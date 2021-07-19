@@ -715,21 +715,21 @@
           this.errors.endDate = false
         }
 
-        // if(!this.$refs.frontEditor.$data.attributes.background_url ||
-        //   this.$refs.frontEditor.$data.attributes.discount_x == 0 ||
-        //   this.$refs.frontEditor.$data.attributes.discount_y == 0) {
-        //   this.errors.uploadedFrontDesign = true
-        // } else {
-        //   this.errors.uploadedFrontDesign = false
-        // }
+        if(!this.$refs.frontEditor.$data.attributes.background_url ||
+          this.$refs.frontEditor.$data.attributes.discount_x == 0 ||
+          this.$refs.frontEditor.$data.attributes.discount_y == 0) {
+          this.errors.uploadedFrontDesign = true
+        } else {
+          this.errors.uploadedFrontDesign = false
+        }
 
-        // if(!this.$refs.backEditor.$data.attributes.background_url ||
-        //   this.$refs.backEditor.$data.attributes.discount_x == 0 ||
-        //   this.$refs.backEditor.$data.attributes.discount_y == 0) {
-        //   this.errors.uploadedBackDesign = true
-        // } else {
-        //   this.errors.uploadedBackDesign = false
-        // }
+        if(!this.$refs.backEditor.$data.attributes.background_url ||
+          this.$refs.backEditor.$data.attributes.discount_x == 0 ||
+          this.$refs.backEditor.$data.attributes.discount_y == 0) {
+          this.errors.uploadedBackDesign = true
+        } else {
+          this.errors.uploadedBackDesign = false
+        }
 
         if(isEmpty(this.automation.campaign_name)) {
           this.errors.campaignName = true
