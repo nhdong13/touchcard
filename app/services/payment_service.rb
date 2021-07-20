@@ -1,3 +1,7 @@
+=begin
+  This class is used to handle a shop's credit in sending postcard process and change card order status if necessary
+  This should be distinguish between this class and any modules that deal with Stripe
+=end
 class PaymentService
   class << self
   	def pay_postcard_for_campaign_monthly shop, card_order, postcard

@@ -1,6 +1,11 @@
 class FetchHistoryOrdersJob < ActiveJob::Base
   queue_as :default
 
+  before_enqueue do |job|
+    # job.arguments[2] => card order instance
+    throw :abort if (job.arguments[2].archived || job.arguments[2].sent?)
+  end
+
   after_perform do |job|
     # job.arguments[0] => shop instance
     # job.arguments[2] => card order instance

@@ -1,6 +1,11 @@
 class SendAllCardsJob < ActiveJob::Base
   queue_as :default
 
+  before_enqueue do |job|
+    # job.arguments[1] => card order instance
+    throw :abort if (job.arguments[1].archived || job.arguments[1].sent?)
+  end
+
   after_perform do |job|
     # After finish job => checking if this campaign is satisfy conditions to stop
     # Conditions to stop:

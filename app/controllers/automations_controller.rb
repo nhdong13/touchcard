@@ -70,11 +70,18 @@ class AutomationsController < BaseController
   # PATCH/PUT /automations/1.json
   def update
     respond_to do |format|
-      toggle_from_off_to_on = (!@automation.enabled? && automation_params[:enabled] )
-
+      campaign_enabled_field_before_update = @automation.enabled
       if @automation.update(automation_params)
-        if toggle_from_off_to_on
-          SendAllHistoryCardsJob.perform_later(@current_shop)
+        if PauseUnpauseCampaignPolicy.enable_campaign? campaign_enabled_field_before_update, @automation.enabled
+          if PauseUnpauseCampaignPolicy.passed_campaign? @automation
+            @automation.update(enabled: false)
+            flash[:error] = "Please edit the date for the campaign to run."
+          else
+            EnableDisableCampaignService.enable_campaign @automation, nil
+            SendAllHistoryCardsJob.perform_later(@current_shop)
+          end
+        elsif PauseUnpauseCampaignPolicy.disable_campaign? campaign_enabled_field_before_update, @automation.enabled
+          EnableDisableCampaignService.disable_campaign @automation, :paused , nil
         end
         flash[:notice] = "Automation successfully updated"
         format.html { redirect_to automations_path }

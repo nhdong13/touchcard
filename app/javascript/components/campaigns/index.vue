@@ -14,10 +14,10 @@
             CSV
             <font-awesome-icon icon="long-arrow-alt-down"/>
            </button> -->
+          <!-- Comment according to customer's requirement
           <DropdownMenu ref="DropdownMenu"></DropdownMenu>
-          <!-- Hide this according to customer's requirement
-          <input :placeholder="'Search'" v-model="searchQuery" @input="debounceSearch" />
           -->
+          <input :placeholder="'SEARCH'" v-model="searchQuery" @input="debounceSearch" class="border-theme"/>
         </div>
       </div>
       <div>
