@@ -28,7 +28,7 @@
     <div class="automation-section" v-if="campaign_type =='automation'">
       <strong>Monthly budget</strong>
       <span>
-        $ <input type="numer" v-on:keypress="restrictToNumber($event)" id="budget_limit" v-model="budget">
+        $ <input type="numer" v-on:keypress="restrictToNumber($event)" id="budget_limit" v-model="budget" maxlength = "10">
       </span>
     </div>
 
@@ -485,17 +485,7 @@
         this.automation.campaign_type = campaign_type
       },
 
-      checkNameCampaignIsInvalid: function() {
-        if(!this.automation.campaign_name) {
-          $(".campaign-name-error").show()
-          return true;
-        } else {
-          $(".campaign-name-error").hide()
-          return false;
-        }
-      },
-
-      requestSave: function() {
+      fetchDataFromUI: function() {
 
         // TODO: Wait for uploads to complete in CardEditor
         // this.$refs.cardEditor.prepareSave();
@@ -517,10 +507,6 @@
         this.automation.budget_type = this.budget_type
         this.automation.campaign_type = this.campaign_type
         this.automation.return_address_attributes = this.returnAddress
-
-        if (this.checkNameCampaignIsInvalid()) return;
-
-        this.sendingSaveRequest();
       },
       sendingSaveRequest: function() {
         axios.put(`/automations/${this.id}.json`, { card_order: this.automation})
@@ -621,28 +607,15 @@
         if(this.isTwoJsonEqual(this.saved_automation, this.automation)) {
           return
         }
-        // Get card side data for saving
-        let frontAttrs = this.$refs.frontEditor.$data.attributes;
-        let backAttrs = this.$refs.backEditor.$data.attributes;
-
-        this.automation.front_json = frontAttrs;
-        this.automation.back_json = backAttrs;
-
-        // Using `.showsDiscount` assumes card_editor.vue has created card_attributes objects from json
-        if (!frontAttrs.showsDiscount && !backAttrs.showsDiscount ) {
-          // Fallback to default
-          this.automation.discount_pct = DEFAULT_DISCOUNT_PERCENTAGE;
-          this.automation.discount_exp = DEFAULT_WEEK_BEFORE_DISCOUNT_EXPIRE;
-        }
-
-        this.automation.budget_type = this.budget_type
-        this.automation.campaign_type = this.campaign_type
-        this.automation.return_address_attributes = this.returnAddress;
+        this.fetchDataFromUI()
         // TODO: Must somehow make sure automation is JSON safe
         this.saved_automation = JSON.parse(JSON.stringify(this.automation))
 
         if(this.isCampaignNew()) {
-          this.sendingSaveRequest()
+          axios.put(`/automations/${this.id}.json`, { card_order: this.automation})
+          .catch(function (error) {
+            console.log(error)
+          });
         }
       },
       isTwoJsonEqual: function(a, b) {
@@ -660,34 +633,35 @@
         })
         if(!this.isFormValid()) return false
         if(this.automation.campaign_status != "draft") {
-          this.requestSave()
+          this.fetchDataFromUI()
         }
         return true
-      },
-
-      saveWithoutValidation: function() {
-        this.requestSave()
       },
 
       saveAndReturn: function() {
         if(this.isCampaignNew()) {
           if(isEmpty(this.automation.campaign_name)) {
             this.automation.campaign_name = "New campaign"
-            const _this = this
-            axios.put(`/automations/${this.id}.json`, { card_order: this.automation})
-              .then(function(response) {
-                _this.returnToCampaignList()
-              }).catch(function (error) {
-                console.log(error)
-            });
           }
-          this.returnToCampaignList()
+          const _this = this
+          axios.put(`/automations/${this.id}.json`, { card_order: this.automation})
+            .then(function(response) {
+              _this.returnToCampaignList()
+            }).catch(function (error) {
+              console.log(error)
+          });
         }
 
         // If there're some errors in save process => return
         if(!this.saveWithValidation()) return
 
-        this.returnToCampaignList()
+        const _this = this
+        axios.put(`/automations/${this.id}.json`, { card_order: this.automation})
+          .then(function(response) {
+            _this.returnToCampaignList()
+          }).catch(function (error) {
+            console.log(error)
+        });
       },
 
 
