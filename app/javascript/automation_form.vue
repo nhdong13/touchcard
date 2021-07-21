@@ -1,14 +1,14 @@
 <template>
   <div class="automation_form">
-    <div class="h-32">
+    <div>
       <h1>{{ automation.campaign_name }}</h1>
     </div>
     <hr/>
     <h2>Campaign Settings</h2>
     <div class="automation-section">
-      <span :class="[errors.campaignName ? 'invalid' : '', 'error-wrapper']">
+      <span>
         <strong><small :class="{error: errors.campaignName}" v-if="errors.campaignName">*</small> Campaign name</strong>
-        <input id="campaign_name" v-model="automation.campaign_name">
+        <input id="campaign_name" v-model="automation.campaign_name" :class="[errors.campaignName ? 'invalid' : '', 'error-wrapper']" maxlength="80">
         <span class="error campaign-name-error">This field is required.</span>
       </span>
     </div>
@@ -205,7 +205,7 @@
     -->
     <h2 class="d-inline-block">Customer Filters</h2>
     <button @click="downloadCSV"> CSV </button>
-    <div :class="[errors.filters ? 'invalid' : '' ,'filter-config nested-toggle row']">
+    <div :class="'filter-config nested-toggle row'" :showError="errors.filters">
       <div id="accepted-section">
         <div class="filter-section-title">Include these customers</div>
         <filter-option :filter="filter" v-for="(filter, index) in acceptedFilters" :key="filter.selectedFilter" @filterChange="filterChange" @filterRemove="filterRemove" collection="accepted" :index="index" :filterConditions="filterConditions" :filterOptions="availableFilters('accepted', index)" />
@@ -529,7 +529,7 @@
         return this.filterOptions.filter(item => !(selectedFilters.includes(item[1]) && selectedFilters.indexOf(item[1]) != index));
       },
       addFilter(list) {
-        let defaultValue = {selectedFilter: "", selectedCondition: 0, value: null};
+        let defaultValue = {selectedFilter: "", selectedCondition: 0, value: null, showInvalidValueInput: false};
         this.removeEmptyFilter();
         if (list == "accepted") {
           if (this.acceptedFilters.length < this.filterOptions.length) this.acceptedFilters.push(defaultValue);
@@ -746,10 +746,14 @@
       },
 
       isFilterIncomplete: function() {
+        let result = false;
         for (let element of this.acceptedFilters.concat(this.removedFilters))
           for(let item in element)
-            if (!element[item] || isEmpty(element[item].toString())) return true;
-        return false;
+            if (!element[item] || isEmpty(element[item].toString())) {
+              element["showInvalidValueInput"] = true;
+              result = true;
+            }
+        return result;
       },
 
       isFormValid: function() {

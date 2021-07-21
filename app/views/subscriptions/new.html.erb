@@ -22,7 +22,7 @@
 
     <div><span v-cloak class="checkout-quantity-display f-s-400">{{ quantity || <%= checkout_quantity(@current_shop) %> }}</span><span class="f-s-200">&nbsp</span></div>
 
-    Order last Month: <%= @current_shop.last_month %>
+    Orders last Month: <%= @current_shop.last_month %>
 
     <%= render 'slider', slider_index: checkout_index(@current_shop) %>
 

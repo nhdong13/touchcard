@@ -22,7 +22,7 @@
     </div>
 
     <!-- Common 2 input fields -->
-    <div :class="['order_tag', 'discount_code'].includes(selectedFilter) ? 'f-value-2' : 'f-value'" v-if="showSecondInput() && !showDiscountAmountInput()">
+    <div :class="[['order_tag', 'discount_code'].includes(selectedFilter) ? 'f-value-2' : 'f-value', {invalid: filter.showInvalidValueInput}]" v-if="showSecondInput() && !showDiscountAmountInput()">
       <datepicker class="valueInput" v-model="value1" v-if="showDateInput()" @input="combineValue()" :use-utc="true" :disabled-dates="datePickerDisabledDates(true)" format="MMM dd, yyyy"/>
       <font-awesome-icon icon="chevron-down" v-if="showDateInput()" @click="triggerDatepicker(1)" class="datepicker-arrow middle-arrow" />
 
@@ -40,13 +40,13 @@
     <!---->
 
     <!-- Zipcode filter -->
-    <div class="f-value" v-else-if="showZipCodeInput()">
+    <div :class="['f-value', {invalid: filter.showInvalidValueInput}]" v-else-if="showZipCodeInput()">
       <input type="number" class="valueInput" v-model="value1" v-if="showNumberInput()" @change="filter.value = `${value1}`" />
     </div>
     <!---->
 
     <!-- Discount amount filter -->
-    <div class="f-value" v-else-if="showDiscountAmountInput()">
+    <div :class="['f-value', {invalid: filter.showInvalidValueInput}]" v-else-if="showDiscountAmountInput()">
       <!-- switcher currency type for discount amount filter -->
       <div class="switcher-small-options">
         <span>$</span>
@@ -62,7 +62,7 @@
     <!---->
 
     <!-- common single filter -->
-    <div :class="['order_tag', 'discount_code'].includes(selectedFilter) ? 'f-value-2' : 'f-value'" v-else>
+    <div :class="[['order_tag', 'discount_code'].includes(selectedFilter) ? 'f-value-2' : 'f-value', {invalid: filter.showInvalidValueInput}]" v-else>
       <input type="text" class="valueInput" v-model="filter.value" v-if="showTextInput()" @change="filterChange" />
       <input type="number" class="valueInput" v-model="filter.value" v-else-if="showNumberInput()" @change="filterChange" @keypress="preventDecimal($event)" min=0 />
 
@@ -71,7 +71,7 @@
 
       <treeselect class="valueInput" v-model="filter.value" v-if="showCountrySelect()" :multiple="true" :options="countriesList" placeholder="Any country" />
 
-      <div class="f-value" v-if="showStateSelect()">
+      <div :class="['f-value', {invalid: filter.showInvalidValueInput}]" v-if="showStateSelect()">
         <div class="position-relative">
           <select class="valueInput" v-model="selectedCountry" @change="countrySelected">
             <option v-for="country in countriesList" :key="country.id" :value="country.id">{{country.label}}</option>
@@ -517,5 +517,9 @@ select {
   width: 0.75em !important;
   filter: brightness(0%); 
   top: 0;
+}
+
+.invalid {
+  border: 1px solid red;
 }
 </style>

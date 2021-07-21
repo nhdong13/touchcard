@@ -26,40 +26,47 @@
             <th>
               <input id="campaign-check-all" type="checkbox" v-model="selectAll"/>
             </th>
-            <th>Active</th>
-            <th>Design</th>
-            <th v-on:click="onSortByAlphabetically('sortByName', 'campaign_name')">
+            <th></th>
+            <th class="left-border-column">Design</th>
+            <th class="left-border-column mw-col" v-on:click="onSortByAlphabetically('sortByName', 'campaign_name')">
               Name
               <span>
                 <font-awesome-icon icon="caret-down" v-if="sortByName"/>
                 <font-awesome-icon icon="caret-up" v-else/>
               </span>
             </th>
-            <th v-on:click="onSortByAlphabetically('sortByType', 'campaign_type')">
-              Type
-              <span>
-                <font-awesome-icon icon="caret-down" v-if="sortByType"/>
-                <font-awesome-icon icon="caret-up" v-else/>
-              </span>
-            </th>
-            <th v-on:click="onSortByAlphabetically('sortByStatus', 'campaign_status')">
+            <th class="left-border-column" v-on:click="onSortByAlphabetically('sortByStatus', 'campaign_status')">
               Status
               <span>
                 <font-awesome-icon icon="caret-down" v-if="sortByStatus"/>
                 <font-awesome-icon icon="caret-up" v-else/>
               </span>
             </th>
-            <th v-on:click="onSortByAlphabetically('sortByMonthlyBudget', 'budget')">
-              Monthly budget
+            <th class="left-border-column" v-on:click="onSortByAlphabetically('sortByType', 'campaign_type')">
+              Type
+              <span>
+                <font-awesome-icon icon="caret-down" v-if="sortByType"/>
+                <font-awesome-icon icon="caret-up" v-else/>
+              </span>
+            </th>
+            <th class="left-border-column" v-on:click="onSortByAlphabetically('sortByMonthlyBudget', 'budget')">
+              Budget
               <span>
                 <font-awesome-icon icon="caret-down" v-if="sortByMonthlyBudget"/>
                 <font-awesome-icon icon="caret-up" v-else/>
               </span>
             </th>
-            <th v-on:click="onSortByAlphabetically('sortBySendDateStart', 'send_date_start')">
-              Schedule
+            <th class="left-border-column" v-on:click="onSortByAlphabetically('sortBySendDateStart', 'send_date_start')">
+              Starts
               <span>
                 <font-awesome-icon icon="caret-down" v-if="sortBySendDateStart"/>
+                <font-awesome-icon icon="caret-up" v-else/>
+              </span>
+            </th>
+            <th class="left-border-column" v-on:click="onSortByAlphabetically('sortBySendDateEnd', 'send_date_end')">
+              Ends
+              <span>
+                <font-awesome-icon icon="caret-down" v-if="sortBySendDateEnd"/>
                 <font-awesome-icon icon="caret-up" v-else/>
               </span>
             </th>
@@ -76,7 +83,7 @@
                 <md-switch v-model="campaignActive" :value="item.id" class="md-primary" @change="value => onChangeCampaignActive(value, item.id)" :disabled="disableToggle(item)"></md-switch>
               </span>
             </td>
-            <td>
+            <td class="left-border-column">
               <!--
                 key attribute is used to make Vue re-render PreviewImage component when the campaign is changed
               -->
@@ -87,16 +94,19 @@
               />
             </td>
             <!-- The maximum of character to display is 45 -->
-            <td>
-              <span v-on:click="onEditCampaign(item.id)" class="campaign-name-style">{{ item.campaign_name | truncate(30) }}</span>
+            <td class="left-border-column">
+              <span v-on:click="onEditCampaign(item.id)" class="campaign-name-style two-line-text">{{ item.campaign_name | truncate(80) }}</span>
             </td>
-            <td>{{ item.campaign_type }}</td>
-            <td>{{ item.campaign_status}}</td>
-            <td>
-              <span class='t-b'> {{ item.budget }}</span>
+            <td class="left-border-column">{{ item.campaign_status}}</td>
+            <td class="left-border-column">{{ item.campaign_type }}</td>
+            <td class="left-border-column">
+              <span class='t-b'> {{ item.campaign_type == "Automation" && item.budget != "-" ? item.budget + '/month' : item.budget }}</span>
             </td>
-            <td>
-              <span class='t-b'> {{ item.schedule }}</span>
+            <td class="left-border-column">
+              <span class='t-b'> {{ splitedSchedule(item.schedule)[0] }}</span>
+            </td>
+            <td class="left-border-column">
+              <span class='t-b'> {{ splitedSchedule(item.schedule)[1] }}</span>
             </td>
           </tr>
         </table>
@@ -198,6 +208,7 @@
         sortByType: true,
         sortByStatus: true,
         sortBySendDateStart: true,
+        sortBySendDateEnd: true,
         sortByMonthlyBudget: true,
         duplicateCampaignName: "",
       }
@@ -412,6 +423,16 @@
       disableToggle: function(campaign) {
         if(campaign.campaign_type == "One-off" && campaign.campaign_status == "Sending") true
         return false
+      },
+
+      splitedSchedule(schedule) {
+        if (schedule == "Not set") {
+          return ["Not set", "Not set"];
+        } else if (schedule.includes(" - ")) {
+          return [schedule.split(" - ")[0], schedule.split(" - ")[1]];
+        } else {
+          return [schedule, ""]
+        }
       }
     },
 
@@ -573,5 +594,21 @@
 
   .border-theme {
     border: 2px solid #5b3e82;
+  }
+
+  .left-border-column {
+    border-left: 1px solid #ddd;
+  }
+
+  .two-line-text {
+   overflow: hidden;
+   text-overflow: ellipsis;
+   display: -webkit-box;
+   -webkit-line-clamp: 2; /* number of lines to show */
+   -webkit-box-orient: vertical;
+  }
+
+  .mw-col {
+    width: 420px;
   }
 </style>
