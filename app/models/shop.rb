@@ -259,7 +259,6 @@ class Shop < ApplicationRecord
   # a shop with credit less than 0.89$ can put any campaign to out of credit status
   def continue_sending_postcards
     if (self.credit > 0.89 && credit_before_last_save < 0.89)
-      puts CardOrder.where(shop_id: self.id, campaign_status: :out_of_credit).inspect
       CardOrder.where(shop_id: self.id, campaign_status: :out_of_credit).find_each do |campaign|
         EnableDisableCampaignService.enable_campaign campaign, "The campaign #{campaign.campaign_name} is automatically toggled to active."
       end

@@ -5,6 +5,6 @@ class DatetimeService
 
   def to_date
     return "/" unless @datetime
-    @datetime.strftime("%m/%d/%Y")
+    @datetime.strftime("%b %d, %Y")
   end
 end

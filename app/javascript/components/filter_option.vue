@@ -23,14 +23,14 @@
 
     <!-- Common 2 input fields -->
     <div :class="['order_tag', 'discount_code'].includes(selectedFilter) ? 'f-value-2' : 'f-value'" v-if="showSecondInput() && !showDiscountAmountInput()">
-      <datepicker class="valueInput" v-model="value1" v-if="showDateInput()" @input="combineValue()" :use-utc="true" :disabled-dates="datePickerDisabledDates(true)" />
+      <datepicker class="valueInput" v-model="value1" v-if="showDateInput()" @input="combineValue()" :use-utc="true" :disabled-dates="datePickerDisabledDates(true)" format="MMM dd, yyyy"/>
       <font-awesome-icon icon="chevron-down" v-if="showDateInput()" @click="triggerDatepicker(1)" class="datepicker-arrow middle-arrow" />
 
       <input type="number" class="valueInput" v-model="value1" v-if="showNumberInput()" @change="combineValue()" :placeholder="numberInputPlaceholder('Min. ')" @keypress="preventDecimal($event)" min=0 />
 
       <span class="middle-text">and</span>
 
-      <datepicker class="valueInput" v-model="value2" v-if="showDateInput()" @input="combineValue()" :use-utc="true" :disabled-dates="datePickerDisabledDates(false)" />
+      <datepicker class="valueInput" v-model="value2" v-if="showDateInput()" @input="combineValue()" :use-utc="true" :disabled-dates="datePickerDisabledDates(false)" format="MMM dd, yyyy"/>
       <font-awesome-icon icon="chevron-down" v-if="showDateInput()" @click="triggerDatepicker(2)" class="datepicker-arrow" />
 
       <input type="number" class="valueInput" v-model="value2" v-if="showNumberInput()" @change="combineValue()" :placeholder="numberInputPlaceholder('Max. ')" @keypress="preventDecimal($event)" min=0 />
@@ -66,7 +66,7 @@
       <input type="text" class="valueInput" v-model="filter.value" v-if="showTextInput()" @change="filterChange" />
       <input type="number" class="valueInput" v-model="filter.value" v-else-if="showNumberInput()" @change="filterChange" @keypress="preventDecimal($event)" min=0 />
 
-      <datepicker class="valueInput" v-model="filter.value" v-if="showDateInput()" @change="filterChange" :use-utc="true" />
+      <datepicker class="valueInput" v-model="filter.value" v-if="showDateInput()" @change="filterChange" :use-utc="true" format="MMM dd, yyyy"/>
       <font-awesome-icon icon="chevron-down" v-if="showDateInput()" @click="triggerDatepicker(1)" class="datepicker-arrow" />
 
       <treeselect class="valueInput" v-model="filter.value" v-if="showCountrySelect()" :multiple="true" :options="countriesList" placeholder="Any country" />

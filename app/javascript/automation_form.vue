@@ -83,7 +83,7 @@
               name="send_date_start"
               ref="sendDateStart"
               @selected="changeSendDateEnd"
-              format="MMM dd yyyy"
+              format="MMM dd, yyyy"
               :disabled="isStartDateDisable"
             ></datepicker>
             <div class="icon-calendar" v-on:click="openSendDateStartDatePicker">
@@ -101,7 +101,7 @@
                 name="sendDateEnd"
                 ref="sendDateEnd"
                 :disabled="automation.send_continuously"
-                format="MMM dd yyyy"
+                format="MMM dd, yyyy"
               ></datepicker>
               <div class="icon-calendar" v-on:click="openSendDateEndDatePicker">
                 <font-awesome-icon icon="calendar-alt"/>
@@ -252,7 +252,7 @@
         <button class="mdc-button mdc-button--stroked" v-on:click="saveAndReturn" >Save and exit</button>
 
         <button class="mdc-button mdc-button--raised" v-on:click="saveAndStartSending" v-if="isUserHasPaymentMethod">Start Sending</button>
-        <button class="mdc-button mdc-button--raised" v-on:click="saveAndCheckout" v-else>Add Payment</button>
+        <button class="mdc-button mdc-button--raised" v-on:click="saveAndCheckout" v-else>Add payment and start sending</button>
       </div>
     </div>
   </div>
@@ -298,7 +298,6 @@
     created() {
       this.isEditExistCampaign = !this.isCampaignNew()
       this.isStartDateDisable = this.disableStartDate()
-
       // Handling event where the user exit page without click Discard or Save Changes button
       const _this = this
       window.addEventListener("beforeunload", function (e) {
@@ -679,7 +678,13 @@
         // If there're some errors in save process => return
         if(!this.saveWithValidation()) return
 
-        this.goToCheckoutPage()
+        const _this = this
+        axios.put(`/automations/${this.id}.json`, { card_order: this.automation})
+          .then(function(response) {
+            _this.goToCheckoutPage()
+          }).catch(function (error) {
+            console.log(error)
+        });
       },
 
       validateForm: function() {
@@ -764,7 +769,7 @@
       },
 
       goToCheckoutPage: function() {
-        Turbolinks.visit('/subscriptions/new')
+        Turbolinks.visit(`/subscriptions/new?campaign_id=${this.id}`)
       },
 
       restrictToNumber: function(e) {
@@ -775,10 +780,11 @@
       disableStartDate: function() {
         if(isEmpty(this.automation.send_date_start)) {
           this.automation.send_date_start = new Date()
-        } else {
-          const today = new Date()
-          today.setDate(today.getDate() - 1)
-          this.disabledDates.to = today
+        }
+        const today = new Date()
+        today.setDate(today.getDate() - 1)
+        this.disabledDates = {
+          to: today
         }
 
         if(this.automation.campaign_status == "sending" ||

@@ -47,11 +47,11 @@ class Postcard < ApplicationRecord
     address.to_lob_address
   end
 
-  def self.send_all
+  def self.send_all campaign_id
     num_failed = 0
     todays_cards = Postcard.joins(:shop)
       .where("paid = TRUE AND sent = FALSE AND canceled = FALSE AND send_date <= ?
-              AND send_date >= ? AND shops.approval_state != ?", Time.now, Time.now - 2.weeks, "denied")
+              AND send_date >= ? AND shops.approval_state != ? AND card_order_id = ?", Time.now, Time.now - 2.weeks, "denied", campaign_id)
     todays_cards.each do |card|
       begin
         card.send_card

@@ -115,11 +115,10 @@ class AutomationsController < BaseController
   end
 
   def start_sending
-    @automation.update(enabled: true)
     # 1 token = 0.89$
     # a shop with credit less than 0.89$ can put any campaign to out of credit status
     @automation.out_of_credit! if @current_shop.credit < 0.89
-    send_postcard
+    InitializeSendingPostcardProcess.start(@current_shop, @automation)
     respond_to do |format|
       format.html { render plain: "OK" }
       format.json { render json: { message: "OK" }, status: :ok }
@@ -127,10 +126,6 @@ class AutomationsController < BaseController
   end
 
   private
-
-  def send_postcard
-    FetchHistoryOrdersJob.perform_now(@current_shop, @current_shop.post_sale_orders.last.send_delay, @automation)
-  end
 
   def set_automation
     @automation = @current_shop.card_orders.find(params[:id])
