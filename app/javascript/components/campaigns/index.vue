@@ -14,10 +14,10 @@
             CSV
             <font-awesome-icon icon="long-arrow-alt-down"/>
            </button> -->
+          <!-- Comment according to customer's requirement
           <DropdownMenu ref="DropdownMenu"></DropdownMenu>
-          <!-- Hide this according to customer's requirement
-          <input :placeholder="'Search'" v-model="searchQuery" @input="debounceSearch" />
           -->
+          <input :placeholder="'SEARCH'" v-model="searchQuery" @input="debounceSearch" class="border-theme"/>
         </div>
       </div>
       <div>
@@ -69,7 +69,7 @@
               <input id="campaign-check-all" type="checkbox" v-model="selected" :value="item.id" number/>
             </td>
             <td>
-              <span v-if="['Out of credit', 'Error', 'Draft', 'Sent'].includes(item.campaign_status)">
+              <span v-if="['Out of credit', 'Error', 'Draft', 'Complete'].includes(item.campaign_status)">
                 <md-switch v-model="campaignActive" class="md-primary" disabled></md-switch>
               </span>
               <span v-else>
@@ -291,6 +291,7 @@
       onClickNewCampaign: function() {
         axios.get('/automations/new.json', {})
           .then(function(response) {
+            sessionStorage.setItem('new-campaign-id', response.data.id)
             Turbolinks.visit(`/automations/${response.data.id}/edit`);
           }).catch(function (error) {
         });

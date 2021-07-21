@@ -70,11 +70,18 @@ class AutomationsController < BaseController
   # PATCH/PUT /automations/1.json
   def update
     respond_to do |format|
-      toggle_from_off_to_on = (!@automation.enabled? && automation_params[:enabled] )
-
+      campaign_enabled_field_before_update = @automation.enabled
       if @automation.update(automation_params)
-        if toggle_from_off_to_on
-          SendAllHistoryCardsJob.perform_later(@current_shop)
+        if PauseUnpauseCampaignPolicy.enable_campaign? campaign_enabled_field_before_update, @automation.enabled
+          if PauseUnpauseCampaignPolicy.passed_campaign? @automation
+            @automation.update(enabled: false)
+            flash[:error] = "Please edit the date for the campaign to run."
+          else
+            EnableDisableCampaignService.enable_campaign @automation, nil
+            SendAllHistoryCardsJob.perform_later(@current_shop)
+          end
+        elsif PauseUnpauseCampaignPolicy.disable_campaign? campaign_enabled_field_before_update, @automation.enabled
+          EnableDisableCampaignService.disable_campaign @automation, :paused , nil
         end
         flash[:notice] = "Automation successfully updated"
         format.html { redirect_to automations_path }
@@ -108,8 +115,10 @@ class AutomationsController < BaseController
   end
 
   def start_sending
-    @automation.update(enabled: true)
-    send_postcard
+    # 1 token = 0.89$
+    # a shop with credit less than 0.89$ can put any campaign to out of credit status
+    @automation.out_of_credit! if @current_shop.credit < 0.89
+    InitializeSendingPostcardProcess.start(@current_shop, @automation)
     respond_to do |format|
       format.html { render plain: "OK" }
       format.json { render json: { message: "OK" }, status: :ok }
@@ -117,10 +126,6 @@ class AutomationsController < BaseController
   end
 
   private
-
-  def send_postcard
-    FetchHistoryOrdersJob.perform_now(@current_shop, @current_shop.post_sale_orders.last.send_delay, @automation)
-  end
 
   def set_automation
     @automation = @current_shop.card_orders.find(params[:id])

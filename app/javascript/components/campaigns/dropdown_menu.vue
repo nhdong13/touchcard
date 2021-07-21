@@ -91,7 +91,7 @@ export default {
         content: 'Sending',
         isHidden: false
       }, {
-        content: 'Sent',
+        content: 'Complete',
         isHidden: false
       }, {
         content: 'Paused',

@@ -1,6 +1,11 @@
 class GeneratePostcardJob < ActiveJob::Base
 	queue_as :default
 
+  before_enqueue do |job|
+    # job.arguments[1] => card order instance
+    throw :abort if (job.arguments[1].archived || job.arguments[1].complete?)
+  end
+
   after_perform do |job|
     # job.arguments[0] => shop instance
     # job.arguments[1] => card order instance

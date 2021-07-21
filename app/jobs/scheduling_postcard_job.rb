@@ -1,6 +1,11 @@
 class SchedulingPostcardJob < ActiveJob::Base
   queue_as :default
 
+  before_enqueue do |job|
+    # job.arguments[1] => card order instance
+    throw :abort if (job.arguments[1].archived || job.arguments[1].complete?)
+  end
+
   after_perform do |job|
     # job.arguments[0] => shop instance
     # job.arguments[1] => card order instance
@@ -8,10 +13,6 @@ class SchedulingPostcardJob < ActiveJob::Base
   end
 
   def perform shop, campaign
-    if campaign.out_of_credit?
-      campaign.processing! if shop.credit > 0.0
-    end
-
     return unless (campaign.enabled? &&
       (campaign.processing? || campaign.scheduled?) &&
       !campaign.archived)

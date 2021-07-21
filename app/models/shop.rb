@@ -15,6 +15,8 @@ class Shop < ApplicationRecord
   has_many :customers, through: :orders
   has_many :checkouts
 
+  after_update :continue_sending_postcards, if: :saved_change_to_credit?
+
   VALID_APPROVAL_STATES = ["new", "approved", "denied"]
 
   validates :customer_pct, numericality: true
@@ -252,4 +254,15 @@ class Shop < ApplicationRecord
   def display_name
     self.domain.split('.myshopify.com').first
   end
+
+  # 1 token = 0.89$
+  # a shop with credit less than 0.89$ can put any campaign to out of credit status
+  def continue_sending_postcards
+    if (self.credit > 0.89 && credit_before_last_save < 0.89)
+      CardOrder.where(shop_id: self.id, campaign_status: :out_of_credit).find_each do |campaign|
+        EnableDisableCampaignService.enable_campaign campaign, "The campaign #{campaign.campaign_name} is automatically toggled to active."
+      end
+    end
+  end
+
 end

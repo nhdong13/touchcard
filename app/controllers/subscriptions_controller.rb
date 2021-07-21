@@ -4,13 +4,15 @@ class SubscriptionsController < BaseController
   def new
     @subscription = Subscription.new
     @subscription.coupon = params[:coupon] if params[:coupon]
+    @campaign_id = params[:campaign_id] if params[:campaign_id]
     @email = @current_shop.customer_email # OR @current_shop.email
   end
 
   def create
     quantity = create_params[:subscription][:quantity] # TODO: Handle missing quantity
     coupon = create_params[:subscription][:coupon]
-
+    campaign = CardOrder.find(create_params[:campaign_id])
+    InitializeSendingPostcardProcess.start(@current_shop, campaign)
     stripe_params = {shop: @current_shop, plan: Plan.last, quantity: quantity}
     stripe_params.merge!({coupon: coupon}) if !coupon.blank?
 
@@ -73,6 +75,7 @@ class SubscriptionsController < BaseController
   def create_params
     params.permit(
         :stripeToken,
+        :campaign_id,
         subscription: [:quantity, :coupon])
   end
 

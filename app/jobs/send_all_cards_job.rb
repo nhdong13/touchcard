@@ -1,6 +1,11 @@
 class SendAllCardsJob < ActiveJob::Base
   queue_as :default
 
+  before_enqueue do |job|
+    # job.arguments[1] => card order instance
+    throw :abort if (job.arguments[1].archived || job.arguments[1].complete?)
+  end
+
   after_perform do |job|
     # After finish job => checking if this campaign is satisfy conditions to stop
     # Conditions to stop:
@@ -13,7 +18,7 @@ class SendAllCardsJob < ActiveJob::Base
       unless (reach_end_date(job.arguments[1]) || job.arguments[1].one_off? || job.arguments[1].archived)
         FetchHistoryOrdersJob.set(wait: 1.day).perform_later(job.arguments[0], job.arguments[0].post_sale_orders.last.send_delay, job.arguments[1])
       else
-        job.arguments[1].sent!
+        job.arguments[1].complete!
       end
     else
       FetchHistoryOrdersJob.set(wait: 1.minutes).perform_later(job.arguments[0], job.arguments[0].post_sale_orders.last.send_delay, job.arguments[1])
@@ -23,7 +28,7 @@ class SendAllCardsJob < ActiveJob::Base
   def perform shop, campaign
     return unless (campaign.enabled? && (campaign.sending? || campaign.scheduled?) && !campaign.archived)
     campaign.sending!
-    result = Postcard.send_all
+    result = Postcard.send_all campaign.id
     campaign.error! if result[:card_sent_amount] < result[:total_card]
     campaign.save!
   end

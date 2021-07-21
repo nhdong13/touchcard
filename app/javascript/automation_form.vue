@@ -28,7 +28,7 @@
     <div class="automation-section" v-if="campaign_type =='automation'">
       <strong>Monthly budget</strong>
       <span>
-        $ <input type="numer" v-on:keypress="restrictToNumber($event)" id="budget_limit" v-model="budget">
+        $ <input type="numer" v-on:keypress="restrictToNumber($event)" id="budget_limit" v-model="budget" maxlength = "10">
       </span>
     </div>
 
@@ -83,7 +83,7 @@
               name="send_date_start"
               ref="sendDateStart"
               @selected="changeSendDateEnd"
-              format="MMM dd yyyy"
+              format="MMM dd, yyyy"
               :disabled="isStartDateDisable"
             ></datepicker>
             <div class="icon-calendar" v-on:click="openSendDateStartDatePicker">
@@ -101,7 +101,7 @@
                 name="sendDateEnd"
                 ref="sendDateEnd"
                 :disabled="automation.send_continuously"
-                format="MMM dd yyyy"
+                format="MMM dd, yyyy"
               ></datepicker>
               <div class="icon-calendar" v-on:click="openSendDateEndDatePicker">
                 <font-awesome-icon icon="calendar-alt"/>
@@ -249,10 +249,10 @@
         <button class="mdc-button mdc-button--raised" @click="saveAndReturn">Save Changes</button>
       </div>
       <div v-else>
-        <button class="mdc-button mdc-button--stroked" v-on:click="saveAndReturn" >Save and exit</button>
+        <button class="mdc-button mdc-button--stroked" v-on:click="saveAndReturn" >Save changes</button>
 
         <button class="mdc-button mdc-button--raised" v-on:click="saveAndStartSending" v-if="isUserHasPaymentMethod">Start Sending</button>
-        <button class="mdc-button mdc-button--raised" v-on:click="saveAndCheckout" v-else>Add Payment</button>
+        <button class="mdc-button mdc-button--raised" v-on:click="saveAndCheckout" v-else>Add payment and start sending</button>
       </div>
     </div>
   </div>
@@ -296,19 +296,16 @@
       }
     },
     created() {
-      this.isEditExistCampaign = !this.isCampaignNew()
+      this.isEditExistCampaign = this.automation.campaign_status != "draft"
       this.isStartDateDisable = this.disableStartDate()
-
       // Handling event where the user exit page without click Discard or Save Changes button
       const _this = this
       window.addEventListener("beforeunload", function (e) {
-        if(isEmpty(_this.automation.campaign_name)) {
-          _this.automation.campaign_name = "New campaign"
-          _this.sendingSaveRequest()
+        if(_this.isCampaignNew()) {
+          axios.delete(`/automations/${_this.id}.json`)
+          sessionStorage.removeItem('new-campaign-id')
         }
       })
-
-
     },
 
     beforeDestroy: function() {
@@ -316,11 +313,14 @@
     },
 
     mounted: function() {
-      if(!this.isEditExistCampaign) {
-        this.interval = window.setInterval(() => {
-          this.saveAutomation()
-        }, 1000)
-      }
+      // if(!this.isEditExistCampaign) {
+      //   this.interval = window.setInterval(() => {
+      //     this.saveAutomation()
+      //   }, 1000)
+      // }
+      this.interval = window.setInterval(() => {
+        this.validateForm()
+      }, 1000)
     },
     data: function() {
       return {
@@ -350,7 +350,7 @@
         },
         filterConditions: [],
         filterOptions: [],
-        interval: null
+        interval: null,
       }
     },
 
@@ -485,17 +485,7 @@
         this.automation.campaign_type = campaign_type
       },
 
-      checkNameCampaignIsInvalid: function() {
-        if(!this.automation.campaign_name) {
-          $(".campaign-name-error").show()
-          return true;
-        } else {
-          $(".campaign-name-error").hide()
-          return false;
-        }
-      },
-
-      requestSave: function() {
+      fetchDataFromUI: function() {
 
         // TODO: Wait for uploads to complete in CardEditor
         // this.$refs.cardEditor.prepareSave();
@@ -517,10 +507,6 @@
         this.automation.budget_type = this.budget_type
         this.automation.campaign_type = this.campaign_type
         this.automation.return_address_attributes = this.returnAddress
-
-        if (this.checkNameCampaignIsInvalid()) return;
-
-        this.sendingSaveRequest();
       },
       sendingSaveRequest: function() {
         axios.put(`/automations/${this.id}.json`, { card_order: this.automation})
@@ -621,28 +607,15 @@
         if(this.isTwoJsonEqual(this.saved_automation, this.automation)) {
           return
         }
-        // Get card side data for saving
-        let frontAttrs = this.$refs.frontEditor.$data.attributes;
-        let backAttrs = this.$refs.backEditor.$data.attributes;
-
-        this.automation.front_json = frontAttrs;
-        this.automation.back_json = backAttrs;
-
-        // Using `.showsDiscount` assumes card_editor.vue has created card_attributes objects from json
-        if (!frontAttrs.showsDiscount && !backAttrs.showsDiscount ) {
-          // Fallback to default
-          this.automation.discount_pct = DEFAULT_DISCOUNT_PERCENTAGE;
-          this.automation.discount_exp = DEFAULT_WEEK_BEFORE_DISCOUNT_EXPIRE;
-        }
-
-        this.automation.budget_type = this.budget_type
-        this.automation.campaign_type = this.campaign_type
-        this.automation.return_address_attributes = this.returnAddress;
+        this.fetchDataFromUI()
         // TODO: Must somehow make sure automation is JSON safe
         this.saved_automation = JSON.parse(JSON.stringify(this.automation))
 
-        if(this.isCampaignNew()) {
-          this.sendingSaveRequest()
+        if(!this.isEditExistCampaign) {
+          axios.put(`/automations/${this.id}.json`, { card_order: this.automation})
+          .catch(function (error) {
+            console.log(error)
+          });
         }
       },
       isTwoJsonEqual: function(a, b) {
@@ -660,52 +633,65 @@
         })
         if(!this.isFormValid()) return false
         if(this.automation.campaign_status != "draft") {
-          this.requestSave()
+          this.fetchDataFromUI()
         }
         return true
       },
 
-      saveWithoutValidation: function() {
-        this.requestSave()
-      },
-
       saveAndReturn: function() {
-        if(this.isCampaignNew()) {
-          if(isEmpty(this.automation.campaign_name)) {
-            this.automation.campaign_name = "New campaign"
-            const _this = this
-            axios.put(`/automations/${this.id}.json`, { card_order: this.automation})
-              .then(function(response) {
-                _this.returnToCampaignList()
-              }).catch(function (error) {
-                console.log(error)
-            });
-          }
+        // If there're some errors in save process => return
+        if(!this.saveWithValidation()) {
+          if(this.isCampaignNew()) return
+
           this.returnToCampaignList()
+          return
         }
 
-        // If there're some errors in save process => return
-        if(!this.saveWithValidation()) return
-
-        this.returnToCampaignList()
+        const _this = this
+        axios.put(`/automations/${this.id}.json`, { card_order: this.automation})
+          .then(function(response) {
+            sessionStorage.removeItem('new-campaign-id')
+            _this.returnToCampaignList()
+          }).catch(function (error) {
+            console.log(error)
+        });
       },
 
 
 
       saveAndStartSending: function() {
         // If there're some errors in save process => return
-        if(!this.saveWithValidation()) return
+        if(!this.saveWithValidation()) {
+          if(this.isCampaignNew()) return
 
+          this.returnToCampaignList()
+          return
+        }
+
+        const _this = this
         axios.get(`/automations/${this.id}/start_sending.json`).then((response) => {
-          Turbolinks.visit('/campaigns')
+          sessionStorage.removeItem('new-campaign-id')
+          _this.returnToCampaignList()
         })
       },
 
       saveAndCheckout: function() {
         // If there're some errors in save process => return
-        if(!this.saveWithValidation()) return
+        if(!this.saveWithValidation()) {
+          if(this.isCampaignNew()) return
 
-        this.goToCheckoutPage()
+          this.returnToCampaignList()
+          return
+        }
+
+        const _this = this
+        axios.put(`/automations/${this.id}.json`, { card_order: this.automation})
+          .then(function(response) {
+            sessionStorage.removeItem('new-campaign-id')
+            _this.goToCheckoutPage()
+          }).catch(function (error) {
+            console.log(error)
+        });
       },
 
       validateForm: function() {
@@ -774,7 +760,8 @@
       },
 
       isCampaignNew: function() {
-        return this.automation.campaign_status == "draft"
+        if(isEmpty(sessionStorage.getItem('new-campaign-id'))) return false
+        return sessionStorage.getItem('new-campaign-id') == this.id
       },
 
       returnToCampaignList: function() {
@@ -790,7 +777,7 @@
       },
 
       goToCheckoutPage: function() {
-        Turbolinks.visit('/subscriptions/new')
+        Turbolinks.visit(`/subscriptions/new?campaign_id=${this.id}`)
       },
 
       restrictToNumber: function(e) {
@@ -801,14 +788,15 @@
       disableStartDate: function() {
         if(isEmpty(this.automation.send_date_start)) {
           this.automation.send_date_start = new Date()
-        } else {
-          const today = new Date()
-          today.setDate(today.getDate() - 1)
-          this.disabledDates.to = today
+        }
+        const today = new Date()
+        today.setDate(today.getDate() - 1)
+        this.disabledDates = {
+          to: today
         }
 
         if(this.automation.campaign_status == "sending" ||
-          this.automation.campaign_status == "sent" ||
+          this.automation.campaign_status == "complete" ||
           this.automation.campaign_status == "out of order" ||
           this.automation.campaign_status == "error" ||
           this.automation.campaign_status == "paused") return true

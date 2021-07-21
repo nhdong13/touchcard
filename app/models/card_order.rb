@@ -5,7 +5,7 @@ class CardOrder < ApplicationRecord
   enum campaign_type: [ :automation, :one_off ]
   TYPES = ['PostSaleOrder', 'CustomerWinbackOrder', 'LifetimePurchaseOrder', 'AbandonedCheckout']
 
-  enum campaign_status: [:draft, :processing, :scheduled, :sending, :sent, :paused, :error, :out_of_credit]
+  enum campaign_status: [:draft, :processing, :scheduled, :sending, :complete, :paused, :error, :out_of_credit]
   self.inheritance_column = :_type_disabled
   belongs_to :shop
 
@@ -64,12 +64,21 @@ class CardOrder < ApplicationRecord
   scope :active, -> { where(archived: false) }
 
   before_create :add_default_params
-  after_update :update_campaign_status, if: :saved_change_to_enabled?
   after_update :update_budget, if: :saved_change_to_budget_update?
   after_update :update_budget_type, if: :saved_change_to_budget_type?
+  after_update :reactivate_campaign, if: :saved_change_to_send_date_end?
 
   def add_default_params
-    self.campaign_name = "New campaign" unless self.campaign_name.present?
+    unless self.campaign_name.present?
+      # If a campaign has name "Automation 3" => This campaign should have name "Automation 4"
+      last_index = CardOrder.where("archived = FALSE AND campaign_name ~* ?", 'Automation \d+').last
+      if last_index.nil?
+        self.campaign_name = "Automation 0"
+      else
+        new_index = last_index.campaign_name.gsub(/[^0-9]/, '').to_i + 1
+        self.campaign_name = "Automation #{new_index}"
+      end
+    end
     self.type = "PostSaleOrder" if self.type.nil?
     self.campaign_status = "draft"
     self.filters << Filter.new(filter_data: {:accepted => {}, :removed => {}})
@@ -102,26 +111,11 @@ class CardOrder < ApplicationRecord
     end
   end
 
-  def update_campaign_status
-    if enabled
-      if !self.previous_campaign_status.nil?
-        previous_campaign_status = self.previous_campaign_status
-
-        # This is for a bug happen in old campaign where
-        # campaign_status: paused
-        # previous_campaign_status: paused
-        #
-        # NOTE: If in the future, this bug doesn't happen again. We can delete this line
-        previous_campaign_status = CardOrder.campaign_statuses[:processing] if previous_campaign_status == CardOrder.campaign_statuses[:paused]
-        update(campaign_status: previous_campaign_status)
-      end
-    else
-      # must convert enum value to integer to persist it
-      saved_campaign_status = CardOrder.campaign_statuses[self.campaign_status]
-      update(
-        previous_campaign_status: saved_campaign_status,
-        campaign_status: :paused
-      )
+  def reactivate_campaign
+    if self.complete? && self.automation?
+      self.sending!
+      self.enabled = true
+      FetchHistoryOrdersJob.perform_now(self.shop, self.shop.post_sale_orders.last.send_delay, self)
     end
   end
 
@@ -194,22 +188,6 @@ class CardOrder < ApplicationRecord
     # TODO: handle international + 5 to 7 business days
     #send_date = arrive_by - 1.week
   end
-=begin
-  def can_afford?(postcard)
-    @can_afford ||= credits >= postcard.cost
-  end
-
-  def pay(postcard)
-    if can_afford?(postcard) && !postcard.paid?
-      self.credits -= postcard.cost
-      self.save!
-    else
-      logger.info "not enough credits postcard:#{postcard.id}" if can_afford?(postcard)
-      logger.info "already paid for postcard:#{postcard.id}" if postcard.paid?
-      return false
-    end
-  end
-=end
 
   def prepare_for_sending(postcard_trigger, data_status="normal")
     # This method can get called from a delayed_job, which does not allow for standard logging
