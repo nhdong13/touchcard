@@ -5,7 +5,7 @@ class CardOrder < ApplicationRecord
   enum campaign_type: [ :automation, :one_off ]
   TYPES = ['PostSaleOrder', 'CustomerWinbackOrder', 'LifetimePurchaseOrder', 'AbandonedCheckout']
 
-  enum campaign_status: [:draft, :processing, :scheduled, :sending, :sent, :paused, :error, :out_of_credit]
+  enum campaign_status: [:draft, :processing, :scheduled, :sending, :complete, :paused, :error, :out_of_credit]
   self.inheritance_column = :_type_disabled
   belongs_to :shop
 
@@ -69,7 +69,16 @@ class CardOrder < ApplicationRecord
   after_update :reactivate_campaign, if: :saved_change_to_send_date_end?
 
   def add_default_params
-    self.campaign_name = "New campaign" unless self.campaign_name.present?
+    unless self.campaign_name.present?
+      # If a campaign has name "Automation 3" => This campaign should have name "Automation 4"
+      last_index = CardOrder.where("campaign_name ~* ?", 'Automation \d+').last
+      if last_index.nil?
+        self.campaign_name = "Automation 0"
+      else
+        new_index = last_index.campaign_name.gsub(/[^0-9]/, '').to_i + 1
+        self.campaign_name = "Automation #{new_index}"
+      end
+    end
     self.type = "PostSaleOrder" if self.type.nil?
     self.campaign_status = "draft"
     self.filters << Filter.new(filter_data: {:accepted => {}, :removed => {}})
@@ -103,7 +112,7 @@ class CardOrder < ApplicationRecord
   end
 
   def reactivate_campaign
-    if self.sent? && self.automation?
+    if self.complete? && self.automation?
       self.sending!
       self.enabled = true
       FetchHistoryOrdersJob.perform_now(self.shop, self.shop.post_sale_orders.last.send_delay, self)

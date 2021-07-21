@@ -3,7 +3,7 @@ class FetchHistoryOrdersJob < ActiveJob::Base
 
   before_enqueue do |job|
     # job.arguments[2] => card order instance
-    throw :abort if (job.arguments[2].archived || job.arguments[2].sent?)
+    throw :abort if (job.arguments[2].archived || job.arguments[2].complete?)
   end
 
   after_perform do |job|

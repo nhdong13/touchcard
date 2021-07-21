@@ -3,7 +3,7 @@ class GeneratePostcardJob < ActiveJob::Base
 
   before_enqueue do |job|
     # job.arguments[1] => card order instance
-    throw :abort if (job.arguments[1].archived || job.arguments[1].sent?)
+    throw :abort if (job.arguments[1].archived || job.arguments[1].complete?)
   end
 
   after_perform do |job|

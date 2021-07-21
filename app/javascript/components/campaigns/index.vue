@@ -69,7 +69,7 @@
               <input id="campaign-check-all" type="checkbox" v-model="selected" :value="item.id" number/>
             </td>
             <td>
-              <span v-if="['Out of credit', 'Error', 'Draft', 'Sent'].includes(item.campaign_status)">
+              <span v-if="['Out of credit', 'Error', 'Draft', 'Complete'].includes(item.campaign_status)">
                 <md-switch v-model="campaignActive" class="md-primary" disabled></md-switch>
               </span>
               <span v-else>
@@ -291,6 +291,7 @@
       onClickNewCampaign: function() {
         axios.get('/automations/new.json', {})
           .then(function(response) {
+            sessionStorage.setItem('new-campaign-id', response.data.id)
             Turbolinks.visit(`/automations/${response.data.id}/edit`);
           }).catch(function (error) {
         });

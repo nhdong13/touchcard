@@ -249,7 +249,7 @@
         <button class="mdc-button mdc-button--raised" @click="saveAndReturn">Save Changes</button>
       </div>
       <div v-else>
-        <button class="mdc-button mdc-button--stroked" v-on:click="saveAndReturn" >Save and exit</button>
+        <button class="mdc-button mdc-button--stroked" v-on:click="saveAndReturn" >Save changes</button>
 
         <button class="mdc-button mdc-button--raised" v-on:click="saveAndStartSending" v-if="isUserHasPaymentMethod">Start Sending</button>
         <button class="mdc-button mdc-button--raised" v-on:click="saveAndCheckout" v-else>Add payment and start sending</button>
@@ -296,18 +296,16 @@
       }
     },
     created() {
-      this.isEditExistCampaign = !this.isCampaignNew()
+      this.isEditExistCampaign = this.automation.campaign_status != "draft"
       this.isStartDateDisable = this.disableStartDate()
       // Handling event where the user exit page without click Discard or Save Changes button
       const _this = this
       window.addEventListener("beforeunload", function (e) {
-        if(isEmpty(_this.automation.campaign_name)) {
-          _this.automation.campaign_name = "New campaign"
-          _this.sendingSaveRequest()
+        if(_this.isCampaignNew()) {
+          axios.delete(`/automations/${_this.id}.json`)
+          sessionStorage.removeItem('new-campaign-id')
         }
       })
-
-
     },
 
     beforeDestroy: function() {
@@ -349,7 +347,7 @@
         },
         filterConditions: [],
         filterOptions: [],
-        interval: null
+        interval: null,
       }
     },
 
@@ -610,7 +608,7 @@
         // TODO: Must somehow make sure automation is JSON safe
         this.saved_automation = JSON.parse(JSON.stringify(this.automation))
 
-        if(this.isCampaignNew()) {
+        if(!this.isEditExistCampaign) {
           axios.put(`/automations/${this.id}.json`, { card_order: this.automation})
           .catch(function (error) {
             console.log(error)
@@ -638,25 +636,13 @@
       },
 
       saveAndReturn: function() {
-        if(this.isCampaignNew()) {
-          if(isEmpty(this.automation.campaign_name)) {
-            this.automation.campaign_name = "New campaign"
-          }
-          const _this = this
-          axios.put(`/automations/${this.id}.json`, { card_order: this.automation})
-            .then(function(response) {
-              _this.returnToCampaignList()
-            }).catch(function (error) {
-              console.log(error)
-          });
-        }
-
         // If there're some errors in save process => return
         if(!this.saveWithValidation()) return
 
         const _this = this
         axios.put(`/automations/${this.id}.json`, { card_order: this.automation})
           .then(function(response) {
+            sessionStorage.removeItem('new-campaign-id')
             _this.returnToCampaignList()
           }).catch(function (error) {
             console.log(error)
@@ -668,8 +654,9 @@
       saveAndStartSending: function() {
         // If there're some errors in save process => return
         if(!this.saveWithValidation()) return
-
+        const _this = this
         axios.get(`/automations/${this.id}/start_sending.json`).then((response) => {
+          sessionStorage.removeItem('new-campaign-id')
           Turbolinks.visit('/campaigns')
         })
       },
@@ -681,6 +668,7 @@
         const _this = this
         axios.put(`/automations/${this.id}.json`, { card_order: this.automation})
           .then(function(response) {
+            sessionStorage.removeItem('new-campaign-id')
             _this.goToCheckoutPage()
           }).catch(function (error) {
             console.log(error)
@@ -753,7 +741,8 @@
       },
 
       isCampaignNew: function() {
-        return this.automation.campaign_status == "draft"
+        if(isEmpty(sessionStorage.getItem('new-campaign-id'))) return false
+        return sessionStorage.getItem('new-campaign-id') == this.id
       },
 
       returnToCampaignList: function() {
@@ -788,7 +777,7 @@
         }
 
         if(this.automation.campaign_status == "sending" ||
-          this.automation.campaign_status == "sent" ||
+          this.automation.campaign_status == "complete" ||
           this.automation.campaign_status == "out of order" ||
           this.automation.campaign_status == "error" ||
           this.automation.campaign_status == "paused") return true

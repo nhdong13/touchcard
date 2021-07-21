@@ -1,11 +1,11 @@
 =begin
   In Sending postcard process,
   There are 3 statuses indicate the campaign is enable: Processing, Scheduled, Sending
-  4 statuses indicate the campaign is disable: Paused, Error, Out of credit, Sent
+  4 statuses indicate the campaign is disable: Paused, Error, Out of credit, Complete
 
   NOTE:
   Draft status indicates this campaign is just created
-  For now, we wait for customer's confirmation about Sent status (whether change from Sent => Processing or Sending)
+  For now, we wait for customer's confirmation about Complete status (whether change from Complete => Processing or Sending)
 
   This class will switch back and forth between statuses indicate the campaign is enable and statuses indicate the campaign is disable
 =end
