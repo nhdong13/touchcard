@@ -313,11 +313,14 @@
     },
 
     mounted: function() {
-      if(!this.isEditExistCampaign) {
-        this.interval = window.setInterval(() => {
-          this.saveAutomation()
-        }, 1000)
-      }
+      // if(!this.isEditExistCampaign) {
+      //   this.interval = window.setInterval(() => {
+      //     this.saveAutomation()
+      //   }, 1000)
+      // }
+      this.interval = window.setInterval(() => {
+        this.validateForm()
+      }, 1000)
     },
     data: function() {
       return {
@@ -637,7 +640,12 @@
 
       saveAndReturn: function() {
         // If there're some errors in save process => return
-        if(!this.saveWithValidation()) return
+        if(!this.saveWithValidation()) {
+          if(this.isCampaignNew()) return
+
+          this.returnToCampaignList()
+          return
+        }
 
         const _this = this
         axios.put(`/automations/${this.id}.json`, { card_order: this.automation})
@@ -653,17 +661,28 @@
 
       saveAndStartSending: function() {
         // If there're some errors in save process => return
-        if(!this.saveWithValidation()) return
+        if(!this.saveWithValidation()) {
+          if(this.isCampaignNew()) return
+
+          this.returnToCampaignList()
+          return
+        }
+
         const _this = this
         axios.get(`/automations/${this.id}/start_sending.json`).then((response) => {
           sessionStorage.removeItem('new-campaign-id')
-          Turbolinks.visit('/campaigns')
+          _this.returnToCampaignList()
         })
       },
 
       saveAndCheckout: function() {
         // If there're some errors in save process => return
-        if(!this.saveWithValidation()) return
+        if(!this.saveWithValidation()) {
+          if(this.isCampaignNew()) return
+
+          this.returnToCampaignList()
+          return
+        }
 
         const _this = this
         axios.put(`/automations/${this.id}.json`, { card_order: this.automation})

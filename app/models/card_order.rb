@@ -71,7 +71,7 @@ class CardOrder < ApplicationRecord
   def add_default_params
     unless self.campaign_name.present?
       # If a campaign has name "Automation 3" => This campaign should have name "Automation 4"
-      last_index = CardOrder.where("campaign_name ~* ?", 'Automation \d+').last
+      last_index = CardOrder.where("archived = FALSE AND campaign_name ~* ?", 'Automation \d+').last
       if last_index.nil?
         self.campaign_name = "Automation 0"
       else
