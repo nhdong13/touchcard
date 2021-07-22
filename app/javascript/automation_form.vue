@@ -318,9 +318,9 @@
       //     this.saveAutomation()
       //   }, 1000)
       // }
-      this.interval = window.setInterval(() => {
-        this.validateForm()
-      }, 1000)
+      // this.interval = window.setInterval(() => {
+      //   this.validateForm()
+      // }, 1000)
     },
     data: function() {
       return {
