@@ -66,8 +66,12 @@ ActiveAdmin.register CardOrder do
       link_to card_order.id, admin_card_order_path(card_order)
     end
 
-
-    column :type
+    column :campaign_name do |cp|
+      link_to cp.campaign_name, admin_card_order_path(cp)
+    end
+    column :campaign_type do |cp|
+      cp.campaign_type&.gsub("_", "-")&.capitalize
+    end
     column :discount_pct
     column :discount_exp
     column :enabled
