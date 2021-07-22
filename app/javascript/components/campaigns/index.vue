@@ -23,7 +23,7 @@
       <div>
         <table class="campaign-dashboard">
           <tr>
-            <th>
+            <th width="45px">
               <input id="campaign-check-all" type="checkbox" v-model="selectAll"/>
             </th>
             <th></th>
@@ -73,7 +73,7 @@
           </tr>
           <tr v-for="item in thisCampaigns">
             <td class="checkbox-cell" @click="selectCampaign">
-              <input id="campaign-check-all" type="checkbox" v-model="selected" :value="item.id" number/>
+              <input type="checkbox" v-model="selected" :value="item.id" number/>
             </td>
             <td>
               <span v-if="['Out of credit', 'Error', 'Draft', 'Complete'].includes(item.campaign_status)">
