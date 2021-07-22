@@ -70,7 +70,7 @@
           <tr id="postcard-<%= postcard.id %>">
             <td>
               <button type="button"
-                      class="mdl-chip mdl-color--<%= postcard.complete? ? 'light_green' : 'orange' %> postcard-status-chip">
+                      class="mdl-chip mdl-color--<%= postcard.sent? ? 'light_green' : 'orange' %> postcard-status-chip">
                 <span class="mdl-chip__text"><%= postcard_status(postcard) %></span>
               </button>
             </td>
