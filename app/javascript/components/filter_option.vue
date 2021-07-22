@@ -214,6 +214,7 @@
         this.$emit('filterRemove', this.filter, this.collection, this.index);
       },
       filterChange() {
+        this.filter.showInvalidValueInput = false;
         this.$emit('filterChange', this.filter, this.collection, this.index);
       },
       optionChange() {
