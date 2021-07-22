@@ -22,6 +22,16 @@ class ShopsController < BaseController
     end
   end
 
+  # GET /settings/get_credit.json
+  def get_credit
+    respond_to do |format|
+      format.html
+      format.json {
+        render :json => {:credit => @shop.credit}, status: :ok
+      }
+    end
+  end
+
   def edit
     @current_credit = @shop.current_subscription.quantity * (Plan.last.amount.to_f/100)
   end

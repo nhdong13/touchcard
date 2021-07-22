@@ -58,6 +58,7 @@ Rails.application.routes.draw do
   resource :shops, only: [:edit, :update], path: 'settings'
   patch '/settings/campaign_filter_option', to: 'shops#set_campaign_filter_option'
   get '/settings/campaign_filter_option', to: 'shops#get_campaign_filter_option'
+  get '/settings/get_credit', to: 'shops#get_credit'
 
   resources :automations, only: [:new, :index, :show, :edit, :update, :destroy] do
     # get 'select_type', :on => :collection

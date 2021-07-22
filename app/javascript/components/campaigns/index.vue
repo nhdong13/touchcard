@@ -163,6 +163,7 @@
   import VModal from 'vue-js-modal'
   import CustomePagination from './pagination.vue'
   import PreviewImage from './campaign_index_preview_image.vue'
+  import dateFormat from 'packs/date-format.js'
 
   Vue.use(VModal, { componentName: 'campaignModal'})
   Vue.use(MdSwitch)
@@ -182,14 +183,13 @@
         type: Number,
         required: true
       },
-      campaignStatuses: {
-        type: Array,
-        required: true
-      },
       campaignTypes: {
         type: Array,
         required: true
       },
+      shared: {
+        type: Object
+      }
     },
     mounted () {
     },
@@ -216,6 +216,29 @@
 
     created() {
       this.listcampaignActive()
+      if(!_.isEmpty(this.shared.campaign)) {
+          const _sharedState = this.shared.campaign
+          let targetCampaignId = this.thisCampaigns.findIndex(obj => {
+            return obj.id == _sharedState.id
+          })
+          if(targetCampaignId != -1) {
+            const startDate = dateFormat(this.shared.campaign.send_date_start, "mediumDate")
+            const endDate = this.shared.campaign.send_date_end ? dateFormat(this.shared.campaign.send_date_end, "mediumDate") : "Ongoing"
+            this.shared.campaign.schedule = `${startDate} - ${endDate}`
+            this.shared.campaign.campaign_status = this.shared.campaign.campaign_status.split("_").join(" ").replace(/^\w/, (c) => c.toUpperCase())
+            this.shared.campaign.campaign_type = this.shared.campaign.campaign_type.split("_").join(" ").replace(/^\w/, (c) => c.toUpperCase())
+
+            if(this.shared.campaign.campaign_type == "One off") {
+              this.shared.campaign.budget = "-"
+            } else {
+              if(this.shared.campaign.budget_type == "monthly") this.shared.campaign.budget = `$${this.shared.campaign.budget_update}`
+              else this.shared.campaign.budget = "-"
+
+            }
+            this.thisCampaigns[targetCampaignId] = this.shared.campaign
+            this.shared.campaign = null
+          }
+        }
     },
 
     computed: {

@@ -293,6 +293,9 @@
       },
       isUserHasPaymentMethod: {
         type: Boolean
+      },
+      shared: {
+        type: Object
       }
     },
     created() {
@@ -305,6 +308,10 @@
           axios.delete(`/automations/${_this.id}.json`)
           sessionStorage.removeItem('new-campaign-id')
         }
+      })
+      axios.get('/settings/get_credit.json').then((response) => {
+        console.log(_this)
+        _this.userCredit = response.data.credit
       })
     },
 
@@ -351,6 +358,7 @@
         filterConditions: [],
         filterOptions: [],
         interval: null,
+        userCredit: 0
       }
     },
 
@@ -633,6 +641,10 @@
         })
         if(!this.isFormValid()) return false
         this.fetchDataFromUI()
+        this.shared.campaign = this.automation
+        axios.put(`/automations/${this.id}.json`, { card_order: this.automation}).catch(function(error) {
+          console.log(error)
+        })
         return true
       },
 
@@ -645,14 +657,8 @@
           return
         }
 
-        const _this = this
-        axios.put(`/automations/${this.id}.json`, { card_order: this.automation})
-          .then(function(response) {
-            sessionStorage.removeItem('new-campaign-id')
-            _this.returnToCampaignList()
-          }).catch(function (error) {
-            console.log(error)
-        });
+        sessionStorage.removeItem('new-campaign-id')
+        this.returnToCampaignList()
       },
 
 
@@ -666,11 +672,10 @@
           return
         }
 
-        const _this = this
-        axios.get(`/automations/${this.id}/start_sending.json`).then((response) => {
-          sessionStorage.removeItem('new-campaign-id')
-          _this.returnToCampaignList()
-        })
+        this.shared.campaign.campaign_status = this.userCredit > 0.89 ? "processing" : "out_of_credit"
+        axios.get(`/automations/${this.id}/start_sending.json`)
+        sessionStorage.removeItem('new-campaign-id')
+        this.returnToCampaignList()
       },
 
       saveAndCheckout: function() {
@@ -682,14 +687,9 @@
           return
         }
 
-        const _this = this
-        axios.put(`/automations/${this.id}.json`, { card_order: this.automation})
-          .then(function(response) {
-            sessionStorage.removeItem('new-campaign-id')
-            _this.goToCheckoutPage()
-          }).catch(function (error) {
-            console.log(error)
-        });
+        this.shared.campaign.campaign_status = "processing"
+        sessionStorage.removeItem('new-campaign-id')
+        this.goToCheckoutPage()
       },
 
       validateForm: function() {
