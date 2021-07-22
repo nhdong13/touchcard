@@ -11,7 +11,7 @@ ActiveAdmin.register Shop do
   end
 
   member_action :change_credit, method: :put do
-    new_credit = params[:shop][:credit].to_i
+    new_credit = params[:shop][:credit].to_f
     shop = Shop.find(params[:id])
     SlackNotify.message("#{current_admin_user.email} changed #{shop.domain} credits " +
                             "from #{shop.credit} to #{new_credit}", true)
@@ -66,7 +66,7 @@ ActiveAdmin.register Shop do
       row :customer_email
       row :last_month
       row :credit do |shop|
-        status_tag("#{shop.credit}")
+        status_tag("#{shop.credit.round(2)}")
         link_to "edit", adjust_credits_admin_shop_path(shop)
       end
       row :stripe_customer_id do |shop|
