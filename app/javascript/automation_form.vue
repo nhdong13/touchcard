@@ -321,6 +321,8 @@
       // this.interval = window.setInterval(() => {
       //   this.validateForm()
       // }, 1000)
+
+      this.saveAutomation()
     },
     data: function() {
       return {
@@ -623,7 +625,7 @@
       },
 
       saveWithValidation: function() {
-        this.validateForm()
+        // this.validateForm()
         this.$nextTick(() => {
           if(isEmpty($(".invalid"))) return
           $(".invalid")[0].scrollIntoView({
@@ -646,7 +648,7 @@
           this.returnToCampaignList()
           return
         }
-
+        console.log(this.automation)
         const _this = this
         axios.put(`/automations/${this.id}.json`, { card_order: this.automation})
           .then(function(response) {
