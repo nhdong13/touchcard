@@ -21,7 +21,7 @@ class FetchHistoryOrdersJob < ActiveJob::Base
     # campaign.sending? should be true when we start a new loop of sending postcard
     #
     return unless (campaign.enabled? &&
-      (campaign.processing? || campaign.draft? || campaign.sent? || campaign.sending?) &&
+      (campaign.processing? || campaign.draft? || campaign.complete? || campaign.sending?) &&
       !campaign.archived)
 
     campaign.processing!

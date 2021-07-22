@@ -788,6 +788,12 @@
       },
 
       disableStartDate: function() {
+        if(this.automation.campaign_status == "sending" ||
+          this.automation.campaign_status == "complete" ||
+          this.automation.campaign_status == "out_of_credit" ||
+          this.automation.campaign_status == "error" ||
+          this.automation.campaign_status == "paused") return true
+
         if(isEmpty(this.automation.send_date_start)) {
           this.automation.send_date_start = new Date()
         }
@@ -796,12 +802,6 @@
         this.disabledDates = {
           to: today
         }
-
-        if(this.automation.campaign_status == "sending" ||
-          this.automation.campaign_status == "complete" ||
-          this.automation.campaign_status == "out of order" ||
-          this.automation.campaign_status == "error" ||
-          this.automation.campaign_status == "paused") return true
 
         return false
       }
