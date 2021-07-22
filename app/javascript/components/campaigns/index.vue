@@ -233,8 +233,9 @@
             } else {
               if(this.shared.campaign.budget_type == "monthly") this.shared.campaign.budget = `$${this.shared.campaign.budget_update}`
               else this.shared.campaign.budget = "-"
-
             }
+
+            if(this.shared.campaign.campaign_status == "Processing") this.campaignActive.push(this.shared.campaign.id)
             this.thisCampaigns[targetCampaignId] = this.shared.campaign
             this.shared.campaign = null
           }

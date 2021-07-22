@@ -310,7 +310,6 @@
         }
       })
       axios.get('/settings/get_credit.json').then((response) => {
-        console.log(_this)
         _this.userCredit = response.data.credit
       })
     },
@@ -687,7 +686,7 @@
           return
         }
 
-        this.shared.campaign.campaign_status = "processing"
+        this.shared.campaign = null
         sessionStorage.removeItem('new-campaign-id')
         this.goToCheckoutPage()
       },
