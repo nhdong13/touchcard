@@ -415,7 +415,8 @@
       },
 
       collectParamsFilters: function() {
-        return this.$refs.DropdownMenu.collectParamsFilters()
+        // return this.$refs.DropdownMenu.collectParamsFilters()
+        return null;
       },
 
       getParamsQuery: function() {
