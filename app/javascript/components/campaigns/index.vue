@@ -27,45 +27,45 @@
               <input id="campaign-check-all" type="checkbox" v-model="selectAll"/>
             </th>
             <th></th>
-            <th class="left-border-column">Design</th>
-            <th class="left-border-column mw-col" v-on:click="onSortByAlphabetically('sortByName', 'campaign_name')">
+            <th>Design</th>
+            <th class="mw-col">
               Name
-              <span>
+              <span v-on:click="onSortByAlphabetically('sortByName', 'campaign_name')">
                 <font-awesome-icon icon="caret-down" v-if="sortByName"/>
                 <font-awesome-icon icon="caret-up" v-else/>
               </span>
             </th>
-            <th class="left-border-column" v-on:click="onSortByAlphabetically('sortByStatus', 'campaign_status')">
+            <th>
               Status
-              <span>
+              <span v-on:click="onSortByAlphabetically('sortByStatus', 'campaign_status')">
                 <font-awesome-icon icon="caret-down" v-if="sortByStatus"/>
                 <font-awesome-icon icon="caret-up" v-else/>
               </span>
             </th>
-            <th class="left-border-column" v-on:click="onSortByAlphabetically('sortByType', 'campaign_type')">
+            <th>
               Type
-              <span>
+              <span v-on:click="onSortByAlphabetically('sortByType', 'campaign_type')">
                 <font-awesome-icon icon="caret-down" v-if="sortByType"/>
                 <font-awesome-icon icon="caret-up" v-else/>
               </span>
             </th>
-            <th class="left-border-column" v-on:click="onSortByAlphabetically('sortByMonthlyBudget', 'budget')">
+            <th>
               Budget
-              <span>
+              <span v-on:click="onSortByAlphabetically('sortByMonthlyBudget', 'budget')">
                 <font-awesome-icon icon="caret-down" v-if="sortByMonthlyBudget"/>
                 <font-awesome-icon icon="caret-up" v-else/>
               </span>
             </th>
-            <th class="left-border-column" v-on:click="onSortByAlphabetically('sortBySendDateStart', 'send_date_start')">
+            <th>
               Starts
-              <span>
+              <span v-on:click="onSortByAlphabetically('sortBySendDateStart', 'send_date_start')">
                 <font-awesome-icon icon="caret-down" v-if="sortBySendDateStart"/>
                 <font-awesome-icon icon="caret-up" v-else/>
               </span>
             </th>
-            <th class="left-border-column" v-on:click="onSortByAlphabetically('sortBySendDateEnd', 'send_date_end')">
+            <th>
               Ends
-              <span>
+              <span v-on:click="onSortByAlphabetically('sortBySendDateEnd', 'send_date_end')">
                 <font-awesome-icon icon="caret-down" v-if="sortBySendDateEnd"/>
                 <font-awesome-icon icon="caret-up" v-else/>
               </span>
@@ -83,7 +83,7 @@
                 <md-switch v-model="campaignActive" :value="item.id" class="md-primary" @change="value => onChangeCampaignActive(value, item.id)" :disabled="disableToggle(item)"></md-switch>
               </span>
             </td>
-            <td class="left-border-column">
+            <td>
               <!--
                 key attribute is used to make Vue re-render PreviewImage component when the campaign is changed
               -->
@@ -94,18 +94,18 @@
               />
             </td>
             <!-- The maximum of character to display is 45 -->
-            <td class="left-border-column">
+            <td>
               <span v-on:click="onEditCampaign(item.id)" class="campaign-name-style two-line-text">{{ item.campaign_name | truncate(80) }}</span>
             </td>
-            <td class="left-border-column">{{ item.campaign_status}}</td>
-            <td class="left-border-column">{{ item.campaign_type }}</td>
-            <td class="left-border-column">
+            <td>{{ item.campaign_status}}</td>
+            <td>{{ item.campaign_type }}</td>
+            <td>
               <span class='t-b'> {{ item.campaign_type == "Automation" && item.budget != "-" ? item.budget + '/month' : item.budget }}</span>
             </td>
-            <td class="left-border-column">
+            <td>
               <span class='t-b'> {{ splitedSchedule(item.schedule)[0] }}</span>
             </td>
-            <td class="left-border-column">
+            <td>
               <span class='t-b'> {{ splitedSchedule(item.schedule)[1] }}</span>
             </td>
           </tr>
@@ -139,7 +139,7 @@
         </div>
       </campaignModal>
 
-      <campaignModal name="deleteCampaignModal" :classes="'delete-campaign-modal'" :width="450" :height="200">
+      <campaignModal name="deleteCampaignModal" :classes="'delete-campaign-modal'" :width="450" :height="200" :clickToClose="false">
         <div>
           <div>
             <strong><h3>This action cannot be undone. Are you sure you want to delete the campaign(s)?</h3></strong>
@@ -298,6 +298,7 @@
 
 
       showModalConfirmDuplicate: function() {
+        this.duplicateCampaignName = "Copy of " + this.thisCampaigns.find(campaign => campaign.id == this.selected).campaign_name;
         this.$modal.show('duplicateModal')
       },
 
@@ -533,11 +534,13 @@
 
   .campaign-dashboard, .campaign-dashboard th, .campaign-dashboard td {
     border-collapse: collapse;
-    text-align: center;
-    border-bottom: 1px solid #ddd;
+    text-align: left;
+    border-bottom: none;//1px solid #ddd;
     th {
-      cursor: pointer;
       padding: 16px 0;
+    }
+    th span{
+      cursor: pointer;
     }
   }
 
@@ -624,19 +627,20 @@
     border: 2px solid #5b3e82;
   }
 
-  .left-border-column {
-    border-left: 1px solid #ddd;
-  }
-
   .two-line-text {
    overflow: hidden;
    text-overflow: ellipsis;
    display: -webkit-box;
    -webkit-line-clamp: 2; /* number of lines to show */
    -webkit-box-orient: vertical;
+   max-width: 390px;
   }
 
   .mw-col {
-    width: 420px;
+    width: 390px;
+  }
+
+  .delete-campaign-modal {
+    padding: 0 56px;
   }
 </style>
