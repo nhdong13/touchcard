@@ -407,9 +407,9 @@
         let _this = this
         let target = `/campaigns/delete_campaigns.json`;
         let campaignsSelected = this.selected
-        axios.delete(target, { params: {campaign_ids: campaignsSelected} })
+        axios.delete(target, { params: {campaign_ids: campaignsSelected, page: this.currentPage, query: this.getParamsQuery(), filters: this.collectParamsFilters()} })
           .then(function(response) {
-            _this.updateState(response.data)
+            _this.updateState(response.data, false)
             _this.closeModalConfirmDeleteCampaign()
           }).catch(function (error) {
         });

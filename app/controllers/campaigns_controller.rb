@@ -20,12 +20,12 @@ class CampaignsController < BaseController
       PaymentService.refund_cards_when_cancelled @current_shop, campaign
       campaign.archive
     end
-    @campaigns = @current_shop.card_orders.page(1)
-    @total_pages = @campaigns.total_pages
+    @result = CampaignSearchService.new(@current_shop, params).index
+    @total_pages = @result[:total_pages]
     respond_to do |format|
       format.html {}
       format.json { render json: {
-        campaigns: ActiveModelSerializers::SerializableResource.new(@campaigns, {each_serializer: CardOrderSerializer}).to_json,
+        campaigns: ActiveModelSerializers::SerializableResource.new(@result[:campaigns], {each_serializer: CardOrderSerializer}).to_json,
         total_pages: @total_pages
       }}
     end
