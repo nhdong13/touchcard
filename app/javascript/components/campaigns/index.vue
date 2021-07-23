@@ -238,6 +238,7 @@
             if(this.shared.campaign.campaign_status == "Processing") this.campaignActive.push(this.shared.campaign.id)
             this.thisCampaigns[targetCampaignId] = this.shared.campaign
             this.shared.campaign = null
+            this.changePagination(this.currentPage)
           }
         }
     },
@@ -415,7 +416,10 @@
       },
 
       collectParamsFilters: function() {
-        return this.$refs.DropdownMenu.collectParamsFilters()
+        // Comment this because we hide the filter for now
+        //
+        // return this.$refs.DropdownMenu.collectParamsFilters()
+        return null
       },
 
       getParamsQuery: function() {

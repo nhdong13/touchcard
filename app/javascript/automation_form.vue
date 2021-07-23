@@ -649,11 +649,7 @@
 
       saveAndReturn: function() {
         // If there're some errors in save process => return
-        if(!this.saveWithValidation()) {
-          if(this.isCampaignNew()) return
-
-          this.returnToCampaignList()
-        }
+        if(!this.saveWithValidation()) return
 
         sessionStorage.removeItem('new-campaign-id')
         this.returnToCampaignList()
