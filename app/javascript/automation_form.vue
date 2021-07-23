@@ -1,8 +1,6 @@
 <template>
   <div class="automation_form">
-    <div>
-      <h1>{{ automation.campaign_name }}</h1>
-    </div>
+    <h1 class="page-header">{{ automation.campaign_name }}</h1>
     <hr/>
     <h2>Campaign Settings</h2>
     <div class="automation-section">
@@ -923,5 +921,12 @@
 
   .h-32 {
     height: 32px;
+  }
+
+  .page-header {
+    height: 60px;
+    display: flex;
+    align-items: center;
+    margin-top: 0;
   }
 </style>
