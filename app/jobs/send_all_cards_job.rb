@@ -29,7 +29,7 @@ class SendAllCardsJob < ActiveJob::Base
     return unless (campaign.enabled? && (campaign.sending? || campaign.scheduled?) && !campaign.archived)
     campaign.sending!
     result = Postcard.send_all campaign.id
-    campaign.error! if result[:card_sent_amount] < result[:total_card]
+    Rails.logger.debug "There are error in sending process" if result[:card_sent_amount] < result[:total_card]
     campaign.save!
   end
 
