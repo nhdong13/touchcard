@@ -38,6 +38,6 @@ class SendAllCardsJob < ActiveJob::Base
     def reach_end_date campaign
       return false if campaign.send_continuously
 
-      Time.now >= campaign.send_date_end
+      Time.now.beginning_of_day >= campaign.send_date_end
     end
 end

@@ -25,6 +25,7 @@ class GeneratePostcardJob < ActiveJob::Base
 
     # Set customer filter
     filter = campaign.filters.last
+    filter = Filter.new(filter_data: {:accepted => {}, :removed => {}}) if filter.blank?
     customer_targeting_service =  CustomerTargetingService.new({shop: shop}, filter.filter_data[:accepted], filter.filter_data[:removed])
 
     # Get already exisiting customer in postcard list => 1 customer only sent 1 postcard

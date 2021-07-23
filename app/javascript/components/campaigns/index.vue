@@ -216,6 +216,17 @@
 
     created() {
       this.listcampaignActive()
+      // TODO: comment this piece of code
+      if(!_.isEmpty(sessionStorage.getItem('new-campaign-id'))){
+        const _this = this
+        const target = `/campaigns/delete_campaigns.json`;
+        axios.delete(target, { params: {campaign_ids: [Number(sessionStorage.getItem('new-campaign-id'))], page: this.currentPage, query: this.getParamsQuery(), filters: this.collectParamsFilters()} })
+          .then(function(response) {
+            _this.updateState(response.data, false)
+            sessionStorage.removeItem('new-campaign-id')
+          })
+      }
+      // TODO: comment this piece of code
       if(!_.isEmpty(this.shared.campaign)) {
           const _sharedState = this.shared.campaign
           let targetCampaignId = this.thisCampaigns.findIndex(obj => {

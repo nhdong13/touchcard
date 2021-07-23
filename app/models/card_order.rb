@@ -115,8 +115,7 @@ class CardOrder < ApplicationRecord
   def reactivate_campaign
     if self.complete? && self.automation?
       self.sending!
-      self.enabled = true
-      FetchHistoryOrdersJob.perform_now(self.shop, self.shop.post_sale_orders.last.send_delay, self)
+      InitializeSendingPostcardProcess.start self.shop, self
     end
   end
 
