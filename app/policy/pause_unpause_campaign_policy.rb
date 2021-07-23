@@ -45,9 +45,9 @@ class PauseUnpauseCampaignPolicy
       # for now the campaign only has 2 types: automation and one-off. If there is any change of that in future
       # this if-else have to change
       if campaign.automation?
-        !campaign.send_continuously && Time.now.beginning_of_day > campaign.send_date_end
+        !campaign.send_continuously && Time.now.beginning_of_day >= campaign.send_date_end
       else
-        Time.now > campaign.send_date_start
+        Time.now.beginning_of_day >= campaign.send_date_start
       end
     end
   end
