@@ -649,12 +649,7 @@
 
       saveAndReturn: function() {
         // If there're some errors in save process => return
-        if(!this.saveWithValidation()) {
-          if(this.isCampaignNew()) return
-
-          this.returnToCampaignList()
-          return
-        }
+        if(!this.saveWithValidation()) return
 
         sessionStorage.removeItem('new-campaign-id')
         this.returnToCampaignList()
@@ -664,12 +659,7 @@
 
       saveAndStartSending: function() {
         // If there're some errors in save process => return
-        if(!this.saveWithValidation()) {
-          if(this.isCampaignNew()) return
-
-          this.returnToCampaignList()
-          return
-        }
+        if(!this.saveWithValidation()) return
 
         this.shared.campaign.campaign_status = this.userCredit > 0.89 ? "processing" : "out_of_credit"
         axios.get(`/automations/${this.id}/start_sending.json`)
@@ -679,12 +669,7 @@
 
       saveAndCheckout: function() {
         // If there're some errors in save process => return
-        if(!this.saveWithValidation()) {
-          if(this.isCampaignNew()) return
-
-          this.returnToCampaignList()
-          return
-        }
+        if(!this.saveWithValidation()) return
 
         this.shared.campaign = null
         sessionStorage.removeItem('new-campaign-id')

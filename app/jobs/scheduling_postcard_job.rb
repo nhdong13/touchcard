@@ -16,17 +16,20 @@ class SchedulingPostcardJob < ActiveJob::Base
     return unless (campaign.enabled? &&
       (campaign.processing? || campaign.scheduled?) &&
       !campaign.archived)
-    begin
-      result = true
-      # Get postcard paid
-      campaign.postcards.find_each do |postcard|
-        result = PaymentService.pay_postcard_for_campaign_monthly campaign.shop, campaign, postcard
-        break unless result
-      end
-      campaign.scheduled! if result
-    rescue
-      campaign.error!
+    # begin
+
+    result = true
+    # Get postcard paid
+    campaign.postcards.find_each do |postcard|
+      result = PaymentService.pay_postcard_for_campaign_monthly campaign.shop, campaign, postcard
+      break unless result
     end
+    campaign.scheduled! if result
+
+    # rescue
+    #   campaign.error!
+    # end
+
     campaign.save
 
   end

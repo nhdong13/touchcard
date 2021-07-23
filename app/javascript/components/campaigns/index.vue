@@ -238,6 +238,7 @@
             if(this.shared.campaign.campaign_status == "Processing") this.campaignActive.push(this.shared.campaign.id)
             this.thisCampaigns[targetCampaignId] = this.shared.campaign
             this.shared.campaign = null
+            this.changePagination(this.currentPage)
           }
         }
     },
@@ -406,17 +407,19 @@
         let _this = this
         let target = `/campaigns/delete_campaigns.json`;
         let campaignsSelected = this.selected
-        axios.delete(target, { params: {campaign_ids: campaignsSelected} })
+        axios.delete(target, { params: {campaign_ids: campaignsSelected, page: this.currentPage, query: this.getParamsQuery(), filters: this.collectParamsFilters()} })
           .then(function(response) {
-            _this.updateState(response.data)
+            _this.updateState(response.data, false)
             _this.closeModalConfirmDeleteCampaign()
           }).catch(function (error) {
         });
       },
 
       collectParamsFilters: function() {
+        // Comment this because we hide the filter for now
+        //
         // return this.$refs.DropdownMenu.collectParamsFilters()
-        return null;
+        return null
       },
 
       getParamsQuery: function() {
