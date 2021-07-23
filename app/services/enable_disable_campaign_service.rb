@@ -22,7 +22,7 @@ class EnableDisableCampaignService
     #     Message you want to notify user.
     #     If leaves nil, there will be no notify
     #
-    def enable_campaign campaign, message
+    def enable_campaign campaign, message = nil
       # This is for a bug happen in old campaign where
       # campaign_status: paused
       # previous_campaign_status: paused
@@ -56,7 +56,7 @@ class EnableDisableCampaignService
     #     Message you want to notify user.
     #     If leaves nil, there will be no notify
     #
-    def disable_campaign campaign, disable_status, message
+    def disable_campaign campaign, disable_status, message = nil
       # must convert enum value to integer to persist it
       campaign.previous_campaign_status = CardOrder.campaign_statuses[campaign.campaign_status]
       campaign.campaign_status = CardOrder.campaign_statuses[disable_status]
