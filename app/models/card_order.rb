@@ -113,7 +113,7 @@ class CardOrder < ApplicationRecord
   end
 
   def reactivate_campaign
-    if self.complete? && self.automation?
+    if self.complete? && self.automation? && Time.now.beginning_of_day < self.send_date_end
       self.sending!
       InitializeSendingPostcardProcess.start self.shop, self
     end
