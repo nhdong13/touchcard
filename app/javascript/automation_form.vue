@@ -357,7 +357,6 @@
       disabledEndDates:{
         get: function(){
           const today = new Date()
-          today.setDate(today.getDate() - 1)
           today.setHours(0,0,0,0)
           return {
             to: today
