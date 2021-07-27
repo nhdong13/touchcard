@@ -243,14 +243,14 @@
     <br>
     <div class="text-right">
       <div v-if="isEditExistCampaign">
-        <button class="mdc-button mdc-button--stroked" v-on:click="returnToCampaignList" >Discard</button>
-        <button class="mdc-button mdc-button--raised" @click="saveAndReturn">Save Changes</button>
+        <button class="mdc-button mdc-button--stroked" v-on:click="returnToCampaignList" :disabled="pausedSubmitForm">Discard</button>
+        <button class="mdc-button mdc-button--raised" @click="saveAndReturn" :disabled="pausedSubmitForm">Save Changes</button>
       </div>
       <div v-else>
-        <button class="mdc-button mdc-button--stroked" v-on:click="saveAndReturn" >Save changes</button>
+        <button class="mdc-button mdc-button--stroked" v-on:click="saveAndReturn" :disabled="pausedSubmitForm">Save changes</button>
 
-        <button class="mdc-button mdc-button--raised" v-on:click="saveAndStartSending" v-if="isUserHasPaymentMethod">Start Sending</button>
-        <button class="mdc-button mdc-button--raised" v-on:click="saveAndCheckout" v-else>Add payment and start sending</button>
+        <button class="mdc-button mdc-button--raised" v-on:click="saveAndStartSending" v-if="isUserHasPaymentMethod" :disabled="pausedSubmitForm">Start Sending</button>
+        <button class="mdc-button mdc-button--raised" v-on:click="saveAndCheckout" v-else :disabled="pausedSubmitForm">Add payment and start sending</button>
       </div>
     </div>
   </div>
@@ -350,6 +350,7 @@
         interval: null,
         userCredit: 0,
         checkingFilterError: false,
+        pausedSubmitForm: false
       }
     },
 
@@ -523,6 +524,7 @@
           this.automation.international = true
         }
         collection == "accepted" ? this.acceptedFilters[index] = filter : this.removedFilters[index] = filter;
+        this.checkingFilterError = false;
       },
       filterRemove(filter, collection, index) {
         if(filter.selectedFilter == "shipping_country" && filter.selectedCondition == "from" && collection == "accepted") {
@@ -618,6 +620,10 @@
       },
 
       saveAutomation(func) {
+        // Prevent to submit form after click submit
+        this.pausedSubmitForm = true;
+        setTimeout(() => this.pausedSubmitForm = false, 5000);
+
         if (this.id) {
           axios.put(`/automations/${this.id}.json`, { card_order: this.automation})
             .then((response) => {
