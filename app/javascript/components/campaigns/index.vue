@@ -217,16 +217,6 @@
     created() {
       this.listcampaignActive()
       // TODO: comment this piece of code
-      if(!_.isEmpty(sessionStorage.getItem('new-campaign-id'))){
-        const _this = this
-        const target = `/campaigns/delete_campaigns.json`;
-        axios.delete(target, { params: {campaign_ids: [Number(sessionStorage.getItem('new-campaign-id'))], page: this.currentPage, query: this.getParamsQuery(), filters: this.collectParamsFilters()} })
-          .then(function(response) {
-            _this.updateState(response.data, false)
-            sessionStorage.removeItem('new-campaign-id')
-          })
-      }
-      // TODO: comment this piece of code
       if(!_.isEmpty(this.shared.campaign)) {
           const _sharedState = this.shared.campaign
           let targetCampaignId = this.thisCampaigns.findIndex(obj => {
@@ -337,12 +327,7 @@
       },
 
       onClickNewCampaign: function() {
-        axios.get('/automations/new.json', {})
-          .then(function(response) {
-            sessionStorage.setItem('new-campaign-id', response.data.id)
-            Turbolinks.visit(`/automations/${response.data.id}/edit`);
-          }).catch(function (error) {
-        });
+        Turbolinks.visit(`/automations/new`);
       },
 
       // exportCsv: function(){
@@ -391,7 +376,6 @@
         this.debounce = setTimeout(() => {
           this.searchQuery = event.target.value
           this.onSearchQuery()
-          console.log(this.searchQuery)
         }, 600)
       },
 

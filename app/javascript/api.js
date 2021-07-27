@@ -18,7 +18,6 @@ export class Api {
       }
     })
       .then(function (result) {
-        console.log(result)
         var signedUrl = result.data.signedUrl;
 
         var options = {
@@ -29,7 +28,6 @@ export class Api {
         // Upload File to S3
         axios.put(signedUrl, file, options)
           .then(function (result) {
-            console.log(result);
             var imageUrl = result.request.responseURL && result.request.responseURL.split('?')[0];
             if (typeof callback === 'function') {
               callback(null, imageUrl);

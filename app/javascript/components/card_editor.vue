@@ -117,7 +117,6 @@
     },
     mounted: function() {
 
-      console.log('CardEditor Mounted')
       // this.$nextTick(function () {
       // code that assumes this.$el is in-document
       // });
@@ -191,7 +190,6 @@
 
         // TODO: Block Saving while files are uploading
         this.api.uploadFileToS3(files[0], (error, result) => {
-          console.log(error ? error : result);
           if (result) {
             this.alertNonOptimalImageDimensions(result);
             this.$emit('update:attributes', Object.assign(this.attributes, {background_url: result}));

@@ -109,7 +109,7 @@
         </div>
         <div class="send-continuously-option align-self-center">
           <span :class="{invalid: errors.endDate}">
-            <input id="send-continuously" type="checkbox" v-model="automation.send_continuously"/>
+            <input id="send-continuously" type="checkbox" v-model="automation.send_continuously" />
           </span>
           <label for="send-continuously" class="noselect">- Ongoing</label>
         </div>
@@ -206,12 +206,12 @@
     <div :class="'filter-config nested-toggle row'" :showError="errors.filters">
       <div id="accepted-section">
         <div class="filter-section-title">Include these customers</div>
-        <filter-option :filter="filter" v-for="(filter, index) in acceptedFilters" :key="filter.selectedFilter" @filterChange="filterChange" @filterRemove="filterRemove" collection="accepted" :index="index" :filterConditions="filterConditions" :filterOptions="availableFilters('accepted', index)" />
+        <filter-option :filter="filter" v-for="(filter, index) in acceptedFilters" :key="filter.selectedFilter" @filterChange="filterChange" @filterRemove="filterRemove" collection="accepted" :index="index" :filterConditions="filterConditions" :filterOptions="availableFilters('accepted', index)" :checkingFilterError="checkingFilterError" />
         <button type="button" class="add-more-filter-btn" id="add-accepted-filter" @click="addFilter('accepted')">Add Filter</button>
       </div>
       <div id="removed-section">
         <div class="filter-section-title">Exclude these customers</div>
-        <filter-option :filter="filter" v-for="(filter, index) in removedFilters" :key="filter.selectedFilter" @filterChange="filterChange" @filterRemove="filterRemove" collection="removed" :index="index" :filterConditions="filterConditions" :filterOptions="availableFilters('removed', index)" />
+        <filter-option :filter="filter" v-for="(filter, index) in removedFilters" :key="filter.selectedFilter" @filterChange="filterChange" @filterRemove="filterRemove" collection="removed" :index="index" :filterConditions="filterConditions" :filterOptions="availableFilters('removed', index)" :checkingFilterError="checkingFilterError" />
         <button type="button" class="add-more-filter-btn" id="add-removed-filter" @click="addFilter">Add Filter</button>
       </div>
     </div>
@@ -299,14 +299,7 @@
     created() {
       this.isEditExistCampaign = this.automation.campaign_status != "draft"
       this.isStartDateDisable = this.disableStartDate()
-      // Handling event where the user exit page without click Discard or Save Changes button
-      const _this = this
-      window.addEventListener("beforeunload", function (e) {
-        if(_this.isCampaignNew()) {
-          axios.delete(`/automations/${_this.id}.json`)
-          sessionStorage.removeItem('new-campaign-id')
-        }
-      })
+      const _this = this;
       axios.get('/settings/get_credit.json').then((response) => {
         _this.userCredit = response.data.credit
       })
@@ -355,7 +348,8 @@
         filterConditions: [],
         filterOptions: [],
         interval: null,
-        userCredit: 0
+        userCredit: 0,
+        checkingFilterError: false,
       }
     },
 
@@ -391,24 +385,6 @@
     },
 
     watch: {
-      enableFiltering: function(enable) {
-        if (enable) {
-          const default_value = {accepted: {}, removed: {}};
-          if (this.automation.filters_attributes.length > 0) {
-            let last_index = this.automation.filters_attributes.length-1;
-            this.automation.filters_attributes[last_index].filter_data = default_value;
-          } else {
-            this.automation.filters_attributes = [{ filter_data: default_value}];
-          }
-        } else {
-          if (this.automation.filters_attributes.length > 0) {
-            let last_index = this.automation.filters_attributes.length-1;
-            let last_filter_id = this.automation.filters_attributes[last_index].id;
-            this.automation.filters_attributes[last_index] = {'id': last_filter_id, _destroy: true};
-          }
-        }
-      },
-
       onSelectState: function() {
         let state = $("#from_state").val()
         this.returnAddress.state = state
@@ -449,13 +425,16 @@
       // Set defaults in case these props are passed as 'null'
       this.automation.discount_pct = this.automation.discount_pct || 20;
       this.automation.discount_exp = this.automation.discount_exp || 3;
-      let last_index = this.automation.filters_attributes.length-1;
-      if (this.automation.filters_attributes[last_index]) {
-        let filters = this.automation.filters_attributes[last_index].filter_data;
+      this.automation.send_date_start = this.automation.send_date_start || new Date();
+      
+      // Render added filters from filter_attributes to accepted/removed list
+      if (this.automation.filters_attributes[0]) {
+        let filters = this.automation.filters_attributes[0].filter_data;
+        // Convert filter_data of filter to list of filters
         this.convertRawFilters(filters);
       }
-      this.automation.send_date_start = this.automation.send_date_start || new Date()
-      this.getAllFilterValues();
+      // Get all filter options
+      this.getAllFilterOptionValues();
     },
 
     methods: {
@@ -518,29 +497,21 @@
         this.automation.campaign_type = this.campaign_type
         this.automation.return_address_attributes = this.returnAddress
       },
-      sendingSaveRequest: function() {
-        axios.put(`/automations/${this.id}.json`, { card_order: this.automation})
-          .then(function(response) {
-          }).catch(function (error) {
-            console.log(error)
-        });
-      },
       // Get all filters and conditions
-      getAllFilterValues() {
+      getAllFilterOptionValues() {
         axios.get("/targeting/get_filters").then((response) => {
           this.filterOptions = response.data.filters;
           this.filterConditions = response.data.conditions;
         });
       },
-      // Remove selected filters
+      // Remove selected filter options => next filter not have existed filter
       availableFilters(collection, index) {
         let filters = collection == "accepted" ? this.acceptedFilters : this.removedFilters;
         let selectedFilters = filters.map(filter => filter.selectedFilter);
         return this.filterOptions.filter(item => !(selectedFilters.includes(item[1]) && selectedFilters.indexOf(item[1]) != index));
       },
       addFilter(list) {
-        let defaultValue = {selectedFilter: "", selectedCondition: 0, value: null, showInvalidValueInput: false};
-        this.removeEmptyFilter();
+        let defaultValue = {selectedFilter: "", selectedCondition: 0, value: null};
         if (list == "accepted") {
           if (this.acceptedFilters.length < this.filterOptions.length) this.acceptedFilters.push(defaultValue);
         } else {
@@ -559,13 +530,7 @@
         }
         collection == "accepted" ? this.acceptedFilters.splice(index, 1) : this.removedFilters.splice(index, 1);
       },
-      removeEmptyFilter() {
-        $(".filter-value").each(function() {
-          if ($(this).val() == "") {
-            $(this).parent().remove();
-          }
-        });
-      },
+      // Convert filter_data of filter to list of filters
       convertRawFilters(rawValue) {
         ["accepted", "removed"].forEach(section => {
           Object.keys(rawValue[section]).forEach(value => {
@@ -574,12 +539,15 @@
           });
         });
       },
+      // Generate/update filter_attribute
       collectFilters() {
         let collectedFilters = this.convertFiltersToParams();
-        this.automation.filters_attributes = [{ filter_data: collectedFilters}];
+        let id = this.automation.filters_attributes[0] ? this.automation.filters_attributes[0].id : null;
+        this.automation.filters_attributes = [{id:id, filter_data: collectedFilters}];
       },
+      // Convert filter lists to filter_data json of Filter object
       convertFiltersToParams() {
-        let res = {};
+        let res = {accepted: {}, removed: {}};
         // Prevent error
         // Cannot read property '[object Array]' of undefined
         const filters = [this.acceptedFilters, this.removedFilters].filter(Boolean)
@@ -589,6 +557,7 @@
         })
         return res;
       },
+      // Generate a filter item into filter object
       generateFilterToObject(list) {
         let tmp = {};
         list.forEach((item) => {
@@ -611,72 +580,90 @@
           console.log(error)
         });
       },
-      saveAutomation: function() {
-        if (this.enableFiltering) this.collectFilters();
-        // This will minimize the overhead of clone the automation
-        if(this.isTwoJsonEqual(this.saved_automation, this.automation)) {
-          return
-        }
-        this.fetchDataFromUI()
-        // TODO: Must somehow make sure automation is JSON safe
-        this.saved_automation = JSON.parse(JSON.stringify(this.automation))
+      // saveAutomation: function() {
+      //   this.collectFilters();
+      //   // This will minimize the overhead of clone the automation
+      //   if(this.isTwoJsonEqual(this.saved_automation, this.automation)) {
+      //     return
+      //   }
+      //   this.fetchDataFromUI()
+      //   // TODO: Must somehow make sure automation is JSON safe
+      //   this.saved_automation = JSON.parse(JSON.stringify(this.automation))
 
-        if(!this.isEditExistCampaign) {
-          axios.put(`/automations/${this.id}.json`, { card_order: this.automation})
-          .catch(function (error) {
-            console.log(error)
-          });
-        }
-      },
+      //   if(!this.isEditExistCampaign) {
+      //     axios.put(`/automations/${this.id}.json`, { card_order: this.automation})
+      //     .catch(function (error) {
+      //       console.log(error)
+      //     });
+      //   }
+      // },
       isTwoJsonEqual: function(a, b) {
         return JSON.stringify(a) === JSON.stringify(b)
       },
 
-      saveWithValidation: function() {
-        this.validateForm()
+      saveWithValidation: function(f) {
+        this.validateForm();
         this.$nextTick(() => {
-          if(isEmpty($(".invalid"))) return
+          if (isEmpty($(".invalid"))) return false;
           $(".invalid")[0].scrollIntoView({
             behavior: "smooth",
             block: "start"
           })
         })
-        if(!this.isFormValid()) return false
-        this.fetchDataFromUI()
-        this.shared.campaign = this.automation
-        axios.put(`/automations/${this.id}.json`, { card_order: this.automation}).catch(function(error) {
-          console.log(error)
-        })
-        return true
+        if(!this.isFormValid()) return false;
+        this.fetchDataFromUI();
+        this.shared.campaign = this.automation;
+        this.collectFilters();
+        return true;
+      },
+
+      saveAutomation(func) {
+        if (this.id) {
+          axios.put(`/automations/${this.id}.json`, { card_order: this.automation})
+            .then((response) => {
+              let id = JSON.parse(response.data.campaign).id;
+              func(id);
+            }).catch((error) => console.log(error));
+        } else {
+          axios.post(`/automations.json`, { card_order: this.automation})
+            .then((response) => {
+              let id = JSON.parse(response.data.campaign).id;
+              func(id);
+            }).catch((error) => console.log(error));
+        }
       },
 
       saveAndReturn: function() {
         // If there're some errors in save process => return
-        if(!this.saveWithValidation()) return
-
-        sessionStorage.removeItem('new-campaign-id')
-        this.returnToCampaignList()
+        if (!this.saveWithValidation()) return;
+        this.saveAutomation(this.returnToCampaignList);
       },
-
-
 
       saveAndStartSending: function() {
         // If there're some errors in save process => return
-        if(!this.saveWithValidation()) return
-
-        this.shared.campaign.campaign_status = this.userCredit > 0.89 ? "processing" : "out_of_credit"
-        axios.get(`/automations/${this.id}/start_sending.json`)
-        sessionStorage.removeItem('new-campaign-id')
-        this.returnToCampaignList()
+        if (!this.saveWithValidation()) return;
+        this.shared.campaign.campaign_status = this.userCredit > 0.89 ? "processing" : "out_of_credit";
+        this.saveAutomation(this.startSending);
       },
 
       saveAndCheckout: function() {
         // If there're some errors in save process => return
-        if(!this.saveWithValidation()) return
+        if (!this.saveWithValidation()) return;
+        this.shared.campaign = null;
+        this.saveAutomation(this.goToCheckoutPage);
+      },
 
-        this.shared.campaign = null
-        sessionStorage.removeItem('new-campaign-id')
-        this.goToCheckoutPage()
+      returnToCampaignList: function() {
+        Turbolinks.clearCache();
+        Turbolinks.visit('/campaigns', {flush: true});
+      },
+
+      goToCheckoutPage: function(id) {
+        Turbolinks.visit(`/subscriptions/new?campaign_id=${id}`);
+      },
+
+      startSending(id) {
+        axios.get(`/automations/${id}/start_sending.json`).then(() => this.returnToCampaignList());
       },
 
       validateForm: function() {
@@ -710,10 +697,12 @@
           this.errors.campaignName = false
         }
 
-        if(this.isFilterIncomplete() && this.enableFiltering) {
-          this.errors.filters = true
+        if(this.isFilterIncomplete()) {
+          this.checkingFilterError = true;
+          this.errors.filters = true;
         } else {
-          this.errors.filters = false
+          this.checkingFilterError = false;
+          this.errors.filters = false;
         }
 
         if(this.automation.international) {
@@ -731,14 +720,10 @@
       },
 
       isFilterIncomplete: function() {
-        let result = false;
         for (let element of this.acceptedFilters.concat(this.removedFilters))
           for(let item in element)
-            if (!element[item] || isEmpty(element[item].toString())) {
-              element["showInvalidValueInput"] = true;
-              result = true;
-            }
-        return result;
+            if (!element[item] || isEmpty(element[item].toString())) return true;
+        return false;
       },
 
       isFormValid: function() {
@@ -748,25 +733,11 @@
         return true
       },
 
-      isCampaignNew: function() {
-        if(isEmpty(sessionStorage.getItem('new-campaign-id'))) return false
-        return sessionStorage.getItem('new-campaign-id') == this.id
-      },
-
-      returnToCampaignList: function() {
-        Turbolinks.clearCache()
-        Turbolinks.visit('/campaigns', {flush: true})
-      },
-
       disableCampaign: function(campaign_id) {
         const _this = this
         axios.put(`/automations/${campaign_id}.json`, { card_order: {enabled: false} }).then(function(response) {
           _this.$forceUpdate()
         })
-      },
-
-      goToCheckoutPage: function() {
-        Turbolinks.visit(`/subscriptions/new?campaign_id=${this.id}`)
       },
 
       restrictToNumber: function(e) {
