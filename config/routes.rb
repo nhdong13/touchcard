@@ -60,7 +60,7 @@ Rails.application.routes.draw do
   get '/settings/campaign_filter_option', to: 'shops#get_campaign_filter_option'
   get '/settings/get_credit', to: 'shops#get_credit'
 
-  resources :automations, only: [:new, :index, :show, :edit, :update, :destroy] do
+  resources :automations do
     # get 'select_type', :on => :collection
     get 'start_sending', :on => :member
   end

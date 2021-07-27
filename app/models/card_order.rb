@@ -64,7 +64,6 @@ class CardOrder < ApplicationRecord
 
   scope :active, -> { where(archived: false) }
 
-  before_create :add_default_params
   after_update :update_budget, if: :saved_change_to_budget_update?
   after_update :update_budget_type, if: :saved_change_to_budget_type?
   after_update :reactivate_campaign, if: :saved_change_to_send_date_end?
@@ -72,11 +71,11 @@ class CardOrder < ApplicationRecord
   def add_default_params
     unless self.campaign_name.present?
       # If a campaign has name "Automation 3" => This campaign should have name "Automation 4"
-      last_index = CardOrder.where("archived = FALSE AND campaign_name ~* ?", 'Automation \d+').last
-      if last_index.nil?
+      exist_campaign_names = CardOrder.where("archived = FALSE AND campaign_name ~* ?", 'Automation \d+').pluck(:campaign_name)
+      unless exist_campaign_names.present?
         self.campaign_name = "Automation 0"
       else
-        new_index = last_index.campaign_name.gsub(/[^0-9]/, '').to_i + 1
+        new_index = exist_campaign_names.map{|name| name.gsub(/[^0-9]/, '').to_i }.sort.last + 1
         self.campaign_name = "Automation #{new_index}"
       end
     end

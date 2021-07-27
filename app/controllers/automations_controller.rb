@@ -1,6 +1,7 @@
 class AutomationsController < BaseController
   before_action :set_automation, only: [:edit, :update, :show, :destroy, :start_sending]
   before_action :set_aws_sign_endpoint, only: [:new, :edit]
+  before_action :set_return_address, only: [:new, :edit]
 
   def index
     # Create default automation if there isn't one already
@@ -20,10 +21,10 @@ class AutomationsController < BaseController
   # TODO: Re-enable automation creation
   #
   def new
-    @automation = @current_shop.post_sale_orders.create
+    @automation = @current_shop.post_sale_orders.new
+    @automation.add_default_params
     respond_to do |format|
-      flash[:notice] = "Automation successfully created"
-      format.html { redirect_to action: 'index'}
+      format.html
       format.json { render json: @automation }
     end
     # NOTE: Don't think we actually need these now, since we're using json in card_orders instead
@@ -32,31 +33,23 @@ class AutomationsController < BaseController
   end
 
 
-  def edit
-    @return_address =  @automation.return_address || ReturnAddress.new
-    if @return_address.new_record?
-      @current_shop.with_shopify_session do
-        # This shop is retrieved directly from Shopify instead of from database in order to get address
-        shop = ShopifyAPI::Shop.current
-        @return_address.address_line1 = shop.address1
-        @return_address.city = shop.city
-        @return_address.state = shop.province
-        @return_address.zip = shop.zip
-        @return_address.country_code = shop.country_code
-        @return_address.name = shop.name
-      end
-    end
-  end
+  def edit; end
 
   # POST /automations
   # POST /automations.json
   def create
     @automation = @current_shop.post_sale_orders.create(automation_params)
     respond_to do |format|
+      campaign_enabled_field_before_update = @automation.enabled
       if @automation.save
+        update_campaign_status(campaign_enabled_field_before_update)
         flash[:notice] = "Automation successfully created"
-        format.html { redirect_to action: 'index'}
-        format.json { render json: @automation }
+        format.html { redirect_to automations_path }
+        format.json { render json: {
+          message: "created",
+          campaign: ActiveModelSerializers::SerializableResource.new(@automation, {each_serializer: CardOrderSerializer}).to_json },
+          status: :ok
+        }
       else
         flash.now[:error] = @automation.errors.full_messages.join("\n")
         format.html { render :new }
@@ -72,17 +65,7 @@ class AutomationsController < BaseController
     respond_to do |format|
       campaign_enabled_field_before_update = @automation.enabled
       if @automation.update(automation_params)
-        if PauseUnpauseCampaignPolicy.enable_campaign? campaign_enabled_field_before_update, @automation.enabled
-          if PauseUnpauseCampaignPolicy.passed_campaign? @automation
-            @automation.update(enabled: false)
-            flash[:error] = "Please edit the date for the campaign to run."
-          else
-            EnableDisableCampaignService.enable_campaign @automation, nil
-            SendAllHistoryCardsJob.perform_later(@current_shop)
-          end
-        elsif PauseUnpauseCampaignPolicy.disable_campaign? campaign_enabled_field_before_update, @automation.enabled
-          EnableDisableCampaignService.disable_campaign @automation, :paused , nil
-        end
+        update_campaign_status(campaign_enabled_field_before_update)
         flash[:notice] = "Automation successfully updated"
         format.html { redirect_to automations_path }
         format.json { render json: {
@@ -128,11 +111,41 @@ class AutomationsController < BaseController
   private
 
   def set_automation
-    @automation = @current_shop.card_orders.find(params[:id])
+    @automation = @current_shop.card_orders.find_by(id: params[:id])
   end
 
   def set_aws_sign_endpoint
     @aws_sign_endpoint = root_url + aws_sign_path
+  end
+
+  def set_return_address
+    @return_address = @automation&.return_address || ReturnAddress.new
+    if @return_address.new_record?
+      @current_shop.with_shopify_session do
+        # This shop is retrieved directly from Shopify instead of from database in order to get address
+        shop = ShopifyAPI::Shop.current
+        @return_address.address_line1 = shop.address1
+        @return_address.city = shop.city
+        @return_address.state = shop.province
+        @return_address.zip = shop.zip
+        @return_address.country_code = shop.country_code
+        @return_address.name = shop.name
+      end
+    end
+  end
+
+  def update_campaign_status campaign_enabled_field_before_update
+    if PauseUnpauseCampaignPolicy.enable_campaign? campaign_enabled_field_before_update, @automation.enabled
+      if PauseUnpauseCampaignPolicy.passed_campaign? @automation
+        @automation.update(enabled: false)
+        flash[:error] = "Please edit the date for the campaign to run."
+      else
+        EnableDisableCampaignService.enable_campaign @automation, nil
+        SendAllHistoryCardsJob.perform_later(@current_shop)
+      end
+    elsif PauseUnpauseCampaignPolicy.disable_campaign? campaign_enabled_field_before_update, @automation.enabled
+      EnableDisableCampaignService.disable_campaign @automation, :paused , nil
+    end
   end
 
   def automation_params
