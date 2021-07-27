@@ -150,15 +150,22 @@ class CustomerTargetingService
   end
 
   def customer_pass_filter? customer_id
-    removed_attrs&.each do |k, v|
-      field_to_filter = select_field_to_filter(k, nil, customer_id)
-      return false if compare_field(field_to_filter, v["condition"], v["value"])
+    begin
+      removed_attrs&.each do |k, v|
+        field_to_filter = select_field_to_filter(k, nil, customer_id)
+        return false if compare_field(field_to_filter, v["condition"], v["value"])
+      end
+      accepted_attrs&.each do |k, v|
+        field_to_filter = select_field_to_filter(k, nil, customer_id)
+        return true if compare_field(field_to_filter, v["condition"], v["value"])
+      end
+      true
+    rescue StandardError => e
+      # If there is an error such as nil order
+      # This rescue is to log the error and keep the system going
+      Rails.logger.debug "[ERROR] #{e.class} #{e.message}"
+      false
     end
-    accepted_attrs&.each do |k, v|
-      field_to_filter = select_field_to_filter(k, nil, customer_id)
-      return true if compare_field(field_to_filter, v["condition"], v["value"])
-    end
-    true
   end
 
   def filtered_orders filter_order=nil
@@ -232,6 +239,7 @@ class CustomerTargetingService
     else
       []
     end
+
   end
 
   def calculate_compare_number_field field
