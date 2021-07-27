@@ -8,18 +8,14 @@ class PaymentService
   		return true if postcard.paid
 
   		if shop.credit < postcard.cost
-        card_order.previous_campaign_status = CardOrder.campaign_statuses[card_order.campaign_status]
-  			card_order.out_of_credit!
-  			card_order.save!
+        EnableDisableCampaignService.disable_campaign campaign, :out_of_credit, "#{campaign.campaign_name} is out of credit"
   			return false
   		end
 
   		if card_order.monthly?
   			available_budget = card_order.budget - card_order.budget_used
   			if available_budget < postcard.cost
-          card_order.previous_campaign_status = CardOrder.campaign_statuses[card_order.campaign_status]
-  				card_order.paused!
-  				card_order.save!
+          EnableDisableCampaignService.disable_campaign campaign, :paused, "#{campaign.campaign_name} is exceeded current budget"
   				return false
   			end
   			card_order.budget_used += postcard.cost

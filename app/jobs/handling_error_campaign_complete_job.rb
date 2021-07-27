@@ -30,5 +30,9 @@ class HandlingErrorCampaignCompleteJob < ActiveJob::Base
       c.complete!
     end
 
+    CardOrder.where("shop_id = :shop_id AND campaign_status != :status AND send_continuously = FALSE AND send_date_end < :now", {shop_id: shop.id,status: CardOrder.campaign_statuses[:complete], now: Time.now.beginning_of_day}).find_each do |c|
+      c.complete!
+    end
+
   end
 end

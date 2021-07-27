@@ -18,7 +18,7 @@ class SendAllCardsJob < ActiveJob::Base
       unless (reach_end_date(job.arguments[1]) || job.arguments[1].one_off? || job.arguments[1].archived)
         FetchHistoryOrdersJob.set(wait: 1.day).perform_later(job.arguments[0], job.arguments[0].post_sale_orders.last.send_delay, job.arguments[1])
       else
-        job.arguments[1].complete!
+        EnableDisableCampaignService.disable_campaign job.arguments[1], :complete, "#{job.arguments[1].campaign_name} is complete"
       end
     else
       FetchHistoryOrdersJob.set(wait: 1.minutes).perform_later(job.arguments[0], job.arguments[0].post_sale_orders.last.send_delay, job.arguments[1])

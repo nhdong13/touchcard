@@ -32,7 +32,7 @@ class EnableDisableCampaignService
       if (campaign.previous_campaign_status == CardOrder.campaign_statuses[:paused] || campaign.previous_campaign_status.nil? )
         campaign.previous_campaign_status = CardOrder.campaign_statuses[:processing]
       end
-
+      campaign.enabled = true
       campaign.campaign_status = campaign.previous_campaign_status
       campaign.save
       # For now cannot use flash in this
@@ -58,6 +58,7 @@ class EnableDisableCampaignService
     #
     def disable_campaign campaign, disable_status, message = nil
       # must convert enum value to integer to persist it
+      campaign.enabled = false
       campaign.previous_campaign_status = CardOrder.campaign_statuses[campaign.campaign_status]
       campaign.campaign_status = CardOrder.campaign_statuses[disable_status]
       campaign.save
