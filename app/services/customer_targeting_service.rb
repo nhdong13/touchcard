@@ -150,22 +150,15 @@ class CustomerTargetingService
   end
 
   def customer_pass_filter? customer_id
-    begin
-      removed_attrs&.each do |k, v|
-        field_to_filter = select_field_to_filter(k, nil, customer_id)
-        return false if compare_field(field_to_filter, v["condition"], v["value"])
-      end
-      accepted_attrs&.each do |k, v|
-        field_to_filter = select_field_to_filter(k, nil, customer_id)
-        return true if compare_field(field_to_filter, v["condition"], v["value"])
-      end
-      true
-    rescue StandardError => e
-      # If there is an error such as nil order
-      # This rescue is to log the error and keep the system going
-      Rails.logger.debug "[ERROR] #{e.class} #{e.message}"
-      false
+    removed_attrs&.each do |k, v|
+      field_to_filter = select_field_to_filter(k, nil, customer_id)
+      return false if compare_field(field_to_filter, v["condition"], v["value"])
     end
+    accepted_attrs&.each do |k, v|
+      field_to_filter = select_field_to_filter(k, nil, customer_id)
+      return true if compare_field(field_to_filter, v["condition"], v["value"])
+    end
+    true
   end
 
   def filtered_orders filter_order=nil
@@ -252,76 +245,83 @@ class CustomerTargetingService
   end
 
   def compare_field field, condition, value
-    case condition
-      when "before"
-        field.to_time < value.to_time.beginning_of_day
-      when "between_date"
-        splited_value = value.split("&")
-        begin_value = splited_value[0].to_time.beginning_of_day
-        end_value = splited_value[1].to_time.end_of_day
-        (field.to_time > begin_value) && (field.to_time < end_value)
-      when "after"
-        field.to_time > value.to_time.end_of_day
-      when "matches_number"
-        calculate_compare_number_field(field) == value.to_i
-      when "smaller_number"
-        calculate_compare_number_field(field) <= value.to_i
-      when "greater_number"
-        calculate_compare_number_field(field) >= value.to_i
-      when "between_number"
-        splited_value = value.split("&")
-        begin_value = splited_value[0].to_i
-        end_value = splited_value[1].to_i
-        calculated_field = calculate_compare_number_field(field)
-        (calculated_field >= begin_value) && (calculated_field <= end_value)
-      when "matches_string"
-        field.to_s.casecmp?(value.to_s)
-      when "contain_string"
-        field.to_s.upcase.include?(value.to_s.upcase)
-      when "1"
-        field.to_i > value.to_i
-      when "2"
-        field.to_i < value.to_i
-      when "8"
-        field.to_time < Time.now.end_of_day - value.to_i.days
-      when "9"
-        field == value
-      when "find_value"
-        field.index(value)
-      when "from"
-        value.join(",").index(field).present?
-      when "tag_is"
-        value.each{|item| return false unless field.include?(item)}
-        true
-      when "tag_contain"
-        value.each{|item| return true if field.include?(item)}
-        false
-      # This is for filter shipping company
-      when "no"
-        field.blank?
-      when "yes"
-        !field.blank?
-      # This is for filter zip code
-      when "equal"
-        field == value
-      when "begin_with"
-        field&.start_with?(value)
-      when "end_with"
-        field&.end_with?(value)
-      when "discount_amount_between"
-        return false if field.class != Array || !field[0].present?
-        currency_type = value[0] == "%" ? "percentage" : "fixed_amount"
-        splited_value = value[1..-1]
-        value_1 = splited_value.split("&")[0].to_f
-        value_2 = splited_value.split("&")[1].to_f
+    begin
+      case condition
+        when "before"
+          field.to_time < value.to_time.beginning_of_day
+        when "between_date"
+          splited_value = value.split("&")
+          begin_value = splited_value[0].to_time.beginning_of_day
+          end_value = splited_value[1].to_time.end_of_day
+          (field.to_time > begin_value) && (field.to_time < end_value)
+        when "after"
+          field.to_time > value.to_time.end_of_day
+        when "matches_number"
+          calculate_compare_number_field(field) == value.to_i
+        when "smaller_number"
+          calculate_compare_number_field(field) <= value.to_i
+        when "greater_number"
+          calculate_compare_number_field(field) >= value.to_i
+        when "between_number"
+          splited_value = value.split("&")
+          begin_value = splited_value[0].to_i
+          end_value = splited_value[1].to_i
+          calculated_field = calculate_compare_number_field(field)
+          (calculated_field >= begin_value) && (calculated_field <= end_value)
+        when "matches_string"
+          field.to_s.casecmp?(value.to_s)
+        when "contain_string"
+          field.to_s.upcase.include?(value.to_s.upcase)
+        when "1"
+          field.to_i > value.to_i
+        when "2"
+          field.to_i < value.to_i
+        when "8"
+          field.to_time < Time.now.end_of_day - value.to_i.days
+        when "9"
+          field == value
+        when "find_value"
+          field.index(value)
+        when "from"
+          value.join(",").index(field).present?
+        when "tag_is"
+          value.each{|item| return false unless field.include?(item)}
+          true
+        when "tag_contain"
+          value.each{|item| return true if field.include?(item)}
+          false
+        # This is for filter shipping company
+        when "no"
+          field.blank?
+        when "yes"
+          !field.blank?
+        # This is for filter zip code
+        when "equal"
+          field == value
+        when "begin_with"
+          field&.start_with?(value)
+        when "end_with"
+          field&.end_with?(value)
+        when "discount_amount_between"
+          return false if field.class != Array || !field[0].present?
+          currency_type = value[0] == "%" ? "percentage" : "fixed_amount"
+          splited_value = value[1..-1]
+          value_1 = splited_value.split("&")[0].to_f
+          value_2 = splited_value.split("&")[1].to_f
 
-        field[0]["type"] == currency_type && field[0]["amount"].to_f >= value_1 && field[0]["amount"].to_f <= value_2
-      when "discount_amount_matches"
-        return false if field.class != Array || !field[0].present?
-        currency_type = value[0] == "%" ? "percentage" : "fixed_amount"
-        field[0]["type"] == currency_type && value[1..-1].to_f == field[0]["amount"].to_f
-      else
-        false
+          field[0]["type"] == currency_type && field[0]["amount"].to_f >= value_1 && field[0]["amount"].to_f <= value_2
+        when "discount_amount_matches"
+          return false if field.class != Array || !field[0].present?
+          currency_type = value[0] == "%" ? "percentage" : "fixed_amount"
+          field[0]["type"] == currency_type && value[1..-1].to_f == field[0]["amount"].to_f
+        else
+          false
+      end
+    rescue StandardError => e
+      # If there is an error such as nil order
+      # This rescue is to log the error and keep the system going
+      Rails.logger.debug "[ERROR] #{e.class} #{e.message}"
+      false
     end
   end
 
