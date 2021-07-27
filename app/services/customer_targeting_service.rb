@@ -189,50 +189,55 @@ class CustomerTargetingService
       user_orders = Order.where(customer_id: filter_customer_id, shop_id: current_shop.id)
     end
     filter_order = order || user_orders.last
-
-    case field.to_s
-    # completed
-    when "last_order_date"
-      filter_order.processed_at
-    when "first_order_date"
-      user_orders.minimum(:processed_at)
-    when "number_of_order"
-      user_orders.count
-    when "shipping_country"
-      customer&.default_address.country_code
-    when "shipping_state"
-      customer&.default_address.province_code
-    when "shipping_city"
-      customer&.default_address.city
-    when "last_order_tag"
-      filter_order.tags&.split(", ")
-    when "any_order_tag"
-      user_orders.map{|order| order.tags&.split(', ')}.flatten
-    when "last_discount_code"
-      filter_order.discount_codes.map{|item| item['code']} if filter_order.discount_codes.class == Array
-    when "any_discount_code"
-      user_orders.map{|order| order.discount_codes.map{|item| item['code']} if order.discount_codes.class == Array}.select{|order|order.class == Array}.flatten
-    when "last_order_total"
-      filter_order.total_price.to_f / 100
-    when "all_order_total"
-      user_orders.sum(:total_price).to_f / 100
-    when "discount_amount"
-      filter_order.discount_codes
-    # end
-    # ongoing
-    # end
-    when "referring_site"
-      filter_order.referring_site
-    when "landing_site"
-      filter_order.landing_site
-    when "shipping_company"
-      customer&.default_address.company
-    when "zip_code"
-      customer&.default_address.zip
-    else
-      []
+    begin
+      case field.to_s
+      # completed
+      when "last_order_date"
+        filter_order.processed_at
+      when "first_order_date"
+        user_orders.minimum(:processed_at)
+      when "number_of_order"
+        user_orders.count
+      when "shipping_country"
+        customer&.default_address.country_code
+      when "shipping_state"
+        customer&.default_address.province_code
+      when "shipping_city"
+        customer&.default_address.city
+      when "last_order_tag"
+        filter_order.tags&.split(", ")
+      when "any_order_tag"
+        user_orders.map{|order| order.tags&.split(', ')}.flatten
+      when "last_discount_code"
+        filter_order.discount_codes.map{|item| item['code']} if filter_order.discount_codes.class == Array
+      when "any_discount_code"
+        user_orders.map{|order| order.discount_codes.map{|item| item['code']} if order.discount_codes.class == Array}.select{|order|order.class == Array}.flatten
+      when "last_order_total"
+        filter_order.total_price.to_f / 100
+      when "all_order_total"
+        user_orders.sum(:total_price).to_f / 100
+      when "discount_amount"
+        filter_order.discount_codes
+      # end
+      # ongoing
+      # end
+      when "referring_site"
+        filter_order.referring_site
+      when "landing_site"
+        filter_order.landing_site
+      when "shipping_company"
+        customer&.default_address.company
+      when "zip_code"
+        customer&.default_address.zip
+      else
+        []
+      end
+    rescue StandardError => e
+      # If there is an error such as nil order
+      # This rescue is to log the error and keep the system going
+      Rails.logger.debug "[ERROR] #{e.class} #{e.message}"
+      nil
     end
-
   end
 
   def calculate_compare_number_field field
