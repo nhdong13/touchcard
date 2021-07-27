@@ -73,7 +73,7 @@ class CardOrder < ApplicationRecord
       # If a campaign has name "Automation 3" => This campaign should have name "Automation 4"
       exist_campaign_names = CardOrder.where("archived = FALSE AND campaign_name ~* ?", 'Automation \d+').pluck(:campaign_name)
       unless exist_campaign_names.present?
-        self.campaign_name = "Automation 0"
+        self.campaign_name = "Automation 1"
       else
         new_index = exist_campaign_names.map{|name| name.gsub(/[^0-9]/, '').to_i }.sort.last + 1
         self.campaign_name = "Automation #{new_index}"
