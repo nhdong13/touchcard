@@ -360,10 +360,15 @@
     },
 
     computed: {
-      disabledEndDates: function(){
-        let startDate = this.automation.send_date_start || new Date()
-        return {to: new Date(new Date(startDate) - 8640000)}
-      },
+      disabledEndDates:{
+        get: function(){
+          const today = new Date()
+          today.setDate(today.getDate() - 1)
+          return {
+            to: today
+          }
+        }
+      } ,
 
       willCheckDailySendingSchedule: {
         get: function(){
