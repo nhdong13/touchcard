@@ -612,20 +612,18 @@
         return true;
       },
 
-      saveAutomation(func, secondFunc=null) {
+      saveAutomation(func) {
         if (this.id) {
           axios.put(`/automations/${this.id}.json`, { card_order: this.automation})
             .then((response) => {
               let id = JSON.parse(response.data.campaign).id;
               func(id);
-              if (secondFunc) secondFunc(id);
             }).catch((error) => console.log(error));
         } else {
           axios.post(`/automations.json`, { card_order: this.automation})
             .then((response) => {
               let id = JSON.parse(response.data.campaign).id;
               func(id);
-              if (secondFunc) secondFunc(id);
             }).catch((error) => console.log(error));
         }
       },
@@ -640,7 +638,7 @@
         // If there're some errors in save process => return
         if (!this.saveWithValidation()) return;
         this.shared.campaign.campaign_status = this.userCredit > 0.89 ? "processing" : "out_of_credit";
-        this.saveAutomation(this.returnToCampaignList, this.startSending);
+        this.saveAutomation(this.startSending);
       },
 
       saveAndCheckout: function() {
@@ -660,7 +658,7 @@
       },
 
       startSending(id) {
-        axios.get(`/automations/${id}/start_sending.json`);
+        axios.get(`/automations/${id}/start_sending.json`).then(() => this.returnToCampaignList());
       },
 
       validateForm: function() {

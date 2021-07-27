@@ -376,7 +376,6 @@
         this.debounce = setTimeout(() => {
           this.searchQuery = event.target.value
           this.onSearchQuery()
-          console.log(this.searchQuery)
         }, 600)
       },
 
