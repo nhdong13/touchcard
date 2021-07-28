@@ -8,7 +8,7 @@ class OrdersCreateJob < ActiveJob::Base
       shopify_order = ShopifyAPI::Order.find(webhook["id"])
 
       begin
-        order = Order.from_shopify!(shopify_order, shop)
+        order = Order.from_shopify!(shopify_order, shop)[:order]
       rescue ActiveRecord::RecordInvalid
         return puts "unable to create order (duplicate webhook?)"
       end

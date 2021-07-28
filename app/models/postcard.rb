@@ -51,7 +51,7 @@ class Postcard < ApplicationRecord
     num_failed = 0
     todays_cards = Postcard.joins(:shop)
       .where("paid = TRUE AND sent = FALSE AND canceled = FALSE AND send_date <= ?
-              AND send_date >= ? AND shops.approval_state != ? AND card_order_id = ?", Time.now, Time.now - 2.weeks, "denied", campaign_id)
+               AND shops.approval_state != ? AND card_order_id = ?", Time.now, "denied", campaign_id)
     todays_cards.each do |card|
       begin
         card.send_card
