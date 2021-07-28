@@ -13,6 +13,7 @@ class DuplicateCampaignService
     card_order_clone.campaign_name = dup_campaign_name
     card_order_clone.card_order_parent_id = @card_order.id
     card_order_clone.enabled = false
+    card_order_clone.campaign_status = :draft
     card_order_clone.save(validate: false)
     clone_front_card_sides(card_order_clone)
     clone_back_card_sides(card_order_clone)

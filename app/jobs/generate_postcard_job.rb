@@ -41,7 +41,7 @@ class GeneratePostcardJob < ActiveJob::Base
                     )
         postcard = Postcard.new
         postcard.customer = customer
-        postcard.send_date = Time.now
+        postcard.send_date = Time.now.beginning_of_day > campaign.send_date_start ? Time.now : campaign.send_date_start
 
         campaign.postcards << postcard
 

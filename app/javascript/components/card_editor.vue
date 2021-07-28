@@ -180,7 +180,7 @@
           return;
         }
 
-        if (!(files[0].type.match('image/'))) {
+        if (!(files[0].type.match('image/png')) && !(files[0].type.match('image/jpeg'))) {
           alert('Please upload a PNG or JPG image.');
           e.target.value = '';
           return;
