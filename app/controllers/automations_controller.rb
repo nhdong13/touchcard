@@ -103,7 +103,9 @@ class AutomationsController < BaseController
     if @current_shop.credit < 0.89
       @automation.out_of_credit!
     else
+      @automation.previous_campaign_status = CardOrder.campaign_statuses[:processing]
       @automation.processing!
+      @automation.save
     end
 
     InitializeSendingPostcardProcess.start(@current_shop, @automation)
