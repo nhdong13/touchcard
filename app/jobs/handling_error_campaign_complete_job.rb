@@ -18,7 +18,8 @@ class HandlingErrorCampaignCompleteJob < ActiveJob::Base
     shop.card_orders.where(campaign_status: [:processing, :scheduled, :sending]).find_each do |c|
       campaign_global_id = c.to_global_id.to_s
       if Delayed::Job.exists?(["handler SIMILAR TO ?", "%#{campaign_global_id}%"])
-        c.update(campaign_status: :error, enabled: false) if Delayed::Job.exists?(["last_error IS NOT NULL AND handler SIMILAR TO ?", "%#{campaign_global_id}%"])
+        # Temporary not update campaign status into error
+        # c.update(campaign_status: :error, enabled: false) if Delayed::Job.exists?(["last_error IS NOT NULL AND handler SIMILAR TO ?", "%#{campaign_global_id}%"])
       else
         c.update(campaign_status: :draft, enabled: false)
       end
