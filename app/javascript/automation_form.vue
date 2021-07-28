@@ -669,6 +669,7 @@
       },
 
       startSending(id) {
+        this.shared.campaign.id = id
         axios.get(`/automations/${id}/start_sending.json`).then(() => this.returnToCampaignList());
       },
 

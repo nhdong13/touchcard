@@ -100,7 +100,12 @@ class AutomationsController < BaseController
   def start_sending
     # 1 token = 0.89$
     # a shop with credit less than 0.89$ can put any campaign to out of credit status
-    @automation.out_of_credit! if @current_shop.credit < 0.89
+    if @current_shop.credit < 0.89
+      @automation.out_of_credit!
+    else
+      @automation.processing!
+    end
+
     InitializeSendingPostcardProcess.start(@current_shop, @automation)
     respond_to do |format|
       format.html { render plain: "OK" }
