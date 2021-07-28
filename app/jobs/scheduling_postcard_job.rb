@@ -12,7 +12,7 @@ class SchedulingPostcardJob < ActiveJob::Base
     if Time.now.beginning_of_day >= job.arguments[1].send_date_start
       SendAllCardsJob.set(wait: 1.minutes).perform_later(job.arguments[0], job.arguments[1]) unless job.arguments[1].archived
     else
-      FetchHistoryOrdersJob.set(wait: campaign.enabled? ? 1.day : 1.minutes).perform_later(job.arguments[0], job.arguments[0].post_sale_orders.last.send_delay, job.arguments[1])
+      FetchHistoryOrdersJob.set(wait: job.arguments[1].enabled? ? 1.day : 1.minutes).perform_later(job.arguments[0], job.arguments[0].post_sale_orders.last.send_delay, job.arguments[1])
     end
   end
 
