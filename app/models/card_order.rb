@@ -104,7 +104,7 @@ class CardOrder < ApplicationRecord
     if budget_update < budget_used
       update(
         budget: budget_update,
-        campaign_status: CardOrder.paused
+        campaign_status: :paused
       )
     else
       update(budget: budget_update)
