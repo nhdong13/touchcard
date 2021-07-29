@@ -68,10 +68,10 @@ class CardOrder < ApplicationRecord
   after_update :update_budget_type, if: :saved_change_to_budget_type?
   after_update :reactivate_campaign, if: :saved_change_to_send_date_end?
 
-  def add_default_params
+  def add_default_params shop
     unless self.campaign_name.present?
       # If a campaign has name "Automation 3" => This campaign should have name "Automation 4"
-      exist_campaign_names = CardOrder.where("archived = FALSE AND campaign_name ~* ?", 'Automation \d+').pluck(:campaign_name)
+      exist_campaign_names = shop.card_orders.where("archived = FALSE AND campaign_name ~* ?", 'Automation \d+').pluck(:campaign_name)
       unless exist_campaign_names.present?
         self.campaign_name = "Automation 1"
       else

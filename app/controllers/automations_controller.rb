@@ -22,7 +22,7 @@ class AutomationsController < BaseController
   #
   def new
     @automation = @current_shop.post_sale_orders.new
-    @automation.add_default_params
+    @automation.add_default_params(@current_shop)
     respond_to do |format|
       format.html
       format.json { render json: @automation }

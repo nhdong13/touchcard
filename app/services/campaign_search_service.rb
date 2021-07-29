@@ -50,12 +50,12 @@ class CampaignSearchService
   end
 
   def filter_base_on_date_created
-    return @current_shop.created_at unless @filters["dateCreated"].present?
+    return @current_shop.created_at unless @filters["dateCreated"].present? && @filters["dateCreated"]["created_at"].present?
     date = @filters["dateCreated"]["created_at"].to_time
   end
 
   def filter_base_on_date_completed
-    return Time.now.utc unless @filters["dateCreated"].present?
+    return Time.now.utc unless @filters["dateCreated"].present? && @filters["dateCreated"]["date_completed"].present?
     date = @filters["dateCreated"]["date_completed"].to_time
   end
 
