@@ -23,7 +23,7 @@
       <div>
         <table class="campaign-dashboard">
           <tr>
-            <th width="45px">
+            <th width="35px">
               <input id="campaign-check-all" type="checkbox" v-model="selectAll"/>
             </th>
             <th></th>
@@ -72,7 +72,7 @@
             </th>
           </tr>
           <tr v-for="item in thisCampaigns">
-            <td class="checkbox-cell" @click="selectCampaign">
+            <td class="checkbox-cell">
               <input type="checkbox" v-model="selected" :value="item.id" number/>
             </td>
             <td>
