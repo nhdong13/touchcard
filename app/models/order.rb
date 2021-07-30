@@ -26,29 +26,31 @@ class Order < ApplicationRecord
 
       {order: order, is_order_exists: is_order_exists}
     end
-  end
 
-  def prepare_shopify_attributes(shopify_order)
-    attrs = shopify_order.attributes.with_indifferent_access
-    customer = Customer.from_shopify!(shopify_order[:customer]) if shopify_order[:customer]
-    attrs.attributes.with_indifferent_access.slice(
-      :browser_ip,
-      :financial_status,
-      :fulfillment_status,
-      :tags,
-      :landing_site,
-      :referring_site,
-      :processing_method,
-      :processed_at
-    ).merge(
-      total_discounts: order.total_discounts.to_f * 100,
-      total_line_items_price: order.total_line_items_price.to_f * 100,
-      total_price: order.total_price.to_f * 100,
-      total_tax: order.total_tax.to_f * 100,
-      discount_codes: order.discount_codes.map(&:attributes),
-      shopify_id: order.id,
-      customer: customer,
-      shop: shop)
+    private
+
+    def prepare_shopify_attributes(shopify_order)
+      attrs = shopify_order.attributes.with_indifferent_access
+      customer = Customer.from_shopify!(shopify_order[:customer]) if shopify_order[:customer]
+      attrs.attributes.with_indifferent_access.slice(
+        :browser_ip,
+        :financial_status,
+        :fulfillment_status,
+        :tags,
+        :landing_site,
+        :referring_site,
+        :processing_method,
+        :processed_at
+      ).merge(
+        total_discounts: order.total_discounts.to_f * 100,
+        total_line_items_price: order.total_line_items_price.to_f * 100,
+        total_price: order.total_price.to_f * 100,
+        total_tax: order.total_tax.to_f * 100,
+        discount_codes: order.discount_codes.map(&:attributes),
+        shopify_id: order.id,
+        customer: customer,
+        shop: shop)
+    end
   end
 
   def connect_to_postcard
