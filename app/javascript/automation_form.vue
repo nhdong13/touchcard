@@ -89,10 +89,10 @@
             </div>
           </div>
         </div>
-        <div class="campaign-section nested-toggle" v-if="!automation.send_continuously">
+        <div class="campaign-section nested-toggle" >
           <div class="datepicker-with-icon">
             <span style="width: 80px"><small :class="{error: errors.endDate}" v-if="errors.endDate">*</small> End date:</span>
-            <div :class="['datepicker-with-icon', {invalid: errors.endDate}]">
+            <div class="datepicker-with-icon">
               <datepicker
                 v-model="automation.send_date_end"
                 :disabled-dates="disabledEndDates"
@@ -100,6 +100,7 @@
                 ref="sendDateEnd"
                 :disabled="automation.send_continuously"
                 format="MMM dd, yyyy"
+                :input-class="{invalid: errors.endDate}"
               ></datepicker>
               <div class="icon-calendar" v-on:click="openSendDateEndDatePicker">
                 <font-awesome-icon icon="calendar-alt"/>
@@ -108,8 +109,8 @@
           </div>
         </div>
         <div class="send-continuously-option align-self-center">
-          <span :class="{invalid: errors.endDate}">
-            <input id="send-continuously" type="checkbox" v-model="automation.send_continuously" />
+          <span>
+            <input id="send-continuously" :class="{'invalid-checkbox': errors.endDate}" type="checkbox" @click="triggerErrorCheckbox" v-model="automation.send_continuously" />
           </span>
           <label for="send-continuously" class="noselect">- Ongoing</label>
         </div>
@@ -771,6 +772,10 @@
         }
 
         return false
+      },
+      triggerErrorCheckbox() {
+        this.errors.endDate = false;
+        this.automation.send_continuously = true;
       }
     }
   }
@@ -914,4 +919,14 @@
     align-items: center;
     margin-top: 0;
   }
+
+  .invalid-checkbox {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    outline: 1px solid red;
+    width: 13px;
+    height: 13px;
+  }
+
 </style>
