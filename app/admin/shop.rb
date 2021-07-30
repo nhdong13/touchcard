@@ -46,9 +46,11 @@ ActiveAdmin.register Shop do
     column :email
     column :owner
     column "Last Mo", :last_month
-    column :credit
+    column :credit do |shop|
+      number_to_currency(shop.credit)
+    end
     column "Sub Qty" do |shop|
-      shop.current_subscription.quantity if shop.current_subscription
+      number_to_currency(shop.current_subscription.value) if shop.current_subscription
     end
     column "Last Login", :last_login_at
   end
@@ -66,7 +68,7 @@ ActiveAdmin.register Shop do
       row :customer_email
       row :last_month
       row :credit do |shop|
-        status_tag("#{shop.credit.round(2)}")
+        status_tag(number_to_currency(shop.credit))
         link_to "edit", adjust_credits_admin_shop_path(shop)
       end
       row :stripe_customer_id do |shop|
@@ -100,7 +102,9 @@ ActiveAdmin.register Shop do
           link_to(subscription.id, admin_subscription_path(subscription))
         end
 
-        column :quantity
+        column :credit do |subscription|
+          number_to_currency(subscription.value)
+        end
         column :plan_id
         column :current_period_start
         column :current_period_end

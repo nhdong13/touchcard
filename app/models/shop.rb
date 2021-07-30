@@ -79,11 +79,15 @@ class Shop < ApplicationRecord
   end
 
   def is_card_registered
-    stripe_customer_id.present?
+    stripe_customer_id.present? && stripe_customer.present?
   end
 
   def stripe_customer
-    Stripe::Customer.retrieve({id: stripe_customer_id, expand: ['subscriptions']})
+    begin
+      Stripe::Customer.retrieve({id: stripe_customer_id, expand: ['subscriptions']})
+    rescue => e
+      nil
+    end
   end
 
   def create_stripe_customer(token)
@@ -117,7 +121,7 @@ class Shop < ApplicationRecord
   end
 
   def top_up
-    update_attribute(:credit, subscriptions.first.quantity)
+    update_attribute(:credit, subscriptions.first.value)
   end
 
   def credits_used
