@@ -22,7 +22,7 @@ class Order < ApplicationRecord
       else
         order = create!(shopify_attrs)
       end
-      shopify_attrs.line_items.each { |li| LineItem.from_shopify!(order, li) }
+      shopify_attrs[:line_items].each { |li| LineItem.from_shopify!(order, li) } if !shopify_attrs[:line_items].blank?
 
       {order: order, is_order_exists: is_order_exists}
     end
@@ -31,8 +31,8 @@ class Order < ApplicationRecord
 
     def prepare_shopify_attributes(shopify_order, shop)
       attrs = shopify_order.attributes.with_indifferent_access
-      customer = Customer.from_shopify!(shopify_order[:customer]) if shopify_order[:customer]
-      attrs.attributes.with_indifferent_access.slice(
+      customer = Customer.from_shopify!(attrs[:customer]) if attrs[:customer]
+      attrs.slice(
         :browser_ip,
         :financial_status,
         :fulfillment_status,
