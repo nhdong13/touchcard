@@ -10,19 +10,19 @@ class Order < ApplicationRecord
   serialize :discount_codes
 
   class << self
-    def from_shopify!(order, shop)
+    def from_shopify!(shopify_order, shop)
       # this one doesn't try to find the order first because that should never
       # occur since orders are only created by the new_order webhook
-      order = Order.find_by(shopify_id: order.id)
+      shopify_attrs = prepare_shopify_attributes(shopify_order)
+      order = Order.find_by(shopify_id: shopify_order.id)
       is_order_exists = false
-      attrs = prepare_shopify_attributes(order)
       if order
         is_order_exists = true
-        order.update(attrs)
+        order.update(shopify_attrs)
       else
-        order = create!(attrs)
+        order = create!(shopify_attrs)
       end
-      attrs.line_items.each { |li| LineItem.from_shopify!(inst, li) }
+      shopify_attrs.line_items.each { |li| LineItem.from_shopify!(order, li) }
 
       {order: order, is_order_exists: is_order_exists}
     end
