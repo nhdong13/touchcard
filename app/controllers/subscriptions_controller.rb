@@ -9,7 +9,13 @@ class SubscriptionsController < BaseController
   end
 
   def create
-    quantity = create_params[:subscription][:quantity] # TODO: Handle missing quantity
+    unless create_params[:subscription][:quantity]
+      flash[:error] = "Missing subscription value"
+      render :new
+      return
+    end
+
+    quantity = create_params[:subscription][:quantity]
     coupon = create_params[:subscription][:coupon]
     campaign = CardOrder.find(create_params[:campaign_id])
     InitializeSendingPostcardProcess.start(@current_shop, campaign)
@@ -38,12 +44,9 @@ class SubscriptionsController < BaseController
   end
 
 
-  def show
-  end
+  def show; end
 
-  def edit
-    @current_credit = @current_shop.current_subscription.quantity * (Plan.last.amount.to_f/100)
-  end
+  def edit; end
 
   def update
     quantity = update_params[:quantity].to_i

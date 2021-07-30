@@ -13,20 +13,20 @@ class Plan < ApplicationRecord
     self.on_stripe = false if self.on_stripe.nil?
   end
 
-  def submit
+  def submit product
     fail "can't submit plan unless record persisted" unless persisted?
     fail "plan already on stripe" if on_stripe?
     plan = Stripe::Plan.create(
       amount: amount,
       interval: interval,
-      name: name,
       currency: currency,
       id: id,
       interval_count: interval_count,
       trial_period_days: trial_period_days,
-      statement_descriptor: statement_descriptor
+      statement_descriptor: statement_descriptor,
+      product: product
     )
-    update_attribute(:on_stripe, true)
+    update(on_stripe: true, stripe_plan_id: plan.id)
   end
 
   def helpers

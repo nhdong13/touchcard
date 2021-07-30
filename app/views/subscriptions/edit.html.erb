@@ -9,7 +9,7 @@
     <button class="mdc-button mdc-button--stroked">Back</button>
   <% end %>
   <section class="text-center">
-    You're currently subscribed to <strong><%= @current_shop.current_subscription.quantity %></strong> postcards <strong>(<%= number_to_currency(@current_credit) %>)</strong> per month. Change to:
+    You're currently subscribed to <strong><%= @current_shop.current_subscription.quantity %></strong> postcards <strong>(<%= number_to_currency(@current_shop.current_subscription.value) %>)</strong> per month. Change to:
 
     <br>
     <div><span v-cloak class="checkout-quantity-display f-s-300">{{ this.quantity }}</span><span class="f-s-200"> postcards / month</span></div>
