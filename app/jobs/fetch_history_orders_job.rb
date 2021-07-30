@@ -9,7 +9,7 @@ class FetchHistoryOrdersJob < ActiveJob::Base
   after_perform do |job|
     # job.arguments[0] => shop instance
     # job.arguments[2] => card order instance
-    GeneratePostcardJob.perform_now(job.arguments[0], job.arguments[2]) unless job.arguments[2].archived
+    GeneratePostcardJob.perform_later(job.arguments[0], job.arguments[2]) unless job.arguments[2].archived
   end
 
   def perform(shop, time_delay, campaign)
