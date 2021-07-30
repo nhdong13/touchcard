@@ -13,7 +13,7 @@ class Order < ApplicationRecord
     def from_shopify!(shopify_order, shop)
       # this one doesn't try to find the order first because that should never
       # occur since orders are only created by the new_order webhook
-      shopify_attrs = prepare_shopify_attributes(shopify_order)
+      shopify_attrs = prepare_shopify_attributes(shopify_order, shop)
       order = Order.find_by(shopify_id: shopify_order.id)
       is_order_exists = false
       if order
@@ -29,7 +29,7 @@ class Order < ApplicationRecord
 
     private
 
-    def prepare_shopify_attributes(shopify_order)
+    def prepare_shopify_attributes(shopify_order, shop)
       attrs = shopify_order.attributes.with_indifferent_access
       customer = Customer.from_shopify!(shopify_order[:customer]) if shopify_order[:customer]
       attrs.attributes.with_indifferent_access.slice(
@@ -42,12 +42,12 @@ class Order < ApplicationRecord
         :processing_method,
         :processed_at
       ).merge(
-        total_discounts: order.total_discounts.to_f * 100,
-        total_line_items_price: order.total_line_items_price.to_f * 100,
-        total_price: order.total_price.to_f * 100,
-        total_tax: order.total_tax.to_f * 100,
-        discount_codes: order.discount_codes.map(&:attributes),
-        shopify_id: order.id,
+        total_discounts: shopify_order.total_discounts.to_f * 100,
+        total_line_items_price: shopify_order.total_line_items_price.to_f * 100,
+        total_price: shopify_order.total_price.to_f * 100,
+        total_tax: shopify_order.total_tax.to_f * 100,
+        discount_codes: shopify_order.discount_codes.map(&:attributes),
+        shopify_id: shopify_order.id,
         customer: customer,
         shop: shop)
     end
