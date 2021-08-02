@@ -8,7 +8,7 @@ class FetchHistoryOrdersJob < ActiveJob::Base
 
   # Migrate all old sending postcard logic to new one
   before_perform do |job|
-    InitializeSendingPostcardProcess.start job.arguments[0], job.arguments[1]
+    SendingPostcardJob.perform_later(job.arguments[0], job.arguments[1])
     throw :abort
   end
 
