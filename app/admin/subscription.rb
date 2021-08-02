@@ -36,7 +36,9 @@ ActiveAdmin.register Subscription do
     column :shop do |subscription|
       subscription.shop
     end
-    column :quantity
+    column :quantity do |subscription|
+      number_to_currency(subscription.value)
+    end
     column :current_period_start
     column :current_period_end
     column :created_at
@@ -48,8 +50,11 @@ ActiveAdmin.register Subscription do
         subscription.shop
       end
       row :id
+      row :credit do |subscription|
+        status_tag(number_to_currency(subscription.value))
+      end
       row :quantity do |subscription|
-        status_tag("#{subscription.quantity}")
+        status_tag(subscription.quantity)
         link_to "edit", change_subscription_quantity_admin_subscription_path(subscription)
       end
       row :current_period_start
