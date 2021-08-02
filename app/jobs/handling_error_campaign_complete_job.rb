@@ -30,16 +30,12 @@ class HandlingErrorCampaignCompleteJob < ActiveJob::Base
       InitializeSendingPostcardProcess.start shop, c
     end
 
-    CardOrder.where("shop_id = :shop_id AND campaign_status != :status AND send_continuously = FALSE AND send_date_end < :now", {shop_id: shop.id,status: CardOrder.campaign_statuses[:complete], now: Time.now.beginning_of_day}).find_each do |c|
-      c.complete!
-    end
+    # CardOrder.where("shop_id = :shop_id AND campaign_status != :status AND send_continuously = FALSE AND send_date_end < :now", {shop_id: shop.id,status: CardOrder.campaign_statuses[:complete], now: Time.now.beginning_of_day}).find_each do |c|
+    #   c.complete!
+    # end
 
-    CardOrder.where("shop_id = :shop_id AND campaign_status = :status AND send_date_start > :now", {shop_id: shop.id,status: CardOrder.campaign_statuses[:sending], now: Time.now.end_of_day}).find_each do |c|
-      c.scheduled!
-    end
-
-    # CardOrder.where("shop_id = :shop_id AND campaign_status = :status AND send_date_start <= :now", {shop_id: shop.id,status: CardOrder.campaign_statuses[:scheduled], now: Time.now.end_of_day}).find_each do |c|
-    #   c.sending!
+    # CardOrder.where("shop_id = :shop_id AND campaign_status = :status AND send_date_start > :now", {shop_id: shop.id,status: CardOrder.campaign_statuses[:sending], now: Time.now.end_of_day}).find_each do |c|
+    #   c.scheduled!
     # end
 
     CardOrder.where("shop_id = :shop_id AND campaign_status = :status AND enabled = TRUE", {shop_id: shop.id,status: CardOrder.campaign_statuses[:paused]}).find_each do |c|

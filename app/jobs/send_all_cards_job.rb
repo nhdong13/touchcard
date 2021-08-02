@@ -6,6 +6,12 @@ class SendAllCardsJob < ActiveJob::Base
     throw :abort if (job.arguments[1].archived || job.arguments[1].complete?)
   end
 
+  # Migrate all old sending postcard logic to new one
+  before_perform do |job|
+    InitializeSendingPostcardProcess.start job.arguments[0], job.arguments[1]
+    throw :abort
+  end
+
   after_perform do |job|
     # After finish job => checking if this campaign is satisfy conditions to stop
     # Conditions to stop:
