@@ -28,7 +28,7 @@ class SendingPostcardJob < ActiveJob::Base
   # end
 
   def perform shop, campaign, is_new_loop = false
-
+    is_new_loop = false
     wait_time = 2.minutes
     campaign.processing! if is_new_loop
     if campaign.enabled?
@@ -126,7 +126,6 @@ class SendingPostcardJob < ActiveJob::Base
           result = PaymentService.pay_postcard_for_campaign_monthly campaign.shop, campaign, postcard
           break unless result
         end
-
         if campaign.enabled?
           if Time.now.end_of_day < campaign.send_date_start
             wait_time = 1.day

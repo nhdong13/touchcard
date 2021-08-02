@@ -77,7 +77,7 @@
             <datepicker
               v-model="automation.send_date_start"
               :disabled-dates="disabledDates"
-              :open-date="new Date()"
+              :open-date="startDate"
               name="send_date_start"
               ref="sendDateStart"
               @selected="changeSendDateEnd"
@@ -322,17 +322,16 @@
     data: function() {
       return {
         onSelectState: this.returnAddress.state,
-        enableFiltering: true,
         enableAddReturnAddress: false,
         acceptedFilters: [],
         removedFilters: [],
-        sendDate: "",
         budget_type: this.automation.budget_type ? this.automation.budget_type : "non_set",
         budget: this.automation.budget_type == "monthly" ? this.automation.budget : null,
         willShowBudgetType: true,
         campaign_type: this.automation.campaign_type ? this.automation.campaign_type : "automation",
         willShowDailySendingSchedule: false,
         disabledDates: {},
+        startDate: new Date(),
         isCancel: false,
         isStartDateDisable: false,
         saved_automation: {}, // Use with autosave, play as backup when user don't want to change campaign any more

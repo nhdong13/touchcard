@@ -61,6 +61,11 @@ export default {
 	mounted: function() {
 		this.currentPage = this.value
 	},
+  watch: {
+    value: function(val) {
+      this.innerValue = val
+    }
+  },
 	computed: {
 		currentPage: {
 			get: function() {
