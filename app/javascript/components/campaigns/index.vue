@@ -119,6 +119,7 @@
           :container-class="'pagination'"
           :page-class="'page-item'"
           :click-handler="changePagination"
+          :key="currentPage"
         > 
         </CustomePagination>
       </div>
@@ -392,6 +393,7 @@
       changePagination: function(pageNum){
         let _this = this
         let target = `/campaigns.json`;
+        this.currentPage = pageNum;
         axios.get(target, { params: {page: pageNum, query: this.getParamsQuery(), filters: this.collectParamsFilters()} })
           .then(function(response) {
             _this.updateState(response.data, false)
