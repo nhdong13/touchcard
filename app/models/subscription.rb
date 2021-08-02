@@ -92,7 +92,11 @@ class Subscription < ApplicationRecord
   end
 
   def destroy
-    shop.stripe_customer.subscriptions.retrieve(stripe_id)&.delete if shop.stripe_customer
+    begin
+      shop.stripe_customer.subscriptions.retrieve(stripe_id)&.delete if shop.stripe_customer
+    rescue => e
+      nil
+    end
     super
   end
 
