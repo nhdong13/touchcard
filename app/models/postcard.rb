@@ -6,9 +6,9 @@ require "postcard_render_util"
 
 class Postcard < ApplicationRecord
   belongs_to :card_order
-  belongs_to :order
+  belongs_to :order, optional: true
   belongs_to :customer
-  belongs_to :postcard_trigger, polymorphic: true
+  belongs_to :postcard_trigger, polymorphic: true # Use Postcard's card_order
   has_one :shop, through: :card_order
   has_many :orders
 
@@ -29,7 +29,7 @@ class Postcard < ApplicationRecord
   end
 
   def address
-    customer.default_address
+    customer&.default_address
   end
 
   def international?
@@ -47,11 +47,11 @@ class Postcard < ApplicationRecord
     address.to_lob_address
   end
 
-  def self.send_all
+  def self.send_all campaign_id
     num_failed = 0
     todays_cards = Postcard.joins(:shop)
       .where("paid = TRUE AND sent = FALSE AND canceled = FALSE AND send_date <= ?
-              AND send_date >= ? AND shops.approval_state != ?", Time.now, Time.now - 2.weeks, "denied")
+               AND shops.approval_state != ? AND card_order_id = ?", Time.now, "denied", campaign_id)
     todays_cards.each do |card|
       begin
         card.send_card
@@ -62,11 +62,32 @@ class Postcard < ApplicationRecord
         next
       end
     end
-    todays_cards.size - num_failed
+    {card_sent_amount: todays_cards.size - num_failed, total_card: todays_cards.size}
   end
 
+  def self.send_all_history_cards(shop)
+    num_failed = 0
+    shop.postcards
+    cards = shop.postcards
+      .where("paid = TRUE AND sent = FALSE AND canceled = FALSE AND data_source_status = ?", "history")
+    cards.each do |card|
+      begin
+        return if card.postcard_trigger.international && !card.card_order.international?
+        card.send_card
+      rescue => e
+        num_failed += 1
+        logger.error e
+        NewRelic::Agent::notice_error(e.message)
+        next
+      end
+    end
+    cards.size - num_failed
+  end
+
+  # 1 token = 0.89$
+  # 2 tokens = 1.78$
   def cost
-    international? ? 2 : 1
+    international? ? 1.78 : 0.89
   end
 
   class DiscountCreationError < StandardError
@@ -104,7 +125,7 @@ class Postcard < ApplicationRecord
     sent_card = @lob.postcards.create(
       description: "#{card_order.type} #{shop.domain}",
       to: to_address,
-      # from: shop_address, # Return address for Shop
+      from: return_address,
       front:  File.new(front_png_path),
       back: File.new(back_png_path)
     )
@@ -146,16 +167,34 @@ class Postcard < ApplicationRecord
     self.save!
   end
 
+  def return_address
+    if card_order.international
+      return_address = card_order.return_address
+      return {} unless return_address
+      {
+        name: return_address.name[0...40],
+        address_line1: return_address.address_line1,
+        address_line2: return_address.address_line2,
+        address_city: return_address.city,
+        address_state: return_address.state,
+        address_country: "US",
+        address_zip: return_address.zip
+      }
+    else
+      {}
+    end
+  end
+
   def city
-    address.city
+    address&.city
   end
 
   def state
-    address.province
+    address&.province
   end
 
   def country
-    address.country
+    address&.country
   end
 
 end

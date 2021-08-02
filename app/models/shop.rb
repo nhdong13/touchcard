@@ -15,6 +15,8 @@ class Shop < ApplicationRecord
   has_many :customers, through: :orders
   has_many :checkouts
 
+  after_update :change_campaign_status, if: :saved_change_to_credit?
+
   VALID_APPROVAL_STATES = ["new", "approved", "denied"]
 
   validates :customer_pct, numericality: true
@@ -77,11 +79,15 @@ class Shop < ApplicationRecord
   end
 
   def is_card_registered
-    stripe_customer_id.present?
+    stripe_customer_id.present? && stripe_customer.present?
   end
 
   def stripe_customer
-    Stripe::Customer.retrieve({id: stripe_customer_id, expand: ['subscriptions']})
+    begin
+      Stripe::Customer.retrieve({id: stripe_customer_id, expand: ['subscriptions']})
+    rescue => e
+      nil
+    end
   end
 
   def create_stripe_customer(token)
@@ -115,7 +121,7 @@ class Shop < ApplicationRecord
   end
 
   def top_up
-    update_attribute(:credit, subscriptions.first.quantity)
+    update_attribute(:credit, subscriptions.first.value)
   end
 
   def credits_used
@@ -228,6 +234,7 @@ class Shop < ApplicationRecord
   #   card ? card.enabled : false
   # end
 
+=begin
   def can_afford?(postcard)
     @can_afford ||= credit >= postcard.cost
   end
@@ -242,7 +249,7 @@ class Shop < ApplicationRecord
       return false
     end
   end
-
+=end
   def increment_credit
     increment!(:credit)
   end
@@ -251,4 +258,19 @@ class Shop < ApplicationRecord
   def display_name
     self.domain.split('.myshopify.com').first
   end
+
+  # 1 token = 0.89$
+  # a shop with credit less than 0.89$ can put any campaign to out of credit status
+  def change_campaign_status
+    if (self.credit >= 0.89 && credit_before_last_save < 0.89)
+      CardOrder.where(shop_id: self.id, campaign_status: :out_of_credit).find_each do |campaign|
+        EnableDisableCampaignService.enable_campaign campaign, "The campaign #{campaign.campaign_name} is automatically toggled to active."
+      end
+    elsif(self.credit < 0.89 && credit_before_last_save >= 0.89)
+      CardOrder.where(shop_id: self.id, campaign_status: [:processing, :scheduled, :sending, :paused, :error, :sent]).find_each do |campaign|
+        EnableDisableCampaignService.disable_campaign campaign, :out_of_credit
+      end
+    end
+  end
+
 end

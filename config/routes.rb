@@ -2,7 +2,7 @@ Rails.application.routes.draw do
   # Shopify Engine
   mount ShopifyApp::Engine, at: '/'
 
-  root 'automations#index' # See comments in controller
+  root 'campaigns#index' # See comments in controller
 
   # Stripe wobhook routes
   post '/stripe/events', to: 'stripe_webhook#hook'
@@ -15,6 +15,8 @@ Rails.application.routes.draw do
   post 'gdpr/customers/data_request', to: 'gdpr_webhooks#customers_data_request'
   post 'gdpr/customers/redact', to: 'gdpr_webhooks#customers_redact'
   post 'gdpr/shop/redact', to: 'gdpr_webhooks#shop_redact'
+
+  get "/download_csv_template", to: 'application#download_csv_template'
 
 
   # HTML Routes for Card Templates
@@ -41,12 +43,36 @@ Rails.application.routes.draw do
     patch 'cancel_postcard', on: :member
   end
 
-  resource :subscriptions, only: [:new, :create, :show, :edit, :update, :destroy]
+  resources :campaigns, only: [:index] do
+    collection do
+      delete :delete_campaigns
+      get :export_csv
+      get :duplicate_campaign
+    end
+  end
+
+  resource :subscriptions, only: [:new, :create, :show, :edit, :update, :destroy] do
+    get 'check_user_subscription', on: :member
+  end
 
   resource :shops, only: [:edit, :update], path: 'settings'
+  patch '/settings/campaign_filter_option', to: 'shops#set_campaign_filter_option'
+  get '/settings/campaign_filter_option', to: 'shops#get_campaign_filter_option'
+  get '/settings/get_credit', to: 'shops#get_credit'
 
-  resources :automations, only: [:index, :show, :edit, :update] do
+  resources :automations do
     # get 'select_type', :on => :collection
+    get 'start_sending', :on => :member
+  end
+
+  resources :targeting, only: [:index] do
+    collection do
+      post :get
+      get :get_filters
+      get :get_countries
+      get :get_states
+      get :get_country_by_state
+    end
   end
 
   # Redirect `/app` (legacy) to `/` to avoid upgrade issues

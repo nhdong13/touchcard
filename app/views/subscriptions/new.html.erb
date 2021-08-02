@@ -1,26 +1,28 @@
 <%= tag.div id: "stripe-pub-key", data: { stripe_pub_key: Rails.configuration.stripe[:publishable_key] } %>
+<%= hidden_field_tag 'customer-email', @email %>
+<%= hidden_field_tag 'price-per-card', Plan.last.amount.to_f/100 %>
 
 <div id="new-subscription-form" class="billing panel">
   <br>
-  <%= link_to root_path, class: "mdc-button mdc-button--stroked" do %>
+  <%= link_to root_path do %>
     <!--<i class="material-icons mdc-button__icon">keyboard_backspace</i>-->
-    Back
+    <button class="mdc-button mdc-button--stroked">Back</button>
   <% end %>
   <br>
   <section class="text-center">
     <br>
     <div class="jumbotron">
       <div class="container">
-        <div class="f-s-300"><i class="material-icons">print</i> + <i class="material-icons">email</i> = 99&cent;</div>
-        <div><strong>PRINT</strong> and <strong>MAIL</strong> cards for just <strong>99&cent;</strong> in the USA</div>
+        <div class="f-s-300"><i class="material-icons">print</i> + <i class="material-icons">email</i> = <%= Plan.last.amount %>&cent;</div>
+        <div><strong>PRINT</strong> and <strong>MAIL</strong> cards for just <strong><%= Plan.last.amount %>&cent;</strong> in the USA</div>
       </div>
     </div>
 
-    <h3>How many customers do you want to reach this month?</h3>
+    <h3>How many postcards would you like to send this month?</h3>
 
     <div><span v-cloak class="checkout-quantity-display f-s-400">{{ quantity || <%= checkout_quantity(@current_shop) %> }}</span><span class="f-s-200">&nbsp</span></div>
 
-    Last Month: <%= @current_shop.last_month %>
+    Orders last Month: <%= @current_shop.last_month %>
 
     <%= render 'slider', slider_index: checkout_index(@current_shop) %>
 
@@ -41,9 +43,9 @@
         <%= text_field(:subscription, :coupon) %>
         <hr>
       <% end %>
-
+      <%= hidden_field_tag :campaign_id, @campaign_id %>
       <% if @current_shop.is_card_registered %>
-        <%= form.submit value: "Submit", class: "mdc-button mdc-button--raised" %>
+        <%= form.submit value: "Buy Now", class: "mdc-button mdc-button--raised" %>
       <% else %>
         <%= hidden_field_tag(:stripeToken) %>
         <button class="mdc-button mdc-button--raised" @click="checkoutSubmit">Buy Now</button>

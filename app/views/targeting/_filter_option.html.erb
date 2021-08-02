@@ -1,0 +1,17 @@
+<% field_group = is_accepted ? "accepted" : "removed" %>
+<div class="filter-container">
+  <% unless is_first_filter %>
+    <p class="text-center my-2">AND</p>
+  <% end %>
+  <%= select_tag field_group + "[filter][]", options_for_select(FILTER_OPTIONS), class: "filter padding-2px" %>
+  <%= select_tag field_group + "[condition][]", options_for_select(CONDITIONS), class: "padding-2px" %>
+  <%= number_field_tag field_group + "[value][]", 0, required: true, class: "value-input padding-2px" %>
+  <%= datetime_field field_group + "[value]", "", class: "value-input", style: "display: none", required: true %>
+  
+  <div class="dropdown more-btn-width">
+    <%= image_tag "options.svg", class: "option-btn" %>
+    <div class="dropdown-content">
+      <p class="remove-filter m-0">Remove filter</p>
+    </div>
+  </div>
+</div>

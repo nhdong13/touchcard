@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_03_03_150657) do
+ActiveRecord::Schema.define(version: 2021_07_30_151235) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -92,6 +92,19 @@ ActiveRecord::Schema.define(version: 2021_03_03_150657) do
     t.json "front_json", default: {}
     t.json "back_json", default: {}
     t.json "price_rules", default: {}
+    t.string "campaign_name"
+    t.float "budget", default: 0.0
+    t.datetime "send_date_start"
+    t.datetime "send_date_end"
+    t.integer "budget_type", default: 0
+    t.float "budget_used", default: 0.0
+    t.float "budget_update", default: 0.0
+    t.integer "campaign_type"
+    t.integer "limit_cards_per_day"
+    t.integer "card_order_parent_id"
+    t.boolean "send_continuously", default: true
+    t.integer "campaign_status", default: 0
+    t.integer "previous_campaign_status"
   end
 
   create_table "card_sides", id: :serial, force: :cascade do |t|
@@ -277,6 +290,15 @@ ActiveRecord::Schema.define(version: 2021_03_03_150657) do
     t.text "statement_descriptor"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "stripe_plan_id"
+  end
+
+  create_table "post_card_infos", force: :cascade do |t|
+    t.string "campaign_id"
+    t.string "front_design"
+    t.string "back_design"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "postcards", id: :serial, force: :cascade do |t|
@@ -299,8 +321,22 @@ ActiveRecord::Schema.define(version: 2021_03_03_150657) do
     t.datetime "discount_exp_at"
     t.bigint "price_rule_id"
     t.boolean "canceled", default: false
+    t.string "data_source_status", default: "normal"
     t.index ["customer_id"], name: "index_postcards_on_customer_id"
     t.index ["postcard_trigger_id"], name: "index_postcards_on_postcard_trigger_id"
+  end
+
+  create_table "return_addresses", force: :cascade do |t|
+    t.string "name"
+    t.string "address_line1"
+    t.string "address_line2"
+    t.string "city"
+    t.string "state"
+    t.string "zip"
+    t.string "country_code"
+    t.integer "card_order_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "shops", id: :serial, force: :cascade do |t|
@@ -309,7 +345,7 @@ ActiveRecord::Schema.define(version: 2021_03_03_150657) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.bigint "shopify_id"
-    t.integer "credit", default: 0
+    t.float "credit", default: 0.0
     t.bigint "webhook_id"
     t.bigint "uninstall_id"
     t.integer "charge_amount", default: 0
@@ -331,6 +367,9 @@ ActiveRecord::Schema.define(version: 2021_03_03_150657) do
     t.datetime "last_login_at"
     t.json "metadata", default: {}
     t.text "oauth_scopes"
+    t.datetime "shopify_history_data_imported"
+    t.integer "shopify_history_data_imported_duration"
+    t.json "campaign_filter_option", default: {}
     t.index ["domain"], name: "index_shops_on_domain", unique: true
   end
 
@@ -350,6 +389,7 @@ ActiveRecord::Schema.define(version: 2021_03_03_150657) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "stripe_id", null: false
+    t.float "value", default: 0.0
     t.index ["plan_id"], name: "index_subscriptions_on_plan_id"
     t.index ["shop_id"], name: "index_subscriptions_on_shop_id"
     t.index ["stripe_id"], name: "index_subscriptions_on_stripe_id"

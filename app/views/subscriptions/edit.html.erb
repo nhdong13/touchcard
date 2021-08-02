@@ -1,18 +1,18 @@
 <%= currently_at "Settings" %>
-
+<%= hidden_field_tag 'price-per-card', Plan.last.amount.to_f/100 %>
 
 <%= tag.div id: "stripe-pub-key", data: { stripe_pub_key: Rails.configuration.stripe[:publishable_key] } %>
 
 <div id="edit-subscription-form" class="billing panel">
   <br>
-
-  <%= link_to 'Back', 'javascript:history.back()', class: "mdc-button mdc-button--stroked" %>
+  <%= link_to 'javascript:history.back()' do %>
+    <button class="mdc-button mdc-button--stroked">Back</button>
+  <% end %>
   <section class="text-center">
-
-    You're currently subscribed to <strong><%= @current_shop.current_subscription.quantity %></strong> cards per month. Change to:
+    You're currently subscribed to <strong><%= @current_shop.current_subscription.quantity %></strong> postcards <strong>(<%= number_to_currency(@current_shop.current_subscription.value) %>)</strong> per month. Change to:
 
     <br>
-    <div><span v-cloak class="checkout-quantity-display f-s-300">{{ quantity || <%= update_quantity(@current_shop) %> }}</span><span class="f-s-200"> cards / month</span></div>
+    <div><span v-cloak class="checkout-quantity-display f-s-300">{{ this.quantity }}</span><span class="f-s-200"> postcards / month</span></div>
 
     <%= render 'slider', slider_index: update_index(@current_shop) %>
 

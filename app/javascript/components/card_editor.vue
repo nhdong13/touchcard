@@ -71,6 +71,7 @@
   import { Api } from '../api';
   import CardSide from './card_side.vue';
   import { CardAttributes } from './card_attributes';
+  import { DEFAULT_DISCOUNT_PERCENTAGE, DEFAULT_WEEK_BEFORE_DISCOUNT_EXPIRE } from '../config';
 
   export default {
     props: {
@@ -83,10 +84,12 @@
         required: true,
       },
       discount_pct: {
-        type: Number
+        type: Number,
+        default: DEFAULT_DISCOUNT_PERCENTAGE
       },
       discount_exp: {
-        type: Number
+        type: Number,
+        default: DEFAULT_WEEK_BEFORE_DISCOUNT_EXPIRE
       },
       aws_sign_endpoint: {
         type: String,
@@ -113,7 +116,7 @@
       }
     },
     mounted: function() {
-      console.log('CardEditor Mounted')
+
       // this.$nextTick(function () {
       // code that assumes this.$el is in-document
       // });
@@ -177,7 +180,7 @@
           return;
         }
 
-        if (!(files[0].type.match('image/'))) {
+        if (!(files[0].type.match('image/png')) && !(files[0].type.match('image/jpeg'))) {
           alert('Please upload a PNG or JPG image.');
           e.target.value = '';
           return;
@@ -187,13 +190,10 @@
 
         // TODO: Block Saving while files are uploading
         this.api.uploadFileToS3(files[0], (error, result) => {
-          console.log(error ? error : result);
           if (result) {
             this.alertNonOptimalImageDimensions(result);
-
-              this.$emit('update:attributes', Object.assign(this.attributes, {background_url: result}));
-              this.isUploading = false;
-
+            this.$emit('update:attributes', Object.assign(this.attributes, {background_url: result}));
+            this.isUploading = false;
           }
         });
       }

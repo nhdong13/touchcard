@@ -8,7 +8,7 @@ class OrdersCreateJob < ActiveJob::Base
       shopify_order = ShopifyAPI::Order.find(webhook["id"])
 
       begin
-        order = Order.from_shopify!(shopify_order, shop)
+        order = Order.from_shopify!(shopify_order, shop)[:order]
       rescue ActiveRecord::RecordInvalid
         return puts "unable to create order (duplicate webhook?)"
       end
@@ -33,12 +33,16 @@ class OrdersCreateJob < ActiveJob::Base
       international = default_address.country_code != "US"
 
       # Create a new card and schedule to send
-      post_sale_order = shop.card_orders.find_by(enabled: true, type: "PostSaleOrder")
+      post_sale_orders = shop.card_orders.where(enabled: true, type: "PostSaleOrder")
       return puts "Card not setup" if post_sale_order.nil?
       return puts "Card not enabled" unless post_sale_order.enabled?
 
-      result = post_sale_order.prepare_for_sending(order) # Schedule a postcard for sending
-      puts result if result
+      post_sale_orders.each do |post_sale_order|
+        return puts "Card not setup" if post_sale_order.nil?
+        return puts "Card not enabled" unless post_sale_order.enabled?
+        result = post_sale_order.prepare_for_sending(order) # Schedule a postcard for sending
+        puts result if result
+      end
     end
   end
 end

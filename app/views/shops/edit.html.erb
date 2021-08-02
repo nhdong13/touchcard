@@ -5,8 +5,10 @@
     <br>
     <% if @shop.current_subscription %>
       <p>
-      You are subscribed to <strong><%= @shop.current_subscription.quantity %></strong> postcards per month. &nbsp
-      <%= link_to 'Edit', edit_subscriptions_path, class: "mdc-button mdc-button--stroked mdc-button--dense" %>
+      You are subscribed to <strong><%= number_to_currency(@current_shop.current_subscription.value) %></strong> per month. &nbsp
+      <%= link_to edit_subscriptions_path do %>
+        <button class="mdc-button mdc-button--stroked">Edit</button>
+      <% end %>
       </p>
       <p>
         Your next billing date is on <strong><%= @current_shop.current_subscription.current_period_end.to_date %></strong>

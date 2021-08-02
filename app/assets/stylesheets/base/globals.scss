@@ -34,7 +34,7 @@ html > body {
 
 
 .main-layout-grid {
-  max-width: 960px;
+  max-width: 1124px;
 }
 .full-width {
   width: 100%;
@@ -478,6 +478,36 @@ html > body {
 
 .grey {
   color: grey;
+}
+
+.row {
+  display: flex;
+  margin-bottom: 10px;
+  input[type='text'], select{
+    height: 30px;
+    width: 100%;
+  }
+
+  div[class^="col-"]{
+    padding: 0 15px;
+  }
+
+  &.center-items{
+    align-items: center
+  }
+
+  &.center{
+    justify-content: center;
+  }
+  .col-6 {
+    width: 50%
+  }
+  .col-8 {
+    width: 75%
+  }
+  .col-2 {
+    width: 25%
+  }
 }
 
 //input[type="text"], input[type="number"] {

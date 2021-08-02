@@ -3,18 +3,36 @@ class Order < ApplicationRecord
   belongs_to :customer
   belongs_to :postcard  # NOT an inverse_of the trigger
   has_many :postcards, as: :postcard_trigger
+  has_many :line_items
   validates :total_price, :total_tax, :shopify_id, :shop, presence: true
   validates :shopify_id, uniqueness: true
 
   serialize :discount_codes
 
   class << self
-    def from_shopify!(order, shop)
+    def from_shopify!(shopify_order, shop)
       # this one doesn't try to find the order first because that should never
       # occur since orders are only created by the new_order webhook
-      attrs = order.attributes.with_indifferent_access
+      shopify_attrs = prepare_shopify_attributes(shopify_order, shop)
+      order = Order.find_by(shopify_id: shopify_order.id)
+      is_order_exists = false
+      if order
+        is_order_exists = true
+        order.update(shopify_attrs)
+      else
+        order = create!(shopify_attrs)
+      end
+      shopify_attrs[:line_items].each { |li| LineItem.from_shopify!(order, li) } if !shopify_attrs[:line_items].blank?
+
+      {order: order, is_order_exists: is_order_exists}
+    end
+
+    private
+
+    def prepare_shopify_attributes(shopify_order, shop)
+      attrs = shopify_order.attributes.with_indifferent_access
       customer = Customer.from_shopify!(attrs[:customer]) if attrs[:customer]
-      inst = create!(attrs.slice(
+      attrs.slice(
         :browser_ip,
         :financial_status,
         :fulfillment_status,
@@ -24,16 +42,14 @@ class Order < ApplicationRecord
         :processing_method,
         :processed_at
       ).merge(
-        total_discounts: order.total_discounts.to_f * 100,
-        total_line_items_price: order.total_line_items_price.to_f * 100,
-        total_price: order.total_price.to_f * 100,
-        total_tax: order.total_tax.to_f * 100,
-        discount_codes: order.discount_codes.map(&:attributes),
-        shopify_id: order.id,
+        total_discounts: shopify_order.total_discounts.to_f * 100,
+        total_line_items_price: shopify_order.total_line_items_price.to_f * 100,
+        total_price: shopify_order.total_price.to_f * 100,
+        total_tax: shopify_order.total_tax.to_f * 100,
+        discount_codes: shopify_order.discount_codes.map(&:attributes),
+        shopify_id: shopify_order.id,
         customer: customer,
-        shop: shop))
-      order.line_items.each { |li| LineItem.from_shopify!(inst, li) }
-      inst
+        shop: shop)
     end
   end
 

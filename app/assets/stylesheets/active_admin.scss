@@ -14,3 +14,156 @@ td.col.col-type {
   word-break: normal;
   min-width: 1px;
 }
+
+#preview_front_design, #preview_back_design{
+  width: 450px;
+  display: none;
+}
+
+.import-csv-message, .general-message{
+  display: none;
+}
+.form-content{
+  padding: 20px
+}
+
+.hide {
+  display: none;
+}
+
+.message{
+  border-radius: 5px;
+  padding: 5px;
+  margin: 2px 0;
+  &.error{
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+  }
+  &.success {
+    color: #155724;
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+  }
+}
+
+label.error{
+  border-radius: 5px;
+  padding: 5px;
+  margin: 2px 0;
+  display: block;
+  color: #721c24;
+  background-color: #f8d7da;
+  border-color: #f5c6cb;
+}
+
+.cancel-preview-postcard{
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  button{
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    width: 88px;
+    height: 42px;
+  }
+}
+
+.row {
+  display: flex;
+  margin-bottom: 10px;
+  input[type='text']{
+    height: 30px;
+    width: 100%;
+  }
+
+  div[class^="col-"]{
+    padding: 0 15px;
+  }
+
+  &.center-items{
+    align-items: center
+  }
+
+  &.center{
+    justify-content: center;
+  }
+
+}
+
+.number-records{
+  font-size: 20px
+}
+
+.button-submit{
+  input{
+    margin: 0 !important;
+  }
+}
+
+.address-label{
+  text-align: right;
+}
+
+.col-6 {
+  width: 50%
+}
+
+.col-8 {
+  width: 75%
+}
+
+.col-2 {
+  width: 25%
+}
+
+.import-csv-btn{
+  display: none !important;
+}
+
+#utility_nav:hover #change_password {
+  clip: initial;
+  opacity: 1;
+}
+
+#current_user {
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.22);
+}
+
+#change_password {
+  background: #fff;
+  border-top-right-radius: 2px;
+  border-top-left-radius: 2px;
+  padding: 16px;
+  height: 56px;
+  width: 200px;
+  position: absolute;
+  right: 0;
+  top: 104px;
+  clip: rect(0, 0, 0, 0);
+  opacity: 0;
+  transition: 0.28s all;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.22);
+  &::before {
+    content: "";
+    border: 7px solid transparent;
+    border-top: none;
+    border-bottom-color: #fff;
+    top: 104px;
+    right: 12px;
+    position: absolute;
+  }
+
+  a {
+    text-align: left;
+    padding: 0;
+    line-height: unset;
+    text-shadow: none;
+    color: rgba(0, 0, 0, 0.7);
+  }
+}
+
+#logout {
+  top: 160px;
+}

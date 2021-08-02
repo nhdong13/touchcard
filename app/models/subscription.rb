@@ -8,6 +8,12 @@ class Subscription < ApplicationRecord
     :current_period_start, :current_period_end, presence: true
   validate :only_one_subscription
 
+  before_save :set_subscription_value
+
+  def set_subscription_value
+    self.value = quantity * plan.amount.to_f / 100
+  end
+
   def only_one_subscription
     return if shop.subscriptions.count == 0 || persisted?
     errors.add(:shop, "already has a subscription")
@@ -68,14 +74,17 @@ class Subscription < ApplicationRecord
       plan = params[:plan] || Plan.find_by(id: params[:plan_id])
       # TODO return a better error it will currently show all the missing stripe fields too
       return super(params) unless shop && plan
+      return super(params) unless shop.stripe_customer.present?
       subscription = shop.stripe_customer.subscriptions.create(
-        plan: plan.id,
+        plan: plan.stripe_plan_id || '1',
         quantity: params[:quantity],
-        coupon: params[:coupon])
+        coupon: params[:coupon]
+      )
       instance = super(params.merge(
         stripe_id: subscription.id,
         current_period_start: Time.at(subscription.current_period_start),
-        current_period_end: Time.at(subscription.current_period_end)))
+        current_period_end: Time.at(subscription.current_period_end)
+      ))
       subscription.delete unless instance.valid?
       ShopSubscribedJob.perform_later(shop) if instance.valid? # Update external APIs (ie: email list)
       instance
@@ -83,8 +92,7 @@ class Subscription < ApplicationRecord
   end
 
   def destroy
-    subscription = shop.stripe_customer.subscriptions.retrieve(stripe_id)
-    subscription.delete
+    shop.stripe_customer.subscriptions.retrieve(stripe_id).delete if shop.stripe_customer
     super
   end
 

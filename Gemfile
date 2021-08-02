@@ -12,6 +12,7 @@ gem "rb-readline", "~> 0.5.3"
 gem 'material_components_web-sass'
 
 gem "sass-rails", "~> 5.0", ">= 5.0.6"
+gem "jquery-rails"
 gem "uglifier", "~> 4.2"
 
 gem 'coffee-rails', '~> 5.0.0'
@@ -27,7 +28,11 @@ gem "json", "~> 2.5.1"
 gem "shopify_app", "~> 12.0.7"
 
 # Stripe
-gem 'stripe', '~> 5.30'
+gem 'stripe', '~> 5.34'
+
+# Excel XLSX
+gem "axlsx" 
+gem "zip-zip"
 
 # S3 connection
 gem "aws-sdk", "~> 3.0.2"
@@ -86,6 +91,9 @@ gem "mimemagic", "0.3.7"
 gem "webrick"
 gem "puma"
 
+gem 'active_model_serializers', '~> 0.10.12'
+
+gem 'kaminari'
 group :assets do
   gem "therubyracer", platforms: :ruby
 end
@@ -101,12 +109,14 @@ group :development, :test do
   # Call "byebug" anywhere in the code to stop execution and get a debugger console
   gem "byebug"
   gem 'simplecov', :require => false
+
+  gem 'rspec', '~> 3.10'
 end
 
 group :test do
   gem "rspec-rails", "~> 5.0.1"
   gem "factory_bot", "~> 4.8"
-  gem "webmock", "~> 3.2"
+  gem "webmock"
   gem "timecop"
 end
 

@@ -2,20 +2,16 @@
 /* global StripeCheckout */
 
 // Todo: Use Stripe Checkout via NPM
+import { isEmpty } from 'lodash'
 
-export default function(element, stripePubKey = '') {
+export default function(element ,stripePubKey = '') {
   return {
     el: element,
-    // props: {
-    //   stripe_pub_key: {
-    //     type: String,
-    //     required: true,
-    //   },
-    // },
     data: function() {
       return {
         slider: null,
         quantity: 0,
+        customerEmail: null,
         stripeHandler: StripeCheckout.configure({
           key: stripePubKey,
           locale: 'auto',
@@ -37,7 +33,8 @@ export default function(element, stripePubKey = '') {
     },
     computed: {
       price: function() {
-        return this.quantity * 0.99;
+        let pricePerCard = parseFloat(document.getElementById('price-per-card').value);
+        return this.quantity * pricePerCard;
       }
     },
     mounted: function() {
@@ -46,6 +43,9 @@ export default function(element, stripePubKey = '') {
         this.updateQuantity();
       });
       this.updateQuantity();
+      if(!isEmpty(document.getElementById('customer-email'))) {
+        this.customerEmail = document.getElementById('customer-email').value
+      }
     },
     beforeDestroy: function() {
       this.stripeHandler.close();
@@ -59,7 +59,8 @@ export default function(element, stripePubKey = '') {
       checkoutSubmit: function(event) {
         if (event) event.preventDefault();
         this.stripeHandler.open({
-          amount: this.price * 100
+          amount: this.price * 100,
+          email: this.customerEmail,
         });
 
       }

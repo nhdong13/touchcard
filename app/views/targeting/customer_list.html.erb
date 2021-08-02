@@ -1,0 +1,24 @@
+<%= currently_at "Targerting" %>
+<%= link_to "Download", get_targeting_index_path(accepted: @accepted_attrs, removed: @removed_attrs, format: :csv), method: :post  %>
+<table>
+  <thead>
+    <tr>
+      <th>No.</th>
+      <% @titles.each do |filter| %>
+        <th><%= filter %></th>
+      <% end %>
+  </thead>
+  <tbody>
+    <% @customers.values.each.with_index(1) do |cus, index| %>
+      <tr>
+        <td><%= index %></td>
+        <% (0..@titles.size).each do |pos| %>
+          <td><%= cus[pos] %></td>
+        <% end %>
+      </tr>
+    <% end %>
+    <% if @customers.empty? %>
+      <tr><td colspan="2">No customer matched conditions.</td></tr>
+    <% end %>
+  </tbody>
+</table>
