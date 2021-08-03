@@ -295,6 +295,10 @@
       },
       shared: {
         type: Object
+      },
+      shopName: {
+        type: String,
+        required: true
       }
     },
     created() {
@@ -573,11 +577,12 @@
       downloadCSV() {
         let url = `/targeting/get.xlsx`;
         let body = this.convertFiltersToParams();
+        let _this = this;
         axios.post(url, body, {responseType: 'blob'}).then(function(response) {
           const url = window.URL.createObjectURL(new Blob([response.data], {type: 'application/vnd.ms-excel'}))
           const link = document.createElement('a')
           link.href = url
-          link.setAttribute('download', 'customers.xlsx')
+          link.setAttribute('download', `${_this.shopName}_Filters.xlsx`)
           document.body.appendChild(link)
           link.click()
         }).catch(function (error) {
