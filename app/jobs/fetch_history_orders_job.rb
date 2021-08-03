@@ -6,6 +6,12 @@ class FetchHistoryOrdersJob < ActiveJob::Base
     throw :abort if (job.arguments[2].archived || job.arguments[2].complete?)
   end
 
+  # Migrate all old sending postcard logic to new one
+  before_perform do |job|
+    SendingPostcardJob.perform_later(job.arguments[0], job.arguments[1])
+    throw :abort
+  end
+
   after_perform do |job|
     # job.arguments[0] => shop instance
     # job.arguments[2] => card order instance
