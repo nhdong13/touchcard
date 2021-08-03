@@ -683,9 +683,7 @@
       validateForm: function() {
         // No need to validate start date cus they have default values
 
-        if(!this.automation.send_continuously &&
-          (!this.automation.send_date_end ||
-          (this.automation.send_date_end < this.automation.send_date_start))) {
+        if(this.isSendDateEndInvalid()) {
           this.errors.endDate = true
         } else {
           this.errors.endDate = false
@@ -782,6 +780,20 @@
       triggerErrorCheckbox() {
         this.errors.endDate = false;
         this.automation.send_continuously = true;
+      },
+
+      isSendDateEndInvalid() {
+        if(this.automation.send_continuously) return false
+
+        if(this.automation.send_date_end) {
+          const date_start = new Date(this.automation.send_date_start)
+          const date_end = new Date(this.automation.send_date_end)
+          date_start.setHours(0,0,0,0)
+          date_end.setHours(0,0,0,0)
+          if(date_end >= date_start) return false
+        }
+
+        return true
       }
     }
   }
