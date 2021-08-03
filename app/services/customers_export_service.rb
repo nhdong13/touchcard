@@ -25,7 +25,10 @@ class CustomersExportService
     lines.each.with_index(1) do |line, i|
       sheet.add_row(line + Array.new(28, ""))
     end
-    
+
+    #Add section divider
+    add_section_divider
+
     # Generate file and return file
     send_excel_file(book)
   end
@@ -63,5 +66,16 @@ class CustomersExportService
       sheet.rows.first.cells[(pointer..pointer + section[1] -1)].first.style = current_section_style
       pointer += section[1]
     end
+  end
+
+  def add_section_divider
+    right_border =  styles.add_style({border: { style: :thin, color: '000000', edges: [:right] }})
+    number_of_rows = sheet.rows.count
+    ["K3:K#{number_of_rows}",
+     "T3:T#{number_of_rows}",
+     "X3:X#{number_of_rows}",
+     "Z3:Z#{number_of_rows}",
+     "AC3:AC#{number_of_rows}"
+    ].each {|cells| sheet[cells].each{|cell| cell.style = right_border } }
   end
 end
