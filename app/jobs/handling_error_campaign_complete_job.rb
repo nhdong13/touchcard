@@ -25,12 +25,12 @@ class HandlingErrorCampaignCompleteJob < ActiveJob::Base
       end
     end
 
-    CardOrder.where("shop_id = :shop_id AND campaign_status = :status AND ((send_continuously = FALSE AND send_date_end > :now) OR (send_continuously = TRUE))", {shop_id: shop.id,status: CardOrder.campaign_statuses[:complete], now: Time.now.beginning_of_day}).find_each do |c|
+    CardOrder.where("shop_id = :shop_id AND campaign_status = :status AND ((send_continuously = FALSE AND send_date_end > :now) OR (send_continuously = TRUE))", {shop_id: shop.id,status: CardOrder.campaign_statuses[:complete], now: Time.now.end_of_day}).find_each do |c|
       c.processing!
       InitializeSendingPostcardProcess.start shop, c
     end
 
-    # CardOrder.where("shop_id = :shop_id AND campaign_status != :status AND send_continuously = FALSE AND send_date_end < :now", {shop_id: shop.id,status: CardOrder.campaign_statuses[:complete], now: Time.now.beginning_of_day}).find_each do |c|
+    # CardOrder.where("shop_id = :shop_id AND campaign_status != :status AND send_continuously = FALSE AND send_date_end < :now", {shop_id: shop.id,status: CardOrder.campaign_statuses[:complete], now: Time.now.end_of_day}).find_each do |c|
     #   c.complete!
     # end
 

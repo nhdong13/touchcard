@@ -27,10 +27,10 @@ class SendingPostcardJob < ActiveJob::Base
   #   end
   # end
 
-  def perform shop, campaign, is_new_loop = false
-    is_new_loop = false
+  def perform shop, campaign, reset_status_to_processing_in_new_loop = false
+    reset_status_to_processing_in_new_loop = false
     wait_time = 2.minutes
-    campaign.processing! if is_new_loop
+    campaign.processing! if reset_status_to_processing_in_new_loop
     if campaign.enabled?
       case campaign.campaign_status
       when "processing"
@@ -95,7 +95,14 @@ class SendingPostcardJob < ActiveJob::Base
         existing_customers = campaign.postcards
         while true
           customers.each do |c|
-            customer = Customer.from_shopify!(c)
+            begin
+              customer = Customer.from_shopify!(c)
+            rescue StandardError => e
+              # If there is an error such as Nil:NilClass
+              # This rescue is to log the error and keep the system going
+              Rails.logger.debug "[ERROR] #{e.class} #{e.message}"
+              next
+            end
             # If customer don't pass filter then skip
             next unless (customer_targeting_service.customer_pass_filter?(customer.id) &&
                         !(customer.international? ^ campaign.international) &&
@@ -114,11 +121,7 @@ class SendingPostcardJob < ActiveJob::Base
           customers = customers.fetch_next_page
         end
         shop.update(shopify_history_data_imported: DateTime.now)
-        if campaign.enabled?
-          campaign.scheduled!
-        end
-      when "scheduled"
-        Rails.logger.debug ">>>>>>>>>>>>>>>>>>>>>> [NOTE] Scheduling"
+
         # begin
         result = true
         # Get postcard paid
@@ -126,19 +129,29 @@ class SendingPostcardJob < ActiveJob::Base
           result = PaymentService.pay_postcard_for_campaign_monthly campaign.shop, campaign, postcard
           break unless result
         end
-        if campaign.enabled?
-          if Time.now.end_of_day < campaign.send_date_start
-            wait_time = 1.day
-            is_new_loop = true
-          else
-            campaign.sending! if result
-          end
-        end
+
         # rescue
         #   campaign.error!
         # end
 
-        campaign.save
+        if campaign.enabled?
+          if Time.now.end_of_day < campaign.send_date_start
+            campaign.scheduled!
+          else
+            campaign.sending! if result
+          end
+        end
+      when "scheduled"
+        Rails.logger.debug ">>>>>>>>>>>>>>>>>>>>>> [NOTE] Scheduling"
+
+        if campaign.enabled?
+          if Time.now.end_of_day < campaign.send_date_start
+            wait_time = 1.day
+          else
+            campaign.sending!
+          end
+        end
+
       when "sending"
         Rails.logger.debug ">>>>>>>>>>>>>>>>>>>>>> [NOTE] Sending"
 
@@ -151,14 +164,14 @@ class SendingPostcardJob < ActiveJob::Base
             campaign.complete!
           else
             wait_time = 1.day
-            is_new_loop = true
+            reset_status_to_processing_in_new_loop = true
           end
         end
       else
         Rails.logger.debug "[NOTE] Campaign with id #{campaign.id} has status #{campaign.campaign_status}"
       end
     end
-    SendingPostcardJob.set(wait: wait_time).perform_later(shop, campaign, is_new_loop)
+    SendingPostcardJob.set(wait: wait_time).perform_later(shop, campaign, reset_status_to_processing_in_new_loop)
   end
 
 
