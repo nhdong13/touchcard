@@ -678,7 +678,9 @@
       validateForm: function() {
         // No need to validate start date cus they have default values
 
-        if(!this.automation.send_continuously && !this.automation.send_date_end) {
+        if(!this.automation.send_continuously &&
+          (!this.automation.send_date_end ||
+          (this.automation.send_date_end < this.automation.send_date_start))) {
           this.errors.endDate = true
         } else {
           this.errors.endDate = false
