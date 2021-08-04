@@ -42,7 +42,7 @@ class CampaignSearchService
   def filter_base_on_status
     if @filters["status"]
       return @filters["status"].map do |e|
-        e.downcase
+        e.downcase.split(" ").join("_")
       end
     else
       return []

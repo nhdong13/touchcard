@@ -17,10 +17,10 @@
         <input type="radio" id="automation" value="automation" v-model="campaign_type" v-on:click="setBudgetType">
         <label for="automation">Automation</label>
       </span>
-      <!-- <span v-if="automation.campaign_status == 'draft' || automation.campaign_type == 'one_off'">
+      <span v-if="automation.campaign_status == 'draft' || automation.campaign_type == 'one_off'">
         <input type="radio" id="one_off" value="one_off" v-model="campaign_type" v-on:click="setBudgetType">
         <label for="one_off">One-off</label>
-      </span> -->
+      </span>
     </div>
 
     <div class="automation-section" v-if="campaign_type =='automation'">
@@ -30,7 +30,7 @@
       </span>
     </div>
 
-    <!-- <div class="automation-section d-flex" v-if="campaign_type =='one_off'">
+    <div class="automation-section d-flex" v-if="campaign_type =='one_off'">
       <div class="align-self-center">
         <strong class="f-14">Campaign schedule</strong>
       </div>
@@ -41,10 +41,11 @@
             <datepicker
               v-model="automation.send_date_start"
               :disabled-dates="disabledDates"
-              :open-date="new Date()"
+              :open-date="startDate"
               name="send_date_start"
               ref="sendDateStart"
               @selected="changeSendDateEnd"
+              format="MMM dd, yyyy"
               :disabled="isStartDateDisable"
             ></datepicker>
             <div class="icon-calendar" v-on:click="openSendDateStartDatePicker">
@@ -53,9 +54,9 @@
           </div>
         </div>
       </div>
-    </div> -->
+    </div>
 
-    <!-- <div class="automation-section" v-if="campaign_type =='one_off'">
+    <div class="automation-section" v-if="campaign_type =='one_off'">
       <div>
         <input id="daily-schedule-checkbox" type="checkbox" v-model="willCheckDailySendingSchedule">
         <label for="daily-schedule-checkbox" class="noselect"><strong>Daily schedule and limits</strong></label>
@@ -64,9 +65,9 @@
         <span>Limit per day:</span>
         <input type="numer" id="budget_limit" v-model="automation.limit_cards_per_day"> postcards
       </div>
-    </div> -->
+    </div>
 
-    <div class="automation-section d-flex">
+    <div class="automation-section d-flex" v-if="campaign_type =='automation'">
       <div class="align-self-center">
         <strong class="f-14">Campaign schedule</strong>
       </div>
@@ -116,8 +117,6 @@
         </div>
       </div>
     </div>
-    <!-- Comment this piece of code according to Customer's requirement
-
     <div :class="[errors.returnAddress ? 'invalid' : '', 'automation-section']">
       <label for="return-address-checkbox" class="noselect"><strong>Add Return Address</strong></label>
       <button @click="enableAddReturnAddress= !enableAddReturnAddress">Edit</button>
@@ -201,7 +200,6 @@
         </div>
       </div>
     </div>
-    -->
     <h2 class="d-inline-block">Customer Filters</h2>
     <button @click="downloadCSV"> CSV </button>
     <div :class="'filter-config nested-toggle row'" :showError="errors.filters">
