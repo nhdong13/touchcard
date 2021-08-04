@@ -5,9 +5,7 @@ class CampaignsController < BaseController
       format.html {}
       format.json { render json: {
         campaigns: ActiveModelSerializers::SerializableResource.new(@result[:campaigns], {each_serializer: CardOrderSerializer}).to_json,
-        total_pages: @result[:total_pages],
-        statuses: @result[:statuses],
-        campaign_types: @result[:campaign_types]
+        total_pages: @result[:total_pages]
       }}
     end
   end

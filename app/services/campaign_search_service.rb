@@ -21,9 +21,7 @@ class CampaignSearchService
     total_pages = campaigns.total_pages
     return {
       campaigns: campaigns,
-      total_pages: total_pages,
-      campaign_types: campaign_types,
-      statuses: statuses
+      total_pages: total_pages
     }
   end
 
