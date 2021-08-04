@@ -34,15 +34,10 @@ class OrdersCreateJob < ActiveJob::Base
 
       # Create a new card and schedule to send
       post_sale_orders = shop.card_orders.where(enabled: true, type: "PostSaleOrder")
-      return puts "Card not setup" if post_sale_order.nil?
-      return puts "Card not enabled" unless post_sale_order.enabled?
+      # return puts "Card not setup" if post_sale_order.nil?
+      # return puts "Card not enabled" unless post_sale_order.enabled?
 
-      post_sale_orders.each do |post_sale_order|
-        return puts "Card not setup" if post_sale_order.nil?
-        return puts "Card not enabled" unless post_sale_order.enabled?
-        result = post_sale_order.prepare_for_sending(order) # Schedule a postcard for sending
-        puts result if result
-      end
+      post_sale_orders.each{|post_sale_order| post_sale_order.prepare_for_sending(order) }
     end
   end
 end

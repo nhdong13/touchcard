@@ -22,7 +22,7 @@ class Order < ApplicationRecord
       else
         order = create!(shopify_attrs)
       end
-      shopify_attrs[:line_items].each { |li| LineItem.from_shopify!(order, li) } if !shopify_attrs[:line_items].blank?
+      shopify_order.line_items.each { |li| LineItem.from_shopify!(order, li) }
 
       {order: order, is_order_exists: is_order_exists}
     end
