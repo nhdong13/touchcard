@@ -122,23 +122,12 @@ class SendingPostcardJob < ActiveJob::Base
         end
         shop.update(shopify_history_data_imported: DateTime.now)
 
-        # begin
-        result = true
-        # Get postcard paid
-        campaign.postcards.find_each do |postcard|
-          result = PaymentService.pay_postcard_for_campaign_monthly campaign.shop, campaign, postcard
-          break unless result
-        end
-
-        # rescue
-        #   campaign.error!
-        # end
-
         if campaign.enabled?
           if Time.now.end_of_day < campaign.send_date_start
+            wait_time = 1.day
             campaign.scheduled!
           else
-            campaign.sending! if result
+            campaign.sending!
           end
         end
       when "scheduled"
@@ -155,11 +144,22 @@ class SendingPostcardJob < ActiveJob::Base
       when "sending"
         Rails.logger.debug ">>>>>>>>>>>>>>>>>>>>>> [NOTE] Sending"
 
+        # begin
+        result = true
+        # Get postcard paid
+        campaign.postcards.find_each do |postcard|
+          result = PaymentService.pay_postcard_for_campaign_monthly campaign.shop, campaign, postcard
+          break unless result
+        end
+        # rescue
+        #   campaign.error!
+        # end
+
         result = Postcard.send_all campaign.id
         Rails.logger.debug "There are error in sending process" if result[:card_sent_amount] < result[:total_card]
         campaign.save!
 
-        if campaign.enabled?
+        if (campaign.enabled? && result)
           if (reach_end_date(campaign) || campaign.one_off?)
             campaign.complete!
           else

@@ -75,8 +75,8 @@ class CustomerTargetingService
       customer.default_address&.address1, customer.default_address&.city,
       customer.default_address&.province_code, customer.default_address&.country_code,
       customer.default_address&.zip, customer.default_address&.company, "", "", "", "", "", "",
-      customer.orders_count, "", currency_formater(customer.total_spent * 100), customer.tags,
-      "", "", "", "", customer.postcards.count, customer.postcards.last&.date_sent&.strftime("%d-%b-%y"),
+      customer.orders.count, "", currency_formater(customer.total_spent * 100), customer.tags,
+      "", "", "", "", customer.postcards.count, customer.postcards.last&.date_sent&.strftime("%b %d, %Y"),
       customer.accepts_marketing ? "Y" : "N", "", "", ""
     ] + filter_passed_by_customer(customer.id)
   end
@@ -100,7 +100,7 @@ class CustomerTargetingService
       order.customer&.default_address&.address1, order.customer&.default_address&.city,
       order.customer&.default_address&.province_code, order.customer&.default_address&.country_code,
       order.customer&.default_address&.zip, order.customer&.default_address&.company, "", order.id,
-      order.processed_at&.strftime("%d-%b-%y"), "", "", "", "", order.line_items&.count, currency_formater(order.total_price),
+      order.processed_at&.strftime("%b %d, %Y"), "", "", "", "", order.line_items&.count, currency_formater(order.total_price),
       order.tags, order.referring_site, order.landing_site, order.discount_codes.map{|code| code['code']}.join(", "),
       currency_formater(order.total_discounts), "", "", "", order.financial_status, order.fulfillment_status, ""
     ] + filter_passed_by_order(order)
@@ -135,8 +135,8 @@ class CustomerTargetingService
 
   def item_line_data item
     [ item.order&.customer&.id, "Order Item", "", "", "", "", "", "", "", "", "",
-      item.order&.id, item.order&.processed_at&.strftime("%d-%b-%y"), item.title, item.vendor,
-      item.variant_title, "", item.quantity, currency_formater(item.price),
+      item.order&.id, item.order&.processed_at&.strftime("%b %d, %Y"), item.title, item.sku,
+      item.variant_title, "", item.quantity, currency_formater(item.price.to_f * 100),
       "", "", "", "", "", "", "", "", "", "", ""
     ] + Array.new(accepted_attrs&.keys&.length, "")
   end
@@ -410,12 +410,12 @@ class CustomerTargetingService
     end
     shorthand += ": " + case value["condition"]
     when "before"
-      "<" + value["value"].to_date.strftime("%d-%b-%y")
+      "<" + value["value"].to_date.strftime("%b %d, %Y")
     when "after"
-      ">" + value["value"].to_date.strftime("%d-%b-%y")
+      ">" + value["value"].to_date.strftime("%b %d, %Y")
     when "between_date"
-      date_1 = value["value"].split("&")[0].to_date.strftime("%d-%b-%y")
-      date_2 = value["value"].split("&")[1].to_date.strftime("%d-%b-%y")
+      date_1 = value["value"].split("&")[0].to_date.strftime("%b %d, %Y")
+      date_2 = value["value"].split("&")[1].to_date.strftime("%b %d, %Y")
       date_1 + " - " + date_2
     when "matches_number"
       if key.include?("order_date")
@@ -445,7 +445,7 @@ class CustomerTargetingService
   end
 
   def currency_formater value
-    sprintf('$%.2f', value.to_f/100)
+    ActionController::Base.helpers.number_to_currency(value.to_f/100)
   end
 
   # get customer field for csv export

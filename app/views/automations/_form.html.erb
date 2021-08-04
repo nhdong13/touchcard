@@ -6,6 +6,7 @@
                 filters: automation.filters.to_json(only: [:id, :filter_data]),
                 aws_sign_endpoint: aws_sign_endpoint,
                 back_url: _back_url,
-                is_user_has_payment_method: !@current_shop.current_subscription.nil?
+                is_user_has_payment_method: !@current_shop.current_subscription.nil?,
+                shop_name: @current_shop.name
             }
 %>
