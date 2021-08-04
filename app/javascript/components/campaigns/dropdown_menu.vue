@@ -118,21 +118,28 @@ export default {
     },
 
     submitFilters: function() {
-      let target = `/campaigns.json`;
       let _this = this
-      this.saveFilterSettings()
-      axios.get(`/campaigns.json`,
-        {
-          params: {
-            query: _this.$parent.getParamsQuery(),
-            filters: _this.collectParamsFilters()
+      axios.patch(`/settings/campaign_filter_option.json`,
+      {
+        filters: this.collectParamsFilters()
+      }).then(function(response) {
+        axios.get(`/campaigns.json`,
+          {
+            params: {
+              query: _this.$parent.getParamsQuery(),
+              // filters: _this.collectParamsFilters()
+            }
           }
-        }
-      ).then(function(response) {
-          _this.$parent.updateState(response.data, true);
-          _this.closeFilters();
-        }).catch(function (error) {
-      });
+        ).then(function(response) {
+            _this.$parent.updateState(response.data, true);
+            _this.closeFilters();
+          }).catch(function (error) {
+            console.log(error)
+          });
+      }).catch(function(error) {
+        console.log(error)
+      })
+
 
     },
 
@@ -183,15 +190,6 @@ export default {
       }
       this.availableStatus.find(element => element.content == this.filters.status).isHidden = true
       this.selectedStatuses.push(this.filters.status)
-    },
-
-    saveFilterSettings: function() {
-      axios.patch(`/settings/campaign_filter_option.json`,
-      {
-        filters: this.collectParamsFilters()
-      }).catch(function(error) {
-        console.log(error)
-      })
     },
 
     loadFilterSettings: function() {
