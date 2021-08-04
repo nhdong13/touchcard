@@ -89,7 +89,7 @@
             </div>
           </div>
         </div>
-        <div class="campaign-section nested-toggle" >
+        <div class="campaign-section nested-toggle" v-if="automation.send_continuously === false">
           <div class="datepicker-with-icon">
             <span style="width: 80px"><small :class="{error: errors.endDate}" v-if="errors.endDate">*</small> End date:</span>
             <div class="datepicker-with-icon">
