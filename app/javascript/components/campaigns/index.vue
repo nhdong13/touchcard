@@ -182,10 +182,6 @@
         type: Number,
         required: true
       },
-      campaignTypes: {
-        type: Array,
-        required: true
-      },
       shared: {
         type: Object
       }

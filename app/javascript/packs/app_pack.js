@@ -85,11 +85,10 @@ document.addEventListener('turbolinks:load', () => {
         return {
           campaigns: tmp_campaigns,
           totalPages: parseInt(campaignDashboardElement.dataset.totalPages),
-          campaignTypes: JSON.parse(campaignDashboardElement.dataset.campaignTypes),
           shared: store
         }
       },
-      template: '<campaign-dashboard :campaigns="campaigns" :totalPages="totalPages" :campaignTypes="campaignTypes" :shared="shared"></campaign-dashboard>',
+      template: '<campaign-dashboard :campaigns="campaigns" :totalPages="totalPages" :shared="shared"></campaign-dashboard>',
       components: {
         campaignDashboard
       }
