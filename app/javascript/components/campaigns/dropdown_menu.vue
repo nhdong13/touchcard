@@ -125,7 +125,7 @@ export default {
         {
           params: {
             query: _this.$parent.getParamsQuery(),
-            // filters: this.collectParamsFilters(),
+            filters: _this.collectParamsFilters()
           }
         }
       ).then(function(response) {
@@ -186,7 +186,7 @@ export default {
     },
 
     saveFilterSettings: function() {
-      axios.patch(`/settings/campaign_filter_option`,
+      axios.patch(`/settings/campaign_filter_option.json`,
       {
         filters: this.collectParamsFilters()
       }).catch(function(error) {
