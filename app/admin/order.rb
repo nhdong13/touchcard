@@ -37,7 +37,7 @@ ActiveAdmin.register Order do
       row :id
       row "Shopify Id", :shopify_id
       row :customer_id do |order|
-        link_to(order.customer.id, admin_customer_path(order.customer)) if order.customer.id
+        link_to(order.customer.id, admin_customer_path(order.customer)) if order.customer
       end
       row :discount_codes
       row :total_discounts
