@@ -294,17 +294,13 @@
       shared: {
         type: Object
       },
-      shopName: {
-        type: String,
+      currentShop: {
+        type: Object,
         required: true
-      }
+      },
     },
     created() {
       this.initializeStartDatepicker();
-      const _this = this;
-      axios.get('/settings/get_credit.json').then((response) => {
-        _this.userCredit = response.data.credit
-      })
     },
 
     beforeDestroy: function() {
@@ -340,7 +336,6 @@
         filterConditions: [],
         filterOptions: [],
         interval: null,
-        userCredit: 0,
         checkingFilterError: false,
         pausedSubmitForm: false
       }
@@ -355,7 +350,7 @@
             to: today
           }
         }
-      } ,
+      },
 
       willCheckDailySendingSchedule: {
         get: function(){
@@ -570,7 +565,7 @@
           const url = window.URL.createObjectURL(new Blob([response.data], {type: 'application/vnd.ms-excel'}))
           const link = document.createElement('a')
           link.href = url
-          link.setAttribute('download', `${_this.shopName}_Filters.xlsx`)
+          link.setAttribute('download', `${_this.currentShop.name}_Filters.xlsx`)
           document.body.appendChild(link)
           link.click()
         }).catch(function (error) {
@@ -636,7 +631,7 @@
       saveAndStartSending: function() {
         // If there're some errors in save process => return
         if (!this.saveWithValidation()) return;
-        this.shared.campaign.campaign_status = this.userCredit > 0.89 ? "processing" : "out_of_credit";
+        this.shared.campaign.campaign_status = this.currentShop.credit > 0.89 ? "processing" : "out_of_credit";
         this.saveAutomation(this.startSending);
       },
 

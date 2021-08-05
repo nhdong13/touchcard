@@ -65,11 +65,11 @@ document.addEventListener('turbolinks:load', () => {
           awsSignEndpoint: automationElement.dataset.awsSignEndpoint,
           backUrl: automationElement.dataset.backUrl,
           isUserHasPaymentMethod: automationElement.dataset.isUserHasPaymentMethod == "true",
-          shopName: automationElement.dataset.shopName,
+          currentShop: JSON.parse(automationElement.dataset.currentShop),
           shared: store
         }
       },
-      template: '<automation-form :id="id" :automation="automation" :return-address="returnAddress" :aws-sign-endpoint="awsSignEndpoint" :back-url="backUrl" :is-user-has-payment-method="isUserHasPaymentMethod" :shared="shared" :shopName="shopName" ></automation-form>',
+      template: '<automation-form :id="id" :automation="automation" :return-address="returnAddress" :aws-sign-endpoint="awsSignEndpoint" :back-url="backUrl" :is-user-has-payment-method="isUserHasPaymentMethod" :shared="shared" :currentShop="currentShop" ></automation-form>',
       components: {
         'automation-form': AutomationForm
       }
