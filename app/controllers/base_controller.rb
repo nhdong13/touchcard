@@ -13,7 +13,7 @@ class BaseController < ApplicationController
     else
       @current_shop ||= Shop.find(session[:shopify])
       @current_shop.update(last_login_at: Time.now, uninstalled_at: nil)
-      HandlingErrorCampaignCompleteJob.perform_later(@current_shop)
+      # HandlingErrorCampaignCompleteJob.perform_later(@current_shop)
     end
   end
 

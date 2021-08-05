@@ -241,7 +241,7 @@
     </div>
     <br>
     <div class="text-right">
-      <div v-if="id">
+      <div v-if="id === null">
         <button class="mdc-button mdc-button--stroked" @click="returnToCampaignList" :disabled="pausedSubmitForm">Discard</button>
         <button class="mdc-button mdc-button--raised" @click="saveAndReturn" :disabled="pausedSubmitForm">Save Changes</button>
       </div>

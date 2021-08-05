@@ -29,7 +29,25 @@ class PaymentService
   	end
 
   	def pay_for_campaign_one_off shop, card_order
+      shop_credit = shop.credit
+      result = true
+      card_order.postcards.find_each do |postcard|
+        next if postcard.paid
+        shop_credit -= postcard.cost
+        if shop_credit < 0.89
+          result = false
+          EnableDisableCampaignService.disable_campaign campaign, :out_of_credit, "#{campaign.campaign_name} is out of credit"
+          break
+        end
+      end
 
+      if result
+        shop.credit = shop_credit
+        shop.save
+        card_order.postcards.update_all "paid = TRUE"
+      end
+
+      result
   	end
 
     def refund_cards_when_cancelled shop, card_order
