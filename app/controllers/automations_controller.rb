@@ -18,11 +18,8 @@ class AutomationsController < BaseController
   def show
   end
 
-  # TODO: Re-enable automation creation
-  #
   def new
-    @automation = @current_shop.post_sale_orders.new
-    @automation.add_default_params(@current_shop)
+    @automation = @current_shop.post_sale_orders.new.add_default_params
     respond_to do |format|
       format.html
       format.json { render json: @automation }

@@ -241,15 +241,15 @@
     </div>
     <br>
     <div class="text-right">
-      <div v-if="isEditExistCampaign">
-        <button class="mdc-button mdc-button--stroked" v-on:click="returnToCampaignList" :disabled="pausedSubmitForm">Discard</button>
+      <div v-if="id">
+        <button class="mdc-button mdc-button--stroked" @click="returnToCampaignList" :disabled="pausedSubmitForm">Discard</button>
         <button class="mdc-button mdc-button--raised" @click="saveAndReturn" :disabled="pausedSubmitForm">Save Changes</button>
       </div>
       <div v-else>
-        <button class="mdc-button mdc-button--stroked" v-on:click="saveAndReturn" :disabled="pausedSubmitForm">Save changes</button>
+        <button class="mdc-button mdc-button--stroked" @click="saveAndReturn" :disabled="pausedSubmitForm">Save changes</button>
 
-        <button class="mdc-button mdc-button--raised" v-on:click="saveAndStartSending" v-if="isUserHasPaymentMethod" :disabled="pausedSubmitForm">Start Sending</button>
-        <button class="mdc-button mdc-button--raised" v-on:click="saveAndCheckout" v-else :disabled="pausedSubmitForm">Add payment and start sending</button>
+        <button class="mdc-button mdc-button--raised" v-if="isUserHasPaymentMethod" @click="saveAndStartSending" :disabled="pausedSubmitForm">Start Sending</button>
+        <button class="mdc-button mdc-button--raised" v-else @click="saveAndCheckout" :disabled="pausedSubmitForm">Add payment and start sending</button>
       </div>
     </div>
   </div>
@@ -266,7 +266,7 @@
   import CancelCampaignDialog from './components/cancel_campaign_dialog.vue'
   import { DEFAULT_DISCOUNT_PERCENTAGE, DEFAULT_WEEK_BEFORE_DISCOUNT_EXPIRE } from './config'
   window.$ = $
-
+  const CAMPAIGN_STATUS_FOR_DISABLE_DATE = ["sending", "complete", "out_of_credit", "error", "paused"];
 
   export default {
     props: {
@@ -300,8 +300,7 @@
       }
     },
     created() {
-      this.isEditExistCampaign = this.automation.campaign_status != "draft"
-      this.isStartDateDisable = this.disableStartDate()
+      this.initializeStartDatepicker();
       const _this = this;
       axios.get('/settings/get_credit.json').then((response) => {
         _this.userCredit = response.data.credit
@@ -313,14 +312,6 @@
     },
 
     mounted: function() {
-      // if(!this.isEditExistCampaign) {
-      //   this.interval = window.setInterval(() => {
-      //     this.saveAutomation()
-      //   }, 1000)
-      // }
-      // this.interval = window.setInterval(() => {
-      //   this.validateForm()
-      // }, 1000)
     },
     data: function() {
       return {
@@ -338,7 +329,6 @@
         isCancel: false,
         isStartDateDisable: false,
         saved_automation: {}, // Use with autosave, play as backup when user don't want to change campaign any more
-        isEditExistCampaign: true,
         errors: {
           endDate: false,
           uploadedFrontDesign: false,
@@ -596,13 +586,6 @@
       //   this.fetchDataFromUI()
       //   // TODO: Must somehow make sure automation is JSON safe
       //   this.saved_automation = JSON.parse(JSON.stringify(this.automation))
-
-      //   if(!this.isEditExistCampaign) {
-      //     axios.put(`/automations/${this.id}.json`, { card_order: this.automation})
-      //     .catch(function (error) {
-      //       console.log(error)
-      //     });
-      //   }
       // },
       isTwoJsonEqual: function(a, b) {
         return JSON.stringify(a) === JSON.stringify(b)
@@ -757,13 +740,8 @@
         e.preventDefault()
       },
 
-      disableStartDate: function() {
-        if(this.automation.campaign_status == "sending" ||
-          this.automation.campaign_status == "complete" ||
-          this.automation.campaign_status == "out_of_credit" ||
-          this.automation.campaign_status == "error" ||
-          this.automation.campaign_status == "paused") return true
-
+      initializeStartDatepicker() {
+        this.isStartDateDisable = this.disableStartDate();
         if(isEmpty(this.automation.send_date_start)) {
           this.automation.send_date_start = new Date()
         }
@@ -772,9 +750,12 @@
         this.disabledDates = {
           to: today
         }
-
-        return false
       },
+
+      disableStartDate() {
+        return CAMPAIGN_STATUS_FOR_DISABLE_DATE.includes(this.automation.campaign_status);
+      },
+
       triggerErrorCheckbox() {
         this.errors.endDate = false;
         this.automation.send_continuously = true;
