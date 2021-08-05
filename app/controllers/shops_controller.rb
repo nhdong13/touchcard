@@ -22,16 +22,6 @@ class ShopsController < BaseController
     end
   end
 
-  # GET /settings/get_credit.json
-  def get_credit
-    respond_to do |format|
-      format.html
-      format.json {
-        render :json => {:credit => @shop.credit}, status: :ok
-      }
-    end
-  end
-
   def edit
   end
 
