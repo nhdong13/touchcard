@@ -34,8 +34,8 @@ class OrdersCreateJob < ActiveJob::Base
 
       # Create a new card and schedule to send
       post_sale_orders = shop.card_orders.where(enabled: true, type: "PostSaleOrder")
-      return puts "Card not setup" if post_sale_orders.nil?
-      return puts "Card not enabled" unless post_sale_orders.enabled?
+      # return puts "Card not setup" if post_sale_orders.nil?
+      # return puts "Card not enabled" unless post_sale_orders.enabled?
 
       post_sale_orders.each{|post_sale_order| post_sale_order.prepare_for_sending(order) }
     end

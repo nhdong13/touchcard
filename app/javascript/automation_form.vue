@@ -572,16 +572,6 @@
           console.log(error)
         });
       },
-      // saveAutomation: function() {
-      //   this.collectFilters();
-      //   // This will minimize the overhead of clone the automation
-      //   if(this.isTwoJsonEqual(this.saved_automation, this.automation)) {
-      //     return
-      //   }
-      //   this.fetchDataFromUI()
-      //   // TODO: Must somehow make sure automation is JSON safe
-      //   this.saved_automation = JSON.parse(JSON.stringify(this.automation))
-      // },
       isTwoJsonEqual: function(a, b) {
         return JSON.stringify(a) === JSON.stringify(b)
       },
@@ -603,6 +593,14 @@
       },
 
       saveAutomation(func) {
+        //   this.collectFilters();
+        //   // This will minimize the overhead of clone the automation
+        //   if(this.isTwoJsonEqual(this.saved_automation, this.automation)) {
+        //     return
+        //   }
+        //   this.fetchDataFromUI()
+        //   // TODO: Must somehow make sure automation is JSON safe
+        //   this.saved_automation = JSON.parse(JSON.stringify(this.automation))
         // Prevent to submit form after click submit
         this.pausedSubmitForm = true;
         setTimeout(() => this.pausedSubmitForm = false, 5000);
