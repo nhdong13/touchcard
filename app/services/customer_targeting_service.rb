@@ -10,7 +10,7 @@ class CustomerTargetingService
                     "discount_amount"
                   ]
   def initialize(params, accepted_attrs, removed_attrs)
-    @current_shop = params[:shop] ? params[:shop] : params[:order].shop_id
+    @current_shop = params[:shop] ? params[:shop] : params[:order].shop
     @orders = params[:order] ? [params[:order]] : get_orders_in_campaign
     @accepted_attrs = finalize_atrrs(accepted_attrs)
     @removed_attrs = finalize_atrrs(removed_attrs)
@@ -75,8 +75,8 @@ class CustomerTargetingService
       customer.default_address&.address1, customer.default_address&.city,
       customer.default_address&.province_code, customer.default_address&.country_code,
       customer.default_address&.zip, customer.default_address&.company, "", "", "", "", "", "",
-      customer.orders_count, "", currency_formater(customer.total_spent * 100), customer.tags,
-      "", "", "", "", customer.postcards.count, customer.postcards.last&.date_sent&.strftime("%d-%b-%y"),
+      customer.orders.where(shop_id: current_shop.id).count, "", currency_formater(customer.total_spent * 100),
+      customer.tags, "", "", "", "", customer.postcards.count, customer.postcards.last&.date_sent&.strftime("%d-%b-%y"),
       customer.accepts_marketing ? "Y" : "N", "", "", ""
     ] + filter_passed_by_customer(customer.id)
   end
