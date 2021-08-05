@@ -68,20 +68,12 @@ class CardOrder < ApplicationRecord
   after_update :update_budget_type, if: :saved_change_to_budget_type?
   after_update :reactivate_campaign, if: :saved_change_to_send_date_end?
 
-  def add_default_params shop
-    unless self.campaign_name.present?
-      # If a campaign has name "Automation 3" => This campaign should have name "Automation 4"
-      exist_campaign_names = shop.card_orders.where("archived = FALSE AND campaign_name ~* ?", 'Automation \d+').pluck(:campaign_name)
-      unless exist_campaign_names.present?
-        self.campaign_name = "Automation 1"
-      else
-        new_index = exist_campaign_names.map{|name| name.gsub(/[^0-9]/, '').to_i }.sort.last + 1
-        self.campaign_name = "Automation #{new_index}"
-      end
-    end
-    self.type = "PostSaleOrder" if self.type.nil?
-    self.campaign_status = "draft"
+  def add_default_params
+    self.campaign_name = generate_campaign_name unless self.campaign_name.present?
+    self.type = "PostSaleOrder" unless self.type.present?
+    self.campaign_status = :draft
     self.filters << Filter.new(filter_data: {:accepted => {}, :removed => {}})
+    self
   end
 
   class << self
@@ -188,28 +180,18 @@ class CardOrder < ApplicationRecord
     #send_date = arrive_by - 1.week
   end
 
-  def prepare_for_sending(postcard_trigger, data_status="normal")
+  def prepare_for_sending(postcard_trigger)
     # This method can get called from a delayed_job, which does not allow for standard logging
     # We thus return a string and expect the caller to log
-    if data_status == "normal"
-      return "international customer not enabeled" if postcard_trigger.international && !international?
-    end
+    return "international customer not enabeled" if postcard_trigger.international && !international?
     return "order filtered out" unless send_postcard?(postcard_trigger)
 
-    params = {
-      card_order: self,
-      customer: postcard_trigger.customer,
-      paid: false
-    }
-
-    if data_status == "history"
-      params.merge!({data_source_status: data_status, send_date: Date.today})
-    else
-      params.merge!({send_date: self.send_date})
-    end
-
-    postcard = postcard_trigger.postcards.new(params)
-    if self.pay(postcard)
+    postcard = postcard_trigger.postcards.new(
+        card_order: self,
+        customer: postcard_trigger.customer,
+        send_date: self.send_date,
+        paid: false)
+    if shop.pay(postcard)
       postcard.paid = true
       postcard.save
     else
@@ -240,4 +222,21 @@ class CardOrder < ApplicationRecord
   # def invalid_image_size(attributes)
   #   # debugger
   # end
+
+  def generate_campaign_name
+    exist_indexes = shop.card_orders.where("archived = FALSE AND campaign_name ~* ?", 'Automation \d+')
+                      .pluck(:campaign_name).map{|name| name.gsub(/[^0-9]/, '').to_i }.sort
+    unless exist_indexes.present?
+      "Automation 1"
+    else
+      new_index = exist_indexes[-1] + 1
+      (1..exist_indexes[-1] + 1).each do |i|
+        unless exist_indexes.include?(i)
+          new_index = i
+          break
+        end
+      end
+      "Automation #{new_index}"
+    end
+  end
 end
