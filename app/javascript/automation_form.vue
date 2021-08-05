@@ -241,7 +241,7 @@
     </div>
     <br>
     <div class="text-right">
-      <div v-if="id === null">
+      <div v-if="id && automation.campaign_status != 'draft'">
         <button class="mdc-button mdc-button--stroked" @click="returnToCampaignList" :disabled="pausedSubmitForm">Discard</button>
         <button class="mdc-button mdc-button--raised" @click="saveAndReturn" :disabled="pausedSubmitForm">Save Changes</button>
       </div>
@@ -301,6 +301,7 @@
     },
     created() {
       this.initializeStartDatepicker();
+      console.log(this.isUserHasPaymentMethod);
     },
 
     beforeDestroy: function() {
