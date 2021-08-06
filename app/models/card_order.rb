@@ -55,8 +55,6 @@ class CardOrder < ApplicationRecord
                                            allow_nil: true,
                                            message: "must be between 1 and 52 weeks"}
 
-  after_initialize :ensure_defaults, if: :new_record?
-
   delegate :current_subscription, to: :shop
 
 
@@ -64,17 +62,10 @@ class CardOrder < ApplicationRecord
 
   scope :active, -> { where(archived: false) }
 
+  after_initialize :ensure_defaults, if: :new_record?
   after_update :update_budget, if: :saved_change_to_budget_update?
   after_update :update_budget_type, if: :saved_change_to_budget_type?
   after_update :reactivate_campaign, if: :saved_change_to_send_date_end?
-
-  def add_default_params
-    self.campaign_name = generate_campaign_name unless self.campaign_name.present?
-    self.type = "PostSaleOrder" unless self.type.present?
-    self.campaign_status = :draft
-    self.filters << Filter.new(filter_data: {:accepted => {}, :removed => {}})
-    self
-  end
 
   class << self
     def num_enabled
@@ -144,6 +135,10 @@ class CardOrder < ApplicationRecord
     self.build_card_side_back(is_back: true) unless self.card_side_back
     self.international = false if international.nil?
     self.enabled = false if enabled.nil?
+    self.campaign_name = generate_campaign_name unless self.campaign_name.present?
+    self.type = "PostSaleOrder" unless self.type.present?
+    self.campaign_status = :draft
+    self.filters << Filter.new(filter_data: {:accepted => {}, :removed => {}})
     # TODO: add defaults to schema that can be added
   end
 
