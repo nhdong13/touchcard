@@ -301,7 +301,6 @@
     },
     created() {
       this.initializeStartDatepicker();
-      console.log(this.isUserHasPaymentMethod);
     },
 
     beforeDestroy: function() {
