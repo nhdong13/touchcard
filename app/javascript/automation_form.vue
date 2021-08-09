@@ -685,12 +685,14 @@
           this.errors.campaignName = false
         }
 
-        if(this.isFilterIncomplete()) {
-          this.checkingFilterError = true;
-          this.errors.filters = true;
-        } else {
-          this.checkingFilterError = false;
-          this.errors.filters = false;
+        if (!this.isFilterIncomplete()) {
+          if (this.orderDateFiltersNotConflict(this.acceptedFilters)) {
+            this.checkingFilterError = false;
+            this.errors.filters = false;
+          } else {
+            this.checkingFilterError = true;
+            this.errors.filters = true;
+          }
         }
 
         if(this.automation.international) {
@@ -766,7 +768,78 @@
         }
 
         return true
-      }
+      },
+
+      orderDateFiltersNotConflict(col) {
+        let orderDateFilters = col.filter(filter => filter.selectedFilter.includes("order_date"));
+        if (orderDateFilters.length != 2) return true;
+        let firstOrdFilter = orderDateFilters.filter(filter => filter.selectedFilter == "first_order_date")[0];
+        let lastOrdFilter = orderDateFilters.filter(filter => filter.selectedFilter == "last_order_date")[0];
+        // let firstOrderDateCompareValue = new Date(firstOrderDateVal.includes("&") ? firstOrderDateVal.split : firstOrderDateVal);
+
+        let firstOrdCompareValue = null;
+        switch (firstOrdFilter.selectedCondition) {
+          case "after":
+            firstOrdCompareValue = new Date(firstOrdFilter.value);
+            break;
+          case "between_date":
+            if (firstOrdFilter.value.split("&")[0] != "") {
+              firstOrdCompareValue = new Date(firstOrdFilter.value.split("&")[0]);
+            }
+            break;
+          case "between_number":
+            let numberOfDay = firstOrdFilter.value.split("&")[1];
+            if (numberOfDay != "") {
+              let today = new Date();
+              firstOrdCompareValue = today.setDate(today.getDate() - parseInt(numberOfDay));
+            }
+            break;
+          case "matches_number":
+            let today = new Date();
+            firstOrdCompareValue = today.setDate(today.getDate() - parseInt(firstOrdFilter.value));
+            break;
+          default:
+            break;
+        }
+        if (!firstOrdCompareValue) return true;
+
+        let lastOrdCompareValue = null;
+        switch (lastOrdFilter.selectedCondition) {
+          case "before":
+            lastOrdCompareValue = new Date(lastOrdFilter.value);
+            break;
+          case "between_date":
+            if (lastOrdFilter.value.split("&")[1] != "") {
+              lastOrdCompareValue = new Date(lastOrdFilter.value.split("&")[1]);
+            }
+            break;
+          case "between_number":
+            let numberOfDay = lastOrdFilter.value.split("&")[0];
+            if (numberOfDay != "") {
+              let today = new Date();
+              lastOrdCompareValue = today.setDate(today.getDate() - parseInt(numberOfDay));
+            }
+            break;
+          case "matches_number":
+            let today = new Date();
+            lastOrdCompareValue = today.setDate(today.getDate() - parseInt(lastOrdFilter.value));
+            break;
+          default:
+            break;
+        }
+        if (!lastOrdCompareValue) return true;
+
+        if (lastOrdCompareValue <= firstOrdCompareValue) {
+          this.markInvalidDateFilter(col, firstOrdFilter, lastOrdFilter);
+          return false;
+        }
+        return true;
+      },
+
+      markInvalidDateFilter(collection, firstOrd, lastOrd) {
+        $($(".filter-line")[collection.indexOf(firstOrd)]).find(".f-value input").addClass("invalid")
+        $($(".filter-line")[collection.indexOf(lastOrd)]).find(".f-value input").addClass("invalid")
+      },
     }
   }
 </script>
