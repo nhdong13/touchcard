@@ -219,19 +219,23 @@ class CardOrder < ApplicationRecord
   # end
 
   def generate_campaign_name
-    exist_indexes = shop.card_orders.where("archived = FALSE AND campaign_name ~* ?", 'Automation \d+')
-                      .pluck(:campaign_name).map{|name| name.gsub(/[^0-9]/, '').to_i }.sort
-    unless exist_indexes.present?
-      "Automation 1"
-    else
-      new_index = exist_indexes[-1] + 1
-      (1..exist_indexes[-1] + 1).each do |i|
-        unless exist_indexes.include?(i)
-          new_index = i
-          break
+    if shop.present?
+      exist_indexes = shop.card_orders.where("archived = FALSE AND campaign_name ~* ?", 'Automation \d+')
+                        .pluck(:campaign_name).map{|name| name.gsub(/[^0-9]/, '').to_i }.sort
+      unless exist_indexes.present?
+        "Automation 1"
+      else
+        new_index = exist_indexes[-1] + 1
+        (1..exist_indexes[-1] + 1).each do |i|
+          unless exist_indexes.include?(i)
+            new_index = i
+            break
+          end
         end
+        "Automation #{new_index}"
       end
-      "Automation #{new_index}"
+    else
+      "Test automation"
     end
   end
 end
