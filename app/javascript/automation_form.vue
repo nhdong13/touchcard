@@ -592,7 +592,7 @@
       },
 
       saveWithValidation: function(f) {
-        this.validateForm();
+        // this.validateForm();
         this.$nextTick(() => {
           if (isEmpty($(".invalid"))) return false;
           $(".invalid")[0].scrollIntoView({
