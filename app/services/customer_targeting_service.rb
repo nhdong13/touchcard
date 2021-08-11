@@ -71,11 +71,12 @@ class CustomerTargetingService
   end
 
   def customer_line_data customer
-    [ customer.id, "Customer", customer.first_name, customer.last_name,
+    [ customer.shopify_id, "Customer", customer.first_name, customer.last_name,
       customer.default_address&.address1, customer.default_address&.city,
       customer.default_address&.province_code, customer.default_address&.country_code,
       customer.default_address&.zip, customer.default_address&.company, "", "", "", "", "", "",
-      customer.orders.where(shop_id: current_shop.id).count, "", currency_formater(customer.total_spent * 100),
+      customer.orders.where(shop_id: current_shop.id).count, "",
+      currency_formater(Order.where(customer_id: customer.id, shop_id: current_shop.id).sum(:total_line_items_price)),
       customer.tags, "", "", "", "", customer.postcards.count, customer.postcards.last&.date_sent&.strftime("%d-%b-%y"),
       customer.accepts_marketing ? "Y" : "N", "", "", ""
     ] + filter_passed_by_customer(customer.id)
@@ -96,11 +97,11 @@ class CustomerTargetingService
   end
 
   def order_line_data order
-    [ order.customer&.id, "Order", order.customer&.first_name, order.customer&.last_name,
+    [ order.customer&.shopify_id, "Order", order.customer&.first_name, order.customer&.last_name,
       order.customer&.default_address&.address1, order.customer&.default_address&.city,
       order.customer&.default_address&.province_code, order.customer&.default_address&.country_code,
-      order.customer&.default_address&.zip, order.customer&.default_address&.company, "", order.id,
-      order.processed_at&.strftime("%b %d, %Y"), "", "", "", "", order.line_items&.count, currency_formater(order.total_price),
+      order.customer&.default_address&.zip, order.customer&.default_address&.company, "", order.shopify_id,
+      order.processed_at&.strftime("%b %d, %Y"), "", "", "", "", order.line_items&.count, currency_formater(order.total_line_items_price),
       order.tags, order.referring_site, order.landing_site, order.discount_codes.map{|code| code['code']}.join(", "),
       currency_formater(order.total_discounts), "", "", "", order.financial_status, order.fulfillment_status, ""
     ] + filter_passed_by_order(order)
@@ -134,8 +135,8 @@ class CustomerTargetingService
   end
 
   def item_line_data item
-    [ item.order&.customer&.id, "Order Item", "", "", "", "", "", "", "", "", "",
-      item.order&.id, item.order&.processed_at&.strftime("%b %d, %Y"), item.title, item.sku,
+    [ item.order&.customer&.shopify_id, "Order Item", "", "", "", "", "", "", "", "", "",
+      item.order&.shopify_id, item.order&.processed_at&.strftime("%b %d, %Y"), item.title, item.sku,
       item.variant_title, "", item.quantity, currency_formater(item.price.to_f * 100),
       "", "", "", "", "", "", "", "", "", "", ""
     ] + Array.new(accepted_attrs&.keys&.length, "")

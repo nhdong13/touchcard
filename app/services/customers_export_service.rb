@@ -29,6 +29,10 @@ class CustomersExportService
     #Add section divider
     add_section_divider
 
+    # Format id column to string
+    sheet["A3:A#{sheet.rows.count}"].each{ |cell| cell.type = :string }
+    sheet["L3:L#{sheet.rows.count}"].each{ |cell| cell.type = :string }
+
     # Generate file and return file
     send_excel_file(book)
   end
