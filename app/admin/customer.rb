@@ -6,7 +6,7 @@ ActiveAdmin.register Customer do
   # filter :shop , as: :select, collection: ->{Shop.all.sort_by {|s| s.domain}}
   filter :first_name
   filter :last_name
-  filter :email
+  filter :email, as: :select, collection: ->{Customer.select(:email, :id).order(:email)}
   filter :total_spent
   filter :orders_count
   filter :accepts_marketing
