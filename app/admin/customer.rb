@@ -4,9 +4,9 @@ ActiveAdmin.register Customer do
   # menu false
 
   # filter :shop , as: :select, collection: ->{Shop.all.sort_by {|s| s.domain}}
-  filter :first_name
-  filter :last_name
-  filter :email
+  filter :first_name, as: :string, filters: [:equals, :starts_with, :ends_with]
+  filter :last_name, as: :string, filters: [:equals, :starts_with, :ends_with]
+  filter :email, as: :string, filters: [:equals, :starts_with, :ends_with]
   filter :total_spent
   filter :orders_count
   filter :accepts_marketing
