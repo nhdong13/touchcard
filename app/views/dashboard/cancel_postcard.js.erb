@@ -1,8 +1,5 @@
 (function() {
   var id = "#postcard-" + <%= @postcard.id %>;
-  var row = document.querySelector(id);
-  var infoBtn = document.querySelector(`${id} .postcard-status-chip`);
-  var cancelBtn = document.querySelector(`${id} .cancel-postcard-button`)
-  cancelBtn.parentNode.removeChild(cancelBtn);
-  infoBtn.innerText = "Canceled";
+  $('.cancel-postcard-button', id).remove();
+  $('.mdl-chip__text',id).text("Canceled");
 })();
