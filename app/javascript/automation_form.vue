@@ -588,6 +588,9 @@
         if(!this.isFormValid()) return false;
         this.fetchDataFromUI();
         this.shared.campaign = this.automation;
+        if(this.automation.campaign_status == "complete") {
+          this.shared.campaign.campaign_status = "sending"
+        }
         this.collectFilters();
         return true;
       },
@@ -629,7 +632,7 @@
       saveAndStartSending: function() {
         // If there're some errors in save process => return
         if (!this.saveWithValidation()) return;
-        this.shared.campaign.campaign_status = this.currentShop.credit > 0.89 ? "processing" : "out_of_credit";
+        this.shared.campaign.campaign_status = this.currentShop.credit > 0.89 ? (this.automation.campaign_status == "complete" ? "sending" : "processing") : "out_of_credit";
         this.saveAutomation(this.startSending);
       },
 
