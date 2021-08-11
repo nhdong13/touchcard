@@ -41,7 +41,7 @@ class Subscription < ApplicationRecord
     subscription.quantity = new_quantity
     subscription.proration_behavior = "none"
     subscription.save
-    update(quantity: new_quantity)
+    update(quantity: new_quantity, stripe_id: subscription.id)
     # don't need to do anything for downgrade as the billing won't change till
     # next month
     return true if downgrade
@@ -103,5 +103,9 @@ class Subscription < ApplicationRecord
   # necessary for the active admin
   def display_name
     self.id
+  end
+
+  def change_plan plan_id
+    Stripe::Subscription.update(stripe_id, {plan: plan_id})
   end
 end
