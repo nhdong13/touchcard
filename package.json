@@ -21,6 +21,7 @@
     "vue-js-modal": "^2.0.0-rc.6",
     "vue-loader": "14.2.2",
     "vue-material": "^1.0.0-beta-15",
+    "vue-screen": "^1.5.5",
     "vue-template-compiler": "^2.5.17",
     "vue-turbolinks": "^2.0.0",
     "vue2-datepicker": "^3.9.1",

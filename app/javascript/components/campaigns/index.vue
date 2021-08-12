@@ -18,7 +18,7 @@
           <input :placeholder="'SEARCH'" v-model="searchQuery" @input="debounceSearch" class="border-theme"/>
         </div>
       </div>
-      <div>
+      <div v-if="$screen.width > 425">
         <table class="campaign-dashboard">
           <tr>
             <th width="35px">
@@ -211,6 +211,7 @@
 
     created() {
       this.listcampaignActive()
+      console.log(screen.width)
       // TODO: comment this piece of code
       if(!_.isEmpty(this.shared.campaign)) {
           const _sharedState = this.shared.campaign
