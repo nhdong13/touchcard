@@ -382,7 +382,7 @@ ActiveRecord::Schema.define(version: 2021_08_11_202511) do
   end
 
   create_table "subscriptions", id: :serial, force: :cascade do |t|
-    t.integer "quantity", default: 0, null: false
+    t.integer "quantity", null: false
     t.integer "plan_id"
     t.integer "shop_id"
     t.datetime "current_period_start", null: false
@@ -393,6 +393,7 @@ ActiveRecord::Schema.define(version: 2021_08_11_202511) do
     t.float "value", default: 0.0
     t.index ["plan_id"], name: "index_subscriptions_on_plan_id"
     t.index ["shop_id"], name: "index_subscriptions_on_shop_id"
+    t.index ["stripe_id"], name: "index_subscriptions_on_stripe_id"
   end
 
   add_foreign_key "addresses", "customers"
