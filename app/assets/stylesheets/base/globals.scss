@@ -35,7 +35,14 @@ html > body {
 
 .main-layout-grid {
   max-width: 1124px;
+  @media screen and (max-width: 768px) and (min-width: 426px) {
+    max-width: 768px;
+  }
+  @media screen and (max-width: 425px) {
+    max-width: 425px;
+  }
 }
+
 .full-width {
   width: 100%;
 }

@@ -93,7 +93,7 @@
             </td>
             <!-- The maximum of character to display is 45 -->
             <td>
-              <span v-on:click="onEditCampaign(item.id)" class="campaign-name-style two-line-text">{{ item.campaign_name | truncate(80) }}</span>
+              <span v-on:click="onEditCampaign(item.id)" class="campaign-name-style two-line-text">{{ item.campaign_name | truncate(60) }}</span>
             </td>
             <td>{{ item.campaign_status}}</td>
             <td>{{ item.campaign_type }}</td>
@@ -626,9 +626,13 @@
 
   .mw-col {
     width: 390px;
+    @media screen and (max-width: 768px) and (min-width: 425px) {
+      width: 100px;
+    }
   }
 
   .delete-campaign-modal {
     padding: 0 56px;
   }
+
 </style>
