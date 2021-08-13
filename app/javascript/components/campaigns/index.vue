@@ -109,6 +109,31 @@
           </tr>
         </table>
       </div>
+      <div class="mobile-support" v-else>
+        <ul>
+          <li class="d-flex" v-for="item in thisCampaigns">
+            <span>
+              <PreviewImage
+                :key="item.id"
+                :front-image="item.front_json.background_url"
+                :back-image="item.back_json.background_url"
+              />
+            </span>
+            <span class="campaign-info d-flex">
+              <div>
+                <span v-on:click="onEditCampaign(item.id)" class="campaign-name-style two-line-text">{{ item.campaign_name | truncate(60) }}</span>
+              </div>
+              <div class="campaign-detail d-flex">
+                <span class='t-b'>{{ item.campaign_status}}</span>
+                <span class='t-b'>{{ item.campaign_type}}</span>
+                <span class='t-b'>{{ item.budget }}</span>
+                <span class='t-b'>{{ splitedSchedule(item.schedule)[0] }}</span>
+                <span class='t-b'>{{ splitedSchedule(item.schedule)[1] }}</span>
+              </div>
+            </span>
+          </li>
+        </ul>
+      </div>
       <div id="pagination">
         <CustomePagination
           v-model="currentPage"
@@ -634,6 +659,28 @@
 
   .delete-campaign-modal {
     padding: 0 56px;
+  }
+
+  .mobile-support > ul {
+    list-style-type: none;
+    padding-inline-start: 0px;
+
+    .d-flex {
+      display: flex;
+    }
+
+    > li {
+      padding: 5px 0px;
+      height: 100px;
+
+      .campaign-info {
+        flex-direction: column;
+
+        .campaign-detail {
+
+        }
+      }
+    }
   }
 
 </style>
