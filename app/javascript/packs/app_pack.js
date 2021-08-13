@@ -36,6 +36,9 @@ library.add(faCaretDown, faCaretUp, faLongArrowAltDown, faCalendarAlt,
   faCaretRight, faCaretLeft, faReply, faTrashAlt, faChevronDown)
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 
+import VueScreen from 'vue-screen';
+Vue.use(VueScreen);
+
 // To get Turbolinks working it helped to put the javascript pack tag in the <head>
 // If we need to expand Vue to other parts of the application I suspect it would help
 // to keep this structure and load individual containers loaded from this file.
