@@ -39,7 +39,8 @@ html > body {
     max-width: 768px;
   }
   @media screen and (max-width: 425px) {
-    max-width: 420px;
+    max-width: 425px;
+    margin-left: -10px;
   }
 }
 
