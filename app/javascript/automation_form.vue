@@ -117,7 +117,7 @@
         </div>
       </div>
     </div>
-    <div :class="[errors.returnAddress ? 'invalid' : '', 'automation-section']">
+    <!-- <div :class="[errors.returnAddress ? 'invalid' : '', 'automation-section']">
       <label for="return-address-checkbox" class="noselect"><strong>Add Return Address</strong></label>
       <button @click="enableAddReturnAddress= !enableAddReturnAddress">Edit</button>
       <div class="nested-toggle return-address" v-if="enableAddReturnAddress">
@@ -199,7 +199,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
     <h2 class="d-inline-block">Customer Filters</h2>
     <button @click="downloadCSV"> CSV </button>
     <div :class="'filter-config nested-toggle row'" :showError="errors.filters">
@@ -588,9 +588,7 @@
         if(!this.isFormValid()) return false;
         this.fetchDataFromUI();
         this.shared.campaign = this.automation;
-        if(this.automation.campaign_status == "complete") {
-          this.shared.campaign.campaign_status = "sending"
-        }
+
         this.collectFilters();
         return true;
       },
@@ -626,13 +624,17 @@
       saveAndReturn: function() {
         // If there're some errors in save process => return
         if (!this.saveWithValidation()) return;
+        if(this.automation.campaign_status == "complete") {
+          this.shared.campaign.campaign_status = this.currentShop.credit > 0.89 ? "sending" : "out_of_credit"
+        }
+
         this.saveAutomation(this.returnToCampaignList);
       },
 
       saveAndStartSending: function() {
         // If there're some errors in save process => return
         if (!this.saveWithValidation()) return;
-        this.shared.campaign.campaign_status = this.currentShop.credit > 0.89 ? (this.automation.campaign_status == "complete" ? "sending" : "processing") : "out_of_credit";
+        this.shared.campaign.campaign_status = this.currentShop.credit > 0.89 ? (this.automation.campaign_status != "complete" ? "processing" : "sending") : "out_of_credit";
         this.saveAutomation(this.startSending);
       },
 

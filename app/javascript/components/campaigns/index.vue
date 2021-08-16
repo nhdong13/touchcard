@@ -257,7 +257,6 @@
 
     created() {
       this.listcampaignActive()
-      console.log(screen.width)
       // TODO: comment this piece of code
       if(!_.isEmpty(this.shared.campaign)) {
           const _sharedState = this.shared.campaign
