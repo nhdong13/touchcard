@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_08_11_202511) do
+ActiveRecord::Schema.define(version: 2021_08_17_091916) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -79,7 +79,6 @@ ActiveRecord::Schema.define(version: 2021_08_11_202511) do
     t.integer "discount_exp"
     t.boolean "enabled", default: false, null: false
     t.boolean "international", default: false, null: false
-    t.integer "send_delay", default: 2
     t.datetime "arrive_by"
     t.datetime "customers_before"
     t.datetime "customers_after"
@@ -323,6 +322,7 @@ ActiveRecord::Schema.define(version: 2021_08_11_202511) do
     t.bigint "price_rule_id"
     t.boolean "canceled", default: false
     t.string "data_source_status", default: "normal"
+    t.string "error"
     t.index ["customer_id"], name: "index_postcards_on_customer_id"
     t.index ["postcard_trigger_id"], name: "index_postcards_on_postcard_trigger_id"
   end

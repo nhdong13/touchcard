@@ -1351,7 +1351,8 @@ GEM
       nokogiri (>= 1.5.9)
     mail (2.7.1)
       mini_mime (>= 0.1.1)
-    mailgunner (2.6.0)
+    mailgun-ruby (1.2.5)
+      rest-client (>= 2.0.2)
     marcel (0.3.3)
       mimemagic (~> 0.3.2)
     material_components_web-sass (0.27.0)
@@ -1600,7 +1601,7 @@ DEPENDENCIES
   json (~> 2.5.1)
   kaminari
   lob (~> 5.0)
-  mailgunner (~> 2.4)
+  mailgun-ruby (~> 1.2.5)
   material_components_web-sass
   mimemagic (= 0.3.7)
   newrelic_rpm (~> 6.15)

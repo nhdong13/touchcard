@@ -1,0 +1,31 @@
+<div class="send-error-report">
+  <table>
+    <tr>
+      <th><strong>Name</strong></th>
+      <th><strong>Status</strong></th>
+      <th><strong>Budget</strong></th>
+      <th><strong>Date</strong></th>
+    </tr>
+    <% campaigns.each do |campaign| %>
+      <tr>
+        <td><%= campaign[:campaign_name] %></td>
+        <td><%= campaign[:campaign_status] %></td>
+        <td><%= campaign[:budget] %></td>
+        <td><%= campaign[:send_date_start] %> - <%= campaign[:send_date_end].nil? ? "Ongoing" : campaign[:send_date_end] %></td>
+      </tr>
+    <% end %>
+  </table>
+  <br/>
+  <div>
+    <ul>
+      <li><span>Number of sent postcards: 50</span></li>
+      <li><span>Number of error postcards/ Total postcard: 50/100</span></li>
+      <li>
+        <span>Number of errors: </span><br/>
+        <ul>
+          <li><span>Wrong address: 10 postcards</span></li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+</div>

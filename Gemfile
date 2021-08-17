@@ -67,7 +67,7 @@ gem "hirb", "~> 0.7"
 gem "business_time", "~> 0.7"
 
 # send mails using mailgun
-gem "mailgunner", '~> 2.4'
+gem 'mailgun-ruby', '~>1.2.5'
 
 gem "active_campaign", "0.1.16"
 

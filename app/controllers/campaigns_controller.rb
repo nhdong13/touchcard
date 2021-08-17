@@ -53,4 +53,12 @@ class CampaignsController < BaseController
       }}
     end
   end
+
+  def test
+    ReportErrorMailer.send_error_report.deliver_now
+
+    respond_to do |format|
+      format.html { render plain: "OK" }
+    end
+  end
 end

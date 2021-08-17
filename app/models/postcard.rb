@@ -59,10 +59,15 @@ class Postcard < ApplicationRecord
         num_failed += 1
         logger.error e
         NewRelic::Agent::notice_error(e.message)
+
         next
       end
     end
-    {card_sent_amount: todays_cards.size - num_failed, total_card: todays_cards.size}
+    {
+      card_sent_amount: todays_cards.size - num_failed,
+      total_card: todays_cards.size,
+      error_cards_amount: num_failed
+    }
   end
 
   def self.send_all_history_cards(shop)
