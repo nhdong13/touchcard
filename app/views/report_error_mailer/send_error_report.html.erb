@@ -18,12 +18,14 @@
   <br/>
   <div>
     <ul>
-      <li><span>Number of sent postcards: 50</span></li>
-      <li><span>Number of error postcards/ Total postcard: 50/100</span></li>
+      <li><span>Number of sent postcards: <%= sending_result[:card_sent_amount] %></span></li>
+      <li><span>Number of error postcards/ Total postcard: <%= sending_result[:error_cards_amount] %>/<%= sending_result[:total_card] %></span></li>
       <li>
         <span>Number of errors: </span><br/>
         <ul>
-          <li><span>Wrong address: 10 postcards</span></li>
+          <% error_details.each do |k, v| %>
+            <li><span><%= k %>: <%= v %> postcards</span></li>
+          <% end %>
         </ul>
       </li>
     </ul>

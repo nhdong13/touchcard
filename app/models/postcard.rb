@@ -47,11 +47,11 @@ class Postcard < ApplicationRecord
     address.to_lob_address
   end
 
-  def self.send_all campaign_id
+  def self.send_all
     num_failed = 0
     todays_cards = Postcard.joins(:shop)
       .where("paid = TRUE AND sent = FALSE AND canceled = FALSE AND send_date <= ?
-               AND shops.approval_state != ? AND card_order_id = ?", Time.now, "denied", campaign_id)
+               AND shops.approval_state != ?", Time.now, "denied")
     todays_cards.each do |card|
       begin
         card.send_card
@@ -59,7 +59,9 @@ class Postcard < ApplicationRecord
         num_failed += 1
         logger.error e
         NewRelic::Agent::notice_error(e.message)
-
+        data_error = JSON.parse(e.json_body.body)
+        card.error = data_error["error"]["response"]
+        card.save
         next
       end
     end
