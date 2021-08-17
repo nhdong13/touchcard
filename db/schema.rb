@@ -10,9 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_08_11_202511) do
+ActiveRecord::Schema.define(version: 2021_08_17_113421) do
 
   # These are extensions that must be enabled in order to support this database
+  enable_extension "pg_stat_statements"
   enable_extension "plpgsql"
 
   create_table "active_admin_comments", id: :serial, force: :cascade do |t|
@@ -168,7 +169,6 @@ ActiveRecord::Schema.define(version: 2021_08_11_202511) do
     t.boolean "accepts_marketing"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["email"], name: "index_customers_on_email"
     t.index ["shopify_id"], name: "index_customers_on_shopify_id", unique: true
   end
 
@@ -382,7 +382,7 @@ ActiveRecord::Schema.define(version: 2021_08_11_202511) do
   end
 
   create_table "subscriptions", id: :serial, force: :cascade do |t|
-    t.integer "quantity", default: 0, null: false
+    t.integer "quantity", null: false
     t.integer "plan_id"
     t.integer "shop_id"
     t.datetime "current_period_start", null: false
@@ -393,6 +393,7 @@ ActiveRecord::Schema.define(version: 2021_08_11_202511) do
     t.float "value", default: 0.0
     t.index ["plan_id"], name: "index_subscriptions_on_plan_id"
     t.index ["shop_id"], name: "index_subscriptions_on_shop_id"
+    t.index ["stripe_id"], name: "index_subscriptions_on_stripe_id"
   end
 
   add_foreign_key "addresses", "customers"
