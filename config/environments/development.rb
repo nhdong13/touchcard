@@ -3,6 +3,13 @@ Rails.application.configure do
   config.hosts = (config.hosts rescue []) << /\h+.ngrok.io/
   config.web_console.whiny_requests = false
 
+  config.before_configuration do
+    env_file = File.join(Rails.root, 'config', 'local_env.yml')
+    YAML.load(File.open(env_file)).each do |key, value|
+      ENV[key.to_s] = value
+    end if File.exists?(env_file)
+  end
+
   # Settings specified here will take precedence over those in config/application.rb.
 
   # In the development environment your application's code is reloaded on
@@ -21,10 +28,13 @@ Rails.application.configure do
   config.action_mailer.raise_delivery_errors = true
 
   # mailgun settings
-  config.action_mailer.delivery_method = :mailgun
-  config.action_mailer.mailgun_settings = {
-    api_key: ENV["MAILGUN_API_KEY"],
-    domain: ENV["MAILGUN_DOMAIN"]
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.smtp_settings = {
+    address: "smtp.mailgun.org",
+    port: ENV["MAILGUN_SMTP_PORT"],
+    domain: ENV["MAILGUN_DOMAIN"],
+    user_name: ENV["MAILGUN_SMTP_LOGIN"],
+    password: ENV["MAILGUN_SMTP_PASSWORD"]
   }
 
   # Print deprecation notices to the Rails logger.

@@ -1,6 +1,7 @@
 class ReportErrorMailer < ApplicationMailer
 
   def send_error_report sending_result
+=begin
     mg_client = Mailgun::Client.new
 
     campaigns_query = CardOrder.select(:campaign_name, :campaign_status, :budget, :send_date_start, :send_date_end).find_by_id(Postcard.where("error IS NOT NULL").distinct.pluck(:card_order_id))
@@ -20,9 +21,12 @@ class ReportErrorMailer < ApplicationMailer
 
     # Send your message through the client
     mg_client.send_message 'sandbox7035359c3a924ff9ac2c8f42db30a207.mailgun.org', message_params
+=end
 
     # For some reason, Mailgun don't recognize sandbox domain when using with Action Mailer
     #
-    # mail(to: "tungdv@nustechnology.com", subject: "Testing")
+    @sending_result = sending_result
+    @campaigns = ActiveModelSerializers::SerializableResource.new(Shop.find(6).card_orders.last(10), {each_serializer: CardOrderSerializer}).serializable_hash
+    mail(to: "tungdv@nustechnology.com", subject: "Testing")
   end
 end
