@@ -23,7 +23,9 @@
       <li>
         <span>Number of errors: </span><br/>
         <ul>
-
+          <% @error_details.each do |k, v| %>
+            <li><span><%= k %>: <%= v %> postcards</span></li>
+          <% end %>
         </ul>
       </li>
     </ul>

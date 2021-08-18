@@ -25,7 +25,7 @@ class SendingPostcardJob < ActiveJob::Base
         # =================================================
         # Fetching Customer data and generate postcard
         # =================================================
-        customers_before = campaign.automation? ? Time.new.strftime("%FT%T%:z") : campaign.created_at
+        customers_before = campaign.automation? ? Time.now : campaign.created_at
 
         # Set customer filter
         filter = campaign.filters.last

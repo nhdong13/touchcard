@@ -68,3 +68,6 @@ CSV_TITLE = [ "Fullame",
               "Accepts marketing",
               "Account status"
             ]
+DEV_EMAILS = [
+  "tungdv@nustechnology.com"
+]

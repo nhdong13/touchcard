@@ -53,17 +53,4 @@ class CampaignsController < BaseController
       }}
     end
   end
-
-  def test
-    fake_sending_result = {
-      card_sent_amount: 12,
-      total_card: 50,
-      error_cards_amount: 38
-    }
-    ReportErrorMailer.send_error_report(fake_sending_result).deliver_now
-
-    respond_to do |format|
-      format.html { render plain: "OK" }
-    end
-  end
 end
