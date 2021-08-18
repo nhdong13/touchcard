@@ -6,7 +6,7 @@
     <div class="automation-section">
       <span>
         <strong><small :class="{error: errors.campaignName}" v-if="errors.campaignName">*</small> Campaign name</strong>
-        <input id="campaign_name" v-model="automation.campaign_name" :class="[errors.campaignName ? 'invalid' : '', 'error-wrapper']" maxlength="80">
+        <input id="campaign_name" v-model="automation.campaign_name" :class="[errors.campaignName ? 'invalid' : '', 'error-wrapper']" maxlength="60">
         <span class="error campaign-name-error">This field is required.</span>
       </span>
     </div>
