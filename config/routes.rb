@@ -85,6 +85,4 @@ Rails.application.routes.draw do
     get '/lob_debug' => 'postcard_render#debug'
   end
 
-  get '/test_mail' , to: 'campaigns#test'
-
 end

@@ -96,7 +96,7 @@ class CardOrder < ApplicationRecord
 
   def reactivate_campaign
     if self.complete? && self.automation? && Time.now.beginning_of_day <= self.send_date_end
-      self.sending!
+      update(campaign_status: :sending, previous_campaign_status: CardOrder.campaign_statuses[:sending])
       InitializeSendingPostcardProcess.start self.shop, self
     end
   end
