@@ -71,3 +71,5 @@ CSV_TITLE = [ "Fullame",
 DEV_EMAILS = [
   "tungdv@nustechnology.com"
 ]
+
+MAXIMUM_CAMPAIGN_NAME_LENGTH = 60

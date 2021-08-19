@@ -42,7 +42,7 @@ class CardOrder < ApplicationRecord
                                 allow_destroy: true
 
   validates :shop, :card_side_front, :card_side_back, presence: true
-  validates :campaign_name, length: {maximum: 80}
+  validates :campaign_name, length: {maximum: MAXIMUM_CAMPAIGN_NAME_LENGTH}
   validates :discount_pct, numericality: { greater_than_or_equal_to: -100,
                                            less_than: 0,
                                            only_integer: true,

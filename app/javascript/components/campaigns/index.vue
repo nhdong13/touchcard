@@ -209,6 +209,7 @@
   import CustomePagination from './pagination.vue'
   import PreviewImage from './campaign_index_preview_image.vue'
   import dateFormat from 'packs/date-format.js'
+  import { MAXIMUM_CAMPAIGN_NAME_LENGTH } from '../../config.js'
 
   Vue.use(VModal, { componentName: 'campaignModal'})
   Vue.use(MdSwitch)
@@ -340,7 +341,11 @@
 
 
       showModalConfirmDuplicate: function() {
-        this.duplicateCampaignName = "Copy of " + this.thisCampaigns.find(campaign => campaign.id == this.selected).campaign_name;
+        const selectedCampaignName = this.thisCampaigns.find(campaign => campaign.id == this.selected).campaign_name
+        this.duplicateCampaignName = "Copy of " + selectedCampaignName;
+        if(this.duplicateCampaignName.length > MAXIMUM_CAMPAIGN_NAME_LENGTH) {
+          this.duplicateCampaignName = selectedCampaignName;
+        }
         this.$modal.show('duplicateModal')
       },
 
