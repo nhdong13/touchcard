@@ -627,7 +627,6 @@
         if(this.automation.campaign_status == "complete") {
           this.shared.campaign.campaign_status = this.currentShop.credit > 0.89 ? "sending" : "out_of_credit"
         }
-
         this.saveAutomation(this.returnToCampaignList);
       },
 
@@ -635,7 +634,7 @@
         // If there're some errors in save process => return
         if (!this.saveWithValidation()) return;
         this.shared.campaign.campaign_status = this.currentShop.credit > 0.89 ? (this.automation.campaign_status != "complete" ? "processing" : "sending") : "out_of_credit";
-        this.saveAutomation(this.startSending);
+        this.saveAutomation(this.automation.campaign_status != "complete" ? this.startSending : this.returnToCampaignList);
       },
 
       saveAndCheckout: function() {
