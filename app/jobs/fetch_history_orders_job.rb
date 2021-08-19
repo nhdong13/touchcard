@@ -6,32 +6,7 @@ class FetchHistoryOrdersJob < ActiveJob::Base
     throw :abort if (job.arguments[2].archived || job.arguments[2].complete?)
   end
 
-  # Migrate all old sending postcard logic to new one
-  before_perform do |job|
-    SendingPostcardJob.perform_later(job.arguments[0], job.arguments[1])
-    throw :abort
-  end
-
-  after_perform do |job|
-    # job.arguments[0] => shop instance
-    # job.arguments[2] => card order instance
-    GeneratePostcardJob.perform_later(job.arguments[0], job.arguments[2]) unless job.arguments[2].archived
-  end
-
-  def perform(shop, time_delay, campaign)
-    # Scenerio with campaign status
-    #
-    # campaign.processing? should be true when we pause and resume campaign
-    # campaign.draft? should be true when we have a new created campaign and we start sending postcard
-    # campaign.sent? should be true when we edit the campaign to extend its end date
-    # campaign.sending? should be true when we start a new loop of sending postcard
-    #
-    return unless (campaign.enabled? &&
-      (campaign.processing? || campaign.draft? || campaign.complete? || campaign.sending?) &&
-      !campaign.archived)
-
-    campaign.processing!
-
+  def perform(shop, time_delay)
     processed_at_max = DateTime.now
     processed_at_min = processed_at_max - time_delay.weeks
     params = {status: "any",

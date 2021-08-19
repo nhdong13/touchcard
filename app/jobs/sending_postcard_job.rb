@@ -16,7 +16,7 @@ class SendingPostcardJob < ActiveJob::Base
   end
 
   def perform shop, campaign, new_loop_flag = true
-    wait_time = 2.minutes
+    wait_time = 2.minutes.from_now
     if campaign.enabled?
       case campaign.campaign_status
       when "processing"
@@ -25,7 +25,7 @@ class SendingPostcardJob < ActiveJob::Base
         # =================================================
         # Fetching Customer data and generate postcard
         # =================================================
-        customers_before = campaign.automation? ? Time.new.strftime("%FT%T%:z") : campaign.created_at
+        customers_before = campaign.automation? ? Time.now : campaign.created_at
 
         # Set customer filter
         filter = campaign.filters.last
@@ -52,7 +52,7 @@ class SendingPostcardJob < ActiveJob::Base
 
         if campaign.enabled?
           if Time.now.end_of_day < campaign.send_date_start
-            wait_time = 1.day
+            wait_time = Date.tomorrow().beginning_of_day
             campaign.scheduled!
           else
             campaign.sending!
@@ -63,7 +63,7 @@ class SendingPostcardJob < ActiveJob::Base
 
         if campaign.enabled?
           if Time.now.end_of_day < campaign.send_date_start
-            wait_time = 1.day
+            wait_time = Date.tomorrow().beginning_of_day
           else
             campaign.sending!
           end
@@ -87,14 +87,14 @@ class SendingPostcardJob < ActiveJob::Base
           if (reach_end_date(campaign) || campaign.one_off?)
             EnableDisableCampaignService.disable_campaign campaign, :complete, "#{campaign.campaign_name} is complete"
           else
-            wait_time = 1.day
+            wait_time = Date.tomorrow().beginning_of_day
           end
         end
       else
         Rails.logger.debug "[NOTE] Campaign with id #{campaign.id} has status #{campaign.campaign_status}"
       end
     end
-    SendingPostcardJob.set(wait: wait_time).perform_later(shop, campaign)
+    SendingPostcardJob.delay(run_at: wait_time).perform_later(shop, campaign)
   end
 
 

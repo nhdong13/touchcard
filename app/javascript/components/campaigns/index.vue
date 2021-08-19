@@ -18,7 +18,7 @@
           <input :placeholder="'SEARCH'" v-model="searchQuery" @input="debounceSearch" class="border-theme"/>
         </div>
       </div>
-      <div>
+      <div v-if="$screen.width > 425">
         <table class="campaign-dashboard">
           <tr>
             <th width="35px">
@@ -93,7 +93,7 @@
             </td>
             <!-- The maximum of character to display is 45 -->
             <td>
-              <span v-on:click="onEditCampaign(item.id)" class="campaign-name-style two-line-text">{{ item.campaign_name | truncate(80) }}</span>
+              <span v-on:click="onEditCampaign(item.id)" class="campaign-name-style two-line-text">{{ item.campaign_name | truncate(45) }}</span>
             </td>
             <td>{{ item.campaign_status}}</td>
             <td>{{ item.campaign_type }}</td>
@@ -108,6 +108,52 @@
             </td>
           </tr>
         </table>
+      </div>
+      <div class="mobile-support" v-else>
+        <ul>
+          <li class="d-flex" v-for="item in thisCampaigns">
+            <span class="d-flex ml-5">
+              <PreviewImage
+                :key="item.id"
+                :front-image="item.front_json.background_url"
+                :back-image="item.back_json.background_url"
+              />
+            </span>
+            <span class="campaign-info d-flex flex-column">
+              <div class="campaign-name">
+                <span v-on:click="onEditCampaign(item.id)" class="campaign-name-style two-line-text">{{ item.campaign_name | truncate(30) }}</span>
+                <span v-if="['Out of credit', 'Error', 'Draft', 'Complete'].includes(item.campaign_status)" class="toggle-button">
+                  <md-switch v-model="campaignActive" class="md-primary" disabled></md-switch>
+                </span>
+                <span class="toggle-button" v-else>
+                  <md-switch v-model="campaignActive" :value="item.id" class="md-primary" @change="value => onChangeCampaignActive(value, item.id)" :disabled="disableToggle(item)"></md-switch>
+                </span>
+              </div>
+              <div class="campaign-detail d-flex">
+                <div class='column-info flex-column d-flex'>
+                  <strong>Status</strong>
+                  <span>{{ item.campaign_status}}</span>
+                </div>
+                <div class='column-info flex-column d-flex'>
+                  <strong>Type</strong>
+                  <span>{{ item.campaign_type}}</span>
+                </div>
+                <div class='column-info flex-column d-flex'>
+                  <strong>Budget</strong>
+                  <span>{{ item.budget}}</span>
+                </div>
+                <div class='column-info flex-column d-flex'>
+                  <strong>Starts</strong>
+                  <span>{{ splitedSchedule(item.schedule)[0] }}</span>
+                </div>
+                <div class='column-info flex-column d-flex'>
+                  <strong>Ends</strong>
+                  <span>{{ splitedSchedule(item.schedule)[1] }}</span>
+                </div>
+              </div>
+            </span>
+          </li>
+        </ul>
       </div>
       <div id="pagination">
         <CustomePagination
@@ -460,9 +506,10 @@
         const truncatedStr = []
         let characterCount = 0
         data.split(" ").slice(0, data.length).forEach((element) => {
-          if((element.length + characterCount) > num) return
-          truncatedStr.push(element)
-          characterCount += (element.length + 1) // 1 is for space " "
+          if((element.length + characterCount) < num) {
+            truncatedStr.push(element)
+            characterCount += (element.length + 1) // 1 is for space " "
+          }
         })
         let result = truncatedStr.join(" ")
         if(data != result) result += " ..."
@@ -627,9 +674,66 @@
 
   .mw-col {
     width: 390px;
+    @media screen and (max-width: 768px) and (min-width: 425px) {
+      width: 100px;
+    }
   }
 
   .delete-campaign-modal {
     padding: 0 56px;
   }
+
+  .mobile-support > ul {
+    list-style-type: none;
+    padding-inline-start: 0px;
+
+    .d-flex {
+      display: flex;
+    }
+
+    .flex-column {
+      flex-direction: column;
+    }
+
+    span.ml-5 {
+      margin-right: 5px;
+    }
+
+    > li {
+      padding: 5px 0px;
+      height: 120px;
+      border-bottom: 1px solid gray;
+
+      .campaign-info {
+
+        .campaign-name {
+          height: 40%;
+          padding-top: 5%;
+          position: relative;
+
+          .toggle-button {
+            position: absolute;
+            left: 220px;
+            top: -10%;
+          }
+
+          // .toggle-button-active {
+          //   position: absolute;
+          //   left: 77%;
+          //   top: -10%;
+          // }
+        }
+
+        .campaign-detail {
+          height: 60%;
+
+          .column-info {
+            margin: 3px;
+            justify-content:space-between;
+          }
+        }
+      }
+    }
+  }
+
 </style>
