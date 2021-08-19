@@ -6,7 +6,7 @@
     <div class="automation-section">
       <span>
         <strong><small :class="{error: errors.campaignName}" v-if="errors.campaignName">*</small> Campaign name</strong>
-        <input id="campaign_name" v-model="automation.campaign_name" :class="[errors.campaignName ? 'invalid' : '', 'error-wrapper']" maxlength="80">
+        <input id="campaign_name" v-model="automation.campaign_name" :class="[errors.campaignName ? 'invalid' : '', 'error-wrapper']" maxlength="60">
         <span class="error campaign-name-error">This field is required.</span>
       </span>
     </div>
@@ -264,7 +264,7 @@
   import $ from 'jquery'
   import { isEmpty } from 'lodash'
   import CancelCampaignDialog from './components/cancel_campaign_dialog.vue'
-  import { DEFAULT_DISCOUNT_PERCENTAGE, DEFAULT_WEEK_BEFORE_DISCOUNT_EXPIRE } from './config'
+  import { DEFAULT_DISCOUNT_PERCENTAGE, DEFAULT_WEEK_BEFORE_DISCOUNT_EXPIRE, MAXIMUM_CAMPAIGN_NAME_LENGTH } from './config'
   window.$ = $
   const CAMPAIGN_STATUS_FOR_DISABLE_DATE = ["sending", "complete", "out_of_credit", "error", "paused"];
 
@@ -683,7 +683,7 @@
           this.errors.uploadedBackDesign = false
         }
 
-        if(isEmpty(this.automation.campaign_name)) {
+        if(isEmpty(this.automation.campaign_name) || this.automation.campaign_name.length > MAXIMUM_CAMPAIGN_NAME_LENGTH) {
           this.errors.campaignName = true
         } else {
           this.errors.campaignName = false

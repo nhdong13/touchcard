@@ -28,11 +28,9 @@ class DuplicateCampaignService
   def generate_campaign_name
     return @params["campaign_name"] if @params["campaign_name"].present?
     number = @card_order.copies.count
-    if number > 0
-      "Copy #{number + 1} of #{@card_order.campaign_name}"
-    else
-      "Copy of #{@card_order.campaign_name}"
-    end
+    clone_campaign_name = number > 0 ? "Copy #{number + 1} of #{@card_order.campaign_name}" : "Copy of #{@card_order.campaign_name}"
+    clone_campaign_name = @card_order.campaign_name if clone_campaign_name.length > MAXIMUM_CAMPAIGN_NAME_LENGTH
+    clone_campaign_name
   end
 
   def clone_front_card_sides card_order_clone
