@@ -587,7 +587,7 @@
         })
         if(!this.isFormValid()) return false;
         this.fetchDataFromUI();
-        this.shared.campaign = this.automation;
+        this.shared.campaign = {...this.automation};
 
         this.collectFilters();
         return true;
