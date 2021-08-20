@@ -197,7 +197,7 @@ class CardOrder < ApplicationRecord
   def archive
     self.enabled = false
     self.archived = true
-    self.save!
+    self.save(validate: false)
   end
 
   def safe_destroy!
