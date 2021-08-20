@@ -17,6 +17,11 @@ class CampaignsController < BaseController
       campaign = CardOrder.find_by(id: campaign_id)
       PaymentService.refund_cards_when_cancelled @current_shop, campaign
       campaign.archive
+      begin
+        campaign.safe_destroy!
+      rescue => e
+        Rails.logger.debug "[ERROR] #{e.class} - #{e.message}"
+      end
     end
     @result = CampaignSearchService.new(@current_shop, params).index
     @total_pages = @result[:total_pages]
