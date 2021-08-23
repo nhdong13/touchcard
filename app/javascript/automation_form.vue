@@ -301,6 +301,8 @@
     },
     created() {
       this.initializeStartDatepicker();
+      console.log(this.automation.send_date_start)
+      console.log(this.automation.send_date_end)
     },
 
     beforeDestroy: function() {
