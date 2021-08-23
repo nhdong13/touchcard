@@ -635,6 +635,8 @@
       saveAndStartSending: function() {
         // If there're some errors in save process => return
         if (!this.saveWithValidation()) return;
+        console.log(this.automation.send_date_start)
+        console.log(this.automation.send_date_end)
         this.shared.campaign.campaign_status = this.currentShop.credit > 0.89 ? (this.automation.campaign_status != "complete" ? "processing" : "sending") : "out_of_credit";
         this.saveAutomation(this.automation.campaign_status != "complete" ? this.startSending : this.returnToCampaignList);
       },
