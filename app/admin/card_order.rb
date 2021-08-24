@@ -56,7 +56,6 @@ ActiveAdmin.register CardOrder do
   filter :discount_exp
   filter :enabled
   filter :international
-  filter :send_delay
   filter :created_at
   filter :updated_at
 
@@ -72,11 +71,26 @@ ActiveAdmin.register CardOrder do
     column :campaign_type do |cp|
       cp.campaign_type&.gsub("_", "-")&.capitalize
     end
-    column :discount_pct
-    column :discount_exp
+    column :discount_pct do |card_order|
+      back_json = card_order&.back_json
+      front_json = card_order&.front_json
+      if (back_json['discount_x'] && back_json['discount_y']) || (front_json['discount_x'] && front_json['discount_y'])
+        card_order.discount_pct
+      else
+        "-"
+      end
+    end
+    column :discount_exp do |card_order|
+      back_json = card_order&.back_json
+      front_json = card_order&.front_json
+      if (back_json['discount_x'] && back_json['discount_y']) || (front_json['discount_x'] && front_json['discount_y'])
+        card_order.discount_exp
+      else
+        "-"
+      end
+    end
     column :enabled
     column :international
-    column :send_delay
     column :created_at
     column :updated_at
   end
@@ -87,14 +101,29 @@ ActiveAdmin.register CardOrder do
         card_order.shop
       end
       row :type
-      row :discount_pct
-      row :discount_exp
+      row :discount_pct do |card_order|
+        back_json = card_order&.back_json
+        front_json = card_order&.front_json
+        if (back_json['discount_x'] && back_json['discount_y']) || (front_json['discount_x'] && front_json['discount_y'])
+          card_order.discount_pct
+        else
+          "-"
+        end
+      end
+      row :discount_exp do |card_order|
+        back_json = card_order&.back_json
+        front_json = card_order&.front_json
+        if (back_json['discount_x'] && back_json['discount_y']) || (front_json['discount_x'] && front_json['discount_y'])
+          card_order.discount_exp
+        else
+          "-"
+        end
+      end
       row :enabled do |card_order|
           status_tag("#{card_order.enabled}")
           link_to "edit", change_sending_status_admin_card_order_path(card_order)
       end
       row :international
-      row :send_delay
       row :created_at
       row :updated_at
 
