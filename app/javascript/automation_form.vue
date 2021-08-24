@@ -41,9 +41,9 @@
             <datepicker
               v-model="automation.send_date_start"
               :disabled-dates="disabledDates"
-              :open-date="startDate"
               name="send_date_start"
               ref="sendDateStart"
+              :use-utc="true"
               @selected="changeSendDateEnd"
               format="MMM dd, yyyy"
               :disabled="isStartDateDisable"
@@ -78,9 +78,9 @@
             <datepicker
               v-model="automation.send_date_start"
               :disabled-dates="disabledDates"
-              :open-date="startDate"
               name="send_date_start"
               ref="sendDateStart"
+              :use-utc="true"
               @selected="changeSendDateEnd"
               format="MMM dd, yyyy"
               :disabled="isStartDateDisable"
@@ -99,6 +99,7 @@
                 :disabled-dates="disabledEndDates"
                 name="sendDateEnd"
                 ref="sendDateEnd"
+                :use-utc="true"
                 :disabled="automation.send_continuously"
                 format="MMM dd, yyyy"
                 :input-class="{invalid: errors.endDate}"
@@ -321,7 +322,6 @@
         campaign_type: this.automation.campaign_type ? this.automation.campaign_type : "automation",
         willShowDailySendingSchedule: false,
         disabledDates: {},
-        startDate: new Date(),
         isCancel: false,
         isStartDateDisable: false,
         saved_automation: {}, // Use with autosave, play as backup when user don't want to change campaign any more
@@ -337,7 +337,7 @@
         filterOptions: [],
         interval: null,
         checkingFilterError: false,
-        pausedSubmitForm: false
+        pausedSubmitForm: false,
       }
     },
 

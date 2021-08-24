@@ -123,9 +123,24 @@ ActiveAdmin.register Shop do
         end
         column :type
         column :enabled
-        column :send_delay
-        column :discount_pct
-        column :discount_exp
+        column :discount_pct do |card_order|
+          back_json = card_order&.back_json
+          front_json = card_order&.front_json
+          if (back_json['discount_x'] && back_json['discount_y']) || (front_json['discount_x'] && front_json['discount_y'])
+            card_order.discount_pct
+          else
+            "-"
+          end
+        end
+        column :discount_exp do |card_order|
+          back_json = card_order&.back_json
+          front_json = card_order&.front_json
+          if (back_json['discount_x'] && back_json['discount_y']) || (front_json['discount_x'] && front_json['discount_y'])
+            card_order.discount_exp
+          else
+            "-"
+          end
+        end
         column :card_side_front_id
         column :card_side_back_id
       end

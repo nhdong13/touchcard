@@ -8,7 +8,7 @@ class CardOrderSerializer < ActiveModel::Serializer
              :budget_type,
              :type,
              :enabled,
-             :schedule,
+             # :schedule,
              :tokens_used,
              :budget_used,
              :campaign_type,
@@ -49,7 +49,7 @@ class CardOrderSerializer < ActiveModel::Serializer
       "$#{object.budget.to_i}"
     end
   end
-
+=begin
   def schedule
     result = "-"
     start_date = DatetimeService.new(object.send_date_start).to_date
@@ -77,4 +77,5 @@ class CardOrderSerializer < ActiveModel::Serializer
     end
     result
   end
+=end
 end
