@@ -502,7 +502,7 @@
       splitedSchedule(schedule) {
         if (schedule == "Not set") {
           return ["Not set", "Not set"];
-        } else if (schedule.includes(" - ")) {
+        } else if (schedule && schedule.includes(" - ")) {
           return [schedule.split(" - ")[0], schedule.split(" - ")[1]];
         } else {
           return [schedule, ""]
