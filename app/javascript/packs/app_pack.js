@@ -39,6 +39,8 @@ Vue.component('font-awesome-icon', FontAwesomeIcon)
 import VueScreen from 'vue-screen';
 Vue.use(VueScreen);
 
+import { formatDateCampaign } from './date-format'
+
 // To get Turbolinks working it helped to put the javascript pack tag in the <head>
 // If we need to expand Vue to other parts of the application I suspect it would help
 // to keep this structure and load individual containers loaded from this file.
@@ -85,6 +87,9 @@ document.addEventListener('turbolinks:load', () => {
       el: campaignDashboardElement,
       data: function() {
         let tmp_campaigns = JSON.parse(campaignDashboardElement.dataset.campaigns);
+        tmp_campaigns.forEach(campaign => {
+          campaign.schedule = formatDateCampaign(campaign.send_date_start, campaign.send_date_end, campaign.campaign_type)
+        })
         return {
           campaigns: tmp_campaigns,
           totalPages: parseInt(campaignDashboardElement.dataset.totalPages),

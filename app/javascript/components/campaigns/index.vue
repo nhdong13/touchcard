@@ -208,7 +208,7 @@
   import VModal from 'vue-js-modal'
   import CustomePagination from './pagination.vue'
   import PreviewImage from './campaign_index_preview_image.vue'
-  import dateFormat from 'packs/date-format.js'
+  import { dateFormat, formatDateCampaign } from 'packs/date-format.js'
   import { MAXIMUM_CAMPAIGN_NAME_LENGTH } from '../../config.js'
 
   Vue.use(VModal, { componentName: 'campaignModal'})
@@ -265,9 +265,7 @@
             return obj.id == _sharedState.id
           })
           if(targetCampaignId != -1) {
-            const startDate = dateFormat(this.shared.campaign.send_date_start, "mediumDate")
-            const endDate = this.shared.campaign.send_date_end ? dateFormat(this.shared.campaign.send_date_end, "mediumDate") : "Ongoing"
-            this.shared.campaign.schedule = `${startDate} - ${endDate}`
+            this.shared.campaign.schedule = formatDateCampaign(this.shared.campaign.send_date_start, this.shared.campaign.send_date_end, this.shared.campaign.campaign_type)
             this.shared.campaign.campaign_status = this.shared.campaign.campaign_status.split("_").join(" ").replace(/^\w/, (c) => c.toUpperCase())
             this.shared.campaign.campaign_type = this.shared.campaign.campaign_type.split("_").join(" ").replace(/^\w/, (c) => c.toUpperCase())
 
@@ -467,7 +465,12 @@
       },
 
       updateState: function(data, willReturnToFisrtPage=true) {
-        this.thisCampaigns = JSON.parse(data.campaigns)
+        let tmp_campaigns = JSON.parse(data.campaigns)
+        tmp_campaigns.forEach(campaign => {
+          campaign.schedule = formatDateCampaign(campaign.send_date_start, campaign.send_date_end, campaign.campaign_type)
+        })
+
+        this.thisCampaigns = tmp_campaigns
         this.thisTotalPages = data.total_pages
         this.selected = []
         if(willReturnToFisrtPage){
