@@ -71,24 +71,8 @@ ActiveAdmin.register CardOrder do
     column :campaign_type do |cp|
       cp.campaign_type&.gsub("_", "-")&.capitalize
     end
-    column :discount_pct do |card_order|
-      back_json = card_order&.back_json
-      front_json = card_order&.front_json
-      if (back_json['discount_x'] && back_json['discount_y']) || (front_json['discount_x'] && front_json['discount_y'])
-        card_order.discount_pct
-      else
-        "-"
-      end
-    end
-    column :discount_exp do |card_order|
-      back_json = card_order&.back_json
-      front_json = card_order&.front_json
-      if (back_json['discount_x'] && back_json['discount_y']) || (front_json['discount_x'] && front_json['discount_y'])
-        card_order.discount_exp
-      else
-        "-"
-      end
-    end
+    column :discount_pct_to_str
+    column :discount_exp_to_str
     column :enabled
     column :international
     column :created_at
@@ -101,24 +85,8 @@ ActiveAdmin.register CardOrder do
         card_order.shop
       end
       row :type
-      row :discount_pct do |card_order|
-        back_json = card_order&.back_json
-        front_json = card_order&.front_json
-        if (back_json['discount_x'] && back_json['discount_y']) || (front_json['discount_x'] && front_json['discount_y'])
-          card_order.discount_pct
-        else
-          "-"
-        end
-      end
-      row :discount_exp do |card_order|
-        back_json = card_order&.back_json
-        front_json = card_order&.front_json
-        if (back_json['discount_x'] && back_json['discount_y']) || (front_json['discount_x'] && front_json['discount_y'])
-          card_order.discount_exp
-        else
-          "-"
-        end
-      end
+      row :discount_pct_to_str
+      row :discount_exp_to_str
       row :enabled do |card_order|
           status_tag("#{card_order.enabled}")
           link_to "edit", change_sending_status_admin_card_order_path(card_order)
