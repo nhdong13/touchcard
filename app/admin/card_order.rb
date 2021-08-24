@@ -65,14 +65,18 @@ ActiveAdmin.register CardOrder do
       link_to card_order.id, admin_card_order_path(card_order)
     end
 
-    column :campaign_name do |cp|
-      link_to cp.campaign_name, admin_card_order_path(cp)
+    column :campaign_name do |card_order|
+      link_to card_order.campaign_name, admin_card_order_path(card_order)
     end
-    column :campaign_type do |cp|
-      cp.campaign_type&.gsub("_", "-")&.capitalize
+    column :campaign_type do |card_order|
+      card_order.campaign_type&.gsub("_", "-")&.capitalize
     end
-    column :discount_pct_to_str
-    column :discount_exp_to_str
+    column :discount_pct do |card_order|
+      card_order.discount_pct_to_str
+    end
+    column :discount_exp do |card_order|
+      card_order.discount_exp_to_str
+    end
     column :enabled
     column :international
     column :created_at
@@ -85,8 +89,12 @@ ActiveAdmin.register CardOrder do
         card_order.shop
       end
       row :type
-      row :discount_pct_to_str
-      row :discount_exp_to_str
+      row :discount_pct do |card_order|
+        card_order.discount_pct_to_str
+      end
+      row :discount_exp do |card_order|
+        card_order.discount_exp_to_str
+      end
       row :enabled do |card_order|
           status_tag("#{card_order.enabled}")
           link_to "edit", change_sending_status_admin_card_order_path(card_order)

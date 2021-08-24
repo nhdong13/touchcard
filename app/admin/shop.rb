@@ -123,8 +123,12 @@ ActiveAdmin.register Shop do
         end
         column :type
         column :enabled
-        column :discount_pct_to_str
-        column :discount_exp_to_str
+        column :discount_pct do |card_order|
+          card_order.discount_pct_to_str
+        end
+        column :discount_exp do |card_order|
+          card_order.discount_exp_to_str
+        end
         column :card_side_front_id
         column :card_side_back_id
       end
