@@ -17,6 +17,19 @@ ActiveAdmin.register Subscription do
     redirect_to admin_subscription_path(subscription)
   end
 
+  member_action :change_subscription_credit, method: :get do
+    @subscription = Subscription.find(params[:id])
+  end
+
+  member_action :change_credit, method: :put do
+    new_credit = params[:value].to_f
+    subscription = Subscription.find(params[:id])
+    SlackNotify.message("#{current_admin_user.email} changed #{subscription.shop.domain} subscription " +
+                            "from #{subscription.value} to #{new_credit}", true)
+    subscription.change_quantity_by_credit(new_credit)
+    redirect_to admin_subscription_path(subscription)
+  end
+
   filter :shop , as: :select, collection: ->{Shop.select(:domain, :id).order(:domain)}
   filter :plan
   filter :quantity
@@ -52,6 +65,7 @@ ActiveAdmin.register Subscription do
       row :id
       row :credit do |subscription|
         status_tag(number_to_currency(subscription.value))
+        link_to "edit", change_subscription_credit_admin_subscription_path(subscription)
       end
       row :quantity do |subscription|
         status_tag(subscription.quantity)
