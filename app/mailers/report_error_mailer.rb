@@ -10,8 +10,6 @@ class ReportErrorMailer < ApplicationMailer
     @campaigns = ActiveModelSerializers::SerializableResource.new(campaigns_query, {each_serializer: CardOrderSerializer}).serializable_hash
     @error_details = Postcard.where("error IS NOT NULL").group(:error).count(:error)
 
-    DEV_EMAILS.each do |mail|
-      mail(to: mail, subject: "Error Report")
-    end
+    mail(to: DEV_EMAILS, subject: "Error Report")
   end
 end
