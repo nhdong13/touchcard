@@ -119,9 +119,14 @@ ActiveAdmin.register Shop do
     panel "Card Orders" do
       table_for shop.card_orders do
         column :id do |card_order|
-          link_to(card_order.id, admin_card_order_path(card_order))
+          link_to card_order.id, admin_card_order_path(card_order)
         end
-        column :type
+        column :campaign_name do |card_order|
+          link_to card_order.campaign_name, admin_card_order_path(card_order)
+        end
+        column :campaign_type do |card_order|
+          card_order.campaign_type&.gsub("_", "-")&.capitalize
+        end
         column :enabled
         column :discount_pct do |card_order|
           card_order.discount_pct_to_str
