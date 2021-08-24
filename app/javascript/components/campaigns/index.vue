@@ -208,7 +208,7 @@
   import VModal from 'vue-js-modal'
   import CustomePagination from './pagination.vue'
   import PreviewImage from './campaign_index_preview_image.vue'
-  import dateFormat from 'packs/date-format.js'
+  import { dateFormat, formatDateCampaign } from 'packs/date-format.js'
   import { MAXIMUM_CAMPAIGN_NAME_LENGTH } from '../../config.js'
 
   Vue.use(VModal, { componentName: 'campaignModal'})
@@ -467,7 +467,12 @@
       },
 
       updateState: function(data, willReturnToFisrtPage=true) {
-        this.thisCampaigns = JSON.parse(data.campaigns)
+        let tmp_campaigns = JSON.parse(data.campaigns)
+        tmp_campaigns.forEach(campaign => {
+          campaign.schedule = formatDateCampaign(campaign.send_date_start, campaign.send_date_end, campaign.campaign_type)
+        })
+
+        this.thisCampaigns = tmp_campaigns
         this.thisTotalPages = data.total_pages
         this.selected = []
         if(willReturnToFisrtPage){

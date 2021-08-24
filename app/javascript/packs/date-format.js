@@ -11,8 +11,9 @@
  * The date defaults to the current date/time.
  * The mask defaults to dateFormat.masks.default.
  */
+import { isEmpty } from 'lodash'
 
-var dateFormat = function () {
+export var dateFormat = function () {
   var  token = /d{1,4}|m{1,4}|yy(?:yy)?|([HhMsTt])\1?|[LloSZ]|"[^"]*"|'[^']*'/g,
     timezone = /\b(?:[PMCEA][SDP]T|(?:Pacific|Mountain|Central|Eastern|Atlantic) (?:Standard|Daylight|Prevailing) Time|(?:GMT|UTC)(?:[-+]\d{4})?)\b/g,
     timezoneClip = /[^-+\dA-Z]/g,
@@ -119,4 +120,22 @@ dateFormat.i18n = {
   ]
 };
 
-export default dateFormat
+export var formatDateCampaign = function(sendDateStart, sendDateEnd, campaignType) {
+  const startDate = dateFormat(sendDateStart, "mediumDate")
+  const endDate = dateFormat(sendDateEnd, "mediumDate")
+
+  if(isEmpty(startDate)) {
+    return "Not Set"
+  }
+
+  if(campaignType == "One-off") {
+    return `${startDate}`
+  }
+
+  if(isEmpty(endDate)) {
+    return `${startDate} - Ongoing`
+  }
+
+  return `${startDate} - ${endDate}`
+}
+
