@@ -88,7 +88,7 @@ document.addEventListener('turbolinks:load', () => {
       data: function() {
         let tmp_campaigns = JSON.parse(campaignDashboardElement.dataset.campaigns);
         tmp_campaigns.forEach(campaign => {
-          campaign.schedule = formatDateCampaign(campaign.send_date_start, campaign.send_date_end, campaign.campaign_type)
+          campaign.schedule = formatDateCampaign(campaign.send_date_start, campaign.send_date_end, campaign.campaign_type, campaign.send_continuously)
         })
         return {
           campaigns: tmp_campaigns,
