@@ -1,5 +1,5 @@
 <%= form_for @shop, url: change_credit_admin_shop_path(@shop), method: :put do |f| %>
-  Credit: <%= f.number_field :credit, step: :any %><br />
+  Credit: <%= number_field_tag :credit, @shop.credit.round(2), step: '0.01' %><br />
   <br />
   <%= f.submit %><%= link_to "Cancel", :back %>
 <% end %>

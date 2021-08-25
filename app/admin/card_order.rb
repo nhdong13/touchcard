@@ -65,29 +65,17 @@ ActiveAdmin.register CardOrder do
       link_to card_order.id, admin_card_order_path(card_order)
     end
 
-    column :campaign_name do |cp|
-      link_to cp.campaign_name, admin_card_order_path(cp)
+    column :campaign_name do |card_order|
+      link_to card_order.campaign_name, admin_card_order_path(card_order)
     end
-    column :campaign_type do |cp|
-      cp.campaign_type&.gsub("_", "-")&.capitalize
+    column :campaign_type do |card_order|
+      card_order.campaign_type&.gsub("_", "-")&.capitalize
     end
     column :discount_pct do |card_order|
-      back_json = card_order&.back_json
-      front_json = card_order&.front_json
-      if (back_json['discount_x'] && back_json['discount_y']) || (front_json['discount_x'] && front_json['discount_y'])
-        card_order.discount_pct
-      else
-        "-"
-      end
+      card_order.discount_pct_to_str
     end
     column :discount_exp do |card_order|
-      back_json = card_order&.back_json
-      front_json = card_order&.front_json
-      if (back_json['discount_x'] && back_json['discount_y']) || (front_json['discount_x'] && front_json['discount_y'])
-        card_order.discount_exp
-      else
-        "-"
-      end
+      card_order.discount_exp_to_str
     end
     column :enabled
     column :international
@@ -102,22 +90,10 @@ ActiveAdmin.register CardOrder do
       end
       row :type
       row :discount_pct do |card_order|
-        back_json = card_order&.back_json
-        front_json = card_order&.front_json
-        if (back_json['discount_x'] && back_json['discount_y']) || (front_json['discount_x'] && front_json['discount_y'])
-          card_order.discount_pct
-        else
-          "-"
-        end
+        card_order.discount_pct_to_str
       end
       row :discount_exp do |card_order|
-        back_json = card_order&.back_json
-        front_json = card_order&.front_json
-        if (back_json['discount_x'] && back_json['discount_y']) || (front_json['discount_x'] && front_json['discount_y'])
-          card_order.discount_exp
-        else
-          "-"
-        end
+        card_order.discount_exp_to_str
       end
       row :enabled do |card_order|
           status_tag("#{card_order.enabled}")

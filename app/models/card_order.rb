@@ -204,6 +204,22 @@ class CardOrder < ApplicationRecord
     self.destroy! unless postcards.exists?
   end
 
+  def discount_pct_to_str
+    if (back_json['discount_x'] && back_json['discount_y']) || (front_json['discount_x'] && front_json['discount_y'])
+      discount_pct
+    else
+      "-"
+    end
+  end
+
+  def discount_exp_to_str
+    if (back_json['discount_x'] && back_json['discount_y']) || (front_json['discount_x'] && front_json['discount_y'])
+      discount_exp
+    else
+      "-"
+    end
+  end
+
   private
 
   def shows_front_discount?

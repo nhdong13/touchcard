@@ -265,9 +265,7 @@
             return obj.id == _sharedState.id
           })
           if(targetCampaignId != -1) {
-            const startDate = dateFormat(this.shared.campaign.send_date_start, "mediumDate")
-            const endDate = this.shared.campaign.send_date_end ? dateFormat(this.shared.campaign.send_date_end, "mediumDate") : "Ongoing"
-            this.shared.campaign.schedule = `${startDate} - ${endDate}`
+            this.shared.campaign.schedule = formatDateCampaign(this.shared.campaign.send_date_start, this.shared.campaign.send_date_end, this.shared.campaign.campaign_type, this.shared.campaign.send_continuously)
             this.shared.campaign.campaign_status = this.shared.campaign.campaign_status.split("_").join(" ").replace(/^\w/, (c) => c.toUpperCase())
             this.shared.campaign.campaign_type = this.shared.campaign.campaign_type.split("_").join(" ").replace(/^\w/, (c) => c.toUpperCase())
 
@@ -502,7 +500,7 @@
       splitedSchedule(schedule) {
         if (schedule == "Not set") {
           return ["Not set", "Not set"];
-        } else if (schedule.includes(" - ")) {
+        } else if (schedule && schedule.includes(" - ")) {
           return [schedule.split(" - ")[0], schedule.split(" - ")[1]];
         } else {
           return [schedule, ""]

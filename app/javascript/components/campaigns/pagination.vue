@@ -127,15 +127,15 @@ export default {
 			this.handlePageSelected(1)	
 		},
 		prevPage() {
-			if(this.currentPage - this.pageRange < 1 ) return
-	      	this.handlePageSelected(this.currentPage - this.pageRange);
+			if(this.currentPage - 1 < 1 ) return
+	      	this.handlePageSelected(this.currentPage - 1);
 	    },
 	    onClickPage(page) {
 	      this.handlePageSelected(page);
 	    },
 	    nextPage() {
-	    	if(this.currentPage + this.pageRange > this.totalPage ) return
-	      	this.handlePageSelected(this.currentPage + this.pageRange);
+	    	if(this.currentPage + 1 > this.totalPage ) return
+	      	this.handlePageSelected(this.currentPage + 1);
 	    },
 	    onClickLastPage() {
 			this.handlePageSelected(this.totalPage)	

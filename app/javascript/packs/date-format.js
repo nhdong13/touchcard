@@ -120,21 +120,17 @@ dateFormat.i18n = {
   ]
 };
 
-export var formatDateCampaign = function(sendDateStart, sendDateEnd, campaignType) {
+export var formatDateCampaign = function(sendDateStart, sendDateEnd, campaignType, isSendContinuously) {
   const startDate = dateFormat(sendDateStart, "mediumDate")
   const endDate = dateFormat(sendDateEnd, "mediumDate")
 
-  if(isEmpty(startDate)) {
-    return "Not Set"
-  }
+  if(isEmpty(startDate)) return "Not Set"
 
-  if(campaignType == "One-off") {
-    return `${startDate}`
-  }
+  if(campaignType == "One-off") return `${startDate}`
 
-  if(isEmpty(endDate)) {
-    return `${startDate} - Ongoing`
-  }
+  if(isSendContinuously) return `${startDate} - Ongoing`
+
+  if(isEmpty(endDate)) return "Not Set"
 
   return `${startDate} - ${endDate}`
 }
