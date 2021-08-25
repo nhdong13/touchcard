@@ -57,6 +57,11 @@ class Subscription < ApplicationRecord
     shop.update(credit: shop.credit + delta_quantity)
   end
 
+  def change_quantity_by_credit(credit)
+    new_quantity = (credit * 100 / Plan.last.amount).to_i
+    change_quantity(new_quantity)
+  end
+
   # Update subscription date to match the stripe dates
   def change_subscription_dates
     subscription = shop.stripe_customer.subscriptions.retrieve(stripe_id)
