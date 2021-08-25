@@ -467,7 +467,7 @@
       updateState: function(data, willReturnToFisrtPage=true) {
         let tmp_campaigns = JSON.parse(data.campaigns)
         tmp_campaigns.forEach(campaign => {
-          campaign.schedule = formatDateCampaign(campaign.send_date_start, campaign.send_date_end, campaign.campaign_type)
+          campaign.schedule = formatDateCampaign(campaign.send_date_start, campaign.send_date_end, campaign.campaign_type, campaign.send_continuously)
         })
 
         this.thisCampaigns = tmp_campaigns
