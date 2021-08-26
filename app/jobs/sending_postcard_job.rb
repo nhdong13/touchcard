@@ -32,15 +32,22 @@ class SendingPostcardJob < ActiveJob::Base
         filter = Filter.new(filter_data: {:accepted => {}, :removed => {}}) if filter.blank?
         customer_targeting_service =  CustomerTargetingService.new({shop: shop}, filter.filter_data[:accepted], filter.filter_data[:removed])
 
+
         # Get already exisiting customer in postcard list => 1 customer only sent 1 postcard
         # This is for use case when we go from paused status to processing
         existing_customers = campaign.postcards
         shop.customers.where("customers.created_at < ?", customers_before).find_each do |customer|
           # If customer don't pass filter then skip
-          next unless (customer_targeting_service.customer_pass_filter?(customer.id) &&
+          begin
+            next unless (customer_targeting_service.customer_pass_filter?(customer.id) &&
                       !(customer.international? ^ campaign.international) &&
                       !existing_customers.exists?(customer_id: customer.id)
                       )
+          rescue => e
+            Rails.logger.debug "[ERROR] #{e.class} - #{e.message}"
+            next
+          end
+
           postcard = Postcard.new
           postcard.customer = customer
           postcard.send_date = Time.now.beginning_of_day > campaign.send_date_start ? Time.now : campaign.send_date_start
