@@ -162,7 +162,7 @@
     },
     watch: {
       checkingFilterError: function(newVal, oldVal) {
-        this.showInvalidValueInput = newVal == true && (this.filter.value == '' || !this.filter.value) ;
+        this.showInvalidValueInput = newVal == true && (this.filter.value == '' || !this.filter.value);
       }
     },
     methods: {
