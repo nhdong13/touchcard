@@ -66,7 +66,7 @@
       <input type="text" :class="['valueInput', {invalid: showInvalidValueInput}]" v-model="filter.value" v-if="showTextInput()" @change="filterChange" />
       <input type="number" :class="['valueInput', {invalid: showInvalidValueInput}]" v-model="filter.value" v-else-if="showNumberInput()" @change="filterChange" @keypress="preventDecimal($event)" min=0 />
 
-      <datepicker class="valueInput" v-model="filter.value" v-if="showDateInput()" @change="filterChange" :use-utc="true" format="MMM dd, yyyy" :input-class="{invalid: showInvalidValueInput}" />
+      <datepicker class="valueInput" v-model="filter.value" v-if="showDateInput()" @input="filterChange" :use-utc="true" format="MMM dd, yyyy" :input-class="{invalid: showInvalidValueInput}" />
       <font-awesome-icon icon="chevron-down" v-if="showDateInput()" @click="triggerDatepicker(1)" class="datepicker-arrow" />
 
       <treeselect :class="['valueInput', {invalid: showInvalidValueInput}]" v-model="filter.value" v-if="showCountrySelect()" :multiple="true" :options="countriesList" placeholder="Any country" />
