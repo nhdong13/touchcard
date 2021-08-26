@@ -16,7 +16,12 @@ class DuplicateCampaignService
     card_order_clone.campaign_status = "draft"
     card_order_clone.send_date_start = ( Time.now.end_of_day >= @card_order.send_date_start ) ? Time.now : @card_order.send_date_start
     unless card_order_clone.send_continuously
-      card_order_clone.send_date_end = ( Time.now.end_of_day >= @card_order.send_date_end ) ? card_order_clone.send_date_start : @card_order.send_date_end
+      if Time.now.end_of_day >= @card_order.send_date_end
+        card_order_clone.send_date_end = nil
+        card_order_clone.send_continuously = true
+      else
+        card_order_clone.send_date_end = @card_order.send_date_end
+      end
     end
     card_order_clone.save(validate: false)
     clone_front_card_sides(card_order_clone)
