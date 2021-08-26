@@ -686,14 +686,11 @@
           this.errors.campaignName = false
         }
 
-        if (!this.isFilterIncomplete()) {
-          if (this.orderDateFiltersNotConflict(this.acceptedFilters)) {
-            this.checkingFilterError = false;
-            this.errors.filters = false;
-          } else {
-            this.checkingFilterError = true;
-            this.errors.filters = true;
-          }
+        this.checkingFilterError = true;
+        if (this.isFilterComplete() && this.orderDateFiltersNotConflict(this.acceptedFilters)) {
+          this.errors.filters = false;
+        } else {
+          this.errors.filters = true;
         }
 
         if(this.automation.international) {
@@ -710,11 +707,11 @@
         }
       },
 
-      isFilterIncomplete: function() {
+      isFilterComplete: function() {
         for (let element of this.acceptedFilters.concat(this.removedFilters))
           for(let item in element)
-            if (!element[item] || isEmpty(element[item].toString())) return true;
-        return false;
+            if (!element[item] || isEmpty(element[item].toString())) return false;
+        return true;
       },
 
       isFormValid: function() {
