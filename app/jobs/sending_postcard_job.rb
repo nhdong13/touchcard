@@ -37,11 +37,6 @@ class SendingPostcardJob < ActiveJob::Base
         existing_customers = campaign.postcards
         shop.customers.where("customers.created_at < ?", customers_before).find_each do |customer|
           # If customer don't pass filter then skip
-          Rails.logger.debug "********************************"
-          Rails.logger.debug "#{customer_targeting_service.customer_pass_filter?(customer.id).inspect} + #{(!(customer.international? ^ campaign.international)).inspect} + #{(!existing_customers.exists?(customer_id: customer.id)).inspect} = #{(customer_targeting_service.customer_pass_filter?(customer.id) &&
-                      !(customer.international? ^ campaign.international) &&
-                      !existing_customers.exists?(customer_id: customer.id)
-                      ).inspect}"
           next unless (customer_targeting_service.customer_pass_filter?(customer.id) &&
                       !(customer.international? ^ campaign.international) &&
                       !existing_customers.exists?(customer_id: customer.id)
