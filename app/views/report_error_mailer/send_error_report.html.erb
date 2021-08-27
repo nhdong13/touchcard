@@ -40,13 +40,15 @@
       <% end %>
     </table>
     <br/>
-    <div>
-      <span>Number of errors: </span><br/>
-      <ul>
-        <% @error_summary.each do |k, v| %>
-          <li><span><%= k %>: <%= v %> postcards</span></li>
-        <% end %>
-      </ul>
-    </div>
+    <ul>
+      <li>
+        <span>Number of errors: </span><br/>
+        <ul>
+          <% @error_summary.each do |k, v| %>
+            <li><span><%= k %>: <%= v %> postcards</span></li>
+          <% end %>
+        </ul>
+      </li>
+    </ul>
   </div>
 </div>
