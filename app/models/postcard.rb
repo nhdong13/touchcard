@@ -57,13 +57,11 @@ class Postcard < ApplicationRecord
         card.send_card
       rescue => e
         num_failed += 1
-        logger.error e
-        NewRelic::Agent::notice_error(e.message)
-        if e.respond_to?('json_body')
-          data_error = JSON.parse(e.json_body)
-          card.error = data_error["error"]["message"]
-          card.save
-        end
+        # logger.error e
+        # NewRelic::Agent::notice_error(e.message)
+        card.error = e.message
+        card.save
+        ReportErrorMailer.send_error_report(card.card_order).deliver_later
         next
       end
     end
