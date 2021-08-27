@@ -24,7 +24,7 @@
     </ul>
   </div>
   <br/>
-  <div><strong>Postcard information</strong></div>
+  <div><strong>Postcard error information</strong></div>
   <br/>
   <div>
     <table>
@@ -40,13 +40,13 @@
       <% end %>
     </table>
     <br/>
-    <li>
+    <div>
       <span>Number of errors: </span><br/>
       <ul>
         <% @error_summary.each do |k, v| %>
           <li><span><%= k %>: <%= v %> postcards</span></li>
         <% end %>
       </ul>
-    </li>
+    </div>
   </div>
 </div>
