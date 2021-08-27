@@ -44,7 +44,8 @@ class SendingPostcardJob < ActiveJob::Base
                       !existing_customers.exists?(customer_id: customer.id)
                       )
           rescue => e
-            Rails.logger.debug "[ERROR] #{e.class} - #{e.message}"
+            campaign.postcards << Postcard.create(error: e.message)
+            ReportErrorMailer.send_error_report(campaign).deliver_later
             next
           end
 

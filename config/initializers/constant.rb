@@ -70,7 +70,7 @@ CSV_TITLE = [ "Fullame",
             ]
 DEV_EMAILS = [
   "tungdv@nustechnology.com",
-  "hoaiptp@nustechnology.com",
+  # "hoaiptp@nustechnology.com",
   # "donghn@nustechnology.com",
   "hungpn@nustechnology.com"
 ]
