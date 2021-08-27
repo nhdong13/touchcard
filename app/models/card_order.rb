@@ -138,7 +138,7 @@ class CardOrder < ApplicationRecord
     self.campaign_name = generate_campaign_name unless self.campaign_name.present?
     self.type = "PostSaleOrder" unless self.type.present?
     self.campaign_status = :draft
-    self.filters << Filter.new(filter_data: {:accepted => {}, :removed => {}})
+    self.filters << Filter.new(filter_data: {:accepted => {}, :removed => {}}) if self.filters.empty?
     # TODO: add defaults to schema that can be added
   end
 
