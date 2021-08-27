@@ -5,7 +5,7 @@ task :daily_send_cards => :environment do
   puts "Sending Cards"
   cards_sent = Postcard.send_all
 
-  ReportErrorMailer.send_error_report.deliver_now if cards_sent[:error_cards_amount] > 0
+  # ReportErrorMailer.send_error_report.deliver_now if cards_sent[:error_cards_amount] > 0
 
   puts "Notifying on #slack..."
   slack_msg = "#{cards_sent} postcards were sent today."

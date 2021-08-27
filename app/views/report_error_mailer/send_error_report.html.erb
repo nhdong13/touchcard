@@ -6,14 +6,12 @@
       <th><strong>Budget</strong></th>
       <th><strong>Date</strong></th>
     </tr>
-    <% @campaigns.each do |campaign| %>
-      <tr>
-        <td><%= campaign[:campaign_name] %></td>
-        <td><%= campaign[:campaign_status] %></td>
-        <td><%= campaign[:budget] %></td>
-        <td><%= campaign[:send_date_start] %> - <%= campaign[:send_date_end].nil? ? "Ongoing" : campaign[:send_date_end] %></td>
-      </tr>
-    <% end %>
+    <tr>
+      <td><%= @campaign[:campaign_name] %></td>
+      <td><%= @campaign[:campaign_status] %></td>
+      <td><%= @campaign[:budget] %></td>
+      <td><%= @campaign[:send_date_start] %> - <%= @campaign[:send_date_end].nil? ? "Ongoing" : @campaign[:send_date_end] %></td>
+    </tr>
   </table>
   <br/>
   <div>
