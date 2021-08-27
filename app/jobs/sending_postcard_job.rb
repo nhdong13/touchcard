@@ -32,6 +32,7 @@ class SendingPostcardJob < ActiveJob::Base
         filter = Filter.new(filter_data: {:accepted => {}, :removed => {}}) if filter.blank?
         customer_targeting_service =  CustomerTargetingService.new({shop: shop}, filter.filter_data[:accepted], filter.filter_data[:removed])
 
+        is_there_error_when_creating_postcard = false
 
         # Get already exisiting customer in postcard list => 1 customer only sent 1 postcard
         # This is for use case when we go from paused status to processing
@@ -50,7 +51,7 @@ class SendingPostcardJob < ActiveJob::Base
                       )
           rescue => e
             campaign.postcards << Postcard.create(error: e.message)
-            ReportErrorMailer.send_error_report(campaign).deliver_later
+            is_there_error_when_creating_postcard = true
             next
           end
 
@@ -62,6 +63,8 @@ class SendingPostcardJob < ActiveJob::Base
 
           postcard.save!
         end
+
+        ReportErrorMailer.send_error_report(campaign).deliver_later if is_there_error_when_creating_postcard
 
         if campaign.enabled?
           if Time.now.end_of_day < campaign.send_date_start
