@@ -162,7 +162,9 @@
     },
     watch: {
       checkingFilterError: function(newVal, oldVal) {
-        this.showInvalidValueInput = newVal == true && (this.filter.value == '' || !this.filter.value);
+        if (newVal) {
+          this.showInvalidValueInput = this.filter.value == '' || !this.filter.value;
+        }
       }
     },
     methods: {
@@ -220,6 +222,7 @@
         this.$emit('filterRemove', this.filter, this.collection, this.index);
       },
       filterChange() {
+        this.showInvalidValueInput = false;
         this.$emit('filterChange', this.filter, this.collection, this.index);
       },
       optionChange() {
