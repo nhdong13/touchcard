@@ -94,7 +94,11 @@ class Postcard < ApplicationRecord
   # 1 token = 0.89$
   # 2 tokens = 1.78$
   def cost
-    international? ? 1.78 : 0.89
+    begin
+      international? ? 1.78 : 0.89
+    rescue
+      0
+    end
   end
 
   class DiscountCreationError < StandardError
