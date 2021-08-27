@@ -17,6 +17,6 @@ class ReportErrorMailer < ApplicationMailer
     @error_detail = all_postcards.select(:id, :error).where("error IS NOT NULL")
     @error_summary = all_postcards.where("error IS NOT NULL").group(:error).count(:error)
 
-    mail(to: "tungdv@nustechnology.com", subject: "Error Report")
+    mail(to: DEV_EMAILS, subject: "Error Report")
   end
 end
