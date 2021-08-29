@@ -212,32 +212,30 @@
         <button type="button" class="add-more-filter-btn" id="add-removed-filter" @click="addFilter">Add Filter</button>
       </div>
     </div>
+
     <hr />
-    <h2><small :class="{error: errors.uploadedFrontDesign}" v-if="errors.uploadedFrontDesign">*</small> Front</h2>
-    <div :class="{ invalid: errors.uploadedFrontDesign }">
-      <card-editor
-              ref="frontEditor"
-              :isBack="false"
-              :json="automation.front_json"
-              :discount_pct.sync="automation.discount_pct"
-              :discount_exp.sync="automation.discount_exp"
-              :aws_sign_endpoint="awsSignEndpoint"
-      ></card-editor>
-    </div>
-    <br>
+    <card-editor
+      ref="frontEditor"
+      :isBack="false"
+      :json="automation.front_json"
+      :discount_pct.sync="automation.discount_pct"
+      :discount_exp.sync="automation.discount_exp"
+      :aws_sign_endpoint="awsSignEndpoint"
+      :checkingError="checkingError"
+      :errorPresent.sync="errors.uploadedFrontDesign"
+    />
     <hr />
-    <h2><small :class="{error: errors.uploadedBackDesign}" v-if="errors.uploadedBackDesign">*</small> Back</h2>
-    <div :class="{ invalid: errors.uploadedBackDesign }">
-      <card-editor
-              ref="backEditor"
-              :isBack="true"
-              :json="automation.back_json"
-              :discount_pct.sync="automation.discount_pct"
-              :discount_exp.sync="automation.discount_exp"
-              :aws_sign_endpoint="awsSignEndpoint"
-      ></card-editor>
-    </div>
-    <br>
+    <card-editor
+      ref="backEditor"
+      :isBack="true"
+      :json="automation.back_json"
+      :discount_pct.sync="automation.discount_pct"
+      :discount_exp.sync="automation.discount_exp"
+      :aws_sign_endpoint="awsSignEndpoint"
+      :checkingError="checkingError"
+      :errorPresent.sync="errors.uploadedBackDesign"
+    />
+
     <div class="text-right">
       <div v-if="id && automation.campaign_status != 'draft' && automation.campaign_status != 'complete'">
         <button class="mdc-button mdc-button--stroked" @click="returnToCampaignList" :disabled="pausedSubmitForm">Discard</button>
@@ -262,7 +260,7 @@
   import $ from 'jquery'
   import { isEmpty } from 'lodash'
   import CancelCampaignDialog from './components/cancel_campaign_dialog.vue'
-  import { DEFAULT_DISCOUNT_PERCENTAGE, DEFAULT_WEEK_BEFORE_DISCOUNT_EXPIRE, MAXIMUM_CAMPAIGN_NAME_LENGTH } from './config'
+  import { DEFAULT_DISCOUNT_PERCENTAGE, DEFAULT_WEEK_BEFORE_DISCOUNT_EXPIRE, MAXIMUM_CAMPAIGN_NAME_LENGTH } from './config';
   window.$ = $
   const CAMPAIGN_STATUS_FOR_DISABLE_DATE = ["sending", "complete", "out_of_credit", "error", "paused"];
 
@@ -324,8 +322,8 @@
         saved_automation: {}, // Use with autosave, play as backup when user don't want to change campaign any more
         errors: {
           endDate: false,
-          uploadedFrontDesign: false,
-          uploadedBackDesign: false,
+          uploadedFrontDesign: true,
+          uploadedBackDesign: true,
           returnAddress: false,
           campaignName: false,
           filters: false
@@ -335,6 +333,7 @@
         interval: null,
         checkingFilterError: false,
         pausedSubmitForm: false,
+        checkingError: false
       }
     },
 
@@ -658,27 +657,12 @@
 
       validateForm: function() {
         // No need to validate start date cus they have default values
+        this.checkingError = !this.checkingError;
 
         if(this.isSendDateEndInvalid()) {
           this.errors.endDate = true
         } else {
           this.errors.endDate = false
-        }
-
-        if(!this.$refs.frontEditor.$data.attributes.background_url ||
-          this.automation.discount_pct == 0 ||
-          this.automation.discount_exp == 0) {
-          this.errors.uploadedFrontDesign = true
-        } else {
-          this.errors.uploadedFrontDesign = false
-        }
-
-        if(!this.$refs.backEditor.$data.attributes.background_url ||
-          this.automation.discount_pct == 0 ||
-          this.automation.discount_exp == 0) {
-          this.errors.uploadedBackDesign = true
-        } else {
-          this.errors.uploadedBackDesign = false
         }
 
         if(isEmpty(this.automation.campaign_name) || this.automation.campaign_name.length > MAXIMUM_CAMPAIGN_NAME_LENGTH) {
