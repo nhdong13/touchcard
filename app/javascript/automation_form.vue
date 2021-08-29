@@ -212,7 +212,8 @@
           collection="accepted"
           :index="index"
           :filterConditions="filterConditions"
-          :filterOptions="availableFilters('accepted', index)" :checkingFilterError="checkingFilterError"
+          :filterOptions="availableFilters('accepted', index)"
+          :checkingError="checkingError"
         />
         <button type="button" class="add-more-filter-btn" id="add-accepted-filter" @click="addFilter('accepted')">Add Filter</button>
       </div>
@@ -227,7 +228,8 @@
           collection="removed"
           :index="index"
           :filterConditions="filterConditions"
-          :filterOptions="availableFilters('removed', index)" :checkingFilterError="checkingFilterError" 
+          :filterOptions="availableFilters('removed', index)"
+          :checkingError="checkingError" 
         />
         <button type="button" class="add-more-filter-btn" id="add-removed-filter" @click="addFilter">Add Filter</button>
       </div>
@@ -351,7 +353,6 @@
         filterConditions: [],
         filterOptions: [],
         interval: null,
-        checkingFilterError: false,
         pausedSubmitForm: false,
         checkingError: false
       }
@@ -681,7 +682,6 @@
           this.errors.campaignName = false
         }
 
-        this.checkingFilterError = true;
         this.filtersValidation();
         if(this.automation.international) {
           if(isEmpty(this.returnAddress.name) ||

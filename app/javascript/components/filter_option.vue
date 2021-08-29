@@ -102,7 +102,7 @@
     components: {
       Datepicker,Switcher,Treeselect,VueTagsInput
     },
-    props: ["filterOptions", "filterConditions","filter", "collection", "index", "checkingFilterError"],
+    props: ["filterOptions", "filterConditions","filter", "collection", "index", "checkingError"],
     beforeMount() {
       // Select first filter for new filter item
       if (this.filter.selectedFilter == "") {
@@ -161,10 +161,8 @@
       }
     },
     watch: {
-      checkingFilterError: function(newVal, oldVal) {
-        if (newVal) {
-          this.showError = this.filter.value == '' || !this.filter.value;
-        }
+      checkingError: function(val) {
+        this.showError = this.filter.value == '' || !this.filter.value;
       }
     },
     methods: {
