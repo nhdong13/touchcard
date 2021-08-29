@@ -203,12 +203,32 @@
     <div :class="'filter-config nested-toggle row'" :showError="errors.filters">
       <div id="accepted-section">
         <div class="filter-section-title">Include these customers</div>
-        <filter-option :filter="filter" v-for="(filter, index) in acceptedFilters" :key="filter.selectedFilter" @filterChange="filterChange" @filterRemove="filterRemove" collection="accepted" :index="index" :filterConditions="filterConditions" :filterOptions="availableFilters('accepted', index)" :checkingFilterError="checkingFilterError" />
+        <filter-option
+          v-for="(filter, index) in acceptedFilters"
+          :filter="filter"
+          :key="filter.selectedFilter"
+          @filterChange="filterChange"
+          @filterRemove="filterRemove"
+          collection="accepted"
+          :index="index"
+          :filterConditions="filterConditions"
+          :filterOptions="availableFilters('accepted', index)" :checkingFilterError="checkingFilterError"
+        />
         <button type="button" class="add-more-filter-btn" id="add-accepted-filter" @click="addFilter('accepted')">Add Filter</button>
       </div>
       <div id="removed-section">
         <div class="filter-section-title">Exclude these customers</div>
-        <filter-option :filter="filter" v-for="(filter, index) in removedFilters" :key="filter.selectedFilter" @filterChange="filterChange" @filterRemove="filterRemove" collection="removed" :index="index" :filterConditions="filterConditions" :filterOptions="availableFilters('removed', index)" :checkingFilterError="checkingFilterError" />
+        <filter-option
+          v-for="(filter, index) in removedFilters"
+          :filter="filter"
+          :key="filter.selectedFilter"
+          @filterChange="filterChange"
+          @filterRemove="filterRemove"
+          collection="removed"
+          :index="index"
+          :filterConditions="filterConditions"
+          :filterOptions="availableFilters('removed', index)" :checkingFilterError="checkingFilterError" 
+        />
         <button type="button" class="add-more-filter-btn" id="add-removed-filter" @click="addFilter">Add Filter</button>
       </div>
     </div>
@@ -509,8 +529,6 @@
           this.automation.international = true
         }
         collection == "accepted" ? this.acceptedFilters[index] = filter : this.removedFilters[index] = filter;
-        this.checkingFilterError = false;
-        this.filtersValidation();
       },
       filterRemove(filter, collection, index) {
         if(filter.selectedFilter == "shipping_country" && filter.selectedCondition == "from" && collection == "accepted") {
@@ -591,14 +609,6 @@
       },
 
       saveAutomation(func) {
-        //   this.collectFilters();
-        //   // This will minimize the overhead of clone the automation
-        //   if(this.isTwoJsonEqual(this.saved_automation, this.automation)) {
-        //     return
-        //   }
-        //   this.fetchDataFromUI()
-        //   // TODO: Must somehow make sure automation is JSON safe
-        //   this.saved_automation = JSON.parse(JSON.stringify(this.automation))
         // Prevent to submit form after click submit
         this.pausedSubmitForm = true;
         setTimeout(() => this.pausedSubmitForm = false, 5000);
