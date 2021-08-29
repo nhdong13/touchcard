@@ -73,13 +73,14 @@ class CustomersExportService
   end
 
   def add_section_divider
-    right_border =  styles.add_style({border: { style: :thin, color: '000000', edges: [:right] }})
+    right_border = styles.add_style({ border: { style: :thin, color: '000000', edges: [:right] } })
+    column_name_with_right_border = styles.add_style({ bg_color: "ddebf7", b: true, border: { style: :thin, color: '000000', edges: [:right] } })
     number_of_rows = sheet.rows.count
-    ["K3:K#{number_of_rows}",
-     "T3:T#{number_of_rows}",
-     "X3:X#{number_of_rows}",
-     "Z3:Z#{number_of_rows}",
-     "AC3:AC#{number_of_rows}"
-    ].each {|cells| sheet[cells].each{|cell| cell.style = right_border } }
+    ["K2:K#{number_of_rows}",
+     "T2:T#{number_of_rows}",
+     "X2:X#{number_of_rows}",
+     "Z2:Z#{number_of_rows}",
+     "AC2:AC#{number_of_rows}"
+    ].each {|cells| sheet[cells].each{|cell| cell.style = cell&.row&.index == 1 ? column_name_with_right_border : right_border } }
   end
 end
