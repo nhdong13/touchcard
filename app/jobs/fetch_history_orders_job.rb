@@ -1,17 +1,10 @@
 class FetchHistoryOrdersJob < ActiveJob::Base
   queue_as :default
 
-  before_enqueue do |job|
-    # job.arguments[2] => card order instance
-    throw :abort if (job.arguments[2].archived || job.arguments[2].complete?)
-  end
-
-  def perform(shop, time_delay)
+  def perform(shop)
     processed_at_max = DateTime.now
-    processed_at_min = processed_at_max - time_delay.weeks
     params = {status: "any",
               limit: 250,
-              processed_at_min: processed_at_min.iso8601,
               processed_at_max: processed_at_max.iso8601
               }
 
