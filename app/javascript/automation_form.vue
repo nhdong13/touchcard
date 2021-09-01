@@ -239,7 +239,7 @@
     <div class="design-editor-wrapper">
       <iframe id="editorFrame"></iframe>
     </div>
-    <card-editor
+    <!-- <card-editor
       ref="frontEditor"
       :isBack="false"
       :json="automation.front_json"
@@ -259,7 +259,8 @@
       :aws_sign_endpoint="awsSignEndpoint"
       :checkingError="checkingError"
       :errorPresent.sync="errors.uploadedBackDesign"
-    />
+    /> -->
+    <br/>
     <div class="text-right">
       <!-- <div><button class="mdc-button mdc-button--stroked" @click="Test">Something</button></div> -->
       <div v-if="id && automation.campaign_status != 'draft' && automation.campaign_status != 'complete'">
