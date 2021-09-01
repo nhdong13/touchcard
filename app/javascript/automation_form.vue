@@ -213,7 +213,9 @@
       </div>
     </div>
     <hr />
-    <card-editor
+    <h2><small :class="{error: errors.uploadedFrontDesign}" v-if="errors.uploadedFrontDesign">*</small> Front</h2>
+    <div :class="{ invalid: errors.uploadedFrontDesign }">
+      <card-editor
       ref="frontEditor"
       :isBack="false"
       :json="automation.front_json"
@@ -223,6 +225,8 @@
       :checkingError="checkingError"
       :errorPresent.sync="errors.uploadedFrontDesign"
     />
+    </div>
+    <br>
     <hr />
     <h2><small :class="{error: errors.uploadedBackDesign}" v-if="errors.uploadedBackDesign">*</small> Back</h2>
     <div :class="{ invalid: errors.uploadedBackDesign }">
@@ -664,7 +668,7 @@
           this.errors.endDate = false
         }
 
-        if(isEmpty(this.front_side_attribute) ||
+        if(!this.$refs.frontEditor.$data.attributes.background_url ||
           this.automation.discount_pct == 0 ||
           this.automation.discount_exp == 0) {
           this.errors.uploadedFrontDesign = true
@@ -672,7 +676,7 @@
           this.errors.uploadedFrontDesign = false
         }
 
-        if(isEmpty(this.back_side_attribute) ||
+        if(!this.$refs.backEditor.$data.attributes.background_url ||
           this.automation.discount_pct == 0 ||
           this.automation.discount_exp == 0) {
           this.errors.uploadedBackDesign = true
