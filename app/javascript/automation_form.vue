@@ -257,7 +257,6 @@
       :checkingError="checkingError"
       :errorPresent.sync="errors.uploadedBackDesign"
     />
-
     <div class="text-right">
       <div v-if="id && automation.campaign_status != 'draft' && automation.campaign_status != 'complete'">
         <button class="mdc-button mdc-button--stroked" @click="returnToCampaignList" :disabled="pausedSubmitForm">Discard</button>
