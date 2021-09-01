@@ -236,10 +236,7 @@
     </div>
 
     <hr />
-    <div class="design-editor-wrapper">
-      <iframe id="editorFrame"></iframe>
-    </div>
-    <!-- <card-editor
+    <card-editor
       ref="frontEditor"
       :isBack="false"
       :json="automation.front_json"
@@ -259,19 +256,18 @@
       :aws_sign_endpoint="awsSignEndpoint"
       :checkingError="checkingError"
       :errorPresent.sync="errors.uploadedBackDesign"
-    /> -->
-    <br/>
+    />
+
     <div class="text-right">
-      <!-- <div><button class="mdc-button mdc-button--stroked" @click="Test">Something</button></div> -->
       <div v-if="id && automation.campaign_status != 'draft' && automation.campaign_status != 'complete'">
-        <button class="mdc-button mdc-button--stroked" @click="getDataFromCanvas(returnToCampaignList)" :disabled="pausedSubmitForm">Discard</button>
-        <button class="mdc-button mdc-button--raised" @click="getDataFromCanvas(saveAndReturn)" :disabled="pausedSubmitForm">Save Changes</button>
+        <button class="mdc-button mdc-button--stroked" @click="returnToCampaignList" :disabled="pausedSubmitForm">Discard</button>
+        <button class="mdc-button mdc-button--raised" @click="saveAndReturn" :disabled="pausedSubmitForm">Save Changes</button>
       </div>
       <div v-else>
-        <button class="mdc-button mdc-button--stroked" @click="getDataFromCanvas(saveAndReturn)" :disabled="pausedSubmitForm">Save changes</button>
+        <button class="mdc-button mdc-button--stroked" @click="saveAndReturn" :disabled="pausedSubmitForm">Save changes</button>
 
-        <button class="mdc-button mdc-button--raised" v-if="isUserHasPaymentMethod" @click="getDataFromCanvas(saveAndStartSending)" :disabled="pausedSubmitForm">Start Sending</button>
-        <button class="mdc-button mdc-button--raised" v-else @click="getDataFromCanvas(saveAndCheckout)" :disabled="pausedSubmitForm">Add payment and start sending</button>
+        <button class="mdc-button mdc-button--raised" v-if="isUserHasPaymentMethod" @click="saveAndStartSending" :disabled="pausedSubmitForm">Start Sending</button>
+        <button class="mdc-button mdc-button--raised" v-else @click="saveAndCheckout" :disabled="pausedSubmitForm">Add payment and start sending</button>
       </div>
     </div>
   </div>
@@ -330,30 +326,6 @@
     },
 
     mounted: function() {
-      //Initializing the product with only one template - "businesscard.psd".
-      const productDefinition = isEmpty(this.automation.front_json.stateId) ? { surfaces: [
-            //The first surface - a front side of the business card.
-            {
-                printAreas: [{ designFile: "test-page" }]
-            },
-            //The second surface - a back side of the business card.
-            {
-                printAreas: [{ designFile: "test-page" }]
-            }] } : this.automation.front_json.stateId;
-      //Getting the iframe element to display the editor in.
-      var iframe = document.getElementById("editorFrame");
-      const _this = this
-      //Loading the editor.
-      CustomersCanvas.IframeApi.loadEditor(iframe, productDefinition)
-          //If the editor has been successfully loaded.
-          .then(function (e) {
-          _this.designEditor = e;
-      })
-      //If there was an error thrown when loading the editor.
-      .catch(function (error) {
-          console.error("The editor failed to load with an exception: ", error);
-      });
-
     },
     data: function() {
       return {
@@ -367,7 +339,9 @@
         campaign_type: this.automation.campaign_type ? this.automation.campaign_type : "automation",
         willShowDailySendingSchedule: false,
         disabledDates: {},
+        isCancel: false,
         isStartDateDisable: false,
+        saved_automation: {}, // Use with autosave, play as backup when user don't want to change campaign any more
         errors: {
           endDate: false,
           uploadedFrontDesign: true,
@@ -380,9 +354,6 @@
         filterOptions: [],
         interval: null,
         pausedSubmitForm: false,
-        designEditor: null,
-        front_side_attribute: null,
-        back_side_attribute: null,
         checkingError: false
       }
     },
@@ -474,30 +445,6 @@
     },
 
     methods: {
-      getDataFromCanvas: function(callback) {
-        const _this = this
-        this.designEditor.finishProductDesign()
-          .then(function(result) {
-            _this.front_side_attribute = {
-              discount_x: null,
-              discount_y: null,
-              background_url: result.proofImageUrls[0][0],
-              stateId: result.stateId,
-            }
-            _this.back_side_attribute = {
-              discount_x: null,
-              discount_y: null,
-              background_url: result.proofImageUrls[1][0],
-              stateId: result.stateId,
-            }
-
-            callback()
-          })
-          .catch(function(error) {
-            console.log(error)
-          })
-      },
-
       checkDataIsValid: function({ type, target }) {
         if(this.automation.international){
           if(!target.value){
@@ -540,18 +487,18 @@
         // this.$refs.cardEditor.prepareSave();
 
         // Get card side data for saving
-        // let frontAttrs = this.$refs.frontEditor.$data.attributes;
-        // let backAttrs = this.$refs.backEditor.$data.attributes;
+        let frontAttrs = this.$refs.frontEditor.$data.attributes;
+        let backAttrs = this.$refs.backEditor.$data.attributes;
 
-        this.automation.front_json = this.front_side_attribute;
-        this.automation.back_json = this.back_side_attribute;
+        this.automation.front_json = frontAttrs;
+        this.automation.back_json = backAttrs;
 
         // Using `.showsDiscount` assumes card_editor.vue has created card_attributes objects from json
-        // if (!frontAttrs.showsDiscount && !backAttrs.showsDiscount ) {
-        //   // Fallback to default
-        //   this.automation.discount_pct = DEFAULT_DISCOUNT_PERCENTAGE;
-        //   this.automation.discount_exp = DEFAULT_WEEK_BEFORE_DISCOUNT_EXPIRE;
-        // }
+        if (!frontAttrs.showsDiscount && !backAttrs.showsDiscount ) {
+          // Fallback to default
+          this.automation.discount_pct = DEFAULT_DISCOUNT_PERCENTAGE;
+          this.automation.discount_exp = DEFAULT_WEEK_BEFORE_DISCOUNT_EXPIRE;
+        }
 
         this.automation.budget_type = this.budget_type
         this.automation.campaign_type = this.campaign_type
@@ -646,7 +593,6 @@
       },
 
       saveWithValidation: function(f) {
-        this.getDataFromCanvas()
         this.validateForm();
         this.$nextTick(() => {
           if (isEmpty($(".invalid"))) return false;
@@ -1063,15 +1009,5 @@
     width: 13px;
     height: 13px;
   }
-
-  .design-editor-wrapper {
-    height: 800px;
-
-    iframe#editorFrame {
-      height: 100%;
-      width: 90%;
-    }
-  }
-
 
 </style>
