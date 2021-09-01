@@ -9,7 +9,6 @@ import store from './store'
 
 import vueCountryRegionSelect from 'vue-country-region-select'
 Vue.use(vueCountryRegionSelect)
-
 import 'vue-material/dist/vue-material.min.css'
 import 'vue-material/dist/theme/default.css'
 import { MdDivider, MdChips, MdSubheader, MdButton,
@@ -20,9 +19,7 @@ Vue.use(MdChips)
 Vue.use(MdSubheader)
 Vue.use(MdButton)
 Vue.use(MdDialog)
-
 import campaignDashboard from '../components/campaigns/index'
-
 import Paginate from 'vuejs-paginate'
 Vue.component('paginate', Paginate)
 
