@@ -380,13 +380,10 @@
         filterOptions: [],
         interval: null,
         pausedSubmitForm: false,
-<<<<<<< HEAD
         designEditor: null,
         front_side_attribute: null,
-        back_side_attribute: null
-=======
+        back_side_attribute: null,
         checkingError: false
->>>>>>> 39921f4ae1a4c117bfaec9c2af8faf19119bdb20
       }
     },
 
@@ -733,7 +730,6 @@
           this.errors.endDate = false
         }
 
-<<<<<<< HEAD
         if(isEmpty(this.front_side_attribute) ||
           this.automation.discount_pct == 0 ||
           this.automation.discount_exp == 0) {
@@ -750,8 +746,6 @@
           this.errors.uploadedBackDesign = false
         }
 
-=======
->>>>>>> 39921f4ae1a4c117bfaec9c2af8faf19119bdb20
         if(isEmpty(this.automation.campaign_name) || this.automation.campaign_name.length > MAXIMUM_CAMPAIGN_NAME_LENGTH) {
           this.errors.campaignName = true
         } else {
