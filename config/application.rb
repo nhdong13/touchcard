@@ -31,6 +31,8 @@ module Touchcard
 
     # Gzip pages by default, see: https://www.schneems.com/2017/11/08/80-smaller-rails-footprint-with-rack-deflate/
     config.middleware.insert_after ActionDispatch::Static, Rack::Deflater
+    # config/application.rb
+    config.assets.initialize_on_precompile = false
 
   end
 end
