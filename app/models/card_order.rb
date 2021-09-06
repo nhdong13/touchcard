@@ -231,6 +231,7 @@ class CardOrder < ApplicationRecord
         # SendAllHistoryCardsJob.perform_later(@current_shop)
       end
     end
+    self
   end
 
   def can_enabled?
