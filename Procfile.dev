@@ -1,4 +1,3 @@
 web: bundle exec puma -C config/puma.rb -p 3000
-webpacker: yarn install && ./bin/webpack --watch --progress --colors
 worker: bundle exec rails jobs:work
 log: tail -f ./log/*.log
