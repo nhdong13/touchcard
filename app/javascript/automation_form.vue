@@ -213,7 +213,7 @@
       </div>
     </div>
     <hr />
-    <h2><small :class="{error: errors.uploadedFrontDesign}" v-if="errors.uploadedFrontDesign">*</small> Front</h2>
+    <!-- <h2><small :class="{error: errors.uploadedFrontDesign}" v-if="errors.uploadedFrontDesign">*</small> Front</h2>
     <div :class="{ invalid: errors.uploadedFrontDesign }">
       <card-editor
               ref="frontEditor"
@@ -236,6 +236,9 @@
               :discount_exp.sync="automation.discount_exp"
               :aws_sign_endpoint="awsSignEndpoint"
       ></card-editor>
+    </div> -->
+    <div class="editor-wrapper">
+      <iframe id="editorFrame"></iframe>
     </div>
     <br>
     <div class="text-right">
@@ -300,12 +303,28 @@
     created() {
       this.initializeStartDatepicker();
     },
-
-    beforeDestroy: function() {
-      window.clearInterval(this.interval)
-    },
-
     mounted: function() {
+      const production = isEmpty(this.automation.front_json.stateId) ? [
+            //The first surface - a front side of the business card.
+            {
+                printAreas: [{ designFile: "test-page" }]
+            },
+            //The second surface - a back side of the business card.
+            {
+                printAreas: [{ designFile: "test-page" }]
+            },
+            safetyLines: [
+            {
+                margin: { horizontal: 8, vertical: 10 },
+                color: "rgba(10,200,10,0.7)",
+                pdfBox: "Crop"
+            }
+        ]] : this.automation.front_json.stateId
+
+      var iframe = document.getElementById("editorFrame");
+      //Loading the editor.
+      const _this = this
+      CustomersCanvas.IframeApi.loadEditor(iframe, productDefinition).then(function(e) {_this.designEditor = e});
     },
     data: function() {
       return {
@@ -319,7 +338,6 @@
         campaign_type: this.automation.campaign_type ? this.automation.campaign_type : "automation",
         willShowDailySendingSchedule: false,
         disabledDates: {},
-        isCancel: false,
         isStartDateDisable: false,
         saved_automation: {}, // Use with autosave, play as backup when user don't want to change campaign any more
         errors: {
@@ -332,9 +350,11 @@
         },
         filterConditions: [],
         filterOptions: [],
-        interval: null,
         checkingFilterError: false,
         pausedSubmitForm: false,
+        front_design_attribute: null,
+        back_design_attribute: null,
+        designEditor: null
       }
     },
 
@@ -991,6 +1011,15 @@
     outline: 1px solid red;
     width: 13px;
     height: 13px;
+  }
+
+  .editor-wrapper {
+    height: 800px;
+
+    #editorFrame {
+      height: 100%;
+      width: 80%;
+    }
   }
 
 </style>
