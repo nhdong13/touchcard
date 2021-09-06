@@ -245,14 +245,14 @@
     <br>
     <div class="text-right">
       <div v-if="id && automation.campaign_status != 'draft' && automation.campaign_status != 'complete'">
-        <button class="mdc-button mdc-button--stroked" @click="returnToCampaignList" :disabled="pausedSubmitForm">Discard</button>
-        <button class="mdc-button mdc-button--raised" @click="saveAndReturn" :disabled="pausedSubmitForm">Save Changes</button>
+        <button class="mdc-button mdc-button--stroked" @click="getDataFromCanvas(returnToCampaignList)" :disabled="pausedSubmitForm">Discard</button>
+        <button class="mdc-button mdc-button--raised" @click="getDataFromCanvas(saveAndReturn)" :disabled="pausedSubmitForm">Save Changes</button>
       </div>
       <div v-else>
-        <button class="mdc-button mdc-button--stroked" @click="saveAndReturn" :disabled="pausedSubmitForm">Save changes</button>
+        <button class="mdc-button mdc-button--stroked" @click="getDataFromCanvas(saveAndReturn)" :disabled="pausedSubmitForm">Save changes</button>
 
-        <button class="mdc-button mdc-button--raised" v-if="isUserHasPaymentMethod" @click="saveAndStartSending" :disabled="pausedSubmitForm">Start Sending</button>
-        <button class="mdc-button mdc-button--raised" v-else @click="saveAndCheckout" :disabled="pausedSubmitForm">Add payment and start sending</button>
+        <button class="mdc-button mdc-button--raised" v-if="isUserHasPaymentMethod" @click="getDataFromCanvas(saveAndStartSending)" :disabled="pausedSubmitForm">Start Sending</button>
+        <button class="mdc-button mdc-button--raised" v-else @click="getDataFromCanvas(saveAndCheckout)" :disabled="pausedSubmitForm">Add payment and start sending</button>
       </div>
     </div>
   </div>
@@ -309,24 +309,31 @@
       const production = isEmpty(this.automation.front_json.stateId) ? [
             //The first surface - a front side of the business card.
             {
-                printAreas: [{ designFile: "test-page" }]
+                printAreas: [{ designFile: "test-page" }],
+                safetyLines: [
+                  {
+                      margin: { horizontal: 8, vertical: 10 },
+                      color: "rgba(10,200,10,0.7)",
+                      pdfBox: "Crop"
+                  }
+                ]
             },
             //The second surface - a back side of the business card.
             {
-                printAreas: [{ designFile: "test-page" }]
-            },
-            safetyLines: [
-            {
-                margin: { horizontal: 8, vertical: 10 },
-                color: "rgba(10,200,10,0.7)",
-                pdfBox: "Crop"
-            }
-        ]] : this.automation.front_json.stateId
+                printAreas: [{ designFile: "test-page" }],
+                safetyLines: [
+                  {
+                      margin: { horizontal: 8, vertical: 10 },
+                      color: "rgba(10,200,10,0.7)",
+                      pdfBox: "Crop"
+                  }
+                ]
+            }] : this.automation.front_json.stateId
 
       var iframe = document.getElementById("editorFrame");
       //Loading the editor.
       const _this = this
-      CustomersCanvas.IframeApi.loadEditor(iframe, productDefinition).then(function(e) {_this.designEditor = e});
+      CustomersCanvas.IframeApi.loadEditor(iframe, production).then(function(e) {_this.designEditor = e});
     },
     data: function() {
       return {
@@ -356,7 +363,7 @@
         pausedSubmitForm: false,
         front_design_attribute: null,
         back_design_attribute: null,
-        designEditor: null
+        designEditor: null,
         checkingError: false
       }
     },
@@ -448,6 +455,33 @@
     },
 
     methods: {
+      getDataFromCanvas: function(callback) {
+        const _this = this
+        this.designEditor.finishProductDesign()
+        // If product customization is completed successfully.
+        .then(function (result) {
+            _this.front_design_attribute = {
+              stateId: result.stateId,
+              background_url: result.proofImageUrls[0][0],
+              discount_x: null,
+              discount_y: null,
+            }
+
+            _this.back_design_attribute = {
+              stateId: result.stateId,
+              background_url: result.proofImageUrls[1][0],
+              discount_x: null,
+              discount_y: null,
+            }
+
+            callback()
+        })
+        // If there was an error thrown when completing product customization.
+        .catch(function (error) {
+            console.error("Completing product customization failed with exception: ", error);
+        });
+      },
+
       checkDataIsValid: function({ type, target }) {
         if(this.automation.international){
           if(!target.value){
@@ -490,18 +524,18 @@
         // this.$refs.cardEditor.prepareSave();
 
         // Get card side data for saving
-        let frontAttrs = this.$refs.frontEditor.$data.attributes;
-        let backAttrs = this.$refs.backEditor.$data.attributes;
+        // let frontAttrs = this.$refs.frontEditor.$data.attributes;
+        // let backAttrs = this.$refs.backEditor.$data.attributes;
 
-        this.automation.front_json = frontAttrs;
-        this.automation.back_json = backAttrs;
+        this.automation.front_json = this.front_design_attribute;
+        this.automation.back_json = this.back_design_attribute;
 
         // Using `.showsDiscount` assumes card_editor.vue has created card_attributes objects from json
-        if (!frontAttrs.showsDiscount && !backAttrs.showsDiscount ) {
-          // Fallback to default
-          this.automation.discount_pct = DEFAULT_DISCOUNT_PERCENTAGE;
-          this.automation.discount_exp = DEFAULT_WEEK_BEFORE_DISCOUNT_EXPIRE;
-        }
+        // if (!frontAttrs.showsDiscount && !backAttrs.showsDiscount ) {
+        //   // Fallback to default
+        //   this.automation.discount_pct = DEFAULT_DISCOUNT_PERCENTAGE;
+        //   this.automation.discount_exp = DEFAULT_WEEK_BEFORE_DISCOUNT_EXPIRE;
+        // }
 
         this.automation.budget_type = this.budget_type
         this.automation.campaign_type = this.campaign_type
