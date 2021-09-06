@@ -129,8 +129,9 @@ class Postcard < ApplicationRecord
 
     prepare_card
 
-    front_png_path = PostcardRenderUtil.render_side_png(postcard: self, is_front: true)
-    back_png_path = PostcardRenderUtil.render_side_png(postcard: self, is_front: false)
+    card_order = self.card_order
+    front_png_path = card_order.front_json[:pdf_output].blank? ? PostcardRenderUtil.render_side_png(postcard: self, is_front: true) : card_order.front_json[:pdf_output]
+    back_png_path = card_order.back_json[:pdf_output].blank? ? PostcardRenderUtil.render_side_png(postcard: self, is_front: false) : card_order.back_json[:pdf_output].blank?
 
     @lob ||= Lob::Client.new(api_key: ENV['LOB_API_KEY'], api_version: LOB_API_VER)
     sent_card = @lob.postcards.create(
