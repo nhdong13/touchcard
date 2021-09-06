@@ -178,8 +178,10 @@ class AutomationsController < BaseController
       :campaign_name,
       :send_continuously,
       filters_attributes: [[:id, :_destroy, filter_data: {}]],
-      front_json: [:stateId, :background_url, :discount_x, :discount_y],
-      back_json: [:stateId, :background_url, :discount_x, :discount_y],
+      # front_json: [:stateId, :background_url, :discount_x, :discount_y],
+      # back_json: [:stateId, :background_url, :discount_x, :discount_y],
+      front_json: [:stateId, :background_url, :pdf_output],
+      back_json: [:stateId, :background_url, :pdf_output],
       return_address_attributes: [:id, :name, :address_line1, :address_line2, :city, :state, :zip, :country_code]
     )
   end

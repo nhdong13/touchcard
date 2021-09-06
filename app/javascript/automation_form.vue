@@ -318,12 +318,18 @@
         surfaces: [
           //The first surface - a front side of the business card.
           {
-              printAreas: [{ designFile: "test-page" }]
+            width: 600,
+            height: 408
           },
           //The second surface - a back side of the business card.
+          // {
+          //     printAreas: [{ designFile: "test-page" }]
+          // }
           {
-              printAreas: [{ designFile: "test-page" }]
-          }]
+            width: 600,
+            height: 408
+          }
+        ]
       } :
       this.automation.front_json.stateId
 
@@ -466,15 +472,13 @@
             _this.front_design_attribute = {
               stateId: result.stateId,
               background_url: result.proofImageUrls[0][0],
-              discount_x: null,
-              discount_y: null,
+              pdf_output: result.hiResOutputUrls[0]
             }
 
             _this.back_design_attribute = {
               stateId: result.stateId,
               background_url: result.proofImageUrls[1][0],
-              discount_x: null,
-              discount_y: null,
+              pdf_output: result.hiResOutputUrls[1]
             }
 
             callback()
