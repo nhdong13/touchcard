@@ -306,34 +306,37 @@
       this.initializeStartDatepicker();
     },
     mounted: function() {
-      const production = isEmpty(this.automation.front_json.stateId) ? [
-            //The first surface - a front side of the business card.
-            {
-                printAreas: [{ designFile: "test-page" }],
-                safetyLines: [
-                  {
-                      margin: { horizontal: 8, vertical: 10 },
-                      color: "rgba(10,200,10,0.7)",
-                      pdfBox: "Crop"
-                  }
-                ]
-            },
-            //The second surface - a back side of the business card.
-            {
-                printAreas: [{ designFile: "test-page" }],
-                safetyLines: [
-                  {
-                      margin: { horizontal: 8, vertical: 10 },
-                      color: "rgba(10,200,10,0.7)",
-                      pdfBox: "Crop"
-                  }
-                ]
-            }] : this.automation.front_json.stateId
+      const production = isEmpty(this.automation.front_json.stateId) ? {
+        //This safety line is applied to all surfaces of the product.
+        defaultSafetyLines: [{
+          margin: 8.5,
+          color: 'rgba(0,255,0,1)',
+          altColor: 'rgba(255,255,255,0)',
+          stepPx: 5,
+          widthPx: 1
+        }],
+        surfaces: [
+          //The first surface - a front side of the business card.
+          {
+              printAreas: [{ designFile: "test-page" }]
+          },
+          //The second surface - a back side of the business card.
+          {
+              printAreas: [{ designFile: "test-page" }]
+          }]
+      } :
+      this.automation.front_json.stateId
+
+      const configuration = {
+        rendering: {
+          hiResOutputToSeparateFiles: true
+        }
+      }
 
       var iframe = document.getElementById("editorFrame");
       //Loading the editor.
       const _this = this
-      CustomersCanvas.IframeApi.loadEditor(iframe, production).then(function(e) {_this.designEditor = e});
+      CustomersCanvas.IframeApi.loadEditor(iframe, production, configuration).then(function(e) {_this.designEditor = e});
     },
     data: function() {
       return {
@@ -722,7 +725,7 @@
           this.errors.endDate = false
         }
 
-        if(!this.$refs.frontEditor.$data.attributes.background_url ||
+        if(isEmpty(this.front_design_attribute) ||
           this.automation.discount_pct == 0 ||
           this.automation.discount_exp == 0) {
           this.errors.uploadedFrontDesign = true
@@ -730,7 +733,7 @@
           this.errors.uploadedFrontDesign = false
         }
 
-        if(!this.$refs.backEditor.$data.attributes.background_url ||
+        if(isEmpty(this.front_design_attribute) ||
           this.automation.discount_pct == 0 ||
           this.automation.discount_exp == 0) {
           this.errors.uploadedBackDesign = true
