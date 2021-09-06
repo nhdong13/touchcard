@@ -1,5 +1,5 @@
 class AutomationsController < BaseController
-  before_action :set_automation, only: [:edit, :update, :show, :destroy, :start_sending]
+  before_action :set_automation, only: [:edit, :update, :show, :destroy, :start_sending, :toggle_pause]
   before_action :set_aws_sign_endpoint, only: [:new, :edit]
   before_action :set_return_address, only: [:new, :edit]
 
@@ -109,6 +109,14 @@ class AutomationsController < BaseController
     respond_to do |format|
       format.html { render plain: "OK" }
       format.json { render json: { message: "OK" }, status: :ok }
+    end
+  end
+
+  def toggle_pause
+    if @automation.toggle_pause
+      render json: { campaign: ActiveModelSerializers::SerializableResource.new(@automation.reload, {each_serializer: CardOrderSerializer}).to_json }, status: :ok
+    else
+      render json: { message: "failed" }, status: 422
     end
   end
 
