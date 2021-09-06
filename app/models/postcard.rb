@@ -57,13 +57,11 @@ class Postcard < ApplicationRecord
         card.send_card
       rescue => e
         num_failed += 1
-        logger.error e
-        NewRelic::Agent::notice_error(e.message)
-        if e.respond_to?('json_body')
-          data_error = JSON.parse(e.json_body)
-          card.error = data_error["error"]["message"]
-          card.save
-        end
+        # logger.error e
+        # NewRelic::Agent::notice_error(e.message)
+        card.error = e.message
+        card.save
+        ReportErrorMailer.send_error_report(card.card_order).deliver_later
         next
       end
     end
@@ -96,7 +94,11 @@ class Postcard < ApplicationRecord
   # 1 token = 0.89$
   # 2 tokens = 1.78$
   def cost
-    international? ? 1.78 : 0.89
+    begin
+      international? ? 1.78 : 0.89
+    rescue
+      0
+    end
   end
 
   class DiscountCreationError < StandardError

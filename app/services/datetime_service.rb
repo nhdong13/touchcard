@@ -4,7 +4,7 @@ class DatetimeService
   end
 
   def to_date
-    return "/" unless @datetime
+    return "" unless @datetime
     @datetime.strftime("%b %d, %Y")
   end
 end

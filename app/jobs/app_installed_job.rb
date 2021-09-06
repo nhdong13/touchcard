@@ -28,6 +28,9 @@ class AppInstalledJob < ActiveJob::Base
     result = ActiveCampaign::client.contact_sync(sync_params)
     ActiveCampaignLogger.log(sync_params, result)
 
+    # Add customer and order into database
+    FetchHistoryOrdersJob.perform_later(shop)
+
     slack_message = "A new shop has installed Touchcard: #{shop.domain}\n" +
         "email: #{shop.email}\nowner: #{shop.owner}\n# new customers: #{shop.last_month}"
     SlackNotify.message(slack_message) unless Rails.env.development?

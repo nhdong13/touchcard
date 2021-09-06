@@ -17,10 +17,10 @@
         <input type="radio" id="automation" value="automation" v-model="campaign_type" v-on:click="setBudgetType">
         <label for="automation">Automation</label>
       </span>
-      <span v-if="automation.campaign_status == 'draft' || automation.campaign_type == 'one_off'">
+      <!-- <span v-if="automation.campaign_status == 'draft' || automation.campaign_type == 'one_off'">
         <input type="radio" id="one_off" value="one_off" v-model="campaign_type" v-on:click="setBudgetType">
         <label for="one_off">One-off</label>
-      </span>
+      </span> -->
     </div>
 
     <div class="automation-section" v-if="campaign_type =='automation'">
@@ -216,13 +216,15 @@
     <!-- <h2><small :class="{error: errors.uploadedFrontDesign}" v-if="errors.uploadedFrontDesign">*</small> Front</h2>
     <div :class="{ invalid: errors.uploadedFrontDesign }">
       <card-editor
-              ref="frontEditor"
-              :isBack="false"
-              :json="automation.front_json"
-              :discount_pct.sync="automation.discount_pct"
-              :discount_exp.sync="automation.discount_exp"
-              :aws_sign_endpoint="awsSignEndpoint"
-      ></card-editor>
+      ref="frontEditor"
+      :isBack="false"
+      :json="automation.front_json"
+      :discount_pct.sync="automation.discount_pct"
+      :discount_exp.sync="automation.discount_exp"
+      :aws_sign_endpoint="awsSignEndpoint"
+      :checkingError="checkingError"
+      :errorPresent.sync="errors.uploadedFrontDesign"
+    />
     </div>
     <br>
     <hr />
@@ -355,6 +357,7 @@
         front_design_attribute: null,
         back_design_attribute: null,
         designEditor: null
+        checkingError: false
       }
     },
 
@@ -531,6 +534,7 @@
         }
         collection == "accepted" ? this.acceptedFilters[index] = filter : this.removedFilters[index] = filter;
         this.checkingFilterError = false;
+        this.filtersValidation();
       },
       filterRemove(filter, collection, index) {
         if(filter.selectedFilter == "shipping_country" && filter.selectedCondition == "from" && collection == "accepted") {
@@ -706,16 +710,8 @@
           this.errors.campaignName = false
         }
 
-        if (!this.isFilterIncomplete()) {
-          if (this.orderDateFiltersNotConflict(this.acceptedFilters)) {
-            this.checkingFilterError = false;
-            this.errors.filters = false;
-          } else {
-            this.checkingFilterError = true;
-            this.errors.filters = true;
-          }
-        }
-
+        this.checkingFilterError = true;
+        this.filtersValidation();
         if(this.automation.international) {
           if(isEmpty(this.returnAddress.name) ||
             isEmpty(this.returnAddress.address_line1) ||
@@ -730,11 +726,11 @@
         }
       },
 
-      isFilterIncomplete: function() {
+      isFilterComplete: function() {
         for (let element of this.acceptedFilters.concat(this.removedFilters))
           for(let item in element)
-            if (!element[item] || isEmpty(element[item].toString())) return true;
-        return false;
+            if (!element[item] || isEmpty(element[item].toString())) return false;
+        return true;
       },
 
       isFormValid: function() {
@@ -853,14 +849,28 @@
         if (lastOrdCompareValue <= firstOrdCompareValue) {
           this.markInvalidDateFilter(col, firstOrdFilter, lastOrdFilter);
           return false;
+        } else {
+          this.markInvalidDateFilter(col, firstOrdFilter, lastOrdFilter, true);
+          return true;
         }
-        return true;
       },
 
-      markInvalidDateFilter(collection, firstOrd, lastOrd) {
-        $($(".filter-line")[collection.indexOf(firstOrd)]).find(".f-value input").addClass("invalid")
-        $($(".filter-line")[collection.indexOf(lastOrd)]).find(".f-value input").addClass("invalid")
+      markInvalidDateFilter(collection, firstOrd, lastOrd, isUnmark=false) {
+        if (isUnmark) {
+          $($(".filter-line")[collection.indexOf(firstOrd)]).find(".f-value input").removeClass("invalid");
+          $($(".filter-line")[collection.indexOf(lastOrd)]).find(".f-value input").removeClass("invalid");
+        } else {
+          $($(".filter-line")[collection.indexOf(firstOrd)]).find(".f-value input").addClass("invalid");
+          $($(".filter-line")[collection.indexOf(lastOrd)]).find(".f-value input").addClass("invalid");
+        }
       },
+      filtersValidation() {
+        if (this.isFilterComplete() && this.orderDateFiltersNotConflict(this.acceptedFilters)) {
+          this.errors.filters = false;
+        } else {
+          this.errors.filters = true;
+        }
+      }
     }
   }
 </script>

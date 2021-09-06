@@ -10,11 +10,11 @@
           <button v-on:click="showModalConfirmDeleteCampaign" :disabled="selected.length < 1" class="mdc-button mdc-button--stroked"> Delete </button>
         </div>
         <div :class="'search-action'">
-          <button v-on:click="exportCsv">
+          <!-- <button v-on:click="exportCsv">
             CSV
             <font-awesome-icon icon="long-arrow-alt-down"/>
-           </button>
-          <DropdownMenu ref="DropdownMenu"></DropdownMenu>
+           </button> -->
+          <!-- <DropdownMenu ref="DropdownMenu"></DropdownMenu> -->
           <input :placeholder="'SEARCH'" v-model="searchQuery" @input="debounceSearch" class="border-theme"/>
         </div>
       </div>
@@ -457,7 +457,8 @@
       },
 
       collectParamsFilters: function() {
-        return this.$refs.DropdownMenu.collectParamsFilters()
+        // return this.$refs.DropdownMenu.collectParamsFilters()
+        return null
       },
 
       getParamsQuery: function() {
