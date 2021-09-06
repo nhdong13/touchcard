@@ -390,8 +390,10 @@
         this.loading = true;
         let target = `/automations/${campaign_id}/toggle_pause`;
         axios.put(target).then(res => {
-          let index = this.thisCampaigns.findIndex(campaign => campaign.id == campaign_id)
-          this.thisCampaigns[index] = JSON.parse(res.data.campaign)
+          let index = this.thisCampaigns.findIndex(campaign => campaign.id == campaign_id);
+          let updateCampaign = JSON.parse(res.data.campaign);
+          updateCampaign.schedule = formatDateCampaign(this.shared.campaign.send_date_start, this.shared.campaign.send_date_end, this.shared.campaign.campaign_type, this.shared.campaign.send_continuously)
+          this.thisCampaigns[index] = updateCampaign;
           this.$forceUpdate();
           this.loading = false;
         }).catch(error => {});
