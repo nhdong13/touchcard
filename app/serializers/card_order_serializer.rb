@@ -8,7 +8,7 @@ class CardOrderSerializer < ActiveModel::Serializer
              :budget_type,
              :type,
              :enabled,
-             # :schedule,
+             :schedule,
              :tokens_used,
              :budget_used,
              :campaign_type,
@@ -50,33 +50,21 @@ class CardOrderSerializer < ActiveModel::Serializer
       "$#{object.budget.to_i}"
     end
   end
-=begin
+
   def schedule
-    result = "-"
-    start_date = DatetimeService.new(object.send_date_start).to_date
-    end_date = DatetimeService.new(object.send_date_end).to_date
-    if object.one_off?
-      if object.send_date_end
-        result = "#{start_date} - #{end_date}"
-      else
-        result = "#{start_date}"
-      end
+    start_date = object.send_date_start&.strftime("%b %d, %Y")
+    end_date = object.send_date_end&.strftime("%b %d, %Y")
+    if start_date.blank?
+      "Not set"
+    elsif object.one_off?
+      start_date
+    elsif object.send_continuously
+      "#{start_date} - Ongoing"
+    elsif end_date.blank?
+      "Not Set"
     else
-      if object.send_continuously
-        if object.send_date_start
-          result = "#{start_date} - Ongoing"
-        else
-          result = "Not set"
-        end
-      else
-        if object.send_date_start && object.send_date_end
-          result = "#{start_date} - #{end_date}"
-        else
-          result = "Not set"
-        end
-      end
+      "#{start_date} - #{end_date}"
     end
-    result
   end
-=end
+
 end
