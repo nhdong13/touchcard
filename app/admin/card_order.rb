@@ -1,7 +1,7 @@
 require "card_util"
 
 ActiveAdmin.register CardOrder do
-  menu priority: 5, label: "Automations"
+  menu priority: 5, label: "Campaigns"
   actions :index, :show
 
   member_action :change_sending_status, method: :get do
@@ -59,7 +59,7 @@ ActiveAdmin.register CardOrder do
   filter :created_at
   filter :updated_at
 
-  index title: "Automations" do
+  index title: "Campaigns" do
     # actions
     column :id do |card_order|
       link_to card_order.id, admin_card_order_path(card_order)
@@ -83,7 +83,7 @@ ActiveAdmin.register CardOrder do
     column :updated_at
   end
 
-  show title: proc{ "Automation ##{@card_order.id}" } do
+  show title: proc{ "Campaign ##{@card_order.id}" } do
     attributes_table do
       row :shop do |card_order|
         card_order.shop
