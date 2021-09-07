@@ -71,6 +71,10 @@ ActiveAdmin.register Shop do
         status_tag(number_to_currency(shop.credit))
         link_to "edit", adjust_credits_admin_shop_path(shop)
       end
+      row :sub_qty do |shop|
+        status_tag(number_to_currency(shop.current_subscription ? shop.current_subscription.value : 0))
+        link_to "edit", shop.current_subscription.present? ? change_subscription_credit_admin_subscription_path(shop.current_subscription, with_direct_path: true) : "#"
+      end
       row :stripe_customer_id do |shop|
         link_to shop.stripe_customer_id, "https://dashboard.stripe.com/customers/#{shop.stripe_customer_id}", target: :_blank if shop.stripe_customer_id
       end
@@ -102,7 +106,7 @@ ActiveAdmin.register Shop do
           link_to(subscription.id, admin_subscription_path(subscription))
         end
 
-        column :credit do |subscription|
+        column :sub_qty do |subscription|
           number_to_currency(subscription.value)
         end
         column :plan_id
