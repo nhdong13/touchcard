@@ -3,9 +3,9 @@ module DashboardHelper
     if postcard.canceled?
       "Canceled"
     elsif postcard.sent?
-      "Sent on #{postcard.date_sent.to_date}"
+      "Sent on #{postcard&.date_sent&.to_date}"
     else
-      "Sending #{postcard.send_date.to_date}"
+      "Sending #{postcard&.send_date&.to_date}"
     end
   end
 end
