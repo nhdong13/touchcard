@@ -206,7 +206,6 @@
   import _ from 'lodash'
   import CustomePagination from './pagination.vue'
   import PreviewImage from './campaign_index_preview_image.vue'
-  import { dateFormat, formatDateCampaign } from 'packs/date-format.js'
   import { MAXIMUM_CAMPAIGN_NAME_LENGTH } from '../../config.js'
   import LoadingDialog from '../loading_dialog.vue'
 
@@ -263,7 +262,6 @@
             return obj.id == _sharedState.id
           })
           if(targetCampaignId != -1) {
-            this.shared.campaign.schedule = formatDateCampaign(this.shared.campaign.send_date_start, this.shared.campaign.send_date_end, this.shared.campaign.campaign_type, this.shared.campaign.send_continuously)
             this.shared.campaign.campaign_status = this.shared.campaign.campaign_status.split("_").join(" ").replace(/^\w/, (c) => c.toUpperCase())
             this.shared.campaign.campaign_type = this.shared.campaign.campaign_type.split("_").join(" ").replace(/^\w/, (c) => c.toUpperCase())
 
@@ -392,7 +390,6 @@
         axios.put(target).then(res => {
           let index = this.thisCampaigns.findIndex(campaign => campaign.id == campaign_id);
           let updateCampaign = JSON.parse(res.data.campaign);
-          updateCampaign.schedule = formatDateCampaign(this.shared.campaign.send_date_start, this.shared.campaign.send_date_end, this.shared.campaign.campaign_type, this.shared.campaign.send_continuously)
           this.thisCampaigns[index] = updateCampaign;
           this.$forceUpdate();
           this.loading = false;
@@ -462,10 +459,6 @@
 
       updateState: function(data, willReturnToFisrtPage=true) {
         let tmp_campaigns = JSON.parse(data.campaigns)
-        tmp_campaigns.forEach(campaign => {
-          campaign.schedule = formatDateCampaign(campaign.send_date_start, campaign.send_date_end, campaign.campaign_type, campaign.send_continuously)
-        })
-
         this.thisCampaigns = tmp_campaigns
         this.thisTotalPages = data.total_pages
         this.selected = []
