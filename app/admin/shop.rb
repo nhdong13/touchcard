@@ -120,7 +120,7 @@ ActiveAdmin.register Shop do
       end
     end
 
-    panel "Card Orders" do
+    panel "Automations" do
       table_for shop.card_orders do
         column :id do |card_order|
           link_to card_order.id, admin_card_order_path(card_order)
