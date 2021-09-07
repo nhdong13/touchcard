@@ -134,23 +134,27 @@ class Postcard < ApplicationRecord
     back_png_path = nil
     is_use_image = false
 
-    if(card_order.front_json[:pdf_output].blank? || card_order.back_json[:pdf_output].blank?)
+    if(card_order.front_json["pdf_output"].blank? || card_order.back_json["pdf_output"].blank?)
       front_png_path =  PostcardRenderUtil.render_side_png(postcard: self, is_front: true)
       back_png_path = PostcardRenderUtil.render_side_png(postcard: self, is_front: false)
       is_use_image = true
     else
-      front_png_path = card_order.front_json[:pdf_output]
-      back_png_path = card_order.back_json[:pdf_output]
+      front_png_path = card_order.front_json["pdf_output"]
+      back_png_path = card_order.back_json["pdf_output"]
     end
+
+    front_design = is_use_image ? File.new(front_png_path) : front_png_path
+    back_design = is_use_image ? File.new(back_png_path) : back_png_path
 
     @lob ||= Lob::Client.new(api_key: ENV['LOB_API_KEY'], api_version: LOB_API_VER)
     sent_card = @lob.postcards.create(
       description: "#{card_order.type} #{shop.domain}",
       to: to_address,
       from: return_address,
-      front: is_use_image ? File.new(front_png_path) : front_png_path,
-      back: is_use_image ? File.new(back_png_path) : back_png_path
+      front: front_design,
+      back: back_design
     )
+
     self.sent = true
     self.date_sent = Date.today
     self.postcard_id = sent_card["id"]

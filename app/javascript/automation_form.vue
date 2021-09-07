@@ -239,7 +239,8 @@
               :aws_sign_endpoint="awsSignEndpoint"
       ></card-editor>
     </div> -->
-    <div class="editor-wrapper">
+    <h2><small :class="{error: errors.design}" v-if="errors.design">*</small>Design</h2>
+    <div :class="['editor-wrapper', errors.design ? 'invalid' : '' ]">
       <iframe id="editorFrame"></iframe>
     </div>
     <br>
@@ -315,19 +316,20 @@
           stepPx: 5,
           widthPx: 1
         }],
+        // PPI of Customer's Canvas Iframe is 72
         surfaces: [
           //The first surface - a front side of the business card.
           {
-            width: 600,
-            height: 408
+            width: 450,
+            height: 306
           },
           //The second surface - a back side of the business card.
           // {
           //     printAreas: [{ designFile: "test-page" }]
           // }
           {
-            width: 600,
-            height: 408
+            width: 450,
+            height: 306
           }
         ]
       } :
@@ -335,7 +337,7 @@
 
       const configuration = {
         rendering: {
-          hiResOutputToSeparateFiles: true
+          hiResOutputToSeparateFiles: true,
         }
       }
 
@@ -357,15 +359,16 @@
         willShowDailySendingSchedule: false,
         disabledDates: {},
         isStartDateDisable: false,
-        saved_automation: {}, // Use with autosave, play as backup when user don't want to change campaign any more
         errors: {
           endDate: false,
-          uploadedFrontDesign: false,
-          uploadedBackDesign: false,
+          // uploadedFrontDesign: false,
+          // uploadedBackDesign: false,
+          design: false,
           returnAddress: false,
           campaignName: false,
           filters: false
         },
+        designValidation: null,
         filterConditions: [],
         filterOptions: [],
         checkingFilterError: false,
@@ -435,11 +438,6 @@
     },
 
     components: {
-      // 'card-editor': () => ({
-      //   // https://vuejs.org/v2/guide/components.html#Async-Components
-      //   component: import('./components/card_editor.vue')
-      //   // loading: LoadingComp, error: ErrorComp, delay: 200, timeout: 3000
-      // })
       FilterOption,
       CardEditor,
       'card-editor': CardEditor,
@@ -480,6 +478,8 @@
               background_url: result.proofImageUrls[1][0],
               pdf_output: result.hiResOutputUrls[1]
             }
+
+            _this.designValidation = result.violationWarningData
 
             callback()
         })
@@ -721,28 +721,32 @@
       },
 
       validateForm: function() {
-        // No need to validate start date cus they have default values
-
         if(this.isSendDateEndInvalid()) {
           this.errors.endDate = true
         } else {
           this.errors.endDate = false
         }
 
-        if(isEmpty(this.front_design_attribute) ||
-          this.automation.discount_pct == 0 ||
-          this.automation.discount_exp == 0) {
-          this.errors.uploadedFrontDesign = true
-        } else {
-          this.errors.uploadedFrontDesign = false
-        }
+        // if(isEmpty(this.front_design_attribute) ||
+        //   this.automation.discount_pct == 0 ||
+        //   this.automation.discount_exp == 0) {
+        //   this.errors.uploadedFrontDesign = true
+        // } else {
+        //   this.errors.uploadedFrontDesign = false
+        // }
 
-        if(isEmpty(this.front_design_attribute) ||
-          this.automation.discount_pct == 0 ||
-          this.automation.discount_exp == 0) {
-          this.errors.uploadedBackDesign = true
+        // if(isEmpty(this.front_design_attribute) ||
+        //   this.automation.discount_pct == 0 ||
+        //   this.automation.discount_exp == 0) {
+        //   this.errors.uploadedBackDesign = true
+        // } else {
+        //   this.errors.uploadedBackDesign = false
+        // }
+
+        if(this.designValidation.length > 0) {
+          this.errors.design = true
         } else {
-          this.errors.uploadedBackDesign = false
+          this.errors.design = false
         }
 
         if(isEmpty(this.automation.campaign_name) || this.automation.campaign_name.length > MAXIMUM_CAMPAIGN_NAME_LENGTH) {
