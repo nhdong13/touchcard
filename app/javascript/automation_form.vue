@@ -339,9 +339,7 @@
         campaign_type: this.automation.campaign_type ? this.automation.campaign_type : "automation",
         willShowDailySendingSchedule: false,
         disabledDates: {},
-        isCancel: false,
         isStartDateDisable: false,
-        saved_automation: {}, // Use with autosave, play as backup when user don't want to change campaign any more
         errors: {
           endDate: false,
           uploadedFrontDesign: true,
@@ -416,11 +414,6 @@
     },
 
     components: {
-      // 'card-editor': () => ({
-      //   // https://vuejs.org/v2/guide/components.html#Async-Components
-      //   component: import('./components/card_editor.vue')
-      //   // loading: LoadingComp, error: ErrorComp, delay: 200, timeout: 3000
-      // })
       FilterOption,
       CardEditor,
       'card-editor': CardEditor,
