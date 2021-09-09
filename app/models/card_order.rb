@@ -1,11 +1,6 @@
 class CardOrder < ApplicationRecord
-  # TODO: Unused Automations Code
-  #
-  enum budget_type: [ :non_set, :monthly ]
-  enum campaign_type: [ :automation, :one_off ]
   TYPES = ['PostSaleOrder', 'CustomerWinbackOrder', 'LifetimePurchaseOrder', 'AbandonedCheckout']
 
-  enum campaign_status: [:draft, :processing, :scheduled, :sending, :complete, :paused, :error, :out_of_credit]
   self.inheritance_column = :_type_disabled
   belongs_to :shop
 
@@ -66,6 +61,10 @@ class CardOrder < ApplicationRecord
   after_update :update_budget, if: :saved_change_to_budget_update?
   after_update :update_budget_type, if: :saved_change_to_budget_type?
   after_update :reactivate_campaign, if: :saved_change_to_send_date_end?
+
+  enum budget_type: [ :non_set, :monthly ]
+  enum campaign_type: [ :automation, :one_off ]
+  enum campaign_status: { draft: 0, processing: 1, scheduled: 2, sending: 3, complete: 4, paused: 5, error: 6, out_of_credit: 7 }
 
   class << self
     def num_enabled
@@ -217,6 +216,30 @@ class CardOrder < ApplicationRecord
       discount_exp
     else
       "-"
+    end
+  end
+
+  def toggle_pause
+    if self.enabled?
+      update!(enabled: !self.enabled, campaign_status: :paused, previous_campaign_status: self.campaign_status_before_type_cast)
+    else
+      if self.can_enabled?
+        goback_status = previous_campaign_status == CardOrder.campaign_statuses[:paused] || previous_campaign_status.nil? ?
+                          CardOrder.campaign_statuses[:processing]
+                          : previous_campaign_status
+        update!(enabled: !self.enabled, campaign_status: goback_status)
+        # SendAllHistoryCardsJob.perform_later(@current_shop)
+      end
+    end
+    self
+  end
+
+  def can_enabled?
+    today = Time.current.beginning_of_day
+    if self.automation?
+      send_continuously || send_date_end < today
+    elsif self.one_off?
+      send_date_start < today
     end
   end
 

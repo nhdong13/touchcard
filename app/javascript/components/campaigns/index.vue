@@ -69,7 +69,7 @@
               </span>
             </th>
           </tr>
-          <tr v-for="item in thisCampaigns">
+          <tr v-for="item in thisCampaigns" :key="item.id">
             <td class="checkbox-cell">
               <input type="checkbox" v-model="selected" :value="item.id" number/>
             </td>
@@ -78,7 +78,7 @@
                 <md-switch v-model="campaignActive" class="md-primary" disabled></md-switch>
               </span>
               <span v-else>
-                <md-switch v-model="campaignActive" :value="item.id" class="md-primary" @change="value => onChangeCampaignActive(value, item.id)" :disabled="disableToggle(item)"></md-switch>
+                <md-switch v-model="campaignActive" :value="item.id" class="md-primary" @change="onChangeCampaignActive(item.id)" :disabled="disableToggle(item)"></md-switch>
               </span>
             </td>
             <td>
@@ -111,7 +111,7 @@
       </div>
       <div class="mobile-support" v-else>
         <ul>
-          <li class="d-flex" v-for="item in thisCampaigns">
+          <li class="d-flex" v-for="item in thisCampaigns" :key="item.campaign_status">
             <span class="d-flex ml-5">
               <PreviewImage
                 :key="item.id"
@@ -126,7 +126,7 @@
                   <md-switch v-model="campaignActive" class="md-primary" disabled></md-switch>
                 </span>
                 <span class="toggle-button" v-else>
-                  <md-switch v-model="campaignActive" :value="item.id" class="md-primary" @change="value => onChangeCampaignActive(value, item.id)" :disabled="disableToggle(item)"></md-switch>
+                  <md-switch v-model="campaignActive" :value="item.id" class="md-primary" @change="onChangeCampaignActive(item.id)" :disabled="disableToggle(item)"></md-switch>
                 </span>
               </div>
               <div class="campaign-detail d-flex">
@@ -168,57 +168,53 @@
         </CustomePagination>
       </div>
     </div>
-      <campaignModal name="duplicateModal" :classes="'duplicate-modal'" :width="450" :height="200" :clickToClose="false">
+    <modal name="duplicateModal" :classes="'duplicate-modal'" :width="450" :height="200" :clickToClose="false">
+      <div>
         <div>
-          <div>
-            <strong><h3>What do you want to name this campaign?</h3></strong>
-          </div>
-          <div>
-            <input id="campaign_name" v-model="duplicateCampaignName" class="border-theme">
-          </div>
-          <br/>
-          <div>
-            <button v-on:click="closeModalConfirmDuplicateCampaign" class="mdc-button mdc-button--stroked"> Cancel </button>
-            <button v-on:click="duplicateCampaign" class="mdc-button mdc-button--stroked"> Save </button>
-          </div>
+          <strong><h3>What do you want to name this campaign?</h3></strong>
         </div>
-      </campaignModal>
+        <div>
+          <input id="campaign_name" v-model="duplicateCampaignName" class="border-theme">
+        </div>
+        <br/>
+        <div>
+          <button v-on:click="closeModalConfirmDuplicateCampaign" class="mdc-button mdc-button--stroked"> Cancel </button>
+          <button v-on:click="duplicateCampaign" class="mdc-button mdc-button--stroked"> Save </button>
+        </div>
+      </div>
+    </modal>
 
-      <campaignModal name="deleteCampaignModal" :classes="'delete-campaign-modal'" :width="450" :height="200" :clickToClose="false">
+    <modal name="deleteCampaignModal" classes="delete-campaign-modal" width="450" height="200" :clickToClose="false">
+      <div>
         <div>
-          <div>
-            <strong><h3>This action cannot be undone. Are you sure you want to delete the campaign(s)?</h3></strong>
-          </div>
-          <div>
-            <button v-on:click="closeModalConfirmDeleteCampaign" class="mdc-button mdc-button--stroked"> Cancel </button>
-            <button v-on:click="deleteCampaigns" class="mdc-button mdc-button--stroked"> Delete </button>
-          </div>
+          <strong><h3>This action cannot be undone. Are you sure you want to delete the campaign(s)?</h3></strong>
         </div>
-      </campaignModal>
-    </div>
+        <div>
+          <button v-on:click="closeModalConfirmDeleteCampaign" class="mdc-button mdc-button--stroked"> Cancel </button>
+          <button v-on:click="deleteCampaigns" class="mdc-button mdc-button--stroked"> Delete </button>
+        </div>
+      </div>
+    </modal>
+    <LoadingDialog :modalDisplay="loading" />
+  </div>
 </template>
 
 <script>
   /* global Turbolinks */
-  import Vue from 'vue/dist/vue.esm'
   import axios from 'axios'
   import DropdownMenu from './dropdown_menu.vue'
-  import { MdSwitch } from 'vue-material/dist/components'
   import _ from 'lodash'
-  import VModal from 'vue-js-modal'
   import CustomePagination from './pagination.vue'
   import PreviewImage from './campaign_index_preview_image.vue'
-  import { dateFormat, formatDateCampaign } from 'packs/date-format.js'
   import { MAXIMUM_CAMPAIGN_NAME_LENGTH } from '../../config.js'
-
-  Vue.use(VModal, { componentName: 'campaignModal'})
-  Vue.use(MdSwitch)
+  import LoadingDialog from '../loading_dialog.vue'
 
   export default {
     components: {
       DropdownMenu,
       CustomePagination,
-      PreviewImage
+      PreviewImage,
+      LoadingDialog
     },
     props: {
       campaigns: {
@@ -253,6 +249,7 @@
         sortBySendDateEnd: true,
         sortByMonthlyBudget: true,
         duplicateCampaignName: "",
+        loading: false
       }
     },
 
@@ -265,7 +262,6 @@
             return obj.id == _sharedState.id
           })
           if(targetCampaignId != -1) {
-            this.shared.campaign.schedule = formatDateCampaign(this.shared.campaign.send_date_start, this.shared.campaign.send_date_end, this.shared.campaign.campaign_type, this.shared.campaign.send_continuously)
             this.shared.campaign.campaign_status = this.shared.campaign.campaign_status.split("_").join(" ").replace(/^\w/, (c) => c.toUpperCase())
             this.shared.campaign.campaign_type = this.shared.campaign.campaign_type.split("_").join(" ").replace(/^\w/, (c) => c.toUpperCase())
 
@@ -388,20 +384,16 @@
         });
       },
 
-      onChangeCampaignActive: function(event, campaign_id){
-        let _this = this
-        let target = `/automations/${campaign_id}.json`;
-        let campaign = this.thisCampaigns.find(function(campaign){
-          return campaign.id == campaign_id
-        });
-        let index = this.thisCampaigns.indexOf(campaign)
-        axios.put(target, { card_order: {enabled: campaign.enabled ? false : true} })
-          .then(function(response) {
-            _this.thisCampaigns[index] = JSON.parse(response.data.campaign)
-            _this.$forceUpdate();
-          }).catch(function (error) {
-        });
-
+      onChangeCampaignActive(campaign_id) {
+        this.loading = true;
+        let target = `/automations/${campaign_id}/toggle_pause`;
+        axios.put(target).then(res => {
+          let index = this.thisCampaigns.findIndex(campaign => campaign.id == campaign_id);
+          let updateCampaign = JSON.parse(res.data.campaign);
+          this.thisCampaigns[index] = updateCampaign;
+          this.$forceUpdate();
+          this.loading = false;
+        }).catch(error => {});
       },
 
       listcampaignActive: function() {
@@ -467,10 +459,6 @@
 
       updateState: function(data, willReturnToFisrtPage=true) {
         let tmp_campaigns = JSON.parse(data.campaigns)
-        tmp_campaigns.forEach(campaign => {
-          campaign.schedule = formatDateCampaign(campaign.send_date_start, campaign.send_date_end, campaign.campaign_type, campaign.send_continuously)
-        })
-
         this.thisCampaigns = tmp_campaigns
         this.thisTotalPages = data.total_pages
         this.selected = []

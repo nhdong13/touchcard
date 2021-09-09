@@ -23,30 +23,30 @@
 
     <!-- Common 2 input fields -->
     <div :class="['order_tag', 'discount_code'].includes(selectedFilter) ? 'f-value-2' : 'f-value'" v-if="showSecondInput() && !showDiscountAmountInput()">
-      <datepicker class="valueInput" v-model="value1" v-if="showDateInput()" @input="combineValue()" :use-utc="true" :disabled-dates="datePickerDisabledDates(true)" format="MMM dd, yyyy" :input-class="{invalid: showInvalidValueInput}" />
+      <datepicker class="valueInput" v-model="value1" v-if="showDateInput()" @input="combineValue()" :use-utc="true" :disabled-dates="datePickerDisabledDates(true)" format="MMM dd, yyyy" :input-class="{invalid: showError}" />
       <font-awesome-icon icon="chevron-down" v-if="showDateInput()" @click="triggerDatepicker(1)" class="datepicker-arrow middle-arrow" />
 
-      <input type="number" :class="['valueInput', {invalid: showInvalidValueInput}]" v-model="value1" v-if="showNumberInput()" @change="combineValue()" :placeholder="numberInputPlaceholder('Min. ')" @keypress="preventDecimal($event)" min=0 />
+      <input type="number" :class="['valueInput', {invalid: showError}]" v-model="value1" v-if="showNumberInput()" @change="combineValue()" :placeholder="numberInputPlaceholder('Min. ')" @keypress="preventDecimal($event)" min=0 />
 
       <span class="middle-text">and</span>
 
-      <datepicker class="valueInput" v-model="value2" v-if="showDateInput()" @input="combineValue()" :use-utc="true" :disabled-dates="datePickerDisabledDates(false)" format="MMM dd, yyyy" :input-class="{invalid: showInvalidValueInput}"/>
+      <datepicker class="valueInput" v-model="value2" v-if="showDateInput()" @input="combineValue()" :use-utc="true" :disabled-dates="datePickerDisabledDates(false)" format="MMM dd, yyyy" :input-class="{invalid: showError}"/>
       <font-awesome-icon icon="chevron-down" v-if="showDateInput()" @click="triggerDatepicker(2)" class="datepicker-arrow" />
 
-      <input type="number" :class="['valueInput', {invalid: showInvalidValueInput}]" v-model="value2" v-if="showNumberInput()" @change="combineValue()" :placeholder="numberInputPlaceholder('Max. ')" @keypress="preventDecimal($event)" min=0 />
+      <input type="number" :class="['valueInput', {invalid: showError}]" v-model="value2" v-if="showNumberInput()" @change="combineValue()" :placeholder="numberInputPlaceholder('Max. ')" @keypress="preventDecimal($event)" min=0 />
 
       <span class="middle-text" v-if="filter.selectedCondition == 'between_number' && filter.selectedFilter.includes('order_date')">days ago</span>
     </div>
     <!---->
 
     <!-- Zipcode filter -->
-    <div :class="['f-value', {invalid: showInvalidValueInput}]" v-else-if="showZipCodeInput()">
+    <div :class="['f-value', {invalid: showError}]" v-else-if="showZipCodeInput()">
       <input type="number" class="valueInput" v-model="value1" v-if="showNumberInput()" @change="filter.value = `${value1}`" />
     </div>
     <!---->
 
     <!-- Discount amount filter -->
-    <div :class="['f-value', {invalid: showInvalidValueInput}]" v-else-if="showDiscountAmountInput()">
+    <div :class="['f-value', {invalid: showError}]" v-else-if="showDiscountAmountInput()">
       <!-- switcher currency type for discount amount filter -->
       <div class="switcher-small-options">
         <span>$</span>
@@ -63,15 +63,15 @@
 
     <!-- common single filter -->
     <div :class="['order_tag', 'discount_code'].includes(selectedFilter) ? 'f-value-2' : 'f-value'" v-else>
-      <input type="text" :class="['valueInput', {invalid: showInvalidValueInput}]" v-model="filter.value" v-if="showTextInput()" @change="filterChange" />
-      <input type="number" :class="['valueInput', {invalid: showInvalidValueInput}]" v-model="filter.value" v-else-if="showNumberInput()" @change="filterChange" @keypress="preventDecimal($event)" min=0 />
+      <input type="text" :class="['valueInput', {invalid: showError}]" v-model="filter.value" v-if="showTextInput()" @change="filterChange" />
+      <input type="number" :class="['valueInput', {invalid: showError}]" v-model="filter.value" v-else-if="showNumberInput()" @change="filterChange" @keypress="preventDecimal($event)" min=0 />
 
-      <datepicker class="valueInput" v-model="filter.value" v-if="showDateInput()" @input="filterChange" :use-utc="true" format="MMM dd, yyyy" :input-class="{invalid: showInvalidValueInput}" />
+      <datepicker class="valueInput" v-model="filter.value" v-if="showDateInput()" @input="filterChange" :use-utc="true" format="MMM dd, yyyy" :input-class="{invalid: showError}" />
       <font-awesome-icon icon="chevron-down" v-if="showDateInput()" @click="triggerDatepicker(1)" class="datepicker-arrow" />
 
-      <treeselect :class="['valueInput', {invalid: showInvalidValueInput}]" v-model="filter.value" v-if="showCountrySelect()" :multiple="true" :options="countriesList" placeholder="Any country" />
+      <treeselect :class="['valueInput', {invalid: showError}]" v-model="filter.value" v-if="showCountrySelect()" :multiple="true" :options="countriesList" placeholder="Any country" />
 
-      <div :class="['f-value', {invalid: showInvalidValueInput}]" v-if="showStateSelect()">
+      <div :class="['f-value', {invalid: showError}]" v-if="showStateSelect()">
         <div class="position-relative">
           <select class="valueInput" v-model="selectedCountry" @change="countrySelected">
             <option v-for="country in countriesList" :key="country.id" :value="country.id">{{country.label}}</option>
@@ -80,7 +80,7 @@
         </div>
         <treeselect class="valueInput" v-model="filter.value" :options="statesList" :multiple="true" placeholder="Any state" />
       </div>
-      <vue-tags-input v-model="newtag" :tags="tags" @tags-changed="newTags => tagsChanged(newTags)" v-if="showCityOrTagsInput()" :class="['valueInput', {invalid: showInvalidValueInput}]" />
+      <vue-tags-input v-model="newtag" :tags="tags" @tags-changed="newTags => tagsChanged(newTags)" v-if="showCityOrTagsInput()" :class="['valueInput', {invalid: showError}]" />
 
       <span class="middle-text" v-if="filter.selectedCondition == 'matches_number' && filter.selectedFilter.includes('order_date')">days ago</span>
     </div>
@@ -102,7 +102,7 @@
     components: {
       Datepicker,Switcher,Treeselect,VueTagsInput
     },
-    props: ["filterOptions", "filterConditions","filter", "collection", "index", "checkingFilterError"],
+    props: ["filterOptions", "filterConditions","filter", "collection", "index", "checkingError"],
     beforeMount() {
       // Select first filter for new filter item
       if (this.filter.selectedFilter == "") {
@@ -157,12 +157,12 @@
         newtag: '',
         tags: [],
         currencySwitcherValue: false,
-        showInvalidValueInput: false
+        showError: false
       }
     },
     watch: {
-      checkingFilterError: function(newVal, oldVal) {
-        this.showInvalidValueInput = newVal == true && (this.filter.value == '' || !this.filter.value);
+      checkingError: function(val) {
+        this.showError = this.filter.value == '' || !this.filter.value;
       }
     },
     methods: {
@@ -220,6 +220,7 @@
         this.$emit('filterRemove', this.filter, this.collection, this.index);
       },
       filterChange() {
+        this.showError = false;
         this.$emit('filterChange', this.filter, this.collection, this.index);
       },
       optionChange() {

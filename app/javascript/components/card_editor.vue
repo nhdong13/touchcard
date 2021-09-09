@@ -1,69 +1,73 @@
 <template>
-  <div class="editor-columns-container">
-    <div ref="editorLeftColumn" class="editor-left-column">
-      <card-side
-              ref="cardSide"
-              class="card-editor"
-              :isBack="isBack"
-              :attributes.sync="attributes"
-              :scaleFactor="cardScaleFactor"
-              :discount_pct="discount_pct"
-              :discount_exp="discount_exp_string"
-      >
-      </card-side>
-    </div>
-    <div class="editor-menu editor-right-column">
-      <strong>Upload Design</strong>
-      <!--<span class="tooltip" data-hover="PNG or JPG image, 1875 by 1275 px">-->
-      <!--<i class="material-icons callout" >help_outline</i>-->
-      <!--</span>-->
-      <br>
-      <div class="f-s-080 grey">
-        <ul>
-          <li>PNG or JPG (required)</li>
-          <li>1875 by 1275 pixels (recommended)</li>
-          <li><a href="/images/front-side-guide.jpg" target="_blank">guidelines</a>, <a href="http://touchcard.co/templates/" target="_blank">templates</a></span></li>
-        </ul>
+  <div>
+    <h2><small :class="{'warning-color': showError}" v-if="showError">*</small> {{isBack ? "Back" : "Front"}}</h2>
+    <div :class="['editor-columns-container', {invalid: showError}]">
+      <div ref="editorLeftColumn" class="editor-left-column">
+        <card-side
+                ref="cardSide"
+                class="card-editor"
+                :isBack="isBack"
+                :attributes.sync="attributes"
+                :scaleFactor="cardScaleFactor"
+                :discount_pct="discount_pct"
+                :discount_exp="discount_exp_string"
+        >
+        </card-side>
       </div>
-      <div role="progressbar" v-if="isUploading" class="mdc-linear-progress mdc-linear-progress--indeterminate">
-        <div class="mdc-linear-progress__buffering-dots"></div>
-        <div class="mdc-linear-progress__buffer"></div>
-        <div class="mdc-linear-progress__bar mdc-linear-progress__primary-bar">
-          <span class="mdc-linear-progress__bar-inner"></span>
-        </div>
-        <div class="mdc-linear-progress__bar mdc-linear-progress__secondary-bar">
-          <span class="mdc-linear-progress__bar-inner"></span>
-        </div>
-      </div>
-      <input type="file" accept="image/png,image/jpeg"  @change="updateBackground($event)">
-      <br>
-      <hr />
-      <input v-bind:id="'discount-toggle-' + _uid" type="checkbox" v-model="attributes.showsDiscount">
-      <label v-bind:for="'discount-toggle-' + _uid" class="noselect" >
-        <strong>Include Expiring Discount</strong>
-        <span class="tooltip" data-hover="Each postcard gets a unique coupon">
-            <i class="material-icons callout" >help_outline</i>
-          </span>
-      </label>
-      <div class="discount-config" v-if="attributes.showsDiscount">
-          <span  v-bind:class="{'tooltip': (discount_pct < 15)}" data-hover="We recommend 15-25% for better conversions">
-            <input type="number" min="0" max="100" :value="discount_pct" @input="$emit('update:discount_pct', Number($event.target.value))">
-            <!--<input type="number" min="0" max="100" :value="automation.discount_pct" @input="$emit('update:automation', Object.assign(automation, {discount_pct: Number($event.target.value)}))">-->
-            <label>% off</label>
-            <span v-bind:class="{'warning-color': (discount_pct < 15), 'tooltip': !(discount_pct < 15)}" data-hover="We recommend 15-25%">
-              <i class="material-icons callout">help_outline</i>
-            </span>
-          </span>
+      <div class="editor-menu editor-right-column">
+        <strong>Upload Design</strong>
+        <!--<span class="tooltip" data-hover="PNG or JPG image, 1875 by 1275 px">-->
+        <!--<i class="material-icons callout" >help_outline</i>-->
+        <!--</span>-->
         <br>
-        <span>
-            <input type="number" min="1" max="52" :value="discount_exp" @input="$emit('update:discount_exp', Number($event.target.value))">
-            weeks expiration
-            <span class="tooltip" data-hover="Calculated from estimated delivery date (1 week in US)">
+        <div class="f-s-080 grey">
+          <ul>
+            <li>PNG or JPG (required)</li>
+            <li>1875 by 1275 pixels (recommended)</li>
+            <li><a href="/images/front-side-guide.jpg" target="_blank">guidelines</a>, <a href="http://touchcard.co/templates/" target="_blank">templates</a></span></li>
+          </ul>
+        </div>
+        <div role="progressbar" v-if="isUploading" class="mdc-linear-progress mdc-linear-progress--indeterminate">
+          <div class="mdc-linear-progress__buffering-dots"></div>
+          <div class="mdc-linear-progress__buffer"></div>
+          <div class="mdc-linear-progress__bar mdc-linear-progress__primary-bar">
+            <span class="mdc-linear-progress__bar-inner"></span>
+          </div>
+          <div class="mdc-linear-progress__bar mdc-linear-progress__secondary-bar">
+            <span class="mdc-linear-progress__bar-inner"></span>
+          </div>
+        </div>
+        <input type="file" accept="image/png,image/jpeg"  @change="updateBackground($event)">
+        <br>
+        <hr />
+        <input v-bind:id="'discount-toggle-' + _uid" type="checkbox" v-model="attributes.showsDiscount">
+        <label v-bind:for="'discount-toggle-' + _uid" class="noselect" >
+          <strong>Include Expiring Discount</strong>
+          <span class="tooltip" data-hover="Each postcard gets a unique coupon">
               <i class="material-icons callout" >help_outline</i>
             </span>
-          </span>
+        </label>
+        <div class="discount-config" v-if="attributes.showsDiscount">
+            <span  v-bind:class="{'tooltip': (discount_pct < 15)}" data-hover="We recommend 15-25% for better conversions">
+              <input type="number" min="0" max="100" :value="discount_pct" @input="$emit('update:discount_pct', Number($event.target.value))">
+              <!--<input type="number" min="0" max="100" :value="automation.discount_pct" @input="$emit('update:automation', Object.assign(automation, {discount_pct: Number($event.target.value)}))">-->
+              <label>% off</label>
+              <span v-bind:class="{'warning-color': (discount_pct < 15), 'tooltip': !(discount_pct < 15)}" data-hover="We recommend 15-25%">
+                <i class="material-icons callout">help_outline</i>
+              </span>
+            </span>
+          <br>
+          <span>
+              <input type="number" min="1" max="52" :value="discount_exp" @input="$emit('update:discount_exp', Number($event.target.value))">
+              weeks expiration
+              <span class="tooltip" data-hover="Calculated from estimated delivery date (1 week in US)">
+                <i class="material-icons callout" >help_outline</i>
+              </span>
+            </span>
+        </div>
       </div>
     </div>
+    <br>
   </div>
 </template>
 
@@ -94,7 +98,15 @@
       aws_sign_endpoint: {
         type: String,
         required: true
-      }
+      },
+      checkingError: {
+        type: Boolean,
+        require: true,
+      },
+      errorPresent: {
+        type: Boolean,
+        require: true,
+      },
     },
     components:{
       'card-side': CardSide
@@ -106,6 +118,7 @@
         attributes: new CardAttributes(this.json),
         cardScaleFactor: 1.0,
         isUploading: false,
+        showError: false,
       }
     },
     watch: {
@@ -113,6 +126,18 @@
       // and card_order.discount_exp if neither card side has a discount.
       attributes: function(val) {
         console.log('attributes changed ' + val);
+      },
+
+      checkingError: function(val) {
+        this.checkIfErrorExist(true);
+      },
+
+      discount_exp: function() {
+        if (this.attributes.showsDiscount) this.checkIfErrorExist();
+      },
+
+      discount_pct: function() {
+        if (this.attributes.showsDiscount) this.checkIfErrorExist();
       }
     },
     mounted: function() {
@@ -194,8 +219,18 @@
             this.alertNonOptimalImageDimensions(result);
             this.$emit('update:attributes', Object.assign(this.attributes, {background_url: result}));
             this.isUploading = false;
+            this.checkIfErrorExist();
           }
         });
+      },
+
+      checkIfErrorExist(doShowError = false) {
+        let flag = false;
+        let { background_url, showsDiscount } = this.attributes;
+        if (!background_url) flag = true;
+        if (showsDiscount && (this.discount_pct == 0 || this.discount_exp == 0)) flag = true;
+        this.showError = doShowError && flag;
+        this.$emit('update:errorPresent', flag);
       }
     }
   }
@@ -264,6 +299,10 @@
 
   .warning-color {
     color: orangered;
+  }
+
+  .invalid {
+    border: 1px solid red;
   }
 
 </style>

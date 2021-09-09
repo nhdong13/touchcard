@@ -1,5 +1,6 @@
 <%= form_for @subscription, url: change_credit_admin_subscription_path(@subscription), method: :put do |f| %>
   Credit: <%= number_field_tag :value, @subscription.value, step: '0.01' %><br />
   <br />
+  <%= hidden_field_tag :with_direct_path, params[:with_direct_path] %>
   <%= f.submit %><%= link_to "Cancel", :back %>
 <% end %>

@@ -203,41 +203,61 @@
     <div :class="'filter-config nested-toggle row'" :showError="errors.filters">
       <div id="accepted-section">
         <div class="filter-section-title">Include these customers</div>
-        <filter-option :filter="filter" v-for="(filter, index) in acceptedFilters" :key="filter.selectedFilter" @filterChange="filterChange" @filterRemove="filterRemove" collection="accepted" :index="index" :filterConditions="filterConditions" :filterOptions="availableFilters('accepted', index)" :checkingFilterError="checkingFilterError" />
+        <filter-option
+          v-for="(filter, index) in acceptedFilters"
+          :filter="filter"
+          :key="filter.selectedFilter"
+          @filterChange="filterChange"
+          @filterRemove="filterRemove"
+          collection="accepted"
+          :index="index"
+          :filterConditions="filterConditions"
+          :filterOptions="availableFilters('accepted', index)"
+          :checkingError="checkingError"
+        />
         <button type="button" class="add-more-filter-btn" id="add-accepted-filter" @click="addFilter('accepted')">Add Filter</button>
       </div>
       <div id="removed-section">
         <div class="filter-section-title">Exclude these customers</div>
-        <filter-option :filter="filter" v-for="(filter, index) in removedFilters" :key="filter.selectedFilter" @filterChange="filterChange" @filterRemove="filterRemove" collection="removed" :index="index" :filterConditions="filterConditions" :filterOptions="availableFilters('removed', index)" :checkingFilterError="checkingFilterError" />
+        <filter-option
+          v-for="(filter, index) in removedFilters"
+          :filter="filter"
+          :key="filter.selectedFilter"
+          @filterChange="filterChange"
+          @filterRemove="filterRemove"
+          collection="removed"
+          :index="index"
+          :filterConditions="filterConditions"
+          :filterOptions="availableFilters('removed', index)"
+          :checkingError="checkingError" 
+        />
         <button type="button" class="add-more-filter-btn" id="add-removed-filter" @click="addFilter">Add Filter</button>
       </div>
     </div>
+
     <hr />
-    <h2><small :class="{error: errors.uploadedFrontDesign}" v-if="errors.uploadedFrontDesign">*</small> Front</h2>
-    <div :class="{ invalid: errors.uploadedFrontDesign }">
-      <card-editor
-              ref="frontEditor"
-              :isBack="false"
-              :json="automation.front_json"
-              :discount_pct.sync="automation.discount_pct"
-              :discount_exp.sync="automation.discount_exp"
-              :aws_sign_endpoint="awsSignEndpoint"
-      ></card-editor>
-    </div>
-    <br>
+    <card-editor
+      ref="frontEditor"
+      :isBack="false"
+      :json="automation.front_json"
+      :discount_pct.sync="automation.discount_pct"
+      :discount_exp.sync="automation.discount_exp"
+      :aws_sign_endpoint="awsSignEndpoint"
+      :checkingError="checkingError"
+      :errorPresent.sync="errors.uploadedFrontDesign"
+    />
     <hr />
-    <h2><small :class="{error: errors.uploadedBackDesign}" v-if="errors.uploadedBackDesign">*</small> Back</h2>
-    <div :class="{ invalid: errors.uploadedBackDesign }">
-      <card-editor
-              ref="backEditor"
-              :isBack="true"
-              :json="automation.back_json"
-              :discount_pct.sync="automation.discount_pct"
-              :discount_exp.sync="automation.discount_exp"
-              :aws_sign_endpoint="awsSignEndpoint"
-      ></card-editor>
-    </div>
-    <br>
+    <card-editor
+      ref="backEditor"
+      :isBack="true"
+      :json="automation.back_json"
+      :discount_pct.sync="automation.discount_pct"
+      :discount_exp.sync="automation.discount_exp"
+      :aws_sign_endpoint="awsSignEndpoint"
+      :checkingError="checkingError"
+      :errorPresent.sync="errors.uploadedBackDesign"
+    />
+
     <div class="text-right">
       <div v-if="id && automation.campaign_status != 'draft' && automation.campaign_status != 'complete'">
         <button class="mdc-button mdc-button--stroked" @click="returnToCampaignList" :disabled="pausedSubmitForm">Discard</button>
@@ -262,7 +282,7 @@
   import $ from 'jquery'
   import { isEmpty } from 'lodash'
   import CancelCampaignDialog from './components/cancel_campaign_dialog.vue'
-  import { DEFAULT_DISCOUNT_PERCENTAGE, DEFAULT_WEEK_BEFORE_DISCOUNT_EXPIRE, MAXIMUM_CAMPAIGN_NAME_LENGTH } from './config'
+  import { DEFAULT_DISCOUNT_PERCENTAGE, DEFAULT_WEEK_BEFORE_DISCOUNT_EXPIRE, MAXIMUM_CAMPAIGN_NAME_LENGTH } from './config';
   window.$ = $
   const CAMPAIGN_STATUS_FOR_DISABLE_DATE = ["sending", "complete", "out_of_credit", "error", "paused"];
 
@@ -319,13 +339,11 @@
         campaign_type: this.automation.campaign_type ? this.automation.campaign_type : "automation",
         willShowDailySendingSchedule: false,
         disabledDates: {},
-        isCancel: false,
         isStartDateDisable: false,
-        saved_automation: {}, // Use with autosave, play as backup when user don't want to change campaign any more
         errors: {
           endDate: false,
-          uploadedFrontDesign: false,
-          uploadedBackDesign: false,
+          uploadedFrontDesign: true,
+          uploadedBackDesign: true,
           returnAddress: false,
           campaignName: false,
           filters: false
@@ -333,8 +351,8 @@
         filterConditions: [],
         filterOptions: [],
         interval: null,
-        checkingFilterError: false,
         pausedSubmitForm: false,
+        checkingError: false
       }
     },
 
@@ -396,11 +414,6 @@
     },
 
     components: {
-      // 'card-editor': () => ({
-      //   // https://vuejs.org/v2/guide/components.html#Async-Components
-      //   component: import('./components/card_editor.vue')
-      //   // loading: LoadingComp, error: ErrorComp, delay: 200, timeout: 3000
-      // })
       FilterOption,
       CardEditor,
       'card-editor': CardEditor,
@@ -510,8 +523,6 @@
           this.automation.international = true
         }
         collection == "accepted" ? this.acceptedFilters[index] = filter : this.removedFilters[index] = filter;
-        this.checkingFilterError = false;
-        this.filtersValidation();
       },
       filterRemove(filter, collection, index) {
         if(filter.selectedFilter == "shipping_country" && filter.selectedCondition == "from" && collection == "accepted") {
@@ -592,14 +603,6 @@
       },
 
       saveAutomation(func) {
-        //   this.collectFilters();
-        //   // This will minimize the overhead of clone the automation
-        //   if(this.isTwoJsonEqual(this.saved_automation, this.automation)) {
-        //     return
-        //   }
-        //   this.fetchDataFromUI()
-        //   // TODO: Must somehow make sure automation is JSON safe
-        //   this.saved_automation = JSON.parse(JSON.stringify(this.automation))
         // Prevent to submit form after click submit
         this.pausedSubmitForm = true;
         setTimeout(() => this.pausedSubmitForm = false, 5000);
@@ -658,27 +661,12 @@
 
       validateForm: function() {
         // No need to validate start date cus they have default values
+        this.checkingError = !this.checkingError;
 
         if(this.isSendDateEndInvalid()) {
           this.errors.endDate = true
         } else {
           this.errors.endDate = false
-        }
-
-        if(!this.$refs.frontEditor.$data.attributes.background_url ||
-          this.automation.discount_pct == 0 ||
-          this.automation.discount_exp == 0) {
-          this.errors.uploadedFrontDesign = true
-        } else {
-          this.errors.uploadedFrontDesign = false
-        }
-
-        if(!this.$refs.backEditor.$data.attributes.background_url ||
-          this.automation.discount_pct == 0 ||
-          this.automation.discount_exp == 0) {
-          this.errors.uploadedBackDesign = true
-        } else {
-          this.errors.uploadedBackDesign = false
         }
 
         if(isEmpty(this.automation.campaign_name) || this.automation.campaign_name.length > MAXIMUM_CAMPAIGN_NAME_LENGTH) {
@@ -687,7 +675,6 @@
           this.errors.campaignName = false
         }
 
-        this.checkingFilterError = true;
         this.filtersValidation();
         if(this.automation.international) {
           if(isEmpty(this.returnAddress.name) ||

@@ -62,7 +62,10 @@ Rails.application.routes.draw do
 
   resources :automations do
     # get 'select_type', :on => :collection
-    get 'start_sending', :on => :member
+    member do
+      get :start_sending
+      put :toggle_pause
+    end
   end
 
   resources :targeting, only: [:index] do

@@ -26,12 +26,12 @@ class CustomersExportService
       sheet.add_row(line + Array.new(28, ""))
     end
 
-    #Add section divider
-    add_section_divider
-
     # Format id column to string
     sheet["A3:A#{sheet.rows.count}"].each{ |cell| cell.type = :string }
     sheet["L3:L#{sheet.rows.count}"].each{ |cell| cell.type = :string }
+
+    #Add section divider
+    add_section_divider
 
     # Generate file and return file
     send_excel_file(book)
@@ -73,13 +73,19 @@ class CustomersExportService
   end
 
   def add_section_divider
-    right_border =  styles.add_style({border: { style: :thin, color: '000000', edges: [:right] }})
+    right_border = styles.add_style({ border: { style: :thin, color: '000000', edges: [:right] } })
+    column_name_with_right_border = styles.add_style({ bg_color: "ddebf7", b: true, border: { style: :thin, color: '000000', edges: [:right] } })
+    
+    # Add empty line below all data
+    empty_line_data = Array.new(sheet.column_info.count)
+    20.times.each{|i| sheet.add_row empty_line_data}
+
     number_of_rows = sheet.rows.count
-    ["K3:K#{number_of_rows}",
-     "T3:T#{number_of_rows}",
-     "X3:X#{number_of_rows}",
-     "Z3:Z#{number_of_rows}",
-     "AC3:AC#{number_of_rows}"
-    ].each {|cells| sheet[cells].each{|cell| cell.style = right_border } }
+    ["K2:K#{number_of_rows}",
+     "T2:T#{number_of_rows}",
+     "X2:X#{number_of_rows}",
+     "Z2:Z#{number_of_rows}",
+     "AC2:AC#{number_of_rows}"
+    ].each {|cells| sheet[cells].each{|cell| cell&.style = cell&.row&.index == 1 ? column_name_with_right_border : right_border } }
   end
 end

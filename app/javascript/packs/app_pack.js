@@ -13,13 +13,14 @@ Vue.use(vueCountryRegionSelect)
 import 'vue-material/dist/vue-material.min.css'
 import 'vue-material/dist/theme/default.css'
 import { MdDivider, MdChips, MdSubheader, MdButton,
-  MdDialog
+  MdDialog, MdSwitch
 } from 'vue-material/dist/components'
 Vue.use(MdDivider)
 Vue.use(MdChips)
 Vue.use(MdSubheader)
 Vue.use(MdButton)
 Vue.use(MdDialog)
+Vue.use(MdSwitch)
 
 import campaignDashboard from '../components/campaigns/index'
 
@@ -39,7 +40,8 @@ Vue.component('font-awesome-icon', FontAwesomeIcon)
 import VueScreen from 'vue-screen';
 Vue.use(VueScreen);
 
-import { formatDateCampaign } from './date-format'
+import VModal from 'vue-js-modal';
+Vue.use(VModal, { componentName: 'modal'});
 
 // To get Turbolinks working it helped to put the javascript pack tag in the <head>
 // If we need to expand Vue to other parts of the application I suspect it would help
@@ -87,9 +89,6 @@ document.addEventListener('turbolinks:load', () => {
       el: campaignDashboardElement,
       data: function() {
         let tmp_campaigns = JSON.parse(campaignDashboardElement.dataset.campaigns);
-        tmp_campaigns.forEach(campaign => {
-          campaign.schedule = formatDateCampaign(campaign.send_date_start, campaign.send_date_end, campaign.campaign_type, campaign.send_continuously)
-        })
         return {
           campaigns: tmp_campaigns,
           totalPages: parseInt(campaignDashboardElement.dataset.totalPages),
