@@ -30,6 +30,18 @@ class CustomerTargetingService
           v["value"] = splited_value[0]
         end
       end
+      if v["condition"] == "between_date"
+        splited_value = v["value"].to_s.split("&")
+        if splited_value.empty?
+          attrs.delete_at(index)
+        elsif splited_value[0] == ""
+          v["condition"] = "before"
+          v["value"] = splited_value[1]
+        elsif splited_value[1].nil?
+          v["condition"] = "after"
+          v["value"] = splited_value[0]
+        end
+      end
     end
   end
 
