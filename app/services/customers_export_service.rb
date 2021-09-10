@@ -26,12 +26,11 @@ class CustomersExportService
       sheet.add_row(line + Array.new(28, ""))
     end
 
-    # Format id column to string
-    sheet["A3:A#{sheet.rows.count}"].each{ |cell| cell.type = :string }
-    sheet["L3:L#{sheet.rows.count}"].each{ |cell| cell.type = :string }
-
     #Add section divider
     add_section_divider
+    # Format id column to string
+    sheet["A3:A#{sheet.rows.size}"].each{ |cell| cell.type = :string }
+    sheet["L3:L#{sheet.rows.size}"].each{ |cell| cell.type = :string }
 
     # Generate file and return file
     send_excel_file(book)
