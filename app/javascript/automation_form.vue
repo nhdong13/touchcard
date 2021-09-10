@@ -586,7 +586,7 @@
       },
 
       saveWithValidation: function(f) {
-        this.validateForm();
+        let formValid = this.validateForm();
         this.$nextTick(() => {
           if (isEmpty($(".invalid"))) return false;
           $(".invalid")[0].scrollIntoView({
@@ -594,7 +594,7 @@
             block: "start"
           })
         })
-        if(!this.isFormValid()) return false;
+        if(!formValid) return false;
         this.fetchDataFromUI();
         this.shared.campaign = {...this.automation};
 
@@ -660,34 +660,38 @@
       },
 
       validateForm: function() {
-        // No need to validate start date cus they have default values
+        let formValid = true;
         this.checkingError = !this.checkingError;
 
         if(this.isSendDateEndInvalid()) {
-          this.errors.endDate = true
+          this.errors.endDate = true;
+          formValid = true;
         } else {
-          this.errors.endDate = false
+          this.errors.endDate = false;
         }
 
         if(isEmpty(this.automation.campaign_name) || this.automation.campaign_name.length > MAXIMUM_CAMPAIGN_NAME_LENGTH) {
-          this.errors.campaignName = true
+          this.errors.campaignName = true;
+          formValid = true;
         } else {
-          this.errors.campaignName = false
+          this.errors.campaignName = false;
         }
 
-        this.filtersValidation();
+        if (this.filtersValidation() == true) formValid = true;
         if(this.automation.international) {
           if(isEmpty(this.returnAddress.name) ||
             isEmpty(this.returnAddress.address_line1) ||
             isEmpty(this.returnAddress.city) ||
             isEmpty(this.returnAddress.zip) ||
             isEmpty(this.returnAddress.state)) {
-            this.errors.returnAddress = true
+            this.errors.returnAddress = true;
+            formValid = true;
             $(".return-address-general-error").show();
           } else {
-            this.errors.returnAddress = false
+            this.errors.returnAddress = false;
           }
         }
+        return formValid;
       },
 
       isFilterComplete: function() {
@@ -833,6 +837,7 @@
           this.errors.filters = false;
         } else {
           this.errors.filters = true;
+          return true;
         }
       }
     }
