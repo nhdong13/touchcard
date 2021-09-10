@@ -78,7 +78,7 @@
                 <md-switch v-model="campaignActive" class="md-primary" disabled></md-switch>
               </span>
               <span v-else>
-                <md-switch v-model="campaignActive" :value="item.id" class="md-primary" @change="onChangeCampaignActive(item.id)" :disabled="disableToggle(item)"></md-switch>
+                <md-switch :value="!item.enabled" class="md-primary" @change="onChangeCampaignActive(item.id)" :disabled="disableToggle(item)"></md-switch>
               </span>
             </td>
             <td>
@@ -126,7 +126,7 @@
                   <md-switch v-model="campaignActive" class="md-primary" disabled></md-switch>
                 </span>
                 <span class="toggle-button" v-else>
-                  <md-switch v-model="campaignActive" :value="item.id" class="md-primary" @change="onChangeCampaignActive(item.id)" :disabled="disableToggle(item)"></md-switch>
+                  <md-switch :value="!item.enabled" class="md-primary" @change="onChangeCampaignActive(item.id)" :disabled="disableToggle(item)"></md-switch>
                 </span>
               </div>
               <div class="campaign-detail d-flex">
