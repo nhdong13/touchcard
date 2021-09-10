@@ -171,7 +171,7 @@ class CustomerTargetingService
       field_to_filter = select_field_to_filter(k, nil, customer_id)
       return true if compare_field(field_to_filter, v["condition"], v["value"])
     end
-    accepted_attrs.size == 0 ? true : false
+    accepted_attrs.present? ? false : true
   end
 
   def filtered_orders filter_order=nil
