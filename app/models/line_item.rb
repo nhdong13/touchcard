@@ -23,7 +23,14 @@ class LineItem < ApplicationRecord
       :name,
       :gift_card,
       :taxable,
-      :total_discount)
-    create!(select_attrs.merge(order: order, shopify_id: line_item.id))
+      :total_discount
+    ).merge(order: order, shopify_id: line_item.id)
+    db_line_item = LineItem.find_by_shopify_id(line_item.id)
+    inst = if db_line_item.present?
+      update!(select_attrs)
+    else
+      create!(select_attrs)
+    end
+    inst
   end
 end

@@ -9,7 +9,6 @@ Rails.application.routes.draw do
 
   # Shopify webhook routes
   post '/new_order',        to:   'shopify_app/webhooks#receive', defaults: { type: 'orders_create'    }
-  post '/orders_fulfilled', to:   'shopify_app/webhooks#receive', defaults: { type: 'orders_fulfilled' }
   post '/orders_updated',   to:   'shopify_app/webhooks#receive', defaults: { type: 'orders_updated'   }
   post '/uninstall',        to:   'shopify_app/webhooks#receive', defaults: { type: 'app_uninstalled'  }
 

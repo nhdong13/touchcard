@@ -15,7 +15,7 @@ class Order < ApplicationRecord
       # occur since orders are only created by the new_order webhook
       attrs = order.attributes.with_indifferent_access
       customer = Customer.from_shopify!(attrs[:customer]) if attrs[:customer]
-      inst = create!(attrs.slice(
+      order_attrs = attrs.slice(
         :browser_ip,
         :financial_status,
         :fulfillment_status,
@@ -32,7 +32,16 @@ class Order < ApplicationRecord
         discount_codes: order.discount_codes.map(&:attributes),
         shopify_id: order.id,
         customer: customer,
-        shop: shop))
+        shop: shop)
+      )
+
+      db_order = Order.find_by_shopify_id(order.id)
+      inst = if db_order.present?
+        update!(order_attrs)
+      else
+        create!(order_attrs)
+      end
+
       order.line_items.each { |li| LineItem.from_shopify!(inst, li) }
       inst
     end
