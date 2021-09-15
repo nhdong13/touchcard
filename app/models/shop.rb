@@ -11,7 +11,7 @@ class Shop < ApplicationRecord
   has_many :postcards, through: :card_orders
   has_many :charges
   has_many :subscriptions
-  has_many :orders
+  has_many :orders, dependent: :destroy
   has_many :customers, through: :orders
   has_many :checkouts
 

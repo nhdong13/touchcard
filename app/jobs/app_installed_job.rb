@@ -2,11 +2,11 @@ require "slack_notify"
 require "active_campaign_logger"
 
 class AppInstalledJob < ActiveJob::Base
-  queue_as :default
 
   def perform(shop)
-
     shop.update_last_month
+    # Get shop's orders within 60 days
+    FetchHistoryOrdersJob.perform_later(shop)
 
     size_tag = case shop.last_month
                  when 0...100 then "S"
@@ -27,9 +27,6 @@ class AppInstalledJob < ActiveJob::Base
 
     result = ActiveCampaign::client.contact_sync(sync_params)
     ActiveCampaignLogger.log(sync_params, result)
-
-    # Add customer and order into database
-    FetchHistoryOrdersJob.perform_later(shop)
 
     slack_message = "A new shop has installed Touchcard: #{shop.domain}\n" +
         "email: #{shop.email}\nowner: #{shop.owner}\n# new customers: #{shop.last_month}"
