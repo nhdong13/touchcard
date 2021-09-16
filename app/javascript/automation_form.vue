@@ -665,19 +665,30 @@
 
         if(this.isSendDateEndInvalid()) {
           this.errors.endDate = true;
-          formValid = true;
+          formValid = false;
         } else {
           this.errors.endDate = false;
         }
 
+        if (this.errors.uploadedFrontDesign) {
+          formValid = false;
+        }
+
+        if (this.errors.uploadedBackDesign) {
+          formValid = false;
+        }
+
         if(isEmpty(this.automation.campaign_name) || this.automation.campaign_name.length > MAXIMUM_CAMPAIGN_NAME_LENGTH) {
           this.errors.campaignName = true;
-          formValid = true;
+          formValid = false;
         } else {
           this.errors.campaignName = false;
         }
 
-        if (this.filtersValidation() == true) formValid = true;
+        if (this.filtersValidation() != true) {
+          formValid = false;
+        }
+
         if(this.automation.international) {
           if(isEmpty(this.returnAddress.name) ||
             isEmpty(this.returnAddress.address_line1) ||
@@ -685,7 +696,7 @@
             isEmpty(this.returnAddress.zip) ||
             isEmpty(this.returnAddress.state)) {
             this.errors.returnAddress = true;
-            formValid = true;
+            formValid = false;
             $(".return-address-general-error").show();
           } else {
             this.errors.returnAddress = false;
