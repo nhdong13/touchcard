@@ -40,7 +40,7 @@ CONDITIONS = [["Date range", "disable_display_1"],
               ["is", "equal"]
              ]
 EXPORT_FILE_SECTIONS = [["CUSTOMER", 11, "000000"], ["ORDERS", 9, "ed7d31"], ["MARKETING", 4, "ffc000"], ["POSTCARDS", 2, "5b9bd5"], ["STATUS", 3, "70ad47"]]
-EXPORT_FILE_COLUMNS = ["Customer_ID", "Type", "F. Name", "L. Name", "Street", "City", "State", "Country", "Zip", "Company", "Abandon chkt", "Order ID", "Order Date", "Prod. Name", "SKU", "Collection", "Order Qty", "Item Qty", "Order Total", "Tags", "Ref. Site", "Land. Site", "Disc. Usage", "Disc. Amount", "Postcard Qty", "Last Postcard Rcvd", "Marketing", "Fin. Status", "Order Ful. status", "And/Or"]
+EXPORT_FILE_COLUMNS = ["Customer_ID", "Type", "F. Name", "L. Name", "Street", "City", "State", "Country", "Zip", "Company", "Abandon chkt", "Order ID", "Order Date", "Prod. Name", "SKU", "Collection", "Order Qty", "Item Qty", "Order Total", "Tags", "Ref. Site", "Land. Site", "Disc. Usage", "Disc. Amount", "Postcard Qty", "Last Postcard Rcvd", "Marketing", "Fin. Status", "Order Ful. status", "Send", "And/Or"]
 CSV_TITLE = [ "Fullame",
               "Email",
               "Shipping Company",

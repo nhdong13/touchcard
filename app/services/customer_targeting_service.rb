@@ -90,7 +90,7 @@ class CustomerTargetingService
       customer.orders.where(shop_id: current_shop.id).count, "",
       currency_formater(Order.where(customer_id: customer.id, shop_id: current_shop.id).sum(:total_line_items_price)),
       customer.tags, "", "", "", "", customer.postcards.count, customer.postcards.last&.date_sent&.strftime("%d-%b-%y"),
-      customer.accepts_marketing ? "Y" : "N", "", "", ""
+      customer.accepts_marketing ? "Y" : "N", "", "", customer_can_receive_postcard(customer),""
     ] + filter_passed_by_customer(customer.id)
   end
 
@@ -115,7 +115,7 @@ class CustomerTargetingService
       order.customer&.default_address&.zip, order.customer&.default_address&.company, "", order.id,
       order.processed_at&.strftime("%b %d, %Y"), "", "", "", "", order.line_items&.count, currency_formater(order.total_line_items_price),
       order.tags, order.referring_site, order.landing_site, order.discount_codes.map{|code| code['code']}.join(", "),
-      currency_formater(order.total_discounts), "", "", "", order.financial_status, order.fulfillment_status, ""
+      currency_formater(order.total_discounts), "", "", "", order.financial_status, order.fulfillment_status, "", ""
     ] + filter_passed_by_order(order)
   end
 
@@ -150,7 +150,7 @@ class CustomerTargetingService
     [ item.order&.customer&.id, "Order Item", "", "", "", "", "", "", "", "", "",
       item.order&.id, item.order&.processed_at&.strftime("%b %d, %Y"), item.title, item.sku,
       item.variant_title, "", item.quantity, currency_formater(item.price.to_f * 100),
-      "", "", "", "", "", "", "", "", "", "", ""
+      "", "", "", "", "", "", "", "", "", "", "", ""
     ] + Array.new(accepted_attrs&.keys&.length, "")
   end
   # End build export data section
@@ -493,5 +493,11 @@ class CustomerTargetingService
       customer.accepts_marketing,
       customer.verified_email ? "Email verified" : "Not verified"
     ]
+  end
+
+  def customer_can_receive_postcard customer
+    return "N" unless customer.default_address.present?
+    return "N" unless customer.default_address&.address1&.present?
+    return "Y"
   end
 end

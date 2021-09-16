@@ -48,7 +48,7 @@ class CustomersExportService
 
   def add_headers_section
     head = []
-    (EXPORT_FILE_SECTIONS + [["FILTERS", filters.length + 1, "7030a0"]]).each do |section|
+    (EXPORT_FILE_SECTIONS + [["FILTERS", filters.length + 2, "7030a0"]]).each do |section|
       head.push(section[0]).push(Array.new((section[1] - 1), "")).flatten!
     end
     sheet.add_row head
@@ -56,7 +56,7 @@ class CustomersExportService
 
   def merge_headers
     pointer = 0
-    (EXPORT_FILE_SECTIONS + [["FILTERS", filters.length + 1, "7030a0"]]).each do |section|
+    (EXPORT_FILE_SECTIONS + [["FILTERS", filters.length + 2, "7030a0"]]).each do |section|
       sheet.merge_cells sheet.rows.first.cells[(pointer..pointer + section[1] - 1)]
       current_section_style = styles.add_style({ 
         alignment: {
