@@ -500,4 +500,37 @@ class CustomerTargetingService
     return "N" unless customer.default_address&.address1&.present?
     return "Y"
   end
+
+  # Export customer list to compare who filtered out
+  # =begin
+  def export_customer_list_test
+    #render header
+    accepted_filters_shorthand = []
+    removed_filters_shorthand = []
+    accepted_attrs&.each{|k, v| accepted_filters_shorthand << shorthand(k, v)}
+    removed_attrs&.each{|k, v| removed_filters_shorthand << shorthand(k, v)}
+    
+    #render data
+    list = @current_shop.customers.uniq.map{ |customer| customer_matches_filters(customer) }
+    
+    #render file
+    @csv = CustomersExportService.new(list, nil).create_compare_xlsx(accepted_filters_shorthand, removed_filters_shorthand)
+  end
+
+  def customer_matches_filters customer
+    res = [customer.id, customer.email, customer.full_name, customer_pass_filter?(customer.id) ? "X" : ""]
+    customer_compare_to_filters = []
+    accepted_attrs&.each do |k, v|
+      field_to_filter = select_field_to_filter(k, nil, customer.id)
+      customer_compare_to_filters << (k.include?("order_date") ? field_to_filter.strftime("%b %d, %Y") : field_to_filter)
+      customer_compare_to_filters << (compare_field(field_to_filter, v["condition"], v["value"]) ? "X" : "")
+    end
+    removed_attrs&.each do |k, v|
+      field_to_filter = select_field_to_filter(k, nil, customer.id)
+      customer_compare_to_filters << (k.include?("order_date") ? field_to_filter.strftime("%b %d, %Y") : field_to_filter)
+      customer_compare_to_filters << (compare_field(field_to_filter, v["condition"], v["value"]) ? "X" : "")
+    end
+    res + customer_compare_to_filters
+  end
+  # =end
 end

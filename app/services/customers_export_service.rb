@@ -36,6 +36,41 @@ class CustomersExportService
     send_excel_file(book)
   end
 
+  # Export customer list to compare who filtered out
+  # =begin
+  CUSTOMER_DATA_COLUMNS_COUNT = 4
+  def create_compare_xlsx accepted_filters, removed_filters
+    book = Axlsx::Package.new
+    workbook = book.workbook
+    @styles = workbook.styles
+    @sheet = workbook.add_worksheet name: "Customer List"
+    
+    # Add header
+    sheet.add_row(Array.new(CUSTOMER_DATA_COLUMNS_COUNT, "CUSTOMER") + accepted_filters.map{|f| [f, ""]}.flatten + removed_filters.map{|f| [f, ""]}.flatten)
+    sheet.merge_cells sheet.rows.first.cells[(0..CUSTOMER_DATA_COLUMNS_COUNT - 1)]
+    (accepted_filters.size + removed_filters.size).times.each do |index|
+      sheet.merge_cells sheet.rows.first.cells[(CUSTOMER_DATA_COLUMNS_COUNT + index*2 ... CUSTOMER_DATA_COLUMNS_COUNT + index*2 + 2)]
+    end
+    # Add Subheader
+    column_names_style = styles.add_style({ bg_color: "ddebf7", b: true })
+    sheet.add_row(["ID", "Email", "Fullname", "Passed?", (1..accepted_filters.size + removed_filters.size).map{|i| ["Customer data", "Passed?"]}].flatten).style = column_names_style
+
+    # Add header style
+    customer_section_style = styles.add_style(centered_column_header("000000"))
+    accept_section_style   = styles.add_style(centered_column_header("70ad47"))
+    remove_section_style   = styles.add_style(centered_column_header("ff0000"))
+    sheet.rows.first.cells[(0..CUSTOMER_DATA_COLUMNS_COUNT - 1)].each{|cell| cell.style = customer_section_style }
+    sheet.rows.first.cells[(CUSTOMER_DATA_COLUMNS_COUNT..accepted_filters.size*3 + CUSTOMER_DATA_COLUMNS_COUNT - 1)].each{|cell| cell.style = accept_section_style }
+    sheet.rows.first.cells[(accepted_filters.size*3 + CUSTOMER_DATA_COLUMNS_COUNT..accepted_filters.size*3 + removed_filters.size*3 + CUSTOMER_DATA_COLUMNS_COUNT - 1)].each{|cell| cell.style = remove_section_style }
+
+    # Add data
+    lines.each.with_index(1) do |line, i|
+      sheet.add_row(line)
+    end
+    send_excel_file(book)
+  end
+  # =end
+
   private
   def send_excel_file book
     tmp_file_path = "#{Rails.root}/tmp/customers.xlsx"
@@ -86,5 +121,16 @@ class CustomersExportService
      "Z2:Z#{number_of_rows}",
      "AC2:AC#{number_of_rows}"
     ].each {|cells| sheet[cells].each{|cell| cell&.style = cell&.row&.index == 1 ? column_name_with_right_border : right_border } }
+  end
+
+  def centered_column_header color
+    { 
+      alignment: {
+        horizontal: :center,
+        vertica: :center,
+        wrap_text: true
+      },
+      bg_color: color, fg_color: "ffffff", b: true
+    }
   end
 end

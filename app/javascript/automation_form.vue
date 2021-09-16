@@ -200,6 +200,7 @@
     </div> -->
     <h2 class="d-inline-block">Customer Filters</h2>
     <button @click="downloadCSV"> CSV </button>
+    <button @click="downloadTestCSV"> Test CSV </button>
     <div :class="'filter-config nested-toggle row'" :showError="errors.filters">
       <div id="accepted-section">
         <div class="filter-section-title">Include these customers</div>
@@ -575,6 +576,20 @@
           const link = document.createElement('a')
           link.href = url
           link.setAttribute('download', `${_this.currentShop.name}_Filters.xlsx`)
+          document.body.appendChild(link)
+          link.click()
+        }).catch(function (error) {
+          console.log(error)
+        });
+      },
+      downloadTestCSV() {
+        let url = `/targeting/get_test.xlsx`;
+        let body = this.convertFiltersToParams();
+        axios.post(url, body, {responseType: 'blob'}).then((response) => {
+          const url = window.URL.createObjectURL(new Blob([response.data], {type: 'application/vnd.ms-excel'}))
+          const link = document.createElement('a')
+          link.href = url
+          link.setAttribute('download', `${this.currentShop.name}_Filters_Compare.xlsx`)
           document.body.appendChild(link)
           link.click()
         }).catch(function (error) {
