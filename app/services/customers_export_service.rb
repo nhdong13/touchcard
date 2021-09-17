@@ -61,7 +61,7 @@ class CustomersExportService
     remove_section_style   = styles.add_style(centered_column_header("ff0000"))
     sheet.rows.first.cells[(0..CUSTOMER_DATA_COLUMNS_COUNT - 1)].each{|cell| cell.style = customer_section_style }
     sheet.rows.first.cells[(CUSTOMER_DATA_COLUMNS_COUNT..accepted_filters.size*3 + CUSTOMER_DATA_COLUMNS_COUNT - 1)].each{|cell| cell.style = accept_section_style }
-    sheet.rows.first.cells[(accepted_filters.size*3 + CUSTOMER_DATA_COLUMNS_COUNT..accepted_filters.size*3 + removed_filters.size*3 + CUSTOMER_DATA_COLUMNS_COUNT - 1)].each{|cell| cell.style = remove_section_style }
+    sheet.rows.first.cells[(accepted_filters.size*3 + CUSTOMER_DATA_COLUMNS_COUNT..accepted_filters.size*3 + removed_filters.size*3 + CUSTOMER_DATA_COLUMNS_COUNT - 1)]&.each{|cell| cell.style = remove_section_style }
 
     # Add data
     lines.each.with_index(1) do |line, i|
