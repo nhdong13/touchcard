@@ -700,7 +700,7 @@
           this.errors.campaignName = false;
         }
 
-        if (this.filtersValidation() != true) {
+        if (!this.isFiltersValid()) {
           formValid = false;
         }
 
@@ -858,12 +858,13 @@
           $($(".filter-line")[collection.indexOf(lastOrd)]).find(".f-value input").addClass("invalid");
         }
       },
-      filtersValidation() {
+      isFiltersValid() {
         if (this.isFilterComplete() && this.orderDateFiltersNotConflict(this.acceptedFilters)) {
           this.errors.filters = false;
+          return true;
         } else {
           this.errors.filters = true;
-          return true;
+          return false;
         }
       }
     }
