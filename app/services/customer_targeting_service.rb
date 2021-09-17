@@ -518,19 +518,22 @@ class CustomerTargetingService
   end
 
   def customer_matches_filters customer
-    res = [customer.id, customer.email, customer.full_name, customer_pass_filter?(customer.id) ? "X" : ""]
+    res = [customer.id, customer.email, customer.full_name]
     customer_compare_to_filters = []
+    will_send = true
     accepted_attrs&.each do |k, v|
       field_to_filter = select_field_to_filter(k, nil, customer.id)
       customer_compare_to_filters << (k.include?("order_date") ? field_to_filter.strftime("%b %d, %Y") : field_to_filter)
       customer_compare_to_filters << (compare_field(field_to_filter, v["condition"], v["value"]) ? "X" : "")
+      will_send = will_send && compare_field(field_to_filter, v["condition"], v["value"])
     end
     removed_attrs&.each do |k, v|
       field_to_filter = select_field_to_filter(k, nil, customer.id)
       customer_compare_to_filters << (k.include?("order_date") ? field_to_filter.strftime("%b %d, %Y") : field_to_filter)
       customer_compare_to_filters << (compare_field(field_to_filter, v["condition"], v["value"]) ? "X" : "")
+      will_send = will_send && !compare_field(field_to_filter, v["condition"], v["value"])
     end
-    res + customer_compare_to_filters
+    res + [will_send ? "X" : ""] + customer_compare_to_filters
   end
   # =end
 end
