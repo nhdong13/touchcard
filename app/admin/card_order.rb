@@ -4,6 +4,11 @@ ActiveAdmin.register CardOrder do
   menu priority: 5, label: "Campaigns"
   actions :index, :show
 
+  breadcrumb do [
+    link_to('Admin', admin_root_path),
+   link_to('Campaigns', admin_card_orders_path)
+  ]
+  end
   member_action :change_sending_status, method: :get do
     @card_order = CardOrder.find(params[:id])
   end
@@ -84,7 +89,7 @@ ActiveAdmin.register CardOrder do
   end
 
   show title: proc{ "Campaign ##{@card_order.id}" } do
-    attributes_table do
+    attributes_table title: "Campaign Details" do
       row :shop do |card_order|
         card_order.shop
       end
