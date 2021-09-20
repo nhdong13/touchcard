@@ -8,8 +8,9 @@ Rails.application.routes.draw do
   post '/stripe/events', to: 'stripe_webhook#hook'
 
   # Shopify webhook routes
-  post '/new_order',  to:   'shopify_app/webhooks#receive', defaults: { type: 'orders_create' }
-  post '/uninstall',  to:   'shopify_app/webhooks#receive', defaults: { type: 'app_uninstalled' }
+  post '/new_order',        to:   'shopify_app/webhooks#receive', defaults: { type: 'orders_create'    }
+  post '/orders_fulfilled', to:   'shopify_app/webhooks#receive', defaults: { type: 'orders_fulfilled' }
+  post '/uninstall',        to:   'shopify_app/webhooks#receive', defaults: { type: 'app_uninstalled'  }
 
   # GDPR webhooks
   post 'gdpr/customers/data_request', to: 'gdpr_webhooks#customers_data_request'
@@ -71,6 +72,7 @@ Rails.application.routes.draw do
   resources :targeting, only: [:index] do
     collection do
       post :get
+      post :get_test
       get :get_filters
       get :get_countries
       get :get_states

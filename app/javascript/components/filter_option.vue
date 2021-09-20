@@ -251,7 +251,11 @@
           if (date1 > date2) this.value1 = null;
         }
 
-        this.filter.value = this.isValidInputNumber() ? `${this.value1 || ''}&${this.value2 || ''}` : null;
+        if (this.selectedFilter.includes("order_date") && this.filter.selectedCondition == "between_date" && (!this.value1 || !this.value2)) {
+          this.filter.value = null;
+        } else {
+          this.filter.value = this.isValidInputNumber() ? `${this.value1 || ''}&${this.value2 || ''}` : null;
+        }
         this.filterChange();
       },
       switcherToggle(switcherValue, valueChange=true) {

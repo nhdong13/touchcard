@@ -200,6 +200,7 @@
     </div> -->
     <h2 class="d-inline-block">Customer Filters</h2>
     <button @click="downloadCSV"> CSV </button>
+    <button @click="downloadTestCSV"> Test CSV </button>
     <div :class="'filter-config nested-toggle row'" :showError="errors.filters">
       <div id="accepted-section">
         <div class="filter-section-title">Include these customers</div>
@@ -581,12 +582,26 @@
           console.log(error)
         });
       },
+      downloadTestCSV() {
+        let url = `/targeting/get_test.xlsx`;
+        let body = this.convertFiltersToParams();
+        axios.post(url, body, {responseType: 'blob'}).then((response) => {
+          const url = window.URL.createObjectURL(new Blob([response.data], {type: 'application/vnd.ms-excel'}))
+          const link = document.createElement('a')
+          link.href = url
+          link.setAttribute('download', `${this.currentShop.name}_Filters_Compare.xlsx`)
+          document.body.appendChild(link)
+          link.click()
+        }).catch(function (error) {
+          console.log(error)
+        });
+      },
       isTwoJsonEqual: function(a, b) {
         return JSON.stringify(a) === JSON.stringify(b)
       },
 
       saveWithValidation: function(f) {
-        this.validateForm();
+        let formValid = this.validateForm();
         this.$nextTick(() => {
           if (isEmpty($(".invalid"))) return false;
           $(".invalid")[0].scrollIntoView({
@@ -594,7 +609,7 @@
             block: "start"
           })
         })
-        if(!this.isFormValid()) return false;
+        if(!formValid) return false;
         this.fetchDataFromUI();
         this.shared.campaign = {...this.automation};
 
@@ -660,34 +675,49 @@
       },
 
       validateForm: function() {
-        // No need to validate start date cus they have default values
+        let formValid = true;
         this.checkingError = !this.checkingError;
 
         if(this.isSendDateEndInvalid()) {
-          this.errors.endDate = true
+          this.errors.endDate = true;
+          formValid = false;
         } else {
-          this.errors.endDate = false
+          this.errors.endDate = false;
+        }
+
+        if (this.errors.uploadedFrontDesign) {
+          formValid = false;
+        }
+
+        if (this.errors.uploadedBackDesign) {
+          formValid = false;
         }
 
         if(isEmpty(this.automation.campaign_name) || this.automation.campaign_name.length > MAXIMUM_CAMPAIGN_NAME_LENGTH) {
-          this.errors.campaignName = true
+          this.errors.campaignName = true;
+          formValid = false;
         } else {
-          this.errors.campaignName = false
+          this.errors.campaignName = false;
         }
 
-        this.filtersValidation();
+        if (!this.isFiltersValid()) {
+          formValid = false;
+        }
+
         if(this.automation.international) {
           if(isEmpty(this.returnAddress.name) ||
             isEmpty(this.returnAddress.address_line1) ||
             isEmpty(this.returnAddress.city) ||
             isEmpty(this.returnAddress.zip) ||
             isEmpty(this.returnAddress.state)) {
-            this.errors.returnAddress = true
+            this.errors.returnAddress = true;
+            formValid = false;
             $(".return-address-general-error").show();
           } else {
-            this.errors.returnAddress = false
+            this.errors.returnAddress = false;
           }
         }
+        return formValid;
       },
 
       isFilterComplete: function() {
@@ -828,11 +858,13 @@
           $($(".filter-line")[collection.indexOf(lastOrd)]).find(".f-value input").addClass("invalid");
         }
       },
-      filtersValidation() {
+      isFiltersValid() {
         if (this.isFilterComplete() && this.orderDateFiltersNotConflict(this.acceptedFilters)) {
           this.errors.filters = false;
+          return true;
         } else {
           this.errors.filters = true;
+          return false;
         }
       }
     }

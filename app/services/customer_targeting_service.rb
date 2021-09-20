@@ -30,6 +30,18 @@ class CustomerTargetingService
           v["value"] = splited_value[0]
         end
       end
+      if v["condition"] == "between_date"
+        splited_value = v["value"].to_s.split("&")
+        if splited_value.empty?
+          attrs.delete_at(index)
+        elsif splited_value[0] == ""
+          v["condition"] = "before"
+          v["value"] = splited_value[1]
+        elsif splited_value[1].nil?
+          v["condition"] = "after"
+          v["value"] = splited_value[0]
+        end
+      end
     end
   end
 
@@ -78,7 +90,7 @@ class CustomerTargetingService
       customer.orders.where(shop_id: current_shop.id).count, "",
       currency_formater(Order.where(customer_id: customer.id, shop_id: current_shop.id).sum(:total_line_items_price)),
       customer.tags, "", "", "", "", customer.postcards.count, customer.postcards.last&.date_sent&.strftime("%d-%b-%y"),
-      customer.accepts_marketing ? "Y" : "N", "", "", ""
+      customer.accepts_marketing ? "Y" : "N", "", "", customer_can_receive_postcard(customer),""
     ] + filter_passed_by_customer(customer.id)
   end
 
@@ -103,7 +115,7 @@ class CustomerTargetingService
       order.customer&.default_address&.zip, order.customer&.default_address&.company, "", order.id,
       order.processed_at&.strftime("%b %d, %Y"), "", "", "", "", order.line_items&.count, currency_formater(order.total_line_items_price),
       order.tags, order.referring_site, order.landing_site, order.discount_codes.map{|code| code['code']}.join(", "),
-      currency_formater(order.total_discounts), "", "", "", order.financial_status, order.fulfillment_status, ""
+      currency_formater(order.total_discounts), "", "", "", order.financial_status, order.fulfillment_status, "", ""
     ] + filter_passed_by_order(order)
   end
 
@@ -138,7 +150,7 @@ class CustomerTargetingService
     [ item.order&.customer&.id, "Order Item", "", "", "", "", "", "", "", "", "",
       item.order&.id, item.order&.processed_at&.strftime("%b %d, %Y"), item.title, item.sku,
       item.variant_title, "", item.quantity, currency_formater(item.price.to_f * 100),
-      "", "", "", "", "", "", "", "", "", "", ""
+      "", "", "", "", "", "", "", "", "", "", "", ""
     ] + Array.new(accepted_attrs&.keys&.length, "")
   end
   # End build export data section
@@ -159,7 +171,7 @@ class CustomerTargetingService
       field_to_filter = select_field_to_filter(k, nil, customer_id)
       return true if compare_field(field_to_filter, v["condition"], v["value"])
     end
-    true
+    accepted_attrs.present? ? false : true
   end
 
   def filtered_orders filter_order=nil
@@ -482,4 +494,46 @@ class CustomerTargetingService
       customer.verified_email ? "Email verified" : "Not verified"
     ]
   end
+
+  def customer_can_receive_postcard customer
+    return "N" unless customer.default_address.present?
+    return "N" unless customer.default_address&.address1&.present?
+    return "Y"
+  end
+
+  # Export customer list to compare who filtered out
+  # =begin
+  def export_customer_list_test
+    #render header
+    accepted_filters_shorthand = []
+    removed_filters_shorthand = []
+    accepted_attrs&.each{|k, v| accepted_filters_shorthand << shorthand(k, v)}
+    removed_attrs&.each{|k, v| removed_filters_shorthand << shorthand(k, v)}
+    
+    #render data
+    list = @current_shop.customers.uniq.map{ |customer| customer_matches_filters(customer) }
+    
+    #render file
+    @csv = CustomersExportService.new(list, nil).create_compare_xlsx(accepted_filters_shorthand, removed_filters_shorthand)
+  end
+
+  def customer_matches_filters customer
+    res = [customer.id, customer.email, customer.full_name]
+    customer_compare_to_filters = []
+    will_send = true
+    accepted_attrs&.each do |k, v|
+      field_to_filter = select_field_to_filter(k, nil, customer.id)
+      customer_compare_to_filters << (k.include?("order_date") ? field_to_filter.strftime("%b %d, %Y") : field_to_filter)
+      customer_compare_to_filters << (compare_field(field_to_filter, v["condition"], v["value"]) ? "X" : "")
+      will_send = will_send && compare_field(field_to_filter, v["condition"], v["value"])
+    end
+    removed_attrs&.each do |k, v|
+      field_to_filter = select_field_to_filter(k, nil, customer.id)
+      customer_compare_to_filters << (k.include?("order_date") ? field_to_filter.strftime("%b %d, %Y") : field_to_filter)
+      customer_compare_to_filters << (compare_field(field_to_filter, v["condition"], v["value"]) ? "X" : "")
+      will_send = will_send && !compare_field(field_to_filter, v["condition"], v["value"])
+    end
+    res + [will_send ? "X" : ""] + customer_compare_to_filters
+  end
+  # =end
 end

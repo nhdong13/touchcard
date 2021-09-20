@@ -11,8 +11,9 @@ ShopifyApp.configure do |config|
   config.api_version = "2021-04"
   config.session_repository = Shop
   config.webhooks = [
-    { topic: "orders/create", format: "json", fields: %w(id customer), address: "#{ENV['APP_URL']}/new_order" },
-    { topic: "app/uninstalled", format: "json", fields: %w(id domain), address: "#{ENV['APP_URL']}/uninstall" }
+    { topic: "orders/create",    format: "json", fields: %w(id customer), address: "#{ENV['APP_URL']}/new_order" },
+    { topic: 'orders/fulfilled', format: "json", fields: %w(id customer), address: "#{ENV['APP_URL']}/orders_fulfilled"},
+    { topic: "app/uninstalled",  format: "json", fields: %w(id domain),   address: "#{ENV['APP_URL']}/uninstall" }
   ]
 end
 

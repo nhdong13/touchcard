@@ -17,6 +17,18 @@ class TargetingController < BaseController
     end
   end
 
+  def get_test
+    @accepted_attrs = params[:accepted]&.permit!
+    @removed_attrs = params[:removed]&.permit!
+    service = CustomerTargetingService.new({shop: @current_shop}, @accepted_attrs, @removed_attrs)
+    csv = service.export_customer_list_test
+
+    respond_to do |f|
+      f.xlsx { send_data csv, filename: "customers.xlsx" }
+      f.html { render "customer_list" }
+    end
+  end
+
   def get_filters
     render json: {filters: FILTER_OPTIONS, conditions: CONDITIONS}
   end

@@ -133,9 +133,16 @@ class AutomationsController < BaseController
   def set_return_address
     @return_address = @automation&.return_address || ReturnAddress.new
     if @return_address.new_record?
-      @current_shop.with_shopify_session do
-        # This shop is retrieved directly from Shopify instead of from database in order to get address
-        shop = ShopifyAPI::Shop.current
+      shop = nil
+      if ENV["USE_RANDOM_ADDRESS"] == "true"
+        shop = Address.take
+      else
+        @current_shop.with_shopify_session do
+          # This shop is retrieved directly from Shopify instead of from database in order to get address
+          shop = ShopifyAPI::Shop.current
+        end
+      end
+      if shop.present?
         @return_address.address_line1 = shop.address1
         @return_address.city = shop.city
         @return_address.state = shop.province

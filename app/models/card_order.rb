@@ -237,7 +237,7 @@ class CardOrder < ApplicationRecord
   def can_enabled?
     today = Time.current.beginning_of_day
     if self.automation?
-      send_continuously || send_date_end < today
+      send_continuously || send_date_end > today
     elsif self.one_off?
       send_date_start < today
     end

@@ -50,7 +50,7 @@ ActiveAdmin.register Subscription do
     column :shop do |subscription|
       subscription.shop
     end
-    column :quantity do |subscription|
+    column :sub_qty do |subscription|
       number_to_currency(subscription.value)
     end
     column :current_period_start
