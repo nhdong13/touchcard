@@ -159,9 +159,6 @@
         <CustomePagination
           v-model="currentPage"
           :total-page="thisTotalPages"
-          :page-range="5"
-          :container-class="'pagination'"
-          :page-class="'page-item'"
           :click-handler="changePagination"
           :key="currentPage"
         > 
