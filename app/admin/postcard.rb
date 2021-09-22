@@ -57,7 +57,7 @@ ActiveAdmin.register Postcard do
       row :canceled
       row :card_order_id do |postcard|
         link_to postcard.card_order_id,
-                admin_card_order_path(postcard.card_order_id) if postcard.card_order_id
+                admin_campaign_path(postcard.card_order_id) if postcard.card_order_id
       end
       row :discount_code
       row :discount_pct
