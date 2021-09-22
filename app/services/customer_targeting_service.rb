@@ -265,27 +265,29 @@ class CustomerTargetingService
   def compare_field field, condition, value
     begin
       case condition
-        when "before"
-          field.to_time < value.to_time.beginning_of_day
+        when "matches_date"
+          field.to_time.beginning_of_day == value.to_time.beginning_of_day
         when "between_date"
           splited_value = value.split("&")
           begin_value = splited_value[0].to_time.beginning_of_day
           end_value = splited_value[1].to_time.end_of_day
           (field.to_time > begin_value) && (field.to_time < end_value)
+        when "before"
+          field.to_time < value.to_time.beginning_of_day
         when "after"
           field.to_time > value.to_time.end_of_day
         when "matches_number"
           calculate_compare_number_field(field) == value.to_i
-        when "smaller_number"
-          calculate_compare_number_field(field) <= value.to_i
-        when "greater_number"
-          calculate_compare_number_field(field) >= value.to_i
         when "between_number"
           splited_value = value.split("&")
           begin_value = splited_value[0].to_i
           end_value = splited_value[1].to_i
           calculated_field = calculate_compare_number_field(field)
           (calculated_field >= begin_value) && (calculated_field <= end_value)
+        when "smaller_number"
+          calculate_compare_number_field(field) <= value.to_i
+        when "greater_number"
+          calculate_compare_number_field(field) >= value.to_i
         when "matches_string"
           field.to_s.casecmp?(value.to_s)
         when "contain_string"
