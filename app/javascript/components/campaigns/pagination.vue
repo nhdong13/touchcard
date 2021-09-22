@@ -61,6 +61,7 @@ export default {
   },
 	created() {
 		const { value, totalPage } = this;
+    if (totalPage < 1) return;
 		if (value > totalPage) this.directToPage(totalPage);
 		if (value < 1) this.directToPage(1);
 	},
@@ -78,14 +79,18 @@ export default {
 			for (let i = displayPage - range; i <= (displayPage + range); i++) {
 				if (i > 0 && i <= totalPage) renderedPaging.push({ index: i, content: i, isSelected: i == displayPage });
 			}
-			if (renderedPaging[0].index !== 1) {
-				renderedPaging.unshift({ breakView: true });
-				renderedPaging.unshift({ index: 1, content: 1, isSelected: false });
-			}
-			if (renderedPaging.at(-1).index !== totalPage) {
-				renderedPaging.push({ breakView: true });
-				renderedPaging.push({ index: totalPage, content: totalPage, isSelected: false });
-			}
+      if (renderedPaging.length > 0) {
+        if (renderedPaging[0].index !== 1) {
+          renderedPaging.unshift({ breakView: true });
+          renderedPaging.unshift({ index: 1, content: 1, isSelected: false });
+        }
+        if (renderedPaging.at(-1).index !== totalPage) {
+          renderedPaging.push({ breakView: true });
+          renderedPaging.push({ index: totalPage, content: totalPage, isSelected: false });
+        }
+      } else {
+        renderedPaging.push({ index: 1, content: 1, isSelected: true });
+      }
 
       return renderedPaging;
     },
