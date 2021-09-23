@@ -61,6 +61,8 @@ class CardOrder < ApplicationRecord
   after_update :update_budget, if: :saved_change_to_budget_update?
   after_update :update_budget_type, if: :saved_change_to_budget_type?
   after_update :reactivate_campaign, if: :saved_change_to_send_date_end?
+  before_save :validate_campaign_name
+  # before_update :validate_campaign_name, if: :saved_change_to_campaign_name?
 
   enum budget_type: [ :non_set, :monthly ]
   enum campaign_type: [ :automation, :one_off ]
@@ -244,6 +246,12 @@ class CardOrder < ApplicationRecord
   end
 
   private
+  def validate_campaign_name
+    if campaign_name_changed?
+      save_campaign_name = generate_campaign_name(campaign_name)
+      self.campaign_name = save_campaign_name
+    end
+  end
 
   def shows_front_discount?
     front_json && front_json['discount_x'].present? && front_json['discount_y'].present?
@@ -257,12 +265,24 @@ class CardOrder < ApplicationRecord
   #   # debugger
   # end
 
-  def generate_campaign_name
+  def generate_campaign_name exist_name=nil
     if shop.present?
-      exist_indexes = shop.card_orders.where("archived = FALSE AND campaign_name ~* ?", 'Automation \d+')
-                        .pluck(:campaign_name).map{|name| name.gsub(/[^0-9]/, '').to_i }.sort
+      saving_name = exist_name || "Automation"
+      # Case saving_name not exist
+      # Return saving_name
+      return saving_name unless shop.card_orders.where(campaign_name: saving_name).present?
+
+      #Case saving_name exists
+      # Step 1: Find all campaign name like saving_name with Number at the end
+      exist_indexes = shop.card_orders.where("campaign_name ~* ?", saving_name + ' \d+')
+                          .pluck(:campaign_name)
+                          .select{|name| name != saving_name}
+                          .map{|name| name.gsub(saving_name + ' ', '').to_i }
+                          .sort
+      # Step 2: If above query not exist, means not exist name has number at the end, then name will start with 1
+      # Else find number next to last exist ending number
       unless exist_indexes.present?
-        "Automation 1"
+        "#{saving_name} 1"
       else
         new_index = exist_indexes[-1] + 1
         (1..exist_indexes[-1] + 1).each do |i|
@@ -271,7 +291,7 @@ class CardOrder < ApplicationRecord
             break
           end
         end
-        "Automation #{new_index}"
+        "#{saving_name} #{new_index}"
       end
     else
       "Test automation"
