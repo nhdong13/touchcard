@@ -25,12 +25,12 @@ class LineItem < ApplicationRecord
       :taxable,
       :total_discount
     ).merge(order: order, shopify_id: line_item.id)
-    db_line_item = LineItem.find_by_shopify_id(line_item.id)
-    inst = if db_line_item.present?
-      update!(select_attrs)
+    db_line_item = LineItem.find_by(shopify_id: line_item.id)
+    if db_line_item.present?
+      db_line_item.update!(select_attrs)
     else
-      create!(select_attrs)
+      db_line_item = create!(select_attrs)
     end
-    inst
+    db_line_item
   end
 end

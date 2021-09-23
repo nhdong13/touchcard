@@ -10,12 +10,12 @@ class Order < ApplicationRecord
   serialize :discount_codes
 
   class << self
-    def from_shopify!(order, shop)
+    def from_shopify!(shopify_order, shop)
       # this one doesn't try to find the order first because that should never
       # occur since orders are only created by the new_order webhook
-      attrs = order.attributes.with_indifferent_access
+      attrs = shopify_order.attributes.with_indifferent_access
       customer = Customer.from_shopify!(attrs[:customer]) if attrs[:customer]
-      order_attrs = attrs.slice(
+      shopify_attrs = attrs.slice(
         :browser_ip,
         :financial_status,
         :fulfillment_status,
@@ -25,25 +25,25 @@ class Order < ApplicationRecord
         :processing_method,
         :processed_at
       ).merge(
-        total_discounts: order.total_discounts.to_f * 100,
-        total_line_items_price: order.total_line_items_price.to_f * 100,
-        total_price: order.total_price.to_f * 100,
-        total_tax: order.total_tax.to_f * 100,
-        discount_codes: order.discount_codes.map(&:attributes),
-        shopify_id: order.id,
+        total_discounts: shopify_order.total_discounts.to_f * 100,
+        total_line_items_price: shopify_order.total_line_items_price.to_f * 100,
+        total_price: shopify_order.total_price.to_f * 100,
+        total_tax: shopify_order.total_tax.to_f * 100,
+        discount_codes: shopify_order.discount_codes.map(&:attributes),
+        shopify_id: shopify_order.id,
         customer: customer,
-        shop: shop)
+        shop: shop
       )
 
-      db_order = Order.find_by_shopify_id(order.id)
-      inst = if db_order.present?
-        update!(order_attrs)
+      order = Order.find_by(shopify_id: shopify_order.id)
+      if order.present?
+        order.update!(shopify_attrs)
       else
-        create!(order_attrs)
+        order = create!(shopify_attrs)
       end
 
-      order.line_items.each { |li| LineItem.from_shopify!(inst, li) }
-      inst
+      order.line_items.each { |li| LineItem.from_shopify!(order, li) }
+      order
     end
   end
 
