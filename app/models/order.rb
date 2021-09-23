@@ -3,7 +3,7 @@ class Order < ApplicationRecord
   belongs_to :customer
   belongs_to :postcard  # NOT an inverse_of the trigger
   has_many :postcards, as: :postcard_trigger
-  has_many :line_items, dependent: :destroy
+  has_many :line_items
   validates :total_price, :total_tax, :shopify_id, :shop, presence: true
   validates :shopify_id, uniqueness: true
 
