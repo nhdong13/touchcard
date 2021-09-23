@@ -82,6 +82,7 @@
               @selected="changeSendDateEnd"
               format="MMM dd, yyyy"
               :disabled="isStartDateDisable"
+              :input-class="{invalid: errors.startDate}"
             ></datepicker>
             <div class="icon-calendar" v-on:click="openSendDateStartDatePicker">
               <font-awesome-icon icon="calendar-alt"/>
@@ -343,6 +344,7 @@
         isStartDateDisable: false,
         errors: {
           endDate: false,
+          startDate: false,
           uploadedFrontDesign: true,
           uploadedBackDesign: true,
           returnAddress: false,
@@ -678,11 +680,18 @@
         let formValid = true;
         this.checkingError = !this.checkingError;
 
-        if(this.isSendDateEndInvalid()) {
+        if (this.isSendDateEndValid()) {
+          this.errors.endDate = false;
+        } else {
           this.errors.endDate = true;
           formValid = false;
+        }
+
+        if (this.isSendDateStartValid()) {
+          this.errors.startDate = false;
         } else {
-          this.errors.endDate = false;
+          this.errors.startDate = true;
+          formValid = false;
         }
 
         if (this.errors.uploadedFrontDesign) {
@@ -767,18 +776,28 @@
         this.automation.send_continuously = true;
       },
 
-      isSendDateEndInvalid() {
-        if(this.automation.send_continuously) return false
+      isSendDateEndValid() {
+        if (this.automation.send_continuously) return true;
+        if (!this.automation.send_date_end) return false;
+        const date_start = new Date(this.automation.send_date_start);
+        const date_end = new Date(this.automation.send_date_end);
+        date_start.setHours(0,0,0,0);
+        date_end.setHours(0,0,0,0);
+        if (date_end <= date_start) return false;
+        let today = new Date();
+        today.setHours(0,0,0,0);
+        if (date_end < today) return false;
+        return true;
+      },
 
-        if(this.automation.send_date_end) {
-          const date_start = new Date(this.automation.send_date_start)
-          const date_end = new Date(this.automation.send_date_end)
-          date_start.setHours(0,0,0,0)
-          date_end.setHours(0,0,0,0)
-          if(date_end >= date_start) return false
-        }
-
-        return true
+      isSendDateStartValid() {
+        if (!this.automation.send_date_start) return false;
+        let today = new Date();
+        today.setHours(0,0,0,0);
+        let date_start = new Date(this.automation.send_date_start);
+        date_start.setHours(0,0,0,0);
+        if (date_start < today) return false;
+        return true;
       },
 
       orderDateFiltersNotConflict(col) {
