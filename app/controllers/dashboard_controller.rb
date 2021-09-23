@@ -6,6 +6,7 @@ class DashboardController < BaseController
       .where(error: nil)
       .order(created_at: :desc)
       .page(@current_page)
+      .per(20)
   end
 
   def cancel_postcard
