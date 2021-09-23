@@ -82,6 +82,7 @@
               @selected="changeSendDateEnd"
               format="MMM dd, yyyy"
               :disabled="isStartDateDisable"
+              :input-class="{invalid: errors.startDate}"
             ></datepicker>
             <div class="icon-calendar" v-on:click="openSendDateStartDatePicker">
               <font-awesome-icon icon="calendar-alt"/>
@@ -200,6 +201,7 @@
     </div> -->
     <h2 class="d-inline-block">Customer Filters</h2>
     <button @click="downloadCSV"> CSV </button>
+    <button @click="downloadTestCSV"> Test CSV </button>
     <div :class="'filter-config nested-toggle row'" :showError="errors.filters">
       <div id="accepted-section">
         <div class="filter-section-title">Include these customers</div>
@@ -342,6 +344,7 @@
         isStartDateDisable: false,
         errors: {
           endDate: false,
+          startDate: false,
           uploadedFrontDesign: true,
           uploadedBackDesign: true,
           returnAddress: false,
@@ -581,6 +584,20 @@
           console.log(error)
         });
       },
+      downloadTestCSV() {
+        let url = `/targeting/get_test.xlsx`;
+        let body = this.convertFiltersToParams();
+        axios.post(url, body, {responseType: 'blob'}).then((response) => {
+          const url = window.URL.createObjectURL(new Blob([response.data], {type: 'application/vnd.ms-excel'}))
+          const link = document.createElement('a')
+          link.href = url
+          link.setAttribute('download', `${this.currentShop.name}_Filters_Compare.xlsx`)
+          document.body.appendChild(link)
+          link.click()
+        }).catch(function (error) {
+          console.log(error)
+        });
+      },
       isTwoJsonEqual: function(a, b) {
         return JSON.stringify(a) === JSON.stringify(b)
       },
@@ -663,21 +680,39 @@
         let formValid = true;
         this.checkingError = !this.checkingError;
 
-        if(this.isSendDateEndInvalid()) {
-          this.errors.endDate = true;
-          formValid = true;
-        } else {
+        if (this.isSendDateEndValid()) {
           this.errors.endDate = false;
+        } else {
+          this.errors.endDate = true;
+          formValid = false;
+        }
+
+        if (this.isSendDateStartValid()) {
+          this.errors.startDate = false;
+        } else {
+          this.errors.startDate = true;
+          formValid = false;
+        }
+
+        if (this.errors.uploadedFrontDesign) {
+          formValid = false;
+        }
+
+        if (this.errors.uploadedBackDesign) {
+          formValid = false;
         }
 
         if(isEmpty(this.automation.campaign_name) || this.automation.campaign_name.length > MAXIMUM_CAMPAIGN_NAME_LENGTH) {
           this.errors.campaignName = true;
-          formValid = true;
+          formValid = false;
         } else {
           this.errors.campaignName = false;
         }
 
-        if (this.filtersValidation() == true) formValid = true;
+        if (!this.isFiltersValid()) {
+          formValid = false;
+        }
+
         if(this.automation.international) {
           if(isEmpty(this.returnAddress.name) ||
             isEmpty(this.returnAddress.address_line1) ||
@@ -685,7 +720,7 @@
             isEmpty(this.returnAddress.zip) ||
             isEmpty(this.returnAddress.state)) {
             this.errors.returnAddress = true;
-            formValid = true;
+            formValid = false;
             $(".return-address-general-error").show();
           } else {
             this.errors.returnAddress = false;
@@ -741,18 +776,28 @@
         this.automation.send_continuously = true;
       },
 
-      isSendDateEndInvalid() {
-        if(this.automation.send_continuously) return false
+      isSendDateEndValid() {
+        if (this.automation.send_continuously) return true;
+        if (!this.automation.send_date_end) return false;
+        const date_start = new Date(this.automation.send_date_start);
+        const date_end = new Date(this.automation.send_date_end);
+        date_start.setHours(0,0,0,0);
+        date_end.setHours(0,0,0,0);
+        if (date_end <= date_start) return false;
+        let today = new Date();
+        today.setHours(0,0,0,0);
+        if (date_end < today) return false;
+        return true;
+      },
 
-        if(this.automation.send_date_end) {
-          const date_start = new Date(this.automation.send_date_start)
-          const date_end = new Date(this.automation.send_date_end)
-          date_start.setHours(0,0,0,0)
-          date_end.setHours(0,0,0,0)
-          if(date_end >= date_start) return false
-        }
-
-        return true
+      isSendDateStartValid() {
+        if (!this.automation.send_date_start) return false;
+        let today = new Date();
+        today.setHours(0,0,0,0);
+        let date_start = new Date(this.automation.send_date_start);
+        date_start.setHours(0,0,0,0);
+        if (date_start < today) return false;
+        return true;
       },
 
       orderDateFiltersNotConflict(col) {
@@ -832,12 +877,13 @@
           $($(".filter-line")[collection.indexOf(lastOrd)]).find(".f-value input").addClass("invalid");
         }
       },
-      filtersValidation() {
+      isFiltersValid() {
         if (this.isFilterComplete() && this.orderDateFiltersNotConflict(this.acceptedFilters)) {
           this.errors.filters = false;
+          return true;
         } else {
           this.errors.filters = true;
-          return true;
+          return false;
         }
       }
     }

@@ -60,10 +60,7 @@
       <tbody>
       <% if @postcards.count == 0 %>
         <tr>
-          <td></td>
-          <td>Sent postcards will appear here.</td>
-          <td></td>
-          <td></td>
+          <td colspan="4" style="text-align:center">Sent postcards will appear here.</td>
         </tr>
       <% end %>
       <% @postcards.each do |postcard| %>
@@ -93,6 +90,9 @@
             </td>
           </tr>
       <% end %>
+      <tr>
+        <td colspan="4"><div id="pagination"><div id="postcard-pagination" data-current-page="<%= @current_page %>" data-total-page="<%= @postcards.total_pages %>"></div></div></td>
+      </tr>
       </tbody>
     </table>
   </div>

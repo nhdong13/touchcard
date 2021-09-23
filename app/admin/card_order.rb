@@ -1,9 +1,16 @@
 require "card_util"
 
-ActiveAdmin.register CardOrder do
+ActiveAdmin.register CardOrder, as: "Campaign" do
   menu priority: 5, label: "Campaigns"
   actions :index, :show
 
+  before_action :get_card_order, only: [:show]
+
+  breadcrumb do [
+    link_to('Admin', admin_root_path),
+    link_to('Campaigns', admin_campaigns_path)
+  ]
+  end
   member_action :change_sending_status, method: :get do
     @card_order = CardOrder.find(params[:id])
   end
@@ -13,7 +20,7 @@ ActiveAdmin.register CardOrder do
     enabled = params[:card_order][:enabled]
     card_order.enabled = enabled
     card_order.save!
-    redirect_to admin_card_order_path(card_order)
+    redirect_to admin_campaign_path(card_order)
   end
 
   member_action :send_sample, method: [:get, :post] do
@@ -36,7 +43,7 @@ ActiveAdmin.register CardOrder do
         lob_admin_path = "https://dashboard.lob.com/#/postcards/#{lob_response['id']}"
         SlackNotify.message("#{current_admin_user.email} sent #{card_order.shop.domain} sample " \
                             "to #{recipient}. #{lob_admin_path} ", true)
-        redirect_to show_sample_admin_card_order_path({card_order_id: card_order.id, lob_response: lob_response})
+        redirect_to show_sample_admin_campaign_path({card_order_id: card_order.id, lob_response: lob_response})
       rescue Lob::InvalidRequestError => error
         render json: error.to_s, status: 422, root: false
       end
@@ -62,11 +69,11 @@ ActiveAdmin.register CardOrder do
   index title: "Campaigns" do
     # actions
     column :id do |card_order|
-      link_to card_order.id, admin_card_order_path(card_order)
+      link_to card_order.id, admin_campaign_path(card_order)
     end
 
     column :campaign_name do |card_order|
-      link_to card_order.campaign_name, admin_card_order_path(card_order)
+      link_to card_order.campaign_name, admin_campaign_path(card_order)
     end
     column :campaign_type do |card_order|
       card_order.campaign_type&.gsub("_", "-")&.capitalize
@@ -84,7 +91,7 @@ ActiveAdmin.register CardOrder do
   end
 
   show title: proc{ "Campaign ##{@card_order.id}" } do
-    attributes_table do
+    attributes_table title: "Campaign Details" do
       row :shop do |card_order|
         card_order.shop
       end
@@ -99,7 +106,7 @@ ActiveAdmin.register CardOrder do
       end
       row :enabled do |card_order|
           status_tag("#{card_order.enabled}")
-          link_to "edit", change_sending_status_admin_card_order_path(card_order)
+          link_to "edit", change_sending_status_admin_campaign_path(card_order)
       end
       row :international
       row :created_at
@@ -128,7 +135,7 @@ ActiveAdmin.register CardOrder do
       row "Old Card Side Back", :card_side_back
 
       row :sample do |card_order|
-          link_to "Send a sample", send_sample_admin_card_order_path(card_order, method: :get)
+          link_to "Send a sample", send_sample_admin_campaign_path(card_order, method: :get)
       end
     end
 
@@ -140,6 +147,12 @@ ActiveAdmin.register CardOrder do
         column :card_order
         column :filter_data
       end
+    end
+  end
+
+  controller do
+    def get_card_order
+      @card_order = CardOrder.find(params[:id])
     end
   end
 end

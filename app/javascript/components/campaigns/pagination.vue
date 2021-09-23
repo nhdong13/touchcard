@@ -1,156 +1,133 @@
 <template>
-<ul :class="containerClass">
-	<li :class="pageClass">
-		<a @click="prevPage()" :disabled="isTotalPageTooSmall() || isInFirstPage()">
-			<font-awesome-icon icon="caret-left"/>
-		</a>
-	</li>
-	<!-- range of pages -->
-	<li v-for="page in pages" :class="[pageClass ,page.isSelected ? 'active' : '']" id="pages">
-		<a v-if="page.firstPage" @click="onClickPage(1)">1</a>
-		<a v-else-if="page.lastPage" @click="onClickPage(totalPage)">{{ totalPage }}</a>
-		<a v-else-if="page.breakView">{{ breakViewText }}</a>
-		<a v-else @click="onClickPage(page.index)">
-			{{ page.content }}
-		</a>
-	</li>
-	<li :class="pageClass">
-		<a @click="nextPage()" :disabled="isTotalPageTooSmall() || isInLastPage()">
-			<font-awesome-icon icon="caret-right"/>
-		</a>
-	</li>
-</ul>
+  <ul :class="containerClass">
+    <li :class="pageClass">
+      <a @click="prevPage()">
+        <font-awesome-icon icon="caret-left" />
+      </a>
+    </li>
+    <!-- range of pages -->
+    <li
+      v-for="(page, index) in pages"
+      :class="[pageClass, page.isSelected ? 'active' : '']"
+      :key="index"
+    >
+      <a v-if="page.breakView">{{ breakViewText }}</a>
+      <a v-else @click="goToPage(page.index)">
+        {{ page.content }}
+      </a>
+    </li>
+    <li :class="pageClass">
+      <a @click="nextPage()">
+        <font-awesome-icon icon="caret-right" />
+      </a>
+    </li>
+  </ul>
 </template>
 <script type="text/javascript">
 export default {
-	name: "CustomePagination",
-	props: {
-		value: {
-			type: Number
+  name: "CustomePagination",
+  props: {
+    value: {
+      type: Number,
+    },
+    pageRange: {
+      type: Number,
+      default: 5,
+    },
+    totalPage: {
+      type: Number,
+      required: true,
+    },
+    clickHandler: {
+      type: Function,
+      default: () => {},
+    },
+		doDirect: {
+			type: Boolean,
+			default: false
 		},
-		pageRange: {
-	      	type: Number,
-	      	default: 5
-	    },
-	    totalPage: {
-	      	type: Number,
-	      	required: true
-	    },
-	    containerClass: {
-	    	type: String
-	    },
-	    pageClass: {
-	    	type: String
-	    },
-	    clickHandler: {
-	    	type: Function,
-	    	default: () => {}
-	    },
-	    breakViewText: {
-	    	type: String,
-	    	default: "..."
-	    }
+    containerClass: {
+      type: String,
+      default: "pagination",
+    },
+    pageClass: {
+      type: String,
+      default: "page-item",
+    },
+    breakViewText: {
+      type: String,
+      default: "...",
+    },
+  },
+	created() {
+		const { value, totalPage } = this;
+    if (totalPage < 1) return;
+		if (value > totalPage) this.directToPage(totalPage);
+		if (value < 1) this.directToPage(1);
 	},
-	data: function() {
+	data() {
 		return {
-			startPage: 1,
-			endPage: 1,
-			innerValue: 1
+			displayPage: this.value
 		}
 	},
-	mounted: function() {
-		this.currentPage = this.value
-	},
-  watch: {
-    value: function(val) {
-      this.innerValue = val
-    }
+  computed: {
+    pages() {
+      let renderedPaging = [];
+			const {displayPage, pageRange, totalPage} = this;
+
+			let range = (pageRange - 1)/2;
+			for (let i = displayPage - range; i <= (displayPage + range); i++) {
+				if (i > 0 && i <= totalPage) renderedPaging.push({ index: i, content: i, isSelected: i == displayPage });
+			}
+      if (renderedPaging.length > 0) {
+        if (renderedPaging[0].index !== 1) {
+          renderedPaging.unshift({ breakView: true });
+          renderedPaging.unshift({ index: 1, content: 1, isSelected: false });
+        }
+        if (renderedPaging.at(-1).index !== totalPage) {
+          renderedPaging.push({ breakView: true });
+          renderedPaging.push({ index: totalPage, content: totalPage, isSelected: false });
+        }
+      } else {
+        renderedPaging.push({ index: 1, content: 1, isSelected: true });
+      }
+
+      return renderedPaging;
+    },
   },
-	computed: {
-		currentPage: {
-			get: function() {
-		    	return this.innerValue
-		    },
-		    set: function(newValue) {
-		    	this.innerValue = newValue
-		    }
-		},
-	    pages() {
-	      const range = [];
-
-	      let pageCount = 1
-	      let newPageCount = 1
-	      this.startPage = this.currentPage
-	      this.endPage = this.currentPage
-
-	      while(pageCount < this.pageRange) {
-	      	if (this.endPage + 1 <= this.totalPage)
-		    {
-		        this.endPage++;
-		        newPageCount++;
-		    }
-		    if(this.startPage - 1 > 0)
-		    {
-		        this.startPage--;
-		        newPageCount++;
-		    }
-
-		    if(pageCount == newPageCount) break
-		    else pageCount = newPageCount
-	      }
-
-	      for (let i = this.startPage; i <= this.endPage; i+= 1 ) {
-	        range.push({
-	          index: i,
-	          content: i,
-	          isSelected: i === this.currentPage
-	        });
-	      }
-
-	      if(this.startPage > 1) {
-	      	range.unshift({firstPage: true}, {breakView: true})
-	      }
-	      if(this.endPage < this.totalPage) {
-	      	range.push({breakView: true}, {lastPage: true})
-	      }
-
-	      return range;
-	    }
-	},
-	methods: {
-		handlePageSelected(page) {
-			if(this.currentPage === page) return
-			this.currentPage = page
-			this.clickHandler(page)
-		},
-		onClickFirstPage() {
-			this.handlePageSelected(1)	
-		},
+  methods: {
+    goToPage(page) {
+			if (page < 1 || page > this.totalPage || this.displayPage === page) return;
+			if (this.doDirect) {
+				this.directToPage(page);
+			} else {
+      	this.clickHandler(page);
+			}
+    },
 		prevPage() {
-			if(this.currentPage - 1 < 1 ) return
-	      	this.handlePageSelected(this.currentPage - 1);
-	    },
-	    onClickPage(page) {
-	      this.handlePageSelected(page);
-	    },
-	    nextPage() {
-	    	if(this.currentPage + 1 > this.totalPage ) return
-	      	this.handlePageSelected(this.currentPage + 1);
-	    },
-	    onClickLastPage() {
-			this.handlePageSelected(this.totalPage)	
-		},
-	    isInLastPage() {
-	    	return this.currentPage === this.totalPage
-	    },
-	    isInFirstPage() {
-	    	return this.currentPage === 1	
-	    },
-	    isTotalPageTooSmall() {
-	    	return this.totalPage <= this.pageRange
-	    }
-	}
-}
+      this.goToPage(this.displayPage - 1);
+    },
+    nextPage() {
+      this.goToPage(this.displayPage + 1);
+    },
+		directToPage(page) {
+			let currentUrl = window.location.href;
+			let arr = currentUrl.split('?');
+			let pageParam = `page=${page}`;
+			let directUrl = '';
+			if (currentUrl.length > 1 && arr[1] && arr[1] !== '') {
+				if (currentUrl.includes("page=")) {
+					directUrl = currentUrl.replace(/page=-?\d+/g, pageParam);
+				} else {
+					directUrl = currentUrl.concat("&" + pageParam);
+				}
+			} else {
+				directUrl = currentUrl.concat("?" + pageParam)
+			}
+			Turbolinks.visit(directUrl);
+		}
+  },
+};
 </script>
 <style type="text/css" scoped>
 a {

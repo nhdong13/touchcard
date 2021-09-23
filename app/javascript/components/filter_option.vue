@@ -98,6 +98,9 @@
   import Treeselect from '@riophae/vue-treeselect'
   import './treeselect.css';
   import VueTagsInput from '@johmun/vue-tags-input';
+  const FILTERS_SHOW_NUMBER_INPUT = ['number_of_order', 'last_order_total', 'all_order_total']; //'total_spend', 'referring_site', 'landing_site', 'discount_amount'];
+  const NUMBER_CONDITIONS = ["matches_number", "between_number", "greater_number", "smaller_number"];
+  const DATE_CONDITIONS = ["matches_date", "before", "between_date", "after", "disable_display_1", "disable_display_2"];
   export default {
     components: {
       Datepicker,Switcher,Treeselect,VueTagsInput
@@ -177,15 +180,15 @@
         return this.filter.selectedCondition.toString().includes("between");
       },
       showNumberInput() {
-        return ['number_of_order', 'total_spend', 'referring_site', 'landing_site', 'last_order_total', 'all_order_total', 'discount_amount'].includes(this.filter.selectedFilter) ||
-               (["first_order_date", "last_order_date"].includes(this.selectedFilter) && ["between_number", "matches_number"].includes(this.filter.selectedCondition)) ||
+        return FILTERS_SHOW_NUMBER_INPUT.includes(this.filter.selectedFilter) ||
+               (this.selectedFilter.includes("order_date") && NUMBER_CONDITIONS.includes(this.filter.selectedCondition)) ||
                (this.selectedFilter == "zip_code" && ["tag_is", "begin_with", "end_with"].indexOf(this.filter.selectedCondition) > -1);
       },
       showTextInput() {
         return ['referring_site', 'landing_site'].indexOf(this.filter.selectedFilter) > -1;
       },
       showDateInput() {
-        return this.selectedFilter.includes("order_date") && (["between_date", "before", "after"].indexOf(this.filter.selectedCondition) > -1);
+        return this.selectedFilter.includes("order_date") && DATE_CONDITIONS.includes(this.filter.selectedCondition);
       },
       showCountrySelect() {
         return this.filter.selectedFilter == "shipping_country" && this.filter.selectedCondition == "from";
@@ -202,14 +205,16 @@
         return this.filter.selectedFilter == 'discount_amount';
       },
       showOption(option) {
-        return option == "" ||
-              (this.selectedFilter.includes("order_date") && ["before", "between_date", "after", "between_number", "matches_number", "disable_display_1", "disable_display_2"].includes(option)) ||
-              (['number_of_order', 'last_order_total', 'all_order_total'].includes(this.filter.selectedFilter) && ["matches_number", "between_number"].includes(option)) ||
-              (['shipping_country', 'shipping_state', 'shipping_city'].indexOf(this.filter.selectedFilter) > -1 && option == "from") ||
-              (this.isFilter(['order_tag', 'discount_code']) && ["tag_is", "tag_contain"].indexOf(option) > -1) ||
-              (this.selectedFilter == "zip_code" && ["equal", "begin_with", "end_with"].indexOf(option) > -1) ||
-              (this.selectedFilter == "shipping_company" && ["no", "yes"].indexOf(option) > -1) ||
-              (this.selectedFilter == 'discount_amount' && ["discount_amount_matches", "discount_amount_between"].includes(option));
+        // return option == "" ||
+        //       (this.selectedFilter.includes("order_date") && ["before", "between_date", "after", "between_number", "matches_number", "disable_display_1", "disable_display_2"].includes(option)) ||
+        //       (['number_of_order', 'last_order_total', 'all_order_total'].includes(this.filter.selectedFilter) && ["matches_number", "between_number"].includes(option)) ||
+        //       (['shipping_country', 'shipping_state', 'shipping_city'].indexOf(this.filter.selectedFilter) > -1 && option == "from") ||
+        //       (this.isFilter(['order_tag', 'discount_code']) && ["tag_is", "tag_contain"].indexOf(option) > -1) ||
+        //       (this.selectedFilter == "zip_code" && ["equal", "begin_with", "end_with"].indexOf(option) > -1) ||
+        //       (this.selectedFilter == "shipping_company" && ["no", "yes"].indexOf(option) > -1) ||
+        //       (this.selectedFilter == 'discount_amount' && ["discount_amount_matches", "discount_amount_between"].includes(option));
+        return (FILTERS_SHOW_NUMBER_INPUT.includes(this.selectedFilter) && NUMBER_CONDITIONS.includes(option)) ||
+               (this.selectedFilter.includes("order_date") && DATE_CONDITIONS.concat(NUMBER_CONDITIONS).includes(option));
       },
       isFilter(filterNames) {
         let correctFilter = false;
@@ -245,13 +250,11 @@
         }
       },
       combineValue() {
-        if (this.value1 && this.value2 && this.selectedFilter.includes("order_date") && this.filter.selectedCondition == "between_date") {
-          let date1 = new Date(this.value1);
-          let date2 = new Date(this.value2);
-          if (date1 > date2) this.value1 = null;
+        if (this.value1 && this.value2 && this.value1 != "" && this.value2 != "" && this.is2InputsValid()) {
+          this.filter.value = `${this.value1}&${this.value2}`;
+        } else {
+          this.filter.value = null;
         }
-
-        this.filter.value = this.isValidInputNumber() ? `${this.value1 || ''}&${this.value2 || ''}` : null;
         this.filterChange();
       },
       switcherToggle(switcherValue, valueChange=true) {
@@ -273,6 +276,15 @@
           this.filter.value = this.value1 && this.value1 != "" ? currencyType + this.value1 : null;
         }
         this.filterChange();
+      },
+      is2InputsValid() {
+        if (this.selectedFilter.includes("order_date") && this.filter.selectedCondition == "between_date") {
+          let date1 = new Date(this.value1);
+          let date2 = new Date(this.value2);
+          return date1 < date2;
+        } else {
+          return parseFloat(this.value1) < parseFloat(this.value2);
+        }
       },
       isValidInputNumber() {
         if ((!this.value1 || this.value1 =='') && (!this.value2 || this.value2 == '')) {

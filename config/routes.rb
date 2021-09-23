@@ -72,6 +72,7 @@ Rails.application.routes.draw do
   resources :targeting, only: [:index] do
     collection do
       post :get
+      post :get_test
       get :get_filters
       get :get_countries
       get :get_states
