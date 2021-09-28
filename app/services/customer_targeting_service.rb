@@ -1,5 +1,5 @@
 class CustomerTargetingService
-  attr_accessor :orders, :current_shop, :accepted_attrs, :removed_attrs
+  attr_accessor :orders, :current_shop, :accepted_attrs, :removed_attrs, :fit_customer_ids
   ACTIVE_FILTERS = ["last_order_date",
                     "first_order_date",
                     "last_order_tag",
@@ -157,9 +157,10 @@ class CustomerTargetingService
 
   def get_list_customer_ids
     all_customer_ids = current_shop.orders.where.not(customer_id: nil).pluck(:customer_id).uniq
-    fit_customer_ids = all_customer_ids.filter{|id|
+    @fit_customer_ids = all_customer_ids.filter{|id|
       customer_pass_filter?(id)
     }
+    all_customer_ids
   end
 
   def customer_pass_filter? customer_id
@@ -498,8 +499,10 @@ class CustomerTargetingService
   end
 
   def customer_can_receive_postcard customer
+    return "N" unless fit_customer_ids.include?(customer.id)
     return "N" unless customer.default_address.present?
     return "N" unless customer.default_address&.address1&.present?
+    return "N" unless customer.default_address.country_code == "US"
     return "Y"
   end
 
