@@ -101,17 +101,6 @@
 		},
 
 		methods: {
-			// changePagination: function (pageNum) {
-			// 	let _this = this;
-   //      let target = `/dashboard.json`;
-   //      this.currentPage = pageNum;
-   //      axios.get(target, { params: { page: pageNum } })
-   //        .then(function(response) {
-   //          _this.thisPostcards = JSON.parse(response.data.postcards);
-   //        }).catch(function (error) {
-   //      });
-			// },
-
 			cancelPostcard: function () {
 				let _this = this;
 				let target = `/dashboard/${_this.id}/cancel_postcard.json`;
