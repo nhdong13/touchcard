@@ -115,10 +115,10 @@
 				let target = `/dashboard/${_this.id}/cancel_postcard.json`;
 				axios.patch(target, { params: { id: _this.id } })
 					.then(function(response) {
-						let index = _this.postcards.findIndex(function (postcard) {
+						let index = _this.thisPostcards.findIndex(function (postcard) {
 							return postcard.id == _this.id;
 						});
-						_this.postcards.splice(index, 1, JSON.parse(response.data.postcard));
+						_this.thisPostcards.splice(index, 1, JSON.parse(response.data.postcard));
 						_this.closeModalConfirmCancelPostcard();
 					}).catch(function (error) {
 				})
