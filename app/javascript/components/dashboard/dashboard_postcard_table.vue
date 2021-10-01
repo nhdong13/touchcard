@@ -29,12 +29,12 @@
             <td>{{ postcard.full_name }}</td>
             <td>{{ postcard.city }}, {{ postcard.state }}, {{ postcard.country }}</td>
             <td>
-            	<a v-if="(postcard.sent || postcard.canceled) == false" 
-            		v-on:click="showModalConfirmCancelPostcard(postcard.id)"
-            		class='mdc-material-icons mdc-button__icon cancel-postcard-button tooltip' 
-            		data-hover="Cancel postcard">
-                <i class="material-icons mdc-button__icon cancel-postcard-button-icon">cancel</i>
-            	</a>
+              <i v-if="(postcard.sent || postcard.canceled) == false"
+	              v-on:click="showModalConfirmCancelPostcard(postcard.id)"
+              	class="material-icons mdc-button__icon cancel-postcard-button-icon"
+              	v-b-tooltip.hover title="Cancel postcard">
+              cancel
+	            </i>
             </td>
           </tr>
 	      	<tr>
@@ -43,7 +43,6 @@
 		      			<CustomPagination
 				          v-model="currentPage"
 				          :total-page="thisTotalPages"
-				          :click-handler="changePagination"
 				          :key="currentPage"
 				        > 
 				        </CustomPagination>
@@ -82,6 +81,9 @@
 			totalPages: {
 				type: Number,
 				required: true
+			},
+			searchParams: {
+				type: Object
 			}
 		},
 		
@@ -94,21 +96,21 @@
 				id: "",
 				thisPostcards: this.postcards,
 				thisTotalPages: this.totalPages,
-				currentPage: 1,
+				currentPage: parseInt(this.searchParams.page) || 1
 			}
 		},
 
 		methods: {
-			changePagination: function (pageNum) {
-				let _this = this;
-        let target = `/dashboard.json`;
-        this.currentPage = pageNum;
-        axios.get(target, { params: { page: pageNum } })
-          .then(function(response) {
-            _this.thisPostcards = JSON.parse(response.data.postcards);
-          }).catch(function (error) {
-        });
-			},
+			// changePagination: function (pageNum) {
+			// 	let _this = this;
+   //      let target = `/dashboard.json`;
+   //      this.currentPage = pageNum;
+   //      axios.get(target, { params: { page: pageNum } })
+   //        .then(function(response) {
+   //          _this.thisPostcards = JSON.parse(response.data.postcards);
+   //        }).catch(function (error) {
+   //      });
+			// },
 
 			cancelPostcard: function () {
 				let _this = this;
@@ -138,7 +140,7 @@
 	}
 </script>
 <style type="text/css" scoped>
-	.cancel-postcard-button {
+	.cancel-postcard-button-icon {
 		cursor: pointer;
 	}
 </style>

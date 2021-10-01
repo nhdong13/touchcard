@@ -50,6 +50,7 @@
 <%= tag.div id: "postcard-table",
             data: {
               postcards: ActiveModelSerializers::SerializableResource.new(@postcards, {each_serializer: PostcardSerializer}).to_json,
+              search_params: params.as_json,
               total_pages: @postcards.total_pages,
             }
 %>

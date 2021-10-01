@@ -135,9 +135,10 @@ document.addEventListener('turbolinks:load', () => {
         return {
           postcards: JSON.parse(dataset.postcards),
           totalPages: parseInt(dataset.totalPages),
+          searchParams: JSON.parse(dataset.searchParams)
         }
       },
-      template: '<postcard-table :postcards="postcards" :totalPages="totalPages"></postcard-table>',
+      template: '<postcard-table :postcards="postcards" :totalPages="totalPages" :searchParams="searchParams"></postcard-table>',
       components: {
         'postcard-table': PostcardTable
       }
