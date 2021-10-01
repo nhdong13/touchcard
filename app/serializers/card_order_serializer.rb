@@ -52,18 +52,18 @@ class CardOrderSerializer < ActiveModel::Serializer
   end
 
   def schedule
-    start_date = object.send_date_start&.strftime("%b %d, %Y")
-    end_date = object.send_date_end&.strftime("%b %d, %Y")
+    start_date = object.send_date_start&.strftime("%F %R %:z")
+    end_date = object.send_date_end&.strftime("%F %R %:z")
     if start_date.blank?
-      "Not set"
+      "Not Set"
     elsif object.one_off?
       start_date
     elsif object.send_continuously
-      "#{start_date} - Ongoing"
+      "#{start_date} &to& Ongoing"
     elsif end_date.blank?
       "Not Set"
     else
-      "#{start_date} - #{end_date}"
+      "#{start_date} &to& #{end_date}"
     end
   end
 

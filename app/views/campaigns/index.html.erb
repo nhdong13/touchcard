@@ -2,7 +2,7 @@
 <%= tag.div id: "campaigns-dashboard",
             data: {
               campaigns: ActiveModelSerializers::SerializableResource.new(@result[:campaigns], {each_serializer: CardOrderSerializer}).to_json,
-              total_pages: @result[:total_pages],
-              campaign_types: @result[:campaign_types]
+              search_params: params.as_json,
+              total_pages: @result[:total_pages]
             }
 %>

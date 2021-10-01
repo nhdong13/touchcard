@@ -8,7 +8,7 @@
     styles="position: absolute;top: 50%;left: 50%;background: transparent;box-shadow: none;"
   >
     <img
-      :src="require('../../assets/images/loading.gif')"
+      :src="require('../../../assets/images/loading.gif')"
       width="50"
       height="50"
     />

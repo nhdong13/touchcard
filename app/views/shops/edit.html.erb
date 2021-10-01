@@ -4,7 +4,7 @@
   <section>
     <br>
     <% if @shop.current_subscription %>
-      <p>
+      <p class="pt-3">
       You are subscribed to <strong><%= number_to_currency(@current_shop.current_subscription.value) %></strong> per month. &nbsp
       <%= link_to edit_subscriptions_path do %>
         <button class="mdc-button mdc-button--stroked">Edit</button>

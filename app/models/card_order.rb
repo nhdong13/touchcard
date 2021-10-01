@@ -65,7 +65,7 @@ class CardOrder < ApplicationRecord
   # before_update :validate_campaign_name, if: :saved_change_to_campaign_name?
 
   enum budget_type: [ :non_set, :monthly ]
-  enum campaign_type: [ :automation, :one_off ]
+  enum campaign_type: { automation: 0, one_off: 1 }
   enum campaign_status: { draft: 0, processing: 1, scheduled: 2, sending: 3, complete: 4, paused: 5, error: 6, out_of_credit: 7 }
 
   class << self
