@@ -53,7 +53,7 @@ Vue.use(IconsPlugin);
 import moment from 'moment';
 Vue.prototype.moment = moment;
 
-import PostcardTable from '../components/dashboard/dashboard_postcard_table'
+import PostcardDashboard from '../components/dashboard/dashboard_postcard_table'
 
 // To get Turbolinks working it helped to put the javascript pack tag in the <head>
 // If we need to expand Vue to other parts of the application I suspect it would help
@@ -68,7 +68,7 @@ document.addEventListener('turbolinks:load', () => {
   var campaignDashboardElement = document.getElementById('campaigns-dashboard');
   var newSubscriptionElement = document.getElementById('new-subscription-form');
   var editSubscriptionElement = document.getElementById('edit-subscription-form');
-  var postcardTableDashboardElement = document.getElementById('postcard-table');
+  var postcardDashboardElement = document.getElementById('postcard-table');
 
   if (automationElement != null) {
     const automationVueApp = new Vue({
@@ -127,11 +127,11 @@ document.addEventListener('turbolinks:load', () => {
     window.VueSubscriptionEdit = vueApp;
   }
 
-  if (postcardTableDashboardElement != null) {
+  if (postcardDashboardElement != null) {
     const vueApp = new Vue({
-      el: postcardTableDashboardElement,
+      el: postcardDashboardElement,
       data: function() {
-        let dataset = postcardTableDashboardElement.dataset;
+        let dataset = postcardDashboardElement.dataset;
         return {
           postcards: JSON.parse(dataset.postcards),
           totalPages: parseInt(dataset.totalPages),
@@ -140,10 +140,10 @@ document.addEventListener('turbolinks:load', () => {
       },
       template: '<postcard-table :postcards="postcards" :totalPages="totalPages" :searchParams="searchParams"></postcard-table>',
       components: {
-        'postcard-table': PostcardTable
+        'postcard-table': PostcardDashboard
       }
     });
-    window.VueDashboardPostcardTable = vueApp;
+    window.VueDashboardPostcard = vueApp;
   }
 
 });
