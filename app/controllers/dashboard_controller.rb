@@ -8,10 +8,9 @@ class DashboardController < BaseController
       .page(@current_page)
       .per(20)
     respond_to do |format|
-      format.html {render :index}
+      format.html { render :index }
       format.json { render json: { 
-        postcards: ActiveModelSerializers::SerializableResource.new(@postcards, {each_serializer: PostcardSerializer}).to_json,
-        total_pages: @postcards.total_pages
+        postcards: ActiveModelSerializers::SerializableResource.new(@postcards, {each_serializer: PostcardSerializer}).to_json
       }}
     end
   end

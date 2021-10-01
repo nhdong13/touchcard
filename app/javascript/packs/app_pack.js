@@ -2,7 +2,6 @@ import Vue from 'vue/dist/vue.esm'
 import AutomationForm from '../automation_form.vue'
 import SubscriptionForm from '../subscription_form'
 import TurbolinksAdapter from 'vue-turbolinks'
-import CustomePagination from '../components/campaigns/pagination.vue'
 Vue.use(TurbolinksAdapter);
 
 import axios from 'axios'
@@ -59,7 +58,6 @@ document.addEventListener('turbolinks:load', () => {
   var campaignDashboardElement = document.getElementById('campaigns-dashboard');
   var newSubscriptionElement = document.getElementById('new-subscription-form');
   var editSubscriptionElement = document.getElementById('edit-subscription-form');
-  var postcardPaginationElement = document.getElementById('postcard-pagination');
   var postcardTableDashboardElement = document.getElementById('postcard-table');
 
   if (automationElement != null) {
@@ -117,24 +115,6 @@ document.addEventListener('turbolinks:load', () => {
   if (editSubscriptionElement != null) {
     const vueApp = new Vue(SubscriptionForm(editSubscriptionElement));
     window.VueSubscriptionEdit = vueApp;
-  }
-
-  if (postcardPaginationElement != null) {
-    const vueApp = new Vue({
-      el: postcardPaginationElement,
-      data: function() {
-        let dataset = postcardPaginationElement.dataset;
-        return {
-          value: parseInt(dataset.currentPage),
-          totalPage: parseInt(dataset.totalPage),
-        }
-      },
-      template: '<CustomePagination :value="value" :totalPage="totalPage" :doDirect="true" />',
-      components: {
-        CustomePagination
-      }
-    });
-    window.VueDashboard = vueApp;
   }
 
   if (postcardTableDashboardElement != null) {

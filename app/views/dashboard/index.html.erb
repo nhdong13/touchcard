@@ -46,58 +46,7 @@
   </div>
 
 </div>
-<!-- <div class="mdc-layout-grid__inner scheduled-cards-container">
-  <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12">
-    <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
-      <thead>
-      <tr>
-        <th class="mdl-data-table__cell--non-numeric">Status</th>
-        <th class="mdl-data-table__cell--non-numeric">Name</th>
-        <th class="mdl-data-table__cell--non-numeric">Location</th>
-        <th class="mdl-data-table__cell--non-numeric"></th>
-      </tr>
-      </thead>
-      <tbody>
-      <% if @postcards.count == 0 %>
-        <tr>
-          <td colspan="4" style="text-align:center">Sent postcards will appear here.</td>
-        </tr>
-      <% end %>
-      <% @postcards.each do |postcard| %>
-          <tr id="postcard-<%= postcard.id %>">
-            <td>
-              <button type="button"
-                      class="mdl-chip mdl-color--<%= postcard.sent? ? 'light_green' : 'orange' %> postcard-status-chip">
-                <span class="mdl-chip__text"><%= postcard_status(postcard) %></span>
-              </button>
-            </td>
 
-            <td><%= postcard.customer&.full_name %></td>
-            <td><%= postcard.city %>, <%= postcard.state %>, <%= postcard.country %></td>
-            <td>
-              <% unless postcard.canceled || postcard.sent %>
-                  <%= link_to(cancel_postcard_dashboard_path(postcard),
-                              method: :patch,
-                              data: {
-                                  confirm:
-                                      "Are you sure you want to cancel this postcard? This can't be undone.",
-                                  hover: "Cancel postcard"},
-                              class: 'mdc-material-icons mdc-button__icon cancel-postcard-button tooltip',
-                              remote: true) do %>
-                      <i class="material-icons mdc-button__icon cancel-postcard-button-icon">cancel</i>
-                  <% end %>
-              <% end %>
-            </td>
-          </tr>
-      <% end %>
-      <tr>
-        <td colspan="4"><div id="pagination"><div id="postcard-pagination" data-current-page="<%= @current_page %>" data-total-page="<%= @postcards.total_pages %>"></div></div></td>
-      </tr>
-      </tbody>
-    </table>
-  </div>
-</div>
- -->
 <%= tag.div id: "postcard-table",
             data: {
               postcards: ActiveModelSerializers::SerializableResource.new(@postcards, {each_serializer: PostcardSerializer}).to_json,

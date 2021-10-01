@@ -106,7 +106,6 @@
         axios.get(target, { params: { page: pageNum } })
           .then(function(response) {
             _this.thisPostcards = JSON.parse(response.data.postcards);
-            _this.thisTotalPages = response.data.total_pages;
           }).catch(function (error) {
         });
 			},
@@ -116,7 +115,6 @@
 				let target = `/dashboard/${_this.id}/cancel_postcard.json`;
 				axios.patch(target, { params: { id: _this.id } })
 					.then(function(response) {
-						console.log(JSON.parse(response.data.postcard));
 						let index = _this.postcards.findIndex(function (postcard) {
 							return postcard.id == _this.id;
 						});
@@ -139,7 +137,7 @@
 
 	}
 </script>
-<style>
+<style type="text/css" scoped>
 	.cancel-postcard-button {
 		cursor: pointer;
 	}
