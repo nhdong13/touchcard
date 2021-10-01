@@ -44,6 +44,8 @@ Vue.use(VueScreen);
 import VModal from 'vue-js-modal';
 Vue.use(VModal, { componentName: 'modal'});
 
+import PostcardTable from '../components/dashboard/dashboard_postcard_table'
+
 // To get Turbolinks working it helped to put the javascript pack tag in the <head>
 // If we need to expand Vue to other parts of the application I suspect it would help
 // to keep this structure and load individual containers loaded from this file.
@@ -58,6 +60,7 @@ document.addEventListener('turbolinks:load', () => {
   var newSubscriptionElement = document.getElementById('new-subscription-form');
   var editSubscriptionElement = document.getElementById('edit-subscription-form');
   var postcardPaginationElement = document.getElementById('postcard-pagination');
+  var postcardTableDashboardElement = document.getElementById('postcard-table');
 
   if (automationElement != null) {
     const automationVueApp = new Vue({
@@ -132,6 +135,24 @@ document.addEventListener('turbolinks:load', () => {
       }
     });
     window.VueDashboard = vueApp;
+  }
+
+  if (postcardTableDashboardElement != null) {
+    const vueApp = new Vue({
+      el: postcardTableDashboardElement,
+      data: function() {
+        let dataset = postcardTableDashboardElement.dataset;
+        return {
+          postcards: JSON.parse(dataset.postcards),
+          totalPages: parseInt(dataset.totalPages),
+        }
+      },
+      template: '<postcard-table :postcards="postcards" :totalPages="totalPages"></postcard-table>',
+      components: {
+        'postcard-table': PostcardTable
+      }
+    });
+    window.VueDashboardPostcardTable = vueApp;
   }
 
 });
