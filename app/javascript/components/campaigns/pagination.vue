@@ -38,17 +38,9 @@ export default {
       type: Number,
       required: true,
     },
-    clickHandler: {
-      type: Function,
-      default: () => {},
-    },
-		doDirect: {
-			type: Boolean,
-			default: false
-		},
     containerClass: {
       type: String,
-      default: "pagination",
+      default: "pagination-ul",
     },
     pageClass: {
       type: String,
@@ -98,11 +90,7 @@ export default {
   methods: {
     goToPage(page) {
 			if (page < 1 || page > this.totalPage || this.displayPage === page) return;
-			if (this.doDirect) {
-				this.directToPage(page);
-			} else {
-      	this.clickHandler(page);
-			}
+      this.directToPage(page);
     },
 		prevPage() {
       this.goToPage(this.displayPage - 1);
@@ -111,20 +99,9 @@ export default {
       this.goToPage(this.displayPage + 1);
     },
 		directToPage(page) {
-			let currentUrl = window.location.href;
-			let arr = currentUrl.split('?');
-			let pageParam = `page=${page}`;
-			let directUrl = '';
-			if (currentUrl.length > 1 && arr[1] && arr[1] !== '') {
-				if (currentUrl.includes("page=")) {
-					directUrl = currentUrl.replace(/page=-?\d+/g, pageParam);
-				} else {
-					directUrl = currentUrl.concat("&" + pageParam);
-				}
-			} else {
-				directUrl = currentUrl.concat("?" + pageParam)
-			}
-			Turbolinks.visit(directUrl);
+      let url = new URL(window.location.href);
+      url.searchParams.set("page", page);
+			Turbolinks.visit(url.href);
 		}
   },
 };

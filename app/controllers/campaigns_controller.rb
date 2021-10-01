@@ -1,12 +1,23 @@
 class CampaignsController < BaseController
   def index
-    @result = CampaignSearchService.new(@current_shop, params).index
+    @result = CampaignsService.new(@current_shop, campaigns_search_params).all
     respond_to do |format|
       format.html {}
       format.json { render json: {
         campaigns: ActiveModelSerializers::SerializableResource.new(@result[:campaigns], {each_serializer: CardOrderSerializer}).to_json,
         total_pages: @result[:total_pages]
       }}
+    end
+  end
+
+  def export_csv
+    card_oders = ActiveModelSerializers::SerializableResource.new(@current_shop.card_orders, {each_serializer: CardOrderSerializer}).to_json
+    csv = ExportCsvService.new card_oders, CardOrder::CSV_ATTRIBUTES
+    respond_to do |format|
+      format.json { render json: {
+        csv_data: csv.perform.to_json,
+        filename: "#{@current_shop.domain}_campaigns.csv" }
+      }
     end
   end
 
@@ -23,39 +34,22 @@ class CampaignsController < BaseController
         Rails.logger.debug "[ERROR] #{e.class} - #{e.message}"
       end
     end
-    @result = CampaignSearchService.new(@current_shop, params).index
-    @total_pages = @result[:total_pages]
     respond_to do |format|
       format.html {}
-      format.json { render json: {
-        campaigns: ActiveModelSerializers::SerializableResource.new(@result[:campaigns], {each_serializer: CardOrderSerializer}).to_json,
-        total_pages: @total_pages
-      }}
-    end
-  end
-
-  def export_csv
-    card_oders = ActiveModelSerializers::SerializableResource.new(@current_shop.card_orders, {each_serializer: CardOrderSerializer}).to_json
-    csv = ExportCsvService.new card_oders, CardOrder::CSV_ATTRIBUTES
-    respond_to do |format|
-      format.json { render json: {
-        csv_data: csv.perform.to_json,
-        filename: "#{@current_shop.domain}_campaigns.csv" }
-      }
+      format.json { render json: {message: "succesful"}, status: 200}
     end
   end
 
   def duplicate_campaign
-    DuplicateCampaignService.new(@current_shop, params).duplicate
-    @result = CampaignSearchService.new(@current_shop, params).index
+    DuplicateCampaignService.new(@current_shop, params[:campaign_id]).duplicate(params[:campaign_name])
     respond_to do |format|
       format.html {}
-      format.json { render json: {
-        campaigns: ActiveModelSerializers::SerializableResource.new(@result[:campaigns], {each_serializer: CardOrderSerializer}).to_json,
-        total_pages: @result[:total_pages],
-        statuses: @result[:statuses],
-        campaign_types: @result[:campaign_types]
-      }}
+      format.json { render json: {message: "succesful"}, status: 200}
     end
+  end
+
+  private
+  def campaigns_search_params
+    params.permit(:campaign_name, :page, :sort_by, :order)
   end
 end

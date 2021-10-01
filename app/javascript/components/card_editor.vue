@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2><small :class="{'warning-color': showError}" v-if="showError">*</small> {{isBack ? "Back" : "Front"}}</h2>
+    <h2 class="custom-h2"><small :class="{'warning-color': showError}" v-if="showError">*</small> {{cardName}}</h2>
     <div :class="['editor-columns-container', {invalid: showError}]">
       <div ref="editorLeftColumn" class="editor-left-column">
         <card-side
@@ -15,7 +15,7 @@
         </card-side>
       </div>
       <div class="editor-menu editor-right-column">
-        <strong>Upload Design</strong>
+        <strong class="mb-3">Upload Design</strong>
         <!--<span class="tooltip" data-hover="PNG or JPG image, 1875 by 1275 px">-->
         <!--<i class="material-icons callout" >help_outline</i>-->
         <!--</span>-->
@@ -43,27 +43,24 @@
         <input v-bind:id="'discount-toggle-' + _uid" type="checkbox" v-model="attributes.showsDiscount">
         <label v-bind:for="'discount-toggle-' + _uid" class="noselect" >
           <strong>Include Expiring Discount</strong>
-          <span class="tooltip" data-hover="Each postcard gets a unique coupon">
-              <i class="material-icons callout" >help_outline</i>
-            </span>
+          <i class="material-icons callout" v-b-tooltip.hover title="Each postcard gets a unique coupon">help_outline</i>
         </label>
         <div class="discount-config" v-if="attributes.showsDiscount">
-            <span  v-bind:class="{'tooltip': (discount_pct < 15)}" data-hover="We recommend 15-25% for better conversions">
-              <input type="number" min="0" max="100" :value="discount_pct" @input="$emit('update:discount_pct', Number($event.target.value))">
-              <!--<input type="number" min="0" max="100" :value="automation.discount_pct" @input="$emit('update:automation', Object.assign(automation, {discount_pct: Number($event.target.value)}))">-->
-              <label>% off</label>
-              <span v-bind:class="{'warning-color': (discount_pct < 15), 'tooltip': !(discount_pct < 15)}" data-hover="We recommend 15-25%">
-                <i class="material-icons callout">help_outline</i>
-              </span>
-            </span>
+          <span :id="'discount-input-'+cardName">
+            <input type="number" min="0" max="100" :value="discount_pct" @input="$emit('update:discount_pct', Number($event.target.value))">
+            <!--<input type="number" min="0" max="100" :value="automation.discount_pct" @input="$emit('update:automation', Object.assign(automation, {discount_pct: Number($event.target.value)}))">-->
+            <label>% off</label>
+            <i :class="['material-icons', 'callout', {'warning-color': (discount_pct < 15)}]" v-b-tooltip.hover title="We recommend 15-25%">help_outline</i>
+          </span>
           <br>
           <span>
-              <input type="number" min="1" max="52" :value="discount_exp" @input="$emit('update:discount_exp', Number($event.target.value))">
-              weeks expiration
-              <span class="tooltip" data-hover="Calculated from estimated delivery date (1 week in US)">
-                <i class="material-icons callout" >help_outline</i>
-              </span>
-            </span>
+            <input type="number" min="1" max="52" :value="discount_exp" @input="$emit('update:discount_exp', Number($event.target.value))">
+            weeks expiration
+            <i class="material-icons callout" v-b-tooltip.hover title="Calculated from estimated delivery date (1 week in US)">help_outline</i>
+          </span>
+          <b-tooltip :show="discount_pct < 15" :target="'discount-input-'+cardName" placement="top" triggers="none">
+            We recommend 15-25% for better conversions
+          </b-tooltip>
         </div>
       </div>
     </div>
@@ -119,6 +116,7 @@
         cardScaleFactor: 1.0,
         isUploading: false,
         showError: false,
+        cardName: this.isBack ? "Back" : "Front",
       }
     },
     watch: {
@@ -295,6 +293,7 @@
   .discount-config {
     padding-top: 10px;
     padding-left: 10px;
+    width: fit-content;
   }
 
   .warning-color {
@@ -303,6 +302,11 @@
 
   .invalid {
     border: 1px solid red;
+  }
+
+  .custom-h2 {
+    font-size: 1.5em;
+    font-weight: 700;
   }
 
 </style>

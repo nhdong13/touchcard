@@ -15,56 +15,28 @@
             <font-awesome-icon icon="long-arrow-alt-down"/>
            </button> -->
           <!-- <DropdownMenu ref="DropdownMenu"></DropdownMenu> -->
-          <input :placeholder="'SEARCH'" v-model="searchQuery" @input="debounceSearch" class="border-theme"/>
+          <input :placeholder="'SEARCH'" v-model="searchCampaignNameKeyword" @input="onSearchChange" class="border-theme"/>
         </div>
       </div>
       <div v-if="$screen.width > 425">
         <table class="campaign-dashboard">
           <tr>
             <th width="35px">
-              <input id="campaign-check-all" type="checkbox" v-model="selectAll"/>
+              <input id="campaign-check-all" type="checkbox" v-model="selectAll" style="margin:3px 4px" />
             </th>
             <th></th>
-            <th>Design</th>
+            <th width="120px">Design</th>
             <th class="mw-col">
               Name
-              <span v-on:click="onSortByAlphabetically('sortByName', 'campaign_name')">
-                <font-awesome-icon icon="caret-down" v-if="sortByName"/>
+              <span v-on:click="onSort('campaign_name')">
+                <font-awesome-icon icon="caret-down" v-if="currentSortBy == 'campaign_name' && currentOrder == 'desc'" />
                 <font-awesome-icon icon="caret-up" v-else/>
               </span>
             </th>
-            <th>
-              Status
-              <span v-on:click="onSortByAlphabetically('sortByStatus', 'campaign_status')">
-                <font-awesome-icon icon="caret-down" v-if="sortByStatus"/>
-                <font-awesome-icon icon="caret-up" v-else/>
-              </span>
-            </th>
-            <th>
-              Type
-              <span v-on:click="onSortByAlphabetically('sortByType', 'campaign_type')">
-                <font-awesome-icon icon="caret-down" v-if="sortByType"/>
-                <font-awesome-icon icon="caret-up" v-else/>
-              </span>
-            </th>
-            <th>
-              Budget
-              <span v-on:click="onSortByAlphabetically('sortByMonthlyBudget', 'budget')">
-                <font-awesome-icon icon="caret-down" v-if="sortByMonthlyBudget"/>
-                <font-awesome-icon icon="caret-up" v-else/>
-              </span>
-            </th>
-            <th>
-              Starts
-              <span v-on:click="onSortByAlphabetically('sortBySendDateStart', 'send_date_start')">
-                <font-awesome-icon icon="caret-down" v-if="sortBySendDateStart"/>
-                <font-awesome-icon icon="caret-up" v-else/>
-              </span>
-            </th>
-            <th>
-              Ends
-              <span v-on:click="onSortByAlphabetically('sortBySendDateEnd', 'send_date_end')">
-                <font-awesome-icon icon="caret-down" v-if="sortBySendDateEnd"/>
+            <th v-for="column in tableColumns" :key="column[1]">
+              {{ column[0] }}
+              <span v-on:click="onSort(column[1])">
+                <font-awesome-icon icon="caret-down" v-if="currentSortBy == column[1] && currentOrder == 'desc'" />
                 <font-awesome-icon icon="caret-up" v-else/>
               </span>
             </th>
@@ -75,10 +47,10 @@
             </td>
             <td>
               <span v-if="['Out of credit', 'Error', 'Draft', 'Complete'].includes(item.campaign_status)">
-                <md-switch v-model="campaignActive" class="md-primary" disabled></md-switch>
+                <md-switch class="md-primary" disabled />
               </span>
               <span v-else>
-                <md-switch :value="!item.enabled" class="md-primary" @change="onChangeCampaignActive(item.id)" :disabled="disableToggle(item)"></md-switch>
+                <md-switch :value="!item.enabled" class="md-primary" @change="onChangeCampaignActive(item.id)" :disabled="disableToggle(item)" />
               </span>
             </td>
             <td>
@@ -93,7 +65,7 @@
             </td>
             <!-- The maximum of character to display is 45 -->
             <td>
-              <span v-on:click="onEditCampaign(item.id)" class="campaign-name-style two-line-text">{{ item.campaign_name | truncate(45) }}</span>
+              <span v-on:click="onClickEditCampaign(item.id)" class="campaign-name-style two-line-text">{{ item.campaign_name | truncate(45) }}</span>
             </td>
             <td>{{ item.campaign_status}}</td>
             <td>{{ item.campaign_type }}</td>
@@ -121,12 +93,12 @@
             </span>
             <span class="campaign-info d-flex flex-column">
               <div class="campaign-name">
-                <span v-on:click="onEditCampaign(item.id)" class="campaign-name-style two-line-text">{{ item.campaign_name | truncate(30) }}</span>
+                <span v-on:click="onClickEditCampaign(item.id)" class="campaign-name-style two-line-text">{{ item.campaign_name | truncate(30) }}</span>
                 <span v-if="['Out of credit', 'Error', 'Draft', 'Complete'].includes(item.campaign_status)" class="toggle-button">
-                  <md-switch v-model="campaignActive" class="md-primary" disabled></md-switch>
+                  <md-switch class="md-primary" disabled />
                 </span>
                 <span class="toggle-button" v-else>
-                  <md-switch :value="!item.enabled" class="md-primary" @change="onChangeCampaignActive(item.id)" :disabled="disableToggle(item)"></md-switch>
+                  <md-switch :value="!item.enabled" class="md-primary" @change="onChangeCampaignActive(item.id)" :disabled="disableToggle(item)" />
                 </span>
               </div>
               <div class="campaign-detail d-flex">
@@ -159,7 +131,6 @@
         <CustomePagination
           v-model="currentPage"
           :total-page="thisTotalPages"
-          :click-handler="changePagination"
           :key="currentPage"
         > 
         </CustomePagination>
@@ -193,30 +164,34 @@
       </div>
     </modal>
     <LoadingDialog :modalDisplay="loading" />
+    <b-alert :show="flashMessage != ''" variant="danger" class="top-alert">{{ flashMessage }}</b-alert>
   </div>
 </template>
 
 <script>
   /* global Turbolinks */
-  import axios from 'axios'
-  import DropdownMenu from './dropdown_menu.vue'
-  import _ from 'lodash'
-  import CustomePagination from './pagination.vue'
-  import PreviewImage from './campaign_index_preview_image.vue'
-  import { MAXIMUM_CAMPAIGN_NAME_LENGTH } from '../../config.js'
-  import LoadingDialog from '../loading_dialog.vue'
+  import axios from 'axios';
+  import DropdownMenu from './dropdown_menu.vue';
+  import _ from 'lodash';
+  import CustomePagination from './pagination.vue';
+  import PreviewImage from './campaign_index_preview_image.vue';
+  import { MAXIMUM_CAMPAIGN_NAME_LENGTH } from '../../config.js';
+  import LoadingDialog from '../utilities/loading_dialog.vue';
 
   export default {
     components: {
       DropdownMenu,
       CustomePagination,
       PreviewImage,
-      LoadingDialog
+      LoadingDialog,
     },
     props: {
       campaigns: {
         type: Array,
         required: true
+      },
+      searchParams: {
+        type: Object
       },
       totalPages: {
         type: Number,
@@ -234,47 +209,25 @@
         name: "Post sale card",
         selected: [],
         thisTotalPages: this.totalPages,
-        currentPage: 1,
-        searchQuery: null,
-        debounce: null,
-        campaignActive: [],
-        sortBy: ['sortByName', 'sortByType'],
-        sortByName: true,
-        sortByType: true,
-        sortByStatus: true,
-        sortBySendDateStart: true,
-        sortBySendDateEnd: true,
-        sortByMonthlyBudget: true,
+        currentPage: parseInt(this.searchParams.page) || 1,
+        inputTimer: null,
+        currentSortBy: this.searchParams.sort_by,
+        currentOrder: this.searchParams.order || 'asc',
         duplicateCampaignName: "",
-        loading: false
+        loading: false,
+        searchCampaignNameKeyword: this.searchParams.campaign_name || "",
+        flashMessage: '',
+        tableColumns: [
+          ["Status", "campaign_status"],
+          ["Type", "campaign_type"],
+          ["Budget", "budget"],
+          ["Starts", "send_date_start"],
+          ["Ends", "send_date_end"]
+        ],
       }
     },
 
     created() {
-      this.listcampaignActive()
-      // TODO: comment this piece of code
-      if(!_.isEmpty(this.shared.campaign)) {
-          const _sharedState = this.shared.campaign
-          let targetCampaignId = this.thisCampaigns.findIndex(obj => {
-            return obj.id == _sharedState.id
-          })
-          if(targetCampaignId != -1) {
-            this.shared.campaign.campaign_status = this.shared.campaign.campaign_status.split("_").join(" ").replace(/^\w/, (c) => c.toUpperCase())
-            this.shared.campaign.campaign_type = this.shared.campaign.campaign_type.split("_").join(" ").replace(/^\w/, (c) => c.toUpperCase())
-
-            if(this.shared.campaign.campaign_type == "One off") {
-              this.shared.campaign.budget = "-"
-            } else {
-              if(this.shared.campaign.budget_type == "monthly") this.shared.campaign.budget = `$${this.shared.campaign.budget_update}`
-              else this.shared.campaign.budget = "-"
-            }
-
-            if(this.shared.campaign.campaign_status == "Processing") this.campaignActive.push(this.shared.campaign.id)
-            this.thisCampaigns[targetCampaignId] = this.shared.campaign
-            this.shared.campaign = null
-            this.changePagination(this.currentPage)
-          }
-        }
     },
 
     computed: {
@@ -310,28 +263,10 @@
     },
 
     watch: {
-      thisCampaigns: function(){
-        this.listcampaignActive()
-      }
     },
 
     methods: {
-      onSortByAlphabetically: function(sortby, name){
-        if(this[sortby]){
-          this[sortby] = false
-          this.thisCampaigns = _.orderBy(this.thisCampaigns, name, 'desc')
-        } else {
-          this[sortby] = true
-          this.thisCampaigns = _.orderBy(this.thisCampaigns, name, 'asc')
-        }
-      },
-
-      onEditCampaign: function(id) {
-        Turbolinks.visit(`/automations/${id}/edit`);
-      },
-
-
-      showModalConfirmDuplicate: function() {
+      showModalConfirmDuplicate() {
         const selectedCampaignName = this.thisCampaigns.find(campaign => campaign.id == this.selected).campaign_name
         this.duplicateCampaignName = "Copy of " + selectedCampaignName;
         if(this.duplicateCampaignName.length > MAXIMUM_CAMPAIGN_NAME_LENGTH) {
@@ -340,31 +275,16 @@
         this.$modal.show('duplicateModal')
       },
 
-      closeModalConfirmDuplicateCampaign: function() {
+      closeModalConfirmDuplicateCampaign() {
         this.$modal.hide('duplicateModal')
       },
 
-      showModalConfirmDeleteCampaign: function() {
+      showModalConfirmDeleteCampaign() {
         this.$modal.show('deleteCampaignModal')
       },
 
-      closeModalConfirmDeleteCampaign: function() {
+      closeModalConfirmDeleteCampaign() {
         this.$modal.hide('deleteCampaignModal')
-      },
-
-
-      duplicateCampaign: function() {
-        let _this = this
-        axios.get('/campaigns/duplicate_campaign.json', { params: { campaign_id: this.selected, campaign_name: this.duplicateCampaignName } })
-          .then(function(response) {
-            _this.updateState(response.data)
-            _this.closeModalConfirmDuplicateCampaign()
-          }).catch(function (error) {
-        });
-      },
-
-      onClickNewCampaign: function() {
-        Turbolinks.visit(`/automations/new`);
       },
 
       exportCsv: function(){
@@ -393,104 +313,94 @@
         }).catch(error => {});
       },
 
-      listcampaignActive: function() {
-        let list = []
-        this.thisCampaigns.forEach((campaign) => {
-          if(campaign.enabled){
-            list.push(campaign.id);
-          }
-        });
-        this.campaignActive = list
+      onSearchChange() {
+        clearTimeout(this.inputTimer);
+        this.inputTimer = setTimeout(() => this.doSearchQuery(), 1000);
       },
 
-      debounceSearch(event) {
-        this.message = null
-        clearTimeout(this.debounce)
-        this.debounce = setTimeout(() => {
-          this.searchQuery = event.target.value
-          this.onSearchQuery()
-        }, 600)
+      doSearchQuery() {
+        let target = "/campaigns";
+        let campaignNameKeyword = this.searchCampaignNameKeyword ? this.searchCampaignNameKeyword.toLocaleLowerCase() : "";
+        if (campaignNameKeyword != "") {
+          target += "?campaign_name=" + campaignNameKeyword;
+        }
+        Turbolinks.visit(target);
       },
 
-      onSearchQuery: function(){
-        let _this = this
-        let target = `/campaigns.json`;
-        axios.get(target, { params: {query: this.getParamsQuery(), filters: this.collectParamsFilters()} })
-          .then(function(response) {
-            _this.updateState(response.data)
-          }).catch(function (error) {
-        });
+      onSort(columnName) {
+        let url = new URL(window.location.href);
+        let order = this.currentSortBy == columnName && this.currentOrder == "asc" ? "desc" : "asc";
+        url.searchParams.set("sort_by", columnName);
+        url.searchParams.set("order", order);
+        // Set current column sorted, and current order type
+        this.currentSortBy = columnName;
+        this.currentOrder = order;
+        Turbolinks.visit(url.href);
       },
 
-      changePagination: function(pageNum){
-        let _this = this
-        let target = `/campaigns.json`;
-        this.currentPage = pageNum;
-        axios.get(target, { params: {page: pageNum, query: this.getParamsQuery(), filters: this.collectParamsFilters()} })
-          .then(function(response) {
-            _this.updateState(response.data, false)
-          }).catch(function (error) {
-        });
-      },
-
-      deleteCampaigns: function() {
-        let _this = this
+      deleteCampaigns() {
         let target = `/campaigns/delete_campaigns.json`;
-        let campaignsSelected = this.selected
-        axios.delete(target, { params: {campaign_ids: campaignsSelected, page: this.currentPage, query: this.getParamsQuery(), filters: this.collectParamsFilters()} })
-          .then(function(response) {
-            _this.updateState(response.data, false)
-            _this.closeModalConfirmDeleteCampaign()
-          }).catch(function (error) {
-        });
+        axios.delete(target, { params: {campaign_ids: this.selected } })
+          .then((response) => {
+            this.closeModalConfirmDeleteCampaign();
+            this.reloadPage();
+          }).catch();
       },
 
-      collectParamsFilters: function() {
-        // return this.$refs.DropdownMenu.collectParamsFilters()
-        return null
-      },
-
-      getParamsQuery: function() {
-        return this.searchQuery ? this.searchQuery.toLocaleLowerCase() : ""
-      },
-
-      updateState: function(data, willReturnToFisrtPage=true) {
-        let tmp_campaigns = JSON.parse(data.campaigns)
-        this.thisCampaigns = tmp_campaigns
-        this.thisTotalPages = data.total_pages
-        this.selected = []
-        if(willReturnToFisrtPage){
-          this.currentPage = 1
-        }
-      },
-
-      selectCampaign: function(e) {
-        if(_.isEmpty(e.target.children[0])) return
-        const campaignId = Number(e.target.children[0].defaultValue)
-        if(e.target.children[0].checked) {
-          e.target.children[0].checked = false
-          this.selected = this.selected.filter(element => element != campaignId)
+      duplicateCampaign() {
+        if (this.selected.length == 1 && this.duplicateCampaignName) {
+          axios.get('/campaigns/duplicate_campaign.json', { params: { campaign_id: this.selected[0], campaign_name: this.duplicateCampaignName } })
+            .then((response) => {
+              this.closeModalConfirmDuplicateCampaign();
+              this.reloadPage();
+            }).catch(() => this.showAlert("fill in campaign name!"));
         } else {
-          e.target.children[0].checked = true
-          this.selected.push(campaignId)
+          this.showAlert("Please fill in campaign name!");
         }
+      },
+
+      collectParamsFilters() {
+        // return this.$refs.DropdownMenu.collectParamsFilters()
+        return null;
       },
 
       // User can't interact with toggle when campaign is in status sending and have type one-off
-      disableToggle: function(campaign) {
-        if(campaign.campaign_type == "One-off" && campaign.campaign_status == "Sending") true
-        return false
+      disableToggle(campaign) {
+        campaign.campaign_type == "One-off" && campaign.campaign_status == "Sending";
+        return false;
       },
 
       splitedSchedule(schedule) {
         if (schedule == "Not set") {
           return ["Not set", "Not set"];
-        } else if (schedule && schedule.includes(" - ")) {
-          return [schedule.split(" - ")[0], schedule.split(" - ")[1]];
+        } else if (schedule && schedule.includes(" &to& ")) {
+          return [this.timeConverter(schedule.split(" &to& ")[0]), this.timeConverter(schedule.split(" &to& ")[0])];
         } else {
-          return [schedule, ""]
+          return [this.timeConverter(schedule), ""]
         }
-      }
+      },
+
+      onClickNewCampaign() {
+        Turbolinks.visit(`/automations/new`);
+      },
+
+      onClickEditCampaign(id) {
+        Turbolinks.visit(`/automations/${id}/edit`);
+      },
+
+      reloadPage() {
+        Turbolinks.visit(window.location.href);
+      },
+
+      showAlert(message) {
+        this.flashMessage = message;
+        clearTimeout(this.inputTimer);
+        this.inputTimer = setTimeout(() => this.flashMessage = "", 3000);
+      },
+
+      timeConverter(time) {
+        return time == "Not Set" || time == "Ongoing" ? time : this.moment(time, "YYYY-MM-DD HH:mm Z").format("ll");
+      },
     },
 
     filters: {
@@ -571,6 +481,10 @@
     th span{
       cursor: pointer;
     }
+
+    .checkbox-cell input {
+      margin: 3px 3px 3px 4px;
+    }
   }
 
   .campaign-name-style{
@@ -600,9 +514,10 @@
     display: inline-block;
   }
 
-  #pagination .pagination{
+  #pagination .pagination-ul {
     text-align: center;
     list-style: none;
+    padding-top: 13px;
     li{
       padding: 5px;
       &.active{
@@ -631,6 +546,16 @@
     justify-content: center;
     align-items: center;
     display: flex;
+
+    h3 {
+      font-size: 1.17em;
+      margin-block-start: 1em;
+      margin-block-end: 1em;
+      margin-inline-start: 0px;
+      margin-inline-end: 0px;
+      font-weight: bold;
+    }
+
     #campaign_name{
       width:100%;
       height: 35px;
@@ -727,6 +652,15 @@
         }
       }
     }
+  }
+
+  .top-alert {
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 50px;
+    z-index: 99999;
   }
 
 </style>

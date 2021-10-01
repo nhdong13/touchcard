@@ -44,6 +44,16 @@ Vue.use(VueScreen);
 import VModal from 'vue-js-modal';
 Vue.use(VModal, { componentName: 'modal'});
 
+import { BootstrapVue, IconsPlugin } from 'bootstrap-vue';
+import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap-vue/dist/bootstrap-vue.css';
+Vue.use(BootstrapVue);
+// Optionally install the BootstrapVue icon components plugin
+Vue.use(IconsPlugin);
+
+import moment from 'moment';
+Vue.prototype.moment = moment;
+
 // To get Turbolinks working it helped to put the javascript pack tag in the <head>
 // If we need to expand Vue to other parts of the application I suspect it would help
 // to keep this structure and load individual containers loaded from this file.
@@ -90,14 +100,14 @@ document.addEventListener('turbolinks:load', () => {
     const campaignDashboardVueApp = new Vue({
       el: campaignDashboardElement,
       data: function() {
-        let tmp_campaigns = JSON.parse(campaignDashboardElement.dataset.campaigns);
         return {
-          campaigns: tmp_campaigns,
+          campaigns: JSON.parse(campaignDashboardElement.dataset.campaigns),
+          searchParams: JSON.parse(campaignDashboardElement.dataset.searchParams),
           totalPages: parseInt(campaignDashboardElement.dataset.totalPages),
           shared: store
         }
       },
-      template: '<campaign-dashboard :campaigns="campaigns" :totalPages="totalPages" :shared="shared"></campaign-dashboard>',
+      template: '<campaign-dashboard :campaigns="campaigns" :totalPages="totalPages" :shared="shared" :searchParams="searchParams" />',
       components: {
         campaignDashboard
       }
@@ -126,7 +136,7 @@ document.addEventListener('turbolinks:load', () => {
           totalPage: parseInt(dataset.totalPage),
         }
       },
-      template: '<CustomePagination :value="value" :totalPage="totalPage" :doDirect="true" />',
+      template: '<CustomePagination :value="value" :totalPage="totalPage" />',
       components: {
         CustomePagination
       }

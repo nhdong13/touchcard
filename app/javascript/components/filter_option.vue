@@ -94,8 +94,8 @@
   import $ from 'jquery';
   import Datepicker from 'vuejs-datepicker';
   import axios from 'axios';
-  import Switcher from './switcher.vue';
-  import Treeselect from '@riophae/vue-treeselect'
+  import Switcher from './utilities/switcher.vue';
+  import Treeselect from '@riophae/vue-treeselect';
   import './treeselect.css';
   import VueTagsInput from '@johmun/vue-tags-input';
   const FILTERS_SHOW_NUMBER_INPUT = ['number_of_order', 'last_order_total', 'all_order_total']; //'total_spend', 'referring_site', 'landing_site', 'discount_amount'];

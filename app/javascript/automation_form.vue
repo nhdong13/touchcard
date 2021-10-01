@@ -2,7 +2,7 @@
   <div class="automation_form">
     <h1 class="page-header">{{ automation.campaign_name }}</h1>
     <hr/>
-    <h2>Campaign Settings</h2>
+    <h2 class="custom-h2">Campaign Settings</h2>
     <div class="automation-section">
       <span>
         <strong><small :class="{error: errors.campaignName}" v-if="errors.campaignName">*</small> Campaign name</strong>
@@ -15,7 +15,7 @@
       <strong>Type</strong>
       <span v-if="automation.campaign_status == 'draft' || automation.campaign_type == 'automation'">
         <input type="radio" id="automation" value="automation" v-model="campaign_type" v-on:click="setBudgetType">
-        <label for="automation">Automation</label>
+        <label for="automation" class="mb-0">Automation</label>
       </span>
       <!-- <span v-if="automation.campaign_status == 'draft' || automation.campaign_type == 'one_off'">
         <input type="radio" id="one_off" value="one_off" v-model="campaign_type" v-on:click="setBudgetType">
@@ -110,9 +110,9 @@
         </div>
         <div class="send-continuously-option align-self-center">
           <span>
-            <input id="send-continuously" :class="{'invalid-checkbox': errors.endDate}" type="checkbox" @click="triggerErrorCheckbox" v-model="automation.send_continuously" />
+            <input id="send-continuously" :class="['m-1', {'invalid-checkbox': errors.endDate}]" type="checkbox" @click="triggerErrorCheckbox" v-model="automation.send_continuously" />
           </span>
-          <label for="send-continuously" class="noselect">- Ongoing</label>
+          <label for="send-continuously" class="noselect mb-0">- Ongoing</label>
         </div>
       </div>
     </div>
@@ -199,10 +199,10 @@
         </div>
       </div>
     </div> -->
-    <h2 class="d-inline-block">Customer Filters</h2>
+    <h2 class="d-inline-block custom-h2 my-3">Customer Filters</h2>
     <button @click="downloadCSV"> CSV </button>
     <button @click="downloadTestCSV"> Test CSV </button>
-    <div :class="'filter-config nested-toggle row'" :showError="errors.filters">
+    <div class="filter-config row mx-0" :showError="errors.filters">
       <div id="accepted-section">
         <div class="filter-section-title">Include these customers</div>
         <filter-option
@@ -1027,6 +1027,9 @@
     display: flex;
     align-items: center;
     margin-top: 0;
+    font-size: 2em;
+    font-weight: bold;
+    margin-block: 0 0.67em;
   }
 
   .invalid-checkbox {
@@ -1036,6 +1039,11 @@
     outline: 1px solid red;
     width: 13px;
     height: 13px;
+  }
+
+  .custom-h2 {
+    font-size: 1.5em;
+    font-weight: 700;
   }
 
 </style>
