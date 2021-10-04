@@ -83,7 +83,7 @@
       </div>
       <vue-tags-input v-model="newtag" :tags="tags" @tags-changed="newTags => tagsChanged(newTags)" v-if="showCityOrTagsInput()" :class="['valueInput', {invalid: showError}]" />
 
-      <span class="middle-text" v-if="(filter.selectedCondition == 'matches_number' || filter.selectedCondition.includes('er_number')) && filter.selectedFilter.includes('order_date')">days ago</span>
+      <span class="middle-text" v-if="(filter.selectedCondition == 'matches_number' || filter.selectedCondition == 'greater_number' || filter.selectedCondition == 'smaller_number') && filter.selectedFilter.includes('order_date')">days ago</span>
     </div>
     <!---->
 

@@ -1,5 +1,6 @@
 <%= form_for @subscription, url: change_quantity_admin_subscription_path(@subscription), method: :put do |f| %>
-  Quantity: <%= f.number_field :quantity %><br />
+  Quantity: <%= f.number_field :quantity, step: '1' %><br />
   <br />
+  <%= hidden_field_tag :with_direct_path, params[:with_direct_path] %>
   <%= f.submit %><%= link_to "Cancel", :back %>
 <% end %>
