@@ -31,6 +31,7 @@
       <span class="middle-text">and</span>
 
       <datepicker class="valueInput" v-model="value2" v-if="showDateInput()" @input="combineValue()" :use-utc="true" :disabled-dates="datePickerDisabledDates(false)" format="MMM dd, yyyy" :input-class="{invalid: showError}"/>
+      
       <font-awesome-icon icon="chevron-down" v-if="showDateInput()" @click="triggerDatepicker(2)" class="datepicker-arrow" />
 
       <input type="number" :class="['valueInput', {invalid: showError}]" v-model="value2" v-if="showNumberInput()" @change="combineValue()" :placeholder="numberInputPlaceholder('Max. ')" @keypress="preventDecimal($event)" min=0 />
@@ -82,7 +83,7 @@
       </div>
       <vue-tags-input v-model="newtag" :tags="tags" @tags-changed="newTags => tagsChanged(newTags)" v-if="showCityOrTagsInput()" :class="['valueInput', {invalid: showError}]" />
 
-      <span class="middle-text" v-if="filter.selectedCondition == 'matches_number' && filter.selectedFilter.includes('order_date')">days ago</span>
+      <span class="middle-text" v-if="(filter.selectedCondition == 'matches_number' || filter.selectedCondition.includes('er_number')) && filter.selectedFilter.includes('order_date')">days ago</span>
     </div>
     <!---->
 
@@ -332,7 +333,7 @@
       },
       selectFirstConditionOption() {
         if (['last_order_total', 'all_order_total'].includes(this.filter.selectedFilter)) {
-          this.filter.selectedCondition = "between_number";
+          this.filter.selectedCondition = "matches_number";
           this.optionChange();
           return;
         }
