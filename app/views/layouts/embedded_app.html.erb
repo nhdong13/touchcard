@@ -32,11 +32,13 @@
 <%= render 'layouts/flash_messages' %>
 
 <script src="https://unpkg.com/@shopify/app-bridge"></script>
+    <% params[:page] ? a = '?page=' + params[:page] : a = "" %>
 
     <%= content_tag(:div, nil, id: 'shopify-app-init', data: {
       api_key: ShopifyApp.configuration.api_key,
       shop_origin: (@shop_session.domain if @shop_session),
-      debug: Rails.env.development?
+      debug: Rails.env.development?,
+      path: request.path + a
     } ) %>
 
 <%= render partial: 'layouts/groove', locals: { shop: @current_shop } unless Rails.env.development? %>

@@ -13,3 +13,12 @@ document.addEventListener('DOMContentLoaded', () => {
     title: data.page,
   });
 });
+
+document.addEventListener('turbolinks:load', () => {
+  var data = document.getElementById('shopify-app-init').dataset;
+  var AppBridge = window['app-bridge'];
+  var actions = AppBridge.actions;
+  var History = actions.History;
+  const history = History.create(app);
+  history.dispatch(History.Action.REPLACE, data.path);
+})
