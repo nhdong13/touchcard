@@ -537,6 +537,7 @@ select {
   width: 0.75em !important;
   filter: brightness(0%); 
   top: 0;
+  pointer-events: none;
 }
 
 .invalid {
