@@ -33,7 +33,6 @@ class SendingPostcardJob < ActiveJob::Base
         customer_targeting_service =  CustomerTargetingService.new({shop: shop}, filter.filter_data[:accepted], filter.filter_data[:removed])
 
         is_there_error_when_creating_postcard = false
-
         # Get already exisiting customer in postcard list => 1 customer only sent 1 postcard
         # This is for use case when we go from paused status to processing
         existing_customers = campaign.postcards
@@ -46,7 +45,7 @@ class SendingPostcardJob < ActiveJob::Base
             #           !existing_customers.exists?(customer_id: customer.id)
             #           )}"
             next unless (customer_targeting_service.customer_pass_filter?(customer.id) &&
-                      !(customer.international? ^ campaign.international) &&
+                      !((customer.default_address.country_code != "US" && !customer.default_address.country_code.blank?) ^ campaign.international) &&
                       !existing_customers.exists?(customer_id: customer.id)
                       )
           rescue => e
@@ -55,13 +54,36 @@ class SendingPostcardJob < ActiveJob::Base
             next
           end
 
-          postcard = Postcard.new
-          postcard.customer = customer
-          postcard.send_date = Time.now.beginning_of_day > campaign.send_date_start ? Time.now : campaign.send_date_start
+          blank_require_fields = {first_name: customer.default_address.first_name.blank?, last_name: customer.default_address.last_name.blank?, 
+            address1: customer.default_address.address1.blank?, 
+            city: customer.default_address.city.blank?, 
+            province: (customer.default_address.province.blank? && customer.default_address.province_code.blank?), 
+            country: (customer.default_address.country.blank? && customer.default_address.country_code.blank?),
+            zip: customer.default_address.zip.blank?}
+          
+          if blank_require_fields.has_value?(true)
+            Rails.logger.debug ">>>>>>>>>>>>>>>>>>>>>> Create error postcards"
 
-          campaign.postcards << postcard
+            error_fields = []
+            blank_require_fields.each {|key, value| error_fields << key.to_s.split("_").join(" ").capitalize if value }
+            error_message = "Missing " + error_fields.join(", ")
 
-          postcard.save!
+            postcard = Postcard.new
+            postcard.customer = customer
+            postcard.error = error_message
+            campaign.postcards << postcard
+            is_there_error_when_creating_postcard = true
+          else
+            Rails.logger.debug ">>>>>>>>>>>>>>>>>>>>>> [NOTE] Normal postcards"
+
+            postcard = Postcard.new
+            postcard.customer = customer
+            postcard.send_date = Time.now.beginning_of_day > campaign.send_date_start ? Time.now : campaign.send_date_start
+
+            campaign.postcards << postcard
+
+            postcard.save!
+          end
         end
 
         ReportErrorMailer.send_error_report(campaign).deliver_later if is_there_error_when_creating_postcard
@@ -91,7 +113,7 @@ class SendingPostcardJob < ActiveJob::Base
         result = true
         # Get postcard paid
         if campaign.automation?
-          campaign.postcards.find_each do |postcard|
+          campaign.postcards.where(error: nil).find_each do |postcard|
             result = PaymentService.pay_postcard_for_campaign_monthly shop, campaign, postcard
             break unless result
           end
@@ -121,4 +143,5 @@ class SendingPostcardJob < ActiveJob::Base
 
       Time.now.beginning_of_day >= campaign.send_date_end
     end
+
 end

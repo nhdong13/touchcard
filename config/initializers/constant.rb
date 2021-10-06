@@ -70,10 +70,11 @@ CSV_TITLE = [ "Fullame",
               "Account status"
             ]
 DEV_EMAILS = [
-  "tungdv@nustechnology.com",
+  # "tungdv@nustechnology.com",
   # "hoaiptp@nustechnology.com",
   # "donghn@nustechnology.com",
-  "hungpn@nustechnology.com"
+  "hungpn@nustechnology.com",
+  "danhtd@nustechnology.com"
 ]
 
 MAXIMUM_CAMPAIGN_NAME_LENGTH = 60

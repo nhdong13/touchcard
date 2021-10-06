@@ -84,6 +84,9 @@ ActiveAdmin.register Postcard do
       row :arrival_notification_sent
       row :expiration_notification_sent
       row :price_rule_id
+      row :error do |postcard|
+        postcard.error ? postcard.error : "No error"
+      end
     end
   end
 end
