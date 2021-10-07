@@ -228,6 +228,7 @@
     },
 
     created() {
+      console.log(this.thisCampaigns[0]);
     },
 
     computed: {
@@ -374,7 +375,7 @@
         if (schedule == "Not set") {
           return ["Not set", "Not set"];
         } else if (schedule && schedule.includes(" &to& ")) {
-          return [this.timeConverter(schedule.split(" &to& ")[0]), this.timeConverter(schedule.split(" &to& ")[0])];
+          return [this.timeConverter(schedule.split(" &to& ")[0]), this.timeConverter(schedule.split(" &to& ")[1])];
         } else {
           return [this.timeConverter(schedule), ""]
         }
