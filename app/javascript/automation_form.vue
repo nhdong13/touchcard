@@ -951,8 +951,8 @@
     cursor: pointer;
     display: flex;
     .icon-calendar {
-      width: 21px;
-      height: 21px;
+      width: 22px;
+      height: 22px;
       border: 1px solid;
       border-left: 0;
       display: flex;
