@@ -494,7 +494,7 @@ input[type=number] {
 
 .datepicker-arrow {
   position: absolute;
-  left: 839px;
+  left: 830px;
   margin-top: 9px; 
   filter: brightness(0%); 
   width: 0.75em !important;
