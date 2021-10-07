@@ -21,6 +21,8 @@ class CampaignsService
     if @params[:sort_by].present?
       sort_order = @params[:order] || "asc"
       campaigns = campaigns.order("#{@params[:sort_by]} #{sort_order}")
+    else
+      campaigns = campaigns.order(created_at: :desc)
     end
     campaigns = campaigns.page(page)
     total_pages = campaigns.total_pages

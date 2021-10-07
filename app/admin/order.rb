@@ -35,7 +35,9 @@ ActiveAdmin.register Order do
         order.shop
       end
       row :id
-      row "Shopify Id", :shopify_id
+      row "Shopify Id" do |order|
+        order.shopify_id
+      end
       row :customer_id do |order|
         link_to(order.customer.id, admin_customer_path(order.customer)) if order.customer
       end
