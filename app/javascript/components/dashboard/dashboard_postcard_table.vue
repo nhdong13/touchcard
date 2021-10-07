@@ -15,7 +15,7 @@
 	        <tr v-if="postcards.length == 0">
 	          <td colspan="4" style="text-align:center">Sent postcards will appear here.</td>
 	        </tr>
-          <tr v-else v-for="postcard in thisPostcards" id="`postcard-${postcard.id}`">
+          <tr v-else v-for="postcard in thisPostcards" id="`postcard-${postcard.id}`" :key="postcard.id">
             <td>
               <button type="button"
                       class="mdl-chip postcard-status-chip"
@@ -28,11 +28,11 @@
 
             <td>{{ postcard.full_name }}</td>
             <td>{{ postcard.city }}, {{ postcard.state }}, {{ postcard.country }}</td>
-            <td>
+            <td class="text-center">
               <i v-if="(postcard.sent || postcard.canceled) == false"
 	              v-on:click="showModalConfirmCancelPostcard(postcard.id)"
               	class="material-icons mdc-button__icon cancel-postcard-button-icon"
-              	v-b-tooltip.hover title="Cancel postcard">
+              	v-b-tooltip title="Cancel postcard">
               cancel
 	            </i>
             </td>
@@ -131,5 +131,8 @@
 <style type="text/css" scoped>
 	.cancel-postcard-button-icon {
 		cursor: pointer;
+	}
+	.text-center {
+		text-align: center;
 	}
 </style>
