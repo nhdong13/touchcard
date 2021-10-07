@@ -57,12 +57,15 @@ class SendingPostcardJob < ActiveJob::Base
           postcard = Postcard.new
           postcard.customer = customer
 
-          blank_required_fields = {first_name: customer.default_address.first_name.present?, last_name: customer.default_address.last_name.present?, 
+          blank_required_fields = {
+            first_name: customer.default_address.first_name.present?, 
+            last_name: customer.default_address.last_name.present?, 
             address1: customer.default_address.address1.present?, 
             city: customer.default_address.city.present?, 
             province: customer.default_address.province_code.present?, 
             country: customer.default_address.country_code.present?,
-            zip: customer.default_address.zip.present?}
+            zip: customer.default_address.zip.present?
+          }
           
           if blank_required_fields.has_value?(false)
             error_fields = []
