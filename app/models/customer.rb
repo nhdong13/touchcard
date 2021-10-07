@@ -19,7 +19,7 @@ class Customer < ApplicationRecord
   end
 
   def international?
-    default_address.country_code != "US"
+    default_address.country_code.present? && default_address.country_code != "US"
   end
 
   def full_name

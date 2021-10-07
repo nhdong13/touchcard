@@ -14,6 +14,7 @@ class Postcard < ApplicationRecord
 
   validates :card_order, presence: true
 
+  scope :can_send, -> { where(error: nil) }
   # TODO: Unused Automations Code
   #
   # validate :one_active_postcard_per_customer
