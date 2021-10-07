@@ -67,7 +67,7 @@ ActiveAdmin.register Subscription do
       row :id
       row :sub_qty do |subscription|
         status_tag(number_to_currency(subscription.value))
-        link_to "edit", change_subscription_credit_admin_subscription_path(subscription)
+        link_to "edit", change_subscription_quantity_admin_subscription_path(subscription)
       end
       # row :quantity do |subscription|
       #   status_tag(subscription.quantity)
