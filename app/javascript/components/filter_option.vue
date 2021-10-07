@@ -501,7 +501,7 @@ input[type=number] {
 }
 
 .datepicker-arrow.middle-arrow {
-  left: 570px;
+  left: 562px;
 }
 
 .datepicker-arrow path {
