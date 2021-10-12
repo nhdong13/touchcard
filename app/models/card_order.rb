@@ -60,7 +60,7 @@ class CardOrder < ApplicationRecord
   after_initialize :ensure_defaults, if: :new_record?
   after_update :update_budget, if: :saved_change_to_budget_update?
   after_update :update_budget_type, if: :saved_change_to_budget_type?
-  after_update :reactivate_campaign, if: :saved_change_to_send_date_end?
+  # after_update :reactivate_campaign, if: :saved_change_to_send_date_end?
   before_save :validate_campaign_name
   # before_update :validate_campaign_name, if: :saved_change_to_campaign_name?
 
@@ -98,7 +98,7 @@ class CardOrder < ApplicationRecord
   def reactivate_campaign
     if self.complete? && self.automation? && Time.now.beginning_of_day <= self.send_date_end
       update(campaign_status: :sending, previous_campaign_status: CardOrder.campaign_statuses[:sending])
-      InitializeSendingPostcardProcess.start self.shop, self
+      # InitializeSendingPostcardProcess.start self.shop, self
     end
   end
 
@@ -170,16 +170,17 @@ class CardOrder < ApplicationRecord
   end
 
   def send_date
-    return send_delay == 0 ? Time.now : Time.now.beginning_of_day + send_delay.weeks
+    # return send_delay == 0 ? Time.now : Time.now.beginning_of_day + send_delay.weeks
     # 4-6 business days delivery according to lob
     # TODO: handle international + 5 to 7 business days
     #send_date = arrive_by - 1.week
+    Date.current
   end
 
   def prepare_for_sending(postcard_trigger)
     # This method can get called from a delayed_job, which does not allow for standard logging
     # We thus return a string and expect the caller to log
-    return "international customer not enabeled" if postcard_trigger.international && !international?
+    return "international customer not enabled" if postcard_trigger.international && !international?
     return "order filtered out" unless send_postcard?(postcard_trigger)
 
     postcard = postcard_trigger.postcards.new(
@@ -242,6 +243,27 @@ class CardOrder < ApplicationRecord
       send_continuously || send_date_end > today
     elsif self.one_off?
       send_date_start < today
+    end
+  end
+
+  def define_current_status
+    today = Date.current
+    if enabled
+      if send_continuously
+        if send_date_start > today
+          self.scheduled!
+        else
+          self.sending!
+        end
+      else
+        if send_date_start <= today && send_date_end >= today
+          self.sending!
+        elsif today > send_date_end
+          self.complete!
+        elsif today < send_date_start
+          self.scheduled!
+        end
+      end
     end
   end
 

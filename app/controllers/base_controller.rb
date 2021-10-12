@@ -14,7 +14,6 @@ class BaseController < ApplicationController
       @current_shop ||= Shop.find(session[:shopify])
       @current_shop.update(last_login_at: Time.now, uninstalled_at: nil)
       check_webhooks_installed
-      # HandlingErrorCampaignCompleteJob.perform_later(@current_shop)
     end
   end
 
@@ -30,7 +29,7 @@ class BaseController < ApplicationController
         { topic: 'orders/fulfilled', format: "json", fields: %w(id customer), address: "#{ENV['APP_URL']}orders_fulfilled"},
         { topic: "app/uninstalled",  format: "json", fields: %w(id domain),   address: "#{ENV['APP_URL']}uninstall" }
       ]
-      ShopifyApp::WebhooksManagerJob.perform_now(shop_domain: @current_shop.domain, shop_token: @current_shop.token, webhooks: webhooks)
+      ShopifyApp::WebhooksManagerJob.perform_now(shop_domain: @current_shop.domain, shop_token: @current_shop.token, webhooks: webhooks) rescue nil
     end
   end
 end

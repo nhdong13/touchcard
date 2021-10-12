@@ -95,6 +95,11 @@ task :hourly_send_coupon_expiration_emails => :environment do
   end
 end
 
+desc "Daily update campaign status"
+task :daily_update_campaign_status => :environment do
+  CardOrder.where(enabled: true).scheduled.find_each{|campaign| campaign.define_current_status }
+end
+
 # TODO: Unused Automations Code
 #
 # namespace :shopify do

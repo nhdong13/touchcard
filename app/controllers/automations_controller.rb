@@ -37,9 +37,7 @@ class AutomationsController < BaseController
   def create
     @automation = @current_shop.post_sale_orders.create(automation_params)
     respond_to do |format|
-      campaign_enabled_field_before_update = @automation.enabled
       if @automation.save
-        update_campaign_status(campaign_enabled_field_before_update)
         flash[:notice] = "Automation successfully created"
         format.html { redirect_to automations_path }
         format.json { render json: {
@@ -100,12 +98,13 @@ class AutomationsController < BaseController
     if @current_shop.credit < 0.89
       @automation.out_of_credit!
     else
+      @automation.enabled = true
       @automation.previous_campaign_status = CardOrder.campaign_statuses[:processing]
-      @automation.processing!
       @automation.save
+      @automation.define_current_status
     end
 
-    InitializeSendingPostcardProcess.start(@current_shop, @automation)
+    # InitializeSendingPostcardProcess.start(@current_shop, @automation)
     respond_to do |format|
       format.html { render plain: "OK" }
       format.json { render json: { message: "OK" }, status: :ok }

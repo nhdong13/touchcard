@@ -19,7 +19,7 @@ class SubscriptionsController < BaseController
     campaign = CardOrder.find(create_params[:campaign_id])
 
     campaign.processing!
-    InitializeSendingPostcardProcess.start(@current_shop, campaign)
+    # InitializeSendingPostcardProcess.start(@current_shop, campaign)
 
     stripe_params = {shop: @current_shop, plan: Plan.last, quantity: quantity}
     stripe_params.merge!({coupon: coupon}) if !coupon.blank?
