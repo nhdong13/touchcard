@@ -15,11 +15,5 @@ document.addEventListener('turbolinks:load', () => {
   var data = document.getElementById('shopify-app-init').dataset;
   var History = actions.History;
   const history = History.create(app);
-  var path = data.path;
-  if (path.includes("hmac=")) {
-    var path = data.path.split("&").filter(
-      p => !(p.includes('hmac=') || p.includes('host=') || p.includes('locale=') || p.includes('session=') || p.includes('shop=') || p.includes('timestamp='))).join("&");
-    path = "/?" + path;
-  };
-  history.dispatch(History.Action.REPLACE, path)
+  history.dispatch(History.Action.REPLACE, data.path)
 })
