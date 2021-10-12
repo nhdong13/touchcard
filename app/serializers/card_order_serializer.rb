@@ -47,7 +47,7 @@ class CardOrderSerializer < ActiveModel::Serializer
     when "non_set"
       "-"
     else
-      "$#{object.budget.to_i}"
+      object.budget.to_i
     end
   end
 

@@ -26,7 +26,7 @@
     <div class="automation-section" v-if="campaign_type =='automation'">
       <strong>Monthly budget</strong>
       <span>
-        $ <input type="numer" v-on:keypress="restrictToNumber($event)" id="budget_limit" v-model="budget" maxlength = "10">
+        $ <input type="numer" v-on:keypress="restrictToNumber($event)" id="budget_limit" v-model="budget" maxlength = "5">
       </span>
     </div>
 

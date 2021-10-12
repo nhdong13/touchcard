@@ -69,8 +69,8 @@
             </td>
             <td>{{ item.campaign_status}}</td>
             <td>{{ item.campaign_type }}</td>
-            <td>
-              <span class='t-b'> {{ item.campaign_type == "Automation" && item.budget != "-" ? item.budget + '/month' : item.budget }}</span>
+            <td class="budget-max-width">
+              <span class='t-b'> {{ item.campaign_type == "Automation" && item.budget != "-" ? `$${item.budget.toLocaleString('en-us')}/month` : item.budget }}</span>
             </td>
             <td>
               <span class='t-b'> {{ splitedSchedule(item.schedule)[0] }}</span>
@@ -112,7 +112,7 @@
                 </div>
                 <div class='column-info flex-column d-flex'>
                   <strong>Budget</strong>
-                  <span>{{ item.budget}}</span>
+                  <span>{{ item.campaign_type == "Automation" && item.budget != "-" ? `$${item.budget.toLocaleString('en-us')}/month` : item.budget }}</span>
                 </div>
                 <div class='column-info flex-column d-flex'>
                   <strong>Starts</strong>
@@ -664,4 +664,7 @@
     z-index: 99999;
   }
 
+  .budget-max-width {
+    max-width: 100px;
+  }
 </style>

@@ -37,13 +37,11 @@
   var actions = AppBridge.actions;
 </script>
 
-    <% params[:page] ? page = '?page=' + params[:page] : page = "" %>
-
     <%= content_tag(:div, nil, id: 'shopify-app-init', data: {
       api_key: ShopifyApp.configuration.api_key,
       shop_origin: (@shop_session.domain if @shop_session),
       debug: Rails.env.development?,
-      path: request.path + page
+      path: request.fullpath
     } ) %>
 
 <%= render partial: 'layouts/groove', locals: { shop: @current_shop } unless Rails.env.development? %>
