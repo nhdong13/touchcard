@@ -98,6 +98,10 @@ end
 desc "Daily update campaign status"
 task :daily_update_campaign_status => :environment do
   CardOrder.where(enabled: true).scheduled.find_each{|campaign| campaign.define_current_status }
+  CardOrder.where.not(campaign_status: :complete)
+           .where(send_continuously: false)
+           .where("send_date_end < '#{Date.current}'")
+           .update_all(campaign_status: :complete)
 end
 
 # TODO: Unused Automations Code
