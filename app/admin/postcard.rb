@@ -9,12 +9,11 @@ ActiveAdmin.register Postcard do
   end
 
   # Only allow filtering by shops that actually sent a postcard
-  filter :shop,
-         as: :select,
-         collection: ->{Shop.where(id: CardOrder.where(id: Postcard.distinct
-                                                             .pluck(:card_order_id))
-                                       .pluck(:shop_id))
-                          .sort_by {|s| s.domain}}
+  filter :filter_postcards_by_shop, 
+        as: :select, 
+        label:"Shop", 
+        filters: [:eq], 
+        collection: ->{Shop.where(id: CardOrder.unscoped.where(id: Postcard.distinct.pluck(:card_order_id)).pluck(:shop_id)).sort_by {|s| s.domain}}
   filter :discount_code
   filter :send_date
   filter :sent
@@ -51,7 +50,9 @@ ActiveAdmin.register Postcard do
   show do
     attributes_table do
       row :shop do |postcard|
-        postcard.shop
+        CardOrder.unscoped do
+          postcard.shop
+        end
       end
       row :id
       row :canceled
