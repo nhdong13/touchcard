@@ -36,7 +36,9 @@ class Shop < ApplicationRecord
   end
 
   def cards_sent
-    postcards.where(sent: true).count
+    CardOrder.unscoped do
+      postcards.where(sent: true).count
+    end
   end
 
   def revenue

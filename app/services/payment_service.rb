@@ -55,6 +55,7 @@ class PaymentService
       paid_postcards.find_each do |postcard|
         shop.credit += postcard.cost
         postcard.paid = false
+        postcard.canceled = true
         postcard.save!
       end
       shop.save!

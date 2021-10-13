@@ -1,12 +1,14 @@
 class DashboardController < BaseController
   def index
     @current_page = params[:page].present? ? params[:page] : 1
-    @postcards = @current_shop.postcards.where(paid: true)
-      .or(@current_shop.postcards.where(canceled: true))
-      .where(error: nil)
-      .order(created_at: :desc)
-      .page(@current_page)
-      .per(20)
+    CardOrder.unscoped do 
+      @postcards = @current_shop.postcards.where(paid: true)
+        .or(@current_shop.postcards.where(canceled: true))
+        .where(error: nil)
+        .order(created_at: :desc)
+        .page(@current_page)
+        .per(20)
+    end
     respond_to do |format|
       format.html { render :index }
       format.json { render json: { 
