@@ -267,6 +267,12 @@ class CardOrder < ApplicationRecord
     end
   end
 
+  def get_status
+    return "Archived" if self.archived
+    return "Enabled" if self.enabled?
+    return "Disabled"
+  end
+
   private
   def validate_campaign_name
     if campaign_name_changed?

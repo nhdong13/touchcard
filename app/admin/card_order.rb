@@ -85,14 +85,10 @@ ActiveAdmin.register CardOrder, as: "Campaign" do
       card_order.discount_exp_to_str
     end
     column "Status", sortable: :enabled do |card_order|
-      if card_order.archived
-        status_tag "Archived"
+      if card_order.enabled?
+        status_tag card_order.get_status, class: "yes"
       else
-        if card_order.enabled?
-          status_tag "Enabled", class: "yes"
-        else
-          status_tag "Disabled"
-        end
+        status_tag card_order.get_status
       end
     end     
     column :international
@@ -115,16 +111,12 @@ ActiveAdmin.register CardOrder, as: "Campaign" do
         card_order.discount_exp_to_str
       end
       row "Status" do |card_order|
-        if card_order.archived
-          status_tag "Archived"
+        if card_order.enabled?
+          status_tag card_order.get_status, class: "yes" 
         else
-          if card_order.enabled?
-            status_tag "Enabled", class: "yes"
-          else
-            status_tag "Disabled"
-          end
-          link_to "edit", change_sending_status_admin_campaign_path(card_order)
+          status_tag card_order.get_status
         end
+        link_to "edit", change_sending_status_admin_campaign_path(card_order) unless card_order.archived
       end   
       row :international
       row :created_at
@@ -179,10 +171,6 @@ ActiveAdmin.register CardOrder, as: "Campaign" do
   end
   
   order_by(:enabled) do |order_clause|
-    if order_clause.order == 'desc'
-      [order_clause.to_sql, ',"card_orders"."archived" asc'].join(' ')
-    else
-      [order_clause.to_sql, ',"card_orders"."archived" desc'].join(' ')
-    end
+    [order_clause.to_sql, ',"card_orders"."archived" '].join(' ')
   end  
 end
