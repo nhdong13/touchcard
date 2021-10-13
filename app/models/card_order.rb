@@ -269,8 +269,7 @@ class CardOrder < ApplicationRecord
 
   def get_status
     return "Archived" if self.archived
-    return "Enabled" if self.enabled?
-    return "Disabled"
+    self.enabled? ? "Enabled" : "Disabled"
   end
 
   private

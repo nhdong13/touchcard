@@ -85,11 +85,7 @@ ActiveAdmin.register CardOrder, as: "Campaign" do
       card_order.discount_exp_to_str
     end
     column "Status", sortable: :enabled do |card_order|
-      if card_order.enabled?
-        status_tag card_order.get_status, class: "yes"
-      else
-        status_tag card_order.get_status
-      end
+      status_tag card_order.get_status, class: card_order.enabled? && "yes"
     end     
     column :international
     column :created_at
@@ -111,11 +107,7 @@ ActiveAdmin.register CardOrder, as: "Campaign" do
         card_order.discount_exp_to_str
       end
       row "Status" do |card_order|
-        if card_order.enabled?
-          status_tag card_order.get_status, class: "yes" 
-        else
-          status_tag card_order.get_status
-        end
+        status_tag card_order.get_status, class: card_order.enabled? && "yes"
         link_to "edit", change_sending_status_admin_campaign_path(card_order) unless card_order.archived
       end   
       row :international
