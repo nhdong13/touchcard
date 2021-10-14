@@ -192,6 +192,7 @@ class CardOrder < ApplicationRecord
       postcard.paid = true
       postcard.save
     else
+      out_of_credit!
       return postcard.errors.full_messages.map{|msg| msg}.join("\n")
     end
   end
