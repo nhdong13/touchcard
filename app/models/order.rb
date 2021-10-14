@@ -42,7 +42,7 @@ class Order < ApplicationRecord
         order = create!(shopify_attrs)
       end
 
-      order.line_items.each { |li| LineItem.from_shopify!(order, li) }
+      shopify_order.line_items.each { |li| LineItem.from_shopify!(order, li) }
       order
     end
   end
