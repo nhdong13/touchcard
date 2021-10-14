@@ -647,23 +647,18 @@
       saveAndReturn: function() {
         // If there're some errors in save process => return
         if (!this.saveWithValidation()) return;
-        if(this.automation.campaign_status == "complete") {
-          this.shared.campaign.campaign_status = this.currentShop.credit > 0.89 ? "sending" : "out_of_credit"
-        }
         this.saveAutomation(this.returnToCampaignList);
       },
 
       saveAndStartSending: function() {
         // If there're some errors in save process => return
         if (!this.saveWithValidation()) return;
-        this.shared.campaign.campaign_status = this.currentShop.credit > 0.89 ? (this.automation.campaign_status != "complete" ? "processing" : "sending") : "out_of_credit";
-        this.saveAutomation(this.automation.campaign_status != "complete" ? this.startSending : this.returnToCampaignList);
+        this.saveAutomation(this.startSending);
       },
 
       saveAndCheckout: function() {
         // If there're some errors in save process => return
         if (!this.saveWithValidation()) return;
-        this.shared.campaign = null;
         this.saveAutomation(this.goToCheckoutPage);
       },
 

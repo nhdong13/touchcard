@@ -60,9 +60,8 @@ class CardOrder < ApplicationRecord
   after_initialize :ensure_defaults, if: :new_record?
   after_update :update_budget, if: :saved_change_to_budget_update?
   after_update :update_budget_type, if: :saved_change_to_budget_type?
-  # after_update :reactivate_campaign, if: :saved_change_to_send_date_end?
+  before_update :save_schedule_of_complete_campaign
   before_save :validate_campaign_name
-  # before_update :validate_campaign_name, if: :saved_change_to_campaign_name?
 
   enum budget_type: [ :non_set, :monthly ]
   enum campaign_type: { automation: 0, one_off: 1 }
@@ -324,5 +323,9 @@ class CardOrder < ApplicationRecord
     else
       "Test automation"
     end
+  end
+
+  def save_schedule_of_complete_campaign
+    self.campaign_status = :draft if complete? && send_date_end_changed?
   end
 end
