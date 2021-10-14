@@ -454,7 +454,7 @@
       },
 
       changeSendDateEnd() {
-        this.automation.send_date_end = "";
+        this.sendDateEnd = "";
         this.openSendDateEndDatePicker();
       },
 
