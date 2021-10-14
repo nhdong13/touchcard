@@ -798,7 +798,7 @@
         today.setHours(0,0,0,0);
         let date_start = new Date(this.sendDateStart);
         date_start.setHours(0,0,0,0);
-        if (date_start < today) return false;
+        if (date_start < today && !this.automation.id) return false;
         return true;
       },
 
