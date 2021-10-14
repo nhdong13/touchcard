@@ -60,7 +60,6 @@ class AutomationsController < BaseController
     respond_to do |format|
       campaign_enabled_field_before_update = @automation.enabled
       if @automation.update(automation_params)
-        update_campaign_status(campaign_enabled_field_before_update)
         flash[:notice] = "Automation successfully updated"
         format.html { redirect_to automations_path }
         format.json { render json: {
