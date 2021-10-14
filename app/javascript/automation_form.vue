@@ -780,9 +780,9 @@
 
       isSendDateEndValid() {
         if (this.automation.send_continuously) return true;
-        if (!this.automation.send_date_end) return false;
-        const date_start = new Date(this.automation.send_date_start);
-        const date_end = new Date(this.automation.send_date_end);
+        if (!this.sendDateEnd) return false;
+        const date_start = new Date(this.sendDateStart);
+        const date_end = new Date(this.sendDateEnd);
         date_start.setHours(0,0,0,0);
         date_end.setHours(0,0,0,0);
         if (date_end <= date_start) return false;
@@ -793,10 +793,10 @@
       },
 
       isSendDateStartValid() {
-        if (!this.automation.send_date_start) return false;
+        if (!this.sendDateStart) return false;
         let today = new Date();
         today.setHours(0,0,0,0);
-        let date_start = new Date(this.automation.send_date_start);
+        let date_start = new Date(this.sendDateStart);
         date_start.setHours(0,0,0,0);
         if (date_start < today) return false;
         return true;
