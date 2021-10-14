@@ -288,10 +288,6 @@ class CardOrder < ApplicationRecord
     back_json && back_json['discount_x'].present? && back_json['discount_y'].present?
   end
 
-  # def invalid_image_size(attributes)
-  #   # debugger
-  # end
-
   def generate_campaign_name exist_name=nil
     if shop.present?
       saving_name = exist_name || "Automation"
