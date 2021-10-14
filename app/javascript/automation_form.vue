@@ -357,7 +357,8 @@
         pausedSubmitForm: false,
         checkingError: false,
         sendDateStart: this.automation.send_date_start ? this.dateParser(this.automation.send_date_start) : new Date(),
-        sendDateEnd: this.automation.send_date_end ? this.dateParser(this.automation.send_date_end) : ""
+        sendDateEnd: this.automation.send_date_end ? this.dateParser(this.automation.send_date_end) : "",
+        duplicateFilters: [],
       }
     },
 
@@ -797,7 +798,8 @@
         return true;
       },
 
-      orderDateFiltersNotConflict(col) {
+      orderDateFiltersNotConflict(collectionType) {
+        let col = collectionType == "accepted" ? this.acceptedFilters : this.removedFilters;
         let orderDateFilters = col.filter(filter => filter.selectedFilter.includes("order_date"));
         if (orderDateFilters.length != 2) return true;
         let firstOrdFilter = orderDateFilters.filter(filter => filter.selectedFilter == "first_order_date")[0];
@@ -857,25 +859,50 @@
         if (!lastOrdCompareValue) return true;
 
         if (lastOrdCompareValue <= firstOrdCompareValue) {
-          this.markInvalidDateFilter(col, firstOrdFilter, lastOrdFilter);
+          this.markInvalidFilter(collectionType, firstOrdFilter, lastOrdFilter);
           return false;
         } else {
-          this.markInvalidDateFilter(col, firstOrdFilter, lastOrdFilter, true);
+          this.markInvalidFilter(collectionType, firstOrdFilter, lastOrdFilter, true);
           return true;
         }
       },
 
-      markInvalidDateFilter(collection, firstOrd, lastOrd, isUnmark=false) {
+      markInvalidFilter(collectionType, firstOrd, lastOrd, isUnmark=false) {
+        let collection = collectionType == "accepted" ? this.acceptedFilters : this.removedFilters;
         if (isUnmark) {
-          $($(".filter-line")[collection.indexOf(firstOrd)]).find(".f-value input").removeClass("invalid");
-          $($(".filter-line")[collection.indexOf(lastOrd)]).find(".f-value input").removeClass("invalid");
+          $($(`#${collectionType}-section .filter-line`)[collection.indexOf(firstOrd)]).find(".f-value input").removeClass("invalid");
+          $($(`#${collectionType}-section .filter-line`)[collection.indexOf(lastOrd)]).find(".f-value input").removeClass("invalid");
         } else {
-          $($(".filter-line")[collection.indexOf(firstOrd)]).find(".f-value input").addClass("invalid");
-          $($(".filter-line")[collection.indexOf(lastOrd)]).find(".f-value input").addClass("invalid");
+          $($(`#${collectionType}-section .filter-line`)[collection.indexOf(firstOrd)]).find(".f-value input").addClass("invalid");
+          $($(`#${collectionType}-section .filter-line`)[collection.indexOf(lastOrd)]).find(".f-value input").addClass("invalid");
         }
       },
+
+      filtersNotDuplicate() {
+        let valid = true;
+        // Remove all old dupicated filters
+        this.duplicateFilters.forEach(item => {
+          let actAppearance = this.acceptedFilters.find(ft => ft.selectedFilter == item);
+          let rmvAppearance = this.removedFilters.find(ft => ft.selectedFilter == item);
+          this.markInvalidFilter("accepted", actAppearance, actAppearance, true);
+          this.markInvalidFilter("removed", rmvAppearance, rmvAppearance, true);
+        })
+
+        // Find current duplicated filters
+        this.acceptedFilters.forEach((filter) => {
+          let appearance = this.removedFilters.find(ft => ft.value == filter.value && ft.selectedCondition == filter.selectedCondition && ft.selectedFilter == ft.selectedFilter);
+          if (appearance) {
+            this.markInvalidFilter("accepted", filter, filter);
+            this.markInvalidFilter("removed", appearance, appearance);
+            this.duplicateFilters.push(filter.selectedFilter);
+            valid = false;
+          }
+        })
+        return valid;
+      },
+
       isFiltersValid() {
-        if (this.isFilterComplete() && this.orderDateFiltersNotConflict(this.acceptedFilters)) {
+        if (this.isFilterComplete() && this.orderDateFiltersNotConflict("accepted") && this.orderDateFiltersNotConflict("removed") && this.filtersNotDuplicate()) {
           this.errors.filters = false;
           return true;
         } else {
@@ -883,6 +910,7 @@
           return false;
         }
       },
+
       dateParser(date) {
         const year = parseInt(date.split("-")[0]);
         const month = parseInt(date.split("-")[1]) - 1;
