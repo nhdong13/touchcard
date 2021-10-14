@@ -228,7 +228,6 @@
     },
 
     created() {
-      console.log(this.thisCampaigns[0]);
     },
 
     computed: {
