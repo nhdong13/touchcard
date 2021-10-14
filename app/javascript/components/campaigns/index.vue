@@ -53,7 +53,7 @@
                 <md-switch :value="!item.enabled" class="md-primary" @change="onChangeCampaignActive(item.id)" :disabled="disableToggle(item)" />
               </span>
             </td>
-            <td>
+            <td class="px-0">
               <!--
                 key attribute is used to make Vue re-render PreviewImage component when the campaign is changed
               -->

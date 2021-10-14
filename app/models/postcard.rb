@@ -209,4 +209,12 @@ class Postcard < ApplicationRecord
     address&.country
   end
 
+  # Custom active_admin filter postcards by shop in url /admin/postcards
+  def self.ransackable_scopes(_auth_object = nil)
+    %i(filter_postcards_by_shop)
+  end
+
+  def self.filter_postcards_by_shop(shop_id)
+    joins('LEFT OUTER JOIN card_orders ON card_orders.id = postcards.card_order_id').where('card_orders.shop_id = ?', shop_id)
+  end
 end

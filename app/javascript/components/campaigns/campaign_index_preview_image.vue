@@ -5,13 +5,13 @@
 <div class="flip-card">
   <div class="flip-card-inner">
     <div class="flip-card-front">
-      <img width="100" hieght="60" :src="frontImage" v-if="frontImage">
+      <img width="100" height="60" :src="frontImage" v-if="frontImage">
       <div class="center" v-else>
         <strong>NO PREVIEW AVAILABLE</strong>
       </div>
     </div>
     <div class="flip-card-back">
-      <img width="100" hieght="60" :src="backImage" v-if="backImage">
+      <img width="100" height="60" :src="backImage" v-if="backImage">
       <div class="center" v-else>
         <strong>NO PREVIEW AVAILABLE</strong>
       </div>
@@ -66,7 +66,6 @@
   border: 1px solid #f1f1f1;
   perspective: 1000px;
   position: relative;
-  margin: auto;
 }
 
 .flip-card-inner {

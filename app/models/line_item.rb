@@ -24,7 +24,7 @@ class LineItem < ApplicationRecord
       :taxable,
       :total_discount
     ).merge(order: order, shopify_id: shopify_line_item.id)
-    line_item = LineItem.find_by(shopify_id: line_item.id)
+    line_item = LineItem.find_by(shopify_id: shopify_line_item.id)
     if line_item.present?
       line_item.update!(attrs)
     else
