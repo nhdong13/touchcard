@@ -56,12 +56,12 @@ ActiveAdmin.register CardOrder, as: "Campaign" do
     @lob_url = params.dig(:lob_response, :url)
     @lob_admin_path = "https://dashboard.lob.com/#/postcards/#{params[:lob_response][:id]}"
   end
-
-
+  
   filter :shop , as: :select, collection: ->{Shop.select(:domain, :id).order(:domain)}
   filter :discount_pct
   filter :discount_exp
   filter :enabled
+  filter :archived
   filter :international
   filter :created_at
   filter :updated_at
@@ -84,7 +84,9 @@ ActiveAdmin.register CardOrder, as: "Campaign" do
     column :discount_exp do |card_order|
       card_order.discount_exp_to_str
     end
-    column :enabled
+    column "Status", sortable: :enabled do |card_order|
+      status_tag card_order.get_status, class: card_order.enabled? && "yes"
+    end     
     column :international
     column :created_at
     column :updated_at
@@ -104,10 +106,10 @@ ActiveAdmin.register CardOrder, as: "Campaign" do
       row :discount_exp do |card_order|
         card_order.discount_exp_to_str
       end
-      row :enabled do |card_order|
-          status_tag("#{card_order.enabled}")
-          link_to "edit", change_sending_status_admin_campaign_path(card_order)
-      end
+      row "Status" do |card_order|
+        status_tag card_order.get_status, class: card_order.enabled? && "yes"
+        link_to "edit", change_sending_status_admin_campaign_path(card_order) unless card_order.archived
+      end   
       row :international
       row :created_at
       row :updated_at
@@ -152,7 +154,15 @@ ActiveAdmin.register CardOrder, as: "Campaign" do
 
   controller do
     def get_card_order
-      @card_order = CardOrder.find(params[:id])
+      @card_order = CardOrder.unscoped.find(params[:id])
+    end
+
+    def scoped_collection
+      CardOrder.unscoped
     end
   end
+  
+  order_by(:enabled) do |order_clause|
+    [order_clause.to_sql, ',"card_orders"."archived" '].join(' ')
+  end  
 end

@@ -28,15 +28,10 @@ class CampaignsController < BaseController
       campaign = CardOrder.find_by(id: campaign_id)
       PaymentService.refund_cards_when_cancelled @current_shop, campaign
       campaign.archive
-      begin
-        campaign.safe_destroy!
-      rescue => e
-        Rails.logger.debug "[ERROR] #{e.class} - #{e.message}"
-      end
     end
     respond_to do |format|
       format.html {}
-      format.json { render json: {message: "succesful"}, status: 200}
+      format.json { render json: {message: "successful"}, status: 200}
     end
   end
 
@@ -44,7 +39,7 @@ class CampaignsController < BaseController
     DuplicateCampaignService.new(@current_shop, params[:campaign_id]).duplicate(params[:campaign_name])
     respond_to do |format|
       format.html {}
-      format.json { render json: {message: "succesful"}, status: 200}
+      format.json { render json: {message: "successful"}, status: 200}
     end
   end
 

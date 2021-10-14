@@ -15,7 +15,7 @@
 	        <tr v-if="postcards.length == 0">
 	          <td colspan="4" style="text-align:center">Sent postcards will appear here.</td>
 	        </tr>
-          <tr v-else v-for="postcard in thisPostcards" id="`postcard-${postcard.id}`" :key="postcard.id">
+          <tr v-else v-for="postcard in thisPostcards" :id="`postcard-${postcard.id}`" :key="postcard.id">
             <td>
               <button type="button"
                       class="mdl-chip postcard-status-chip"
