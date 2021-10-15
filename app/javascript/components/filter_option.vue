@@ -227,6 +227,7 @@
       },
       filterChange() {
         this.showError = false;
+        $(".f-value input", this.$el).removeClass("invalid");
         this.$emit('filterChange', this.filter, this.collection, this.index);
       },
       optionChange() {

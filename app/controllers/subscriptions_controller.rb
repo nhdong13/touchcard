@@ -18,9 +18,6 @@ class SubscriptionsController < BaseController
     coupon = create_params[:subscription][:coupon]
     campaign = CardOrder.find(create_params[:campaign_id])
 
-    campaign.processing!
-    # InitializeSendingPostcardProcess.start(@current_shop, campaign)
-
     stripe_params = {shop: @current_shop, plan: Plan.last, quantity: quantity}
     stripe_params.merge!({coupon: coupon}) if !coupon.blank?
 
@@ -30,7 +27,7 @@ class SubscriptionsController < BaseController
     if @subscription.save
       @subscription.shop.top_up
       flash[:notice] = "Subscription successfully created"
-      redirect_to root_path
+      redirect_to start_sending_automation_path(campaign.id)
     else
       flash[:error] = @subscription.errors.full_messages.join("\n")
       render :new
