@@ -173,9 +173,10 @@ class Postcard < ApplicationRecord
   def cancel
     self.canceled = true
     self.transaction do
-      self.shop.increment_credit if self.paid
+      self.shop.credit += self.cost if self.paid
       self.paid = false
     end
+    self.shop.save!
     self.save!
   end
 
