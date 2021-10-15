@@ -39,7 +39,7 @@
           <div class="datepicker-with-icon">
             <span style="width: 80px">Start date:</span>
             <datepicker
-              v-model="automation.send_date_start"
+              v-model="sendDateStart"
               :disabled-dates="disabledDates"
               name="send_date_start"
               ref="sendDateStart"
@@ -75,7 +75,7 @@
           <div class="datepicker-with-icon">
             <span style="width: 80px">Start date:</span>
             <datepicker
-              v-model="automation.send_date_start"
+              v-model="sendDateStart"
               :disabled-dates="disabledDates"
               name="send_date_start"
               ref="sendDateStart"
@@ -94,7 +94,7 @@
             <span style="width: 80px"><small :class="{error: errors.endDate}" v-if="errors.endDate">*</small> End date:</span>
             <div class="datepicker-with-icon">
               <datepicker
-                v-model="automation.send_date_end"
+                v-model="sendDateEnd"
                 :disabled-dates="disabledEndDates"
                 name="sendDateEnd"
                 ref="sendDateEnd"
@@ -355,14 +355,16 @@
         filterOptions: [],
         interval: null,
         pausedSubmitForm: false,
-        checkingError: false
+        checkingError: false,
+        sendDateStart: this.automation.send_date_start ? this.dateParser(this.automation.send_date_start) : new Date(),
+        sendDateEnd: this.automation.send_date_end ? this.dateParser(this.automation.send_date_end) : ""
       }
     },
 
     computed: {
       disabledEndDates:{
         get: function(){
-          const today = new Date()
+          let today = this.sendDateStart || new Date();
           today.setHours(0,0,0,0)
           return {
             to: today
@@ -451,8 +453,8 @@
         }
       },
 
-      changeSendDateEnd: function (){
-        this.automation.send_date_end = ""
+      changeSendDateEnd() {
+        this.automation.send_date_end = "";
         this.openSendDateEndDatePicker();
       },
 
@@ -623,6 +625,9 @@
         // Prevent to submit form after click submit
         this.pausedSubmitForm = true;
         setTimeout(() => this.pausedSubmitForm = false, 5000);
+        // Set campaign schedule value
+        if (this.sendDateStart) this.automation.send_date_start = this.moment(this.sendDateStart).format("YYYY-MM-DD");
+        if (isEmpty(this.sendDateEnd)) this.automation.send_date_end = this.moment(this.sendDateEnd).format("YYYY-MM-DD");
 
         if (this.id) {
           axios.put(`/automations/${this.id}.json`, { card_order: this.automation})
@@ -757,9 +762,6 @@
 
       initializeStartDatepicker() {
         this.isStartDateDisable = this.disableStartDate();
-        if(isEmpty(this.automation.send_date_start)) {
-          this.automation.send_date_start = new Date()
-        }
         const today = new Date()
         today.setDate(today.getDate() - 1)
         this.disabledDates = {
@@ -885,6 +887,12 @@
           this.errors.filters = true;
           return false;
         }
+      },
+      dateParser(date) {
+        const year = parseInt(date.split("-")[0]);
+        const month = parseInt(date.split("-")[1]) - 1;
+        const day = parseInt(date.split("-")[2]);
+        return new Date(year, month, day);
       }
     }
   }
