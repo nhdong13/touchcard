@@ -501,8 +501,14 @@ class CustomerTargetingService
   def customer_can_receive_postcard customer
     return "N" unless fit_customer_ids.include?(customer.id)
     return "N" unless customer.default_address.present?
-    return "N" unless customer.default_address&.address1&.present?
-    return "N" unless customer.default_address.country_code == "US"
+    return "N" unless customer.default_address.first_name.present? &&
+                      customer.default_address.last_name.present? &&
+                      customer.default_address.address1.present? &&
+                      customer.default_address.city.present? &&
+                      customer.default_address.province_code.present? &&
+                      customer.default_address.country_code.present? &&
+                      customer.default_address.country_code == "US" &&
+                      customer.default_address.zip.present?
     return "Y"
   end
 
