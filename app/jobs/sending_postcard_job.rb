@@ -49,7 +49,7 @@ class SendingPostcardJob < ActiveJob::Base
                       !existing_customers.exists?(customer_id: customer.id)
                       )
           rescue => e
-            campaign.postcards << Postcard.create(error: e.message)
+            campaign.postcards << Postcard.create(error: e.message, customer_id: customer.id)
             is_there_error_when_creating_postcard = true
             next
           end
@@ -57,27 +57,7 @@ class SendingPostcardJob < ActiveJob::Base
           postcard = Postcard.new
           postcard.customer = customer
 
-          blank_required_fields = {
-            first_name: customer.default_address.first_name.present?, 
-            last_name: customer.default_address.last_name.present?, 
-            address1: customer.default_address.address1.present?, 
-            city: customer.default_address.city.present?, 
-            province: customer.default_address.province_code.present?, 
-            country: customer.default_address.country_code.present?,
-            zip: customer.default_address.zip.present?
-          }
-          
-          if blank_required_fields.has_value?(false)
-            error_fields = []
-            blank_required_fields = blank_required_fields.filter {|key, value| value == false}
-            blank_required_fields.each_key {|key| error_fields << key.to_s.split("_").join(" ").capitalize}
-            error_message = "Missing " + error_fields.join(", ")
-
-            postcard.error = error_message
-            is_there_error_when_creating_postcard = true
-          else
-            postcard.send_date = Time.now.beginning_of_day > campaign.send_date_start ? Time.now : campaign.send_date_start
-          end
+          campaign.check_required_address_fields(postcard)
 
           campaign.postcards << postcard
           postcard.save!

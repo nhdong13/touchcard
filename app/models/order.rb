@@ -62,6 +62,6 @@ class Order < ApplicationRecord
   end
 
   def international
-    customer.default_address.country_code != "US"
+    customer.default_address.country_code.present? && customer.default_address.country_code != "US"
   end
 end
