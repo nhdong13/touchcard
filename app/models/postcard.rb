@@ -92,11 +92,11 @@ class Postcard < ApplicationRecord
     cards.size - num_failed
   end
 
-  # 1 token = 0.89$
-  # 2 tokens = 1.78$
+  # Domestic = 0.89$
+  # International = 1.75$
   def cost
     begin
-      international? ? 1.78 : 0.89
+      international? ? 1.75 : 0.89
     rescue
       0
     end
