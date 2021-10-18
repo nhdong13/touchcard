@@ -366,9 +366,10 @@
       disabledEndDates:{
         get: function(){
           let today = this.sendDateStart || new Date();
-          today.setHours(0,0,0,0)
+          let minDate = new Date(Math.max(...[today, new Date()]));
+          minDate.setHours(0,0,0,0);
           return {
-            to: today
+            to: minDate
           }
         }
       },
