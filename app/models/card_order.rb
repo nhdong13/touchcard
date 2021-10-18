@@ -179,9 +179,7 @@ class CardOrder < ApplicationRecord
   def prepare_for_sending(postcard_trigger)
     # This method can get called from a delayed_job, which does not allow for standard logging
     # We thus return a string and expect the caller to log
-    if postcard_trigger.customer.default_address
-      return "international customer not enabled" if postcard_trigger.international && !international?
-    end
+    return "international customer not enabled" if postcard_trigger.customer.default_address && postcard_trigger.international && !international?
     return "order filtered out" unless send_postcard?(postcard_trigger)
 
     postcard = postcard_trigger.postcards.new(
@@ -192,16 +190,15 @@ class CardOrder < ApplicationRecord
     self.check_required_address_fields(postcard)
     if postcard.error.present?
       ReportErrorMailer.send_error_report(postcard.card_order).deliver_later
-      return postcard.save
     end
-
-    if shop.pay(postcard)
-      postcard.paid = true
-      postcard.save
-    else
-      out_of_credit!
-      return postcard.errors.full_messages.map{|msg| msg}.join("\n")
-    end
+    postcard.save
+    # if shop.pay(postcard)
+    #   postcard.paid = true
+    #   postcard.save
+    # else
+    #   out_of_credit!
+    #   return postcard.errors.full_messages.map{|msg| msg}.join("\n")
+    # end
   end
 
   def archive

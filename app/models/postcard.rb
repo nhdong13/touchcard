@@ -51,19 +51,18 @@ class Postcard < ApplicationRecord
   def self.send_all
     num_failed = 0
     todays_cards = Postcard.joins(:shop)
-      .where("error IS NULL AND paid = TRUE AND sent = FALSE AND canceled = FALSE AND send_date <= ?
-               AND shops.approval_state != ?", Time.now, "denied")
+      .where("error IS NULL AND sent = FALSE AND canceled = FALSE AND send_date <= ?
+               AND shops.approval_state != ?", Date.current, "denied")
     todays_cards.each do |card|
       begin
-        card.send_card
+        if card.shop.pay(card)
+          card.update(paid: true)
+          card.send_card
+        else
+          card.card_order.out_of_credit!
+        end
       rescue => e
-        num_failed += 1
-        # logger.error e
-        # NewRelic::Agent::notice_error(e.message)
-        card.error = e.message
-        card.save
-        ReportErrorMailer.send_error_report(card.card_order).deliver_later
-        next
+        card.update(error: e.message)
       end
     end
     {
