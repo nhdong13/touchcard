@@ -54,7 +54,7 @@ class Subscription < ApplicationRecord
       currency: "usd",
       description: "Plan upgrade from #{old_quantity} cards to #{new_quantity} cards adding #{delta_quantity} cards for this month"
     })
-    shop.update(credit: shop.credit + delta_quantity)
+    shop.update(credit: shop.credit + delta_quantity * (Plan.last.amount.to_f / 100))
   end
 
   def change_quantity_by_credit(credit)
