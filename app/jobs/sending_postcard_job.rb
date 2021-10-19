@@ -56,8 +56,7 @@ class SendingPostcardJob < ActiveJob::Base
 
           postcard = Postcard.new
           postcard.customer = customer
-
-          campaign.check_required_address_fields(postcard)
+          postcard.send_date = campaign.send_date
 
           campaign.postcards << postcard
           postcard.save!

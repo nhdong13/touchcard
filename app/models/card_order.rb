@@ -179,18 +179,15 @@ class CardOrder < ApplicationRecord
   def prepare_for_sending(postcard_trigger)
     # This method can get called from a delayed_job, which does not allow for standard logging
     # We thus return a string and expect the caller to log
-    return "international customer not enabled" if postcard_trigger.customer.default_address && postcard_trigger.international && !international?
+    return "international customer not enabled" if postcard_trigger.international && !international?
     return "order filtered out" unless send_postcard?(postcard_trigger)
 
     postcard = postcard_trigger.postcards.new(
         card_order: self,
         customer: postcard_trigger.customer,
+        send_date: self.send_date,
         paid: false)
 
-    self.check_required_address_fields(postcard)
-    if postcard.error.present?
-      ReportErrorMailer.send_error_report(postcard.card_order).deliver_later
-    end
     postcard.save
     # if shop.pay(postcard)
     #   postcard.paid = true
@@ -275,30 +272,6 @@ class CardOrder < ApplicationRecord
   def get_status
     return "Archived" if self.archived
     self.enabled? ? "Enabled" : "Disabled"
-  end
-
-  def check_required_address_fields(postcard)
-    return postcard.error = "No default address" unless postcard.customer.default_address
-
-    required_fields = {
-      first_name: postcard.customer.default_address.first_name.present?, 
-      last_name: postcard.customer.default_address.last_name.present?, 
-      address1: postcard.customer.default_address.address1.present?, 
-      city: postcard.customer.default_address.city.present?, 
-      province: postcard.customer.default_address.province_code.present?, 
-      country: postcard.customer.default_address.country_code.present?,
-      zip: postcard.customer.default_address.zip.present?
-    }
-
-    if required_fields.has_value?(false)
-      error_fields = []
-      blank_required_fields = required_fields.filter { |key, value| value == false }
-      blank_required_fields.each_key { |key| error_fields << key.to_s.split("_").join(" ") }
-      error_msg = "No " + error_fields.join(", ") + " in address"
-      postcard.error = error_msg
-    else
-      postcard.send_date = self.send_date
-    end
   end
 
   private
