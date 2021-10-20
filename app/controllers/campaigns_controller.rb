@@ -26,8 +26,15 @@ class CampaignsController < BaseController
     campaign_ids = params[:campaign_ids]
     campaign_ids.each do |campaign_id|
       campaign = CardOrder.find_by(id: campaign_id)
-      PaymentService.refund_cards_when_cancelled @current_shop, campaign
+      # PaymentService.refund_cards_when_cancelled @current_shop, campaign
+      postcards = campaign.postcards.where(paid: false, sent: false, canceled: false)
+      postcards.each do |postcard|
+        postcard.canceled = true
+        postcard.save!
+      end
+
       campaign.archive
+      campaign.safe_destroy! rescue nil
     end
     respond_to do |format|
       format.html {}
