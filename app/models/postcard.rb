@@ -63,6 +63,7 @@ class Postcard < ApplicationRecord
         end
       rescue => e
         card.update(error: e.message)
+        ReportErrorMailer.send_error_report(card.card_order).deliver_later
       end
     end
     {
