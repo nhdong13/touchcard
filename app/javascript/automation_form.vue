@@ -285,6 +285,7 @@
   import { isEmpty } from 'lodash'
   import CancelCampaignDialog from './components/cancel_campaign_dialog.vue'
   import { DEFAULT_DISCOUNT_PERCENTAGE, DEFAULT_WEEK_BEFORE_DISCOUNT_EXPIRE, MAXIMUM_CAMPAIGN_NAME_LENGTH } from './config';
+  import { sameFiltersNotConflict } from 'automation_form_handle_conflicting_filters';
   window.$ = $
   const CAMPAIGN_STATUS_FOR_DISABLE_DATE = ["sending", "complete", "out_of_credit", "error", "paused"];
 
@@ -358,7 +359,7 @@
         checkingError: false,
         sendDateStart: this.automation.send_date_start ? this.dateParser(this.automation.send_date_start) : new Date(),
         sendDateEnd: this.automation.send_date_end ? this.dateParser(this.automation.send_date_end) : "",
-        duplicateFilters: [],
+        conflictFilters: [],
       }
     },
 
@@ -879,31 +880,10 @@
         }
       },
 
-      filtersNotDuplicate() {
-        let valid = true;
-        // Remove all old dupicated filters
-        this.duplicateFilters.forEach(item => {
-          let actAppearance = this.acceptedFilters.find(ft => ft.selectedFilter == item);
-          let rmvAppearance = this.removedFilters.find(ft => ft.selectedFilter == item);
-          this.markInvalidFilter("accepted", actAppearance, actAppearance, true);
-          this.markInvalidFilter("removed", rmvAppearance, rmvAppearance, true);
-        })
-
-        // Find current duplicated filters
-        this.acceptedFilters.forEach((filter) => {
-          let appearance = this.removedFilters.find(ft => ft.value == filter.value && ft.selectedCondition == filter.selectedCondition && ft.selectedFilter == ft.selectedFilter);
-          if (appearance) {
-            this.markInvalidFilter("accepted", filter, filter);
-            this.markInvalidFilter("removed", appearance, appearance);
-            this.duplicateFilters.push(filter.selectedFilter);
-            valid = false;
-          }
-        })
-        return valid;
-      },
+      sameFiltersNotConflict,
 
       isFiltersValid() {
-        if (this.isFilterComplete() && this.orderDateFiltersNotConflict("accepted") && this.orderDateFiltersNotConflict("removed") && this.filtersNotDuplicate()) {
+        if (this.isFilterComplete() && this.orderDateFiltersNotConflict("accepted") && this.orderDateFiltersNotConflict("removed") && this.sameFiltersNotConflict()) {
           this.errors.filters = false;
           return true;
         } else {
