@@ -12,6 +12,9 @@
   <%= csrf_meta_tags %>
   <%= gtm_head_tag %>
   <%= javascript_include_tag 'https://checkout.stripe.com/checkout.js' %>
+  <% if content_for?(:head) %>
+    <%= yield(:head) %>
+  <% end %>
 </head>
 
 <body>
