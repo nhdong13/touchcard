@@ -8,6 +8,7 @@ class Order < ApplicationRecord
   validates :shopify_id, uniqueness: true
 
   serialize :discount_codes
+  after_create :prepare_postcard_for_send
 
   class << self
     def from_shopify!(shopify_order, shop)
@@ -63,5 +64,10 @@ class Order < ApplicationRecord
 
   def international
     customer.default_address.country_code.present? && customer.default_address.country_code != "US"
+  end
+
+  private
+  def prepare_postcard_for_send
+    PreparePostcardJob.perform_later(id)
   end
 end

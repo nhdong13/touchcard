@@ -38,7 +38,6 @@ class OrdersCreateJob < ActiveJob::Base
       # # return puts "Card not enabled" unless post_sale_orders.enabled?
 
       # post_sale_orders.each{|post_sale_order| post_sale_order.prepare_for_sending(order) }
-      PreparePostcardJob.perform_later(order.id)
     end
   end
 end
