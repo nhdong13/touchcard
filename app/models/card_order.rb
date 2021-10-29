@@ -326,6 +326,6 @@ class CardOrder < ApplicationRecord
   end
 
   def save_schedule_of_complete_campaign
-    self.campaign_status = :draft if complete? && send_date_end_changed?
+    self.campaign_status = :draft if complete? && (send_date_end_changed? || send_continuously_changed?)
   end
 end
