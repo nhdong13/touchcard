@@ -783,6 +783,8 @@
         const date_end = new Date(this.sendDateEnd);
         date_start.setHours(0,0,0,0);
         date_end.setHours(0,0,0,0);
+        let dateEndString = `${date_end.getFullYear()}-${date_end.getMonth() + 1}-${date_end.getDate()}`;
+        if (dateEndString === this.automation.send_date_end) return true;
         if (date_end <= date_start) return false;
         let today = new Date();
         today.setHours(0,0,0,0);
@@ -794,9 +796,11 @@
         if (!this.sendDateStart) return false;
         let today = new Date();
         today.setHours(0,0,0,0);
-        let date_start = new Date(this.sendDateStart);
-        date_start.setHours(0,0,0,0);
-        if (date_start < today && !this.automation.id) return false;
+        let dateStart = new Date(this.sendDateStart);
+        dateStart.setHours(0,0,0,0);
+        let dateStartString = `${dateStart.getFullYear()}-${dateStart.getMonth() + 1}-${dateStart.getDate()}`;
+        if (dateStartString === this.automation.send_date_start) return true;
+        if (dateStart < today && !this.automation.id) return false;
         return true;
       },
 
