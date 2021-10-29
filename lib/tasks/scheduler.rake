@@ -101,7 +101,7 @@ task :daily_update_campaign_status => :environment do
   CardOrder.where.not(campaign_status: :complete)
            .where(send_continuously: false)
            .where("send_date_end < '#{Date.current}'")
-           .update_all(campaign_status: :complete)
+           .update_all(campaign_status: :complete, enabled: false)
 end
 
 # TODO: Unused Automations Code
