@@ -255,17 +255,17 @@ class CardOrder < ApplicationRecord
     if enabled
       if send_continuously
         if send_date_start > today
-          self.scheduled!
+          update!(campaign_status: :scheduled, enabled: true)
         else
-          self.sending!
+          update!(campaign_status: :sending, enabled: true)
         end
       else
         if send_date_start <= today && send_date_end >= today
-          self.sending!
+          update!(campaign_status: :sending, enabled: true)
         elsif today > send_date_end
-          self.complete!
+          update!(campaign_status: :complete, enabled: false)
         elsif today < send_date_start
-          self.scheduled!
+          update!(campaign_status: :scheduled, enabled: true)
         end
       end
     end
