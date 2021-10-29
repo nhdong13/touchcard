@@ -166,13 +166,13 @@ class Postcard < ApplicationRecord
   # end
 
   def cancel
-    self.canceled = true
-    self.transaction do
-      self.shop.credit += self.cost if self.paid
+    ActiveRecord::Base.transaction do
+      self.canceled = true
       self.paid = false
-    end
-    self.shop.save!
-    self.save!
+      self.shop.credit += self.cost
+      self.shop.save!
+      self.save!
+    end rescue nil
   end
 
   def return_address
