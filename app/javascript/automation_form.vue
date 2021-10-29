@@ -346,8 +346,8 @@
         errors: {
           endDate: false,
           startDate: false,
-          uploadedFrontDesign: true,
-          uploadedBackDesign: true,
+          uploadedFrontDesign: this.automation.front_json.background_url === undefined,
+          uploadedBackDesign: this.automation.back_json.background_url === undefined,
           returnAddress: false,
           campaignName: false,
           filters: false
