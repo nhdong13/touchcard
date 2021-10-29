@@ -6,7 +6,7 @@ class AppInstalledJob < ActiveJob::Base
   def perform(shop)
     shop.update_last_month
     # Get shop's orders within 60 days
-    FetchHistoryOrdersJob.perform_later(shop)
+    FetchHistoryOrdersJob.perform_later(shop.id)
 
     size_tag = case shop.last_month
                  when 0...100 then "S"

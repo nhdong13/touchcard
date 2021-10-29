@@ -188,14 +188,13 @@ class CardOrder < ApplicationRecord
         send_date: self.send_date,
         paid: false)
 
-    postcard.save
-    # if shop.pay(postcard)
-    #   postcard.paid = true
-    #   postcard.save
-    # else
-    #   out_of_credit!
-    #   return postcard.errors.full_messages.map{|msg| msg}.join("\n")
-    # end
+    if shop.pay(postcard)
+      postcard.paid = true
+      postcard.save
+    else
+      update!(campaign_status: :out_of_credit, enabled: false)
+      return postcard.errors.full_messages.map{|msg| msg}.join("\n")
+    end
   end
 
   def archive
@@ -229,11 +228,14 @@ class CardOrder < ApplicationRecord
       update!(enabled: !self.enabled, campaign_status: :paused, previous_campaign_status: self.campaign_status_before_type_cast)
     else
       if self.can_enabled?
-        goback_status = previous_campaign_status == CardOrder.campaign_statuses[:paused] || previous_campaign_status.nil? ?
-                          CardOrder.campaign_statuses[:processing]
-                          : previous_campaign_status
-        update!(enabled: !self.enabled, campaign_status: goback_status)
-        # SendAllHistoryCardsJob.perform_later(@current_shop)
+        if out_of_credit?
+          update!(enabled: !self.enabled, campaign_status: :sending) if shop.credit > 0
+        else
+          goback_status = previous_campaign_status == CardOrder.campaign_statuses[:paused] || previous_campaign_status.nil? ?
+                            CardOrder.campaign_statuses[:processing]
+                            : previous_campaign_status
+          update!(enabled: !self.enabled, campaign_status: goback_status)
+        end
       end
     end
     self

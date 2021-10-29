@@ -15,7 +15,7 @@ class Shop < ApplicationRecord
   has_many :customers, through: :orders
   has_many :checkouts
 
-  after_update :change_campaign_status, if: :saved_change_to_credit?
+  # after_update :change_campaign_status, if: :saved_change_to_credit?
 
   VALID_APPROVAL_STATES = ["new", "approved", "denied"]
 

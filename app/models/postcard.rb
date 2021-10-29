@@ -55,12 +55,7 @@ class Postcard < ApplicationRecord
                AND shops.approval_state != ?", Date.current, "denied")
     todays_cards.each do |card|
       begin
-        if card.shop.pay(card)
-          card.update(paid: true)
-          card.send_card
-        else
-          card.card_order.out_of_credit!
-        end
+        card.send_card
       rescue => e
         card.update(error: e.message)
         ReportErrorMailer.send_error_report(card.card_order).deliver_later
