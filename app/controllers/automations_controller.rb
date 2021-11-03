@@ -94,13 +94,11 @@ class AutomationsController < BaseController
   def start_sending
     # 1 token = 0.89$
     # a shop with credit less than 0.89$ can put any campaign to out of credit status
+    @automation.update(enabled: true)
+    @automation.define_current_status
+
     if @current_shop.credit < 0.89
-      @automation.out_of_credit!
-    else
-      @automation.enabled = true
-      @automation.previous_campaign_status = CardOrder.campaign_statuses[:processing]
-      @automation.save
-      @automation.define_current_status
+      @automation.update(campaign_status: :out_of_credit, previous_campaign_status: @automation.campaign_status_before_type_cast)
     end
 
     respond_to do |format|

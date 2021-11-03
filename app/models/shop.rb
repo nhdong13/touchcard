@@ -15,7 +15,7 @@ class Shop < ApplicationRecord
   has_many :customers, through: :orders
   has_many :checkouts
 
-  # after_update :change_campaign_status, if: :saved_change_to_credit?
+  after_update :change_campaign_status, if: :saved_change_to_credit?
 
   VALID_APPROVAL_STATES = ["new", "approved", "denied"]
 
@@ -263,14 +263,12 @@ class Shop < ApplicationRecord
   # 1 token = 0.89$
   # a shop with credit less than 0.89$ can put any campaign to out of credit status
   def change_campaign_status
-    if (self.credit >= 0.89 && credit_before_last_save < 0.89)
-      CardOrder.where(shop_id: self.id, campaign_status: :out_of_credit).find_each do |campaign|
-        EnableDisableCampaignService.enable_campaign campaign, "The campaign #{campaign.campaign_name} is automatically toggled to active."
-      end
-    elsif(self.credit < 0.89 && credit_before_last_save >= 0.89)
-      CardOrder.where(shop_id: self.id, campaign_status: [:processing, :scheduled, :sending, :paused, :error, :sent]).find_each do |campaign|
-        EnableDisableCampaignService.disable_campaign campaign, :out_of_credit
-      end
+    if credit < SINGLE_POSTCARD_PRICE && credit_before_last_save >= SINGLE_POSTCARD_PRICE
+      card_orders.where.not(campaign_status: [:draft, :complete])
+                 .find_each{|cp| cp.update(campaign_status: :out_of_credit, previous_campaign_status: cp.campaign_status_before_type_cast) }
+    elsif credit_before_last_save < SINGLE_POSTCARD_PRICE && credit >= SINGLE_POSTCARD_PRICE
+      card_orders.out_of_credit
+                 .find_each{|cp| cp.update(campaign_status: cp.previous_campaign_status, previous_campaign_status: nil) }
     end
   end
 

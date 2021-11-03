@@ -192,7 +192,6 @@ class CardOrder < ApplicationRecord
       postcard.paid = true
       postcard.save
     else
-      update!(campaign_status: :out_of_credit, enabled: false)
       return postcard.errors.full_messages.map{|msg| msg}.join("\n")
     end
   end
