@@ -230,10 +230,12 @@ class CardOrder < ApplicationRecord
         if out_of_credit?
           update!(enabled: !self.enabled, campaign_status: :sending) if shop.credit > 0
         else
-          goback_status = previous_campaign_status == CardOrder.campaign_statuses[:paused] || previous_campaign_status.nil? ?
-                            CardOrder.campaign_statuses[:processing]
-                            : previous_campaign_status
-          update!(enabled: !self.enabled, campaign_status: goback_status)
+          if previous_campaign_status == CardOrder.campaign_statuses[:paused] || previous_campaign_status.nil?
+            update!(enabled: !self.enabled)
+            self.define_current_status
+          else
+            update!(enabled: !self.enabled, campaign_status: previous_campaign_status)
+          end
         end
       end
     end
