@@ -47,7 +47,7 @@
               format="MMM dd, yyyy"
               :disabled="isStartDateDisable"
             ></datepicker>
-            <div class="icon-calendar" v-on:click="openSendDateStartDatePicker">
+            <div :class="['icon-calendar', {'icon-calendar-disabled': isStartDateDisable}]" v-on:click="openSendDateStartDatePicker">
               <font-awesome-icon icon="calendar-alt"/>
             </div>
           </div>
@@ -84,7 +84,7 @@
               :disabled="isStartDateDisable"
               :input-class="{invalid: errors.startDate}"
             ></datepicker>
-            <div class="icon-calendar" v-on:click="openSendDateStartDatePicker">
+            <div :class="['icon-calendar', {'icon-calendar-disabled': isStartDateDisable}]" v-on:click="openSendDateStartDatePicker">
               <font-awesome-icon icon="calendar-alt"/>
             </div>
           </div>
@@ -976,6 +976,10 @@
       display: flex;
       justify-content: center;
       align-items: center;
+    }
+    .icon-calendar-disabled {
+      background: #f8f8f8;
+      border-color: #d4d4d4;
     }
   }
 
