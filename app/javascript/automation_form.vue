@@ -285,7 +285,7 @@
   import { isEmpty } from 'lodash'
   import CancelCampaignDialog from './components/cancel_campaign_dialog.vue'
   import { DEFAULT_DISCOUNT_PERCENTAGE, DEFAULT_WEEK_BEFORE_DISCOUNT_EXPIRE, MAXIMUM_CAMPAIGN_NAME_LENGTH } from './config';
-  import { sameFiltersNotConflict, checkConflictOrdersSpentFilters } from 'automation_form_handle_conflicting_filters';
+  import { sameFiltersNotConflict, checkConflictOrdersSpentFilters, checkConflictOrdersDateFilters } from 'automation_form_handle_conflicting_filters';
   window.$ = $
   const CAMPAIGN_STATUS_FOR_DISABLE_DATE = ["sending", "complete", "out_of_credit", "error", "paused"];
 
@@ -886,9 +886,10 @@
 
       sameFiltersNotConflict,
       checkConflictOrdersSpentFilters,
+      checkConflictOrdersDateFilters,
 
       isFiltersValid() {
-        if (this.isFilterComplete() && this.orderDateFiltersNotConflict("accepted") && this.orderDateFiltersNotConflict("removed") && this.sameFiltersNotConflict() && !this.checkConflictOrdersSpentFilters()) {
+        if (this.isFilterComplete() && this.orderDateFiltersNotConflict("accepted") && this.orderDateFiltersNotConflict("removed") && this.sameFiltersNotConflict() && !this.checkConflictOrdersSpentFilters() && !this.checkConflictOrdersDateFilters()) {
           this.errors.filters = false;
           return true;
         } else {

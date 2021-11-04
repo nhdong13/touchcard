@@ -205,4 +205,31 @@ const checkConflictOrdersSpentFilters = function() {
 	return hasError;
 }
 
-export { sameFiltersNotConflict, checkConflictOrdersSpentFilters }
+const checkConflictOrdersDateFilters = function() {
+	let hasError = false;
+	[this.acceptedFilters, this.removedFilters].forEach((collection, index) => {
+		let lastOrderDate = collection.find(ft=> ft.selectedFilter === 'last_order_date');
+		let firstOrderDate = collection.find(ft=> ft.selectedFilter === 'first_order_date');
+		let isError = lastOrderDate && firstOrderDate &&
+									lastOrderDate.value !== null &&
+									firstOrderDate.value !== null &&
+									((lastOrderDate.selectedCondition === 'before' &&
+									firstOrderDate.selectedCondition === 'before') ||
+									(lastOrderDate.selectedCondition === 'after' &&
+									firstOrderDate.selectedCondition === 'after')) &&
+									Date.parse(lastOrderDate.value) < Date.parse(firstOrderDate.value);
+
+		let collectionName = index == 0 ? 'accepted':'removed';
+		
+		if (isError) {
+			hasError = hasError || isError;
+			this.markInvalidFilter(collectionName, lastOrderDate, firstOrderDate);
+		} else {
+			this.markInvalidFilter(collectionName, lastOrderDate, firstOrderDate, true);
+		}
+	})
+
+	return hasError;
+}
+
+export { sameFiltersNotConflict, checkConflictOrdersSpentFilters, checkConflictOrdersDateFilters }
