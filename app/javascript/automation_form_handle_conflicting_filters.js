@@ -180,4 +180,29 @@ const sameFilterType = function (excludeCondition, includeCondition, includeValu
 	}
 }
 
-export { sameFiltersNotConflict }
+const checkConflictOrdersSpentFilters = function() {
+	let hasError = false;
+	[this.acceptedFilters, this.removedFilters].forEach((collection, index) => {
+		let lastOrderTotal = collection.find(ft=> ft.selectedFilter === 'last_order_total');
+		let allOrderTotal = collection.find(ft=> ft.selectedFilter === 'all_order_total');
+		let isError = lastOrderTotal && allOrderTotal &&
+									lastOrderTotal.value !== null &&
+									allOrderTotal.value !== null &&
+									lastOrderTotal.selectedCondition === 'matches_number' &&
+									allOrderTotal.selectedCondition === 'matches_number' &&
+									lastOrderTotal.value > allOrderTotal.value;
+
+		let collectionName = index == 0 ? 'accepted':'removed';
+		
+		if (isError) {
+			hasError = hasError || isError;
+			this.markInvalidFilter(collectionName, lastOrderTotal, allOrderTotal);
+		} else {
+			this.markInvalidFilter(collectionName, lastOrderTotal, allOrderTotal, true);
+		}
+	})
+
+	return hasError;
+}
+
+export { sameFiltersNotConflict, checkConflictOrdersSpentFilters }
