@@ -19,6 +19,12 @@ const calculateValue = function(value, condition) {
 	}
 }
 
+const convertDaysAgoToDate = function(value, today = new Date()) {
+	today.setUTCHours(0, 0, 0, 0);
+	today.setDate(today.getDate() - value);
+	return today;
+}
+
 const sameFiltersNotConflict = function() {
 	let valid = true;
 	// Remove all old duplicated filters and conflicting filters which have same filter type
@@ -83,12 +89,6 @@ const sameFilterTypeAndCondition = function(includeCondition, includeValue, excl
 }
 // Same filter type, different condition
 const sameFilterType = function (excludeCondition, includeCondition, includeValue, excludeValue) {
-	const convertDaysAgoToDate = function(value, today = new Date()) {
-		today.setUTCHours(0, 0, 0, 0);
-		today.setDate(today.getDate() - value);
-		return today;
-	};
-
 	switch (includeCondition) {
 		case 'matches_number':
 			switch (excludeCondition) {
@@ -232,4 +232,63 @@ const checkConflictOrdersDateFilters = function() {
 	return hasError;
 }
 
-export { sameFiltersNotConflict, checkConflictOrdersSpentFilters, checkConflictOrdersDateFilters }
+const orderDateFiltersNotConflict = function(collectionType) {
+	let col = collectionType == "accepted" ? this.acceptedFilters : this.removedFilters;
+	let orderDateFilters = col.filter(filter => filter.selectedFilter.includes("order_date"));
+	if (orderDateFilters.length != 2) return true;
+	let firstOrdFilter = orderDateFilters.filter(filter => filter.selectedFilter == "first_order_date")[0];
+	let lastOrdFilter = orderDateFilters.filter(filter => filter.selectedFilter == "last_order_date")[0];
+	// let firstOrderDateCompareValue = new Date(firstOrderDateVal.includes("&") ? firstOrderDateVal.split : firstOrderDateVal);
+	let firstOrdCondition = firstOrdFilter.selectedCondition;
+	let lastOrdCondition = lastOrdFilter.selectedCondition;
+	let firstOrderDateValue = calculateValue(firstOrdFilter.value, firstOrdCondition);
+	let lastOrderDateValue = calculateValue(lastOrdFilter.value, lastOrdCondition);
+	
+	const returnFirstOrderDateCompareValue = function() {
+		switch (firstOrdCondition) {
+			case "after":
+			case "matches_date":
+				return firstOrderDateValue;
+			case "between_date":
+				return firstOrderDateValue[0];
+			case "between_number":
+				return convertDaysAgoToDate(firstOrderDateValue[1]);
+			case "matches_number":
+			case "smaller_number":
+				return convertDaysAgoToDate(firstOrderDateValue);
+			default:
+				break;
+		}
+	}
+	let firstOrdCompareValue = returnFirstOrderDateCompareValue();
+	if (!firstOrdCompareValue) return true;
+
+	const returnLastOrderDateCompareValue = function() {
+		switch (lastOrdCondition) {
+			case "before":
+			case "matches_date":
+				return lastOrderDateValue;
+			case "between_date":
+				return lastOrderDateValue[1];
+			case "between_number":
+				return convertDaysAgoToDate(lastOrderDateValue[0]);
+			case "matches_number":
+			case "greater_number":
+				return convertDaysAgoToDate(lastOrderDateValue);
+			default:
+				break;
+		}
+	}
+	let lastOrdCompareValue = returnLastOrderDateCompareValue();
+	if (!lastOrdCompareValue) return true;
+
+	if (lastOrdCompareValue <= firstOrdCompareValue) {
+		this.markInvalidFilter(collectionType, firstOrdFilter, lastOrdFilter);
+		return false;
+	} else {
+		this.markInvalidFilter(collectionType, firstOrdFilter, lastOrdFilter, true);
+		return true;
+	}
+}
+
+export { sameFiltersNotConflict, checkConflictOrdersSpentFilters, checkConflictOrdersDateFilters, orderDateFiltersNotConflict }

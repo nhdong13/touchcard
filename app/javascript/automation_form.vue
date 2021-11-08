@@ -285,7 +285,7 @@
   import { isEmpty } from 'lodash'
   import CancelCampaignDialog from './components/cancel_campaign_dialog.vue'
   import { DEFAULT_DISCOUNT_PERCENTAGE, DEFAULT_WEEK_BEFORE_DISCOUNT_EXPIRE, MAXIMUM_CAMPAIGN_NAME_LENGTH } from './config';
-  import { sameFiltersNotConflict, checkConflictOrdersSpentFilters, checkConflictOrdersDateFilters } from 'automation_form_handle_conflicting_filters';
+  import { sameFiltersNotConflict, checkConflictOrdersSpentFilters, checkConflictOrdersDateFilters, orderDateFiltersNotConflict } from 'automation_form_handle_conflicting_filters';
   window.$ = $
   const CAMPAIGN_STATUS_FOR_DISABLE_DATE = ["sending", "complete", "out_of_credit", "error", "paused"];
 
@@ -804,75 +804,6 @@
         return true;
       },
 
-      orderDateFiltersNotConflict(collectionType) {
-        let col = collectionType == "accepted" ? this.acceptedFilters : this.removedFilters;
-        let orderDateFilters = col.filter(filter => filter.selectedFilter.includes("order_date"));
-        if (orderDateFilters.length != 2) return true;
-        let firstOrdFilter = orderDateFilters.filter(filter => filter.selectedFilter == "first_order_date")[0];
-        let lastOrdFilter = orderDateFilters.filter(filter => filter.selectedFilter == "last_order_date")[0];
-        // let firstOrderDateCompareValue = new Date(firstOrderDateVal.includes("&") ? firstOrderDateVal.split : firstOrderDateVal);
-
-        let firstOrdCompareValue = null;
-        switch (firstOrdFilter.selectedCondition) {
-          case "after":
-            firstOrdCompareValue = new Date(firstOrdFilter.value);
-            break;
-          case "between_date":
-            if (firstOrdFilter.value.split("&")[0] != "") {
-              firstOrdCompareValue = new Date(firstOrdFilter.value.split("&")[0]);
-            }
-            break;
-          case "between_number":
-            let numberOfDay = firstOrdFilter.value.split("&")[1];
-            if (numberOfDay != "") {
-              let today = new Date();
-              firstOrdCompareValue = today.setDate(today.getDate() - parseInt(numberOfDay));
-            }
-            break;
-          case "matches_number":
-            let today = new Date();
-            firstOrdCompareValue = today.setDate(today.getDate() - parseInt(firstOrdFilter.value));
-            break;
-          default:
-            break;
-        }
-        if (!firstOrdCompareValue) return true;
-
-        let lastOrdCompareValue = null;
-        switch (lastOrdFilter.selectedCondition) {
-          case "before":
-            lastOrdCompareValue = new Date(lastOrdFilter.value);
-            break;
-          case "between_date":
-            if (lastOrdFilter.value.split("&")[1] != "") {
-              lastOrdCompareValue = new Date(lastOrdFilter.value.split("&")[1]);
-            }
-            break;
-          case "between_number":
-            let numberOfDay = lastOrdFilter.value.split("&")[0];
-            if (numberOfDay != "") {
-              let today = new Date();
-              lastOrdCompareValue = today.setDate(today.getDate() - parseInt(numberOfDay));
-            }
-            break;
-          case "matches_number":
-            let today = new Date();
-            lastOrdCompareValue = today.setDate(today.getDate() - parseInt(lastOrdFilter.value));
-            break;
-          default:
-            break;
-        }
-        if (!lastOrdCompareValue) return true;
-
-        if (lastOrdCompareValue <= firstOrdCompareValue) {
-          this.markInvalidFilter(collectionType, firstOrdFilter, lastOrdFilter);
-          return false;
-        } else {
-          this.markInvalidFilter(collectionType, firstOrdFilter, lastOrdFilter, true);
-          return true;
-        }
-      },
-
       markInvalidFilter(collectionType, firstOrd, lastOrd, isUnmark=false) {
         let collection = collectionType == "accepted" ? this.acceptedFilters : this.removedFilters;
         if (isUnmark) {
@@ -887,6 +818,7 @@
       sameFiltersNotConflict,
       checkConflictOrdersSpentFilters,
       checkConflictOrdersDateFilters,
+      orderDateFiltersNotConflict,
 
       isFiltersValid() {
         if (this.isFilterComplete() && this.orderDateFiltersNotConflict("accepted") && this.orderDateFiltersNotConflict("removed") && this.sameFiltersNotConflict() && !this.checkConflictOrdersSpentFilters() && !this.checkConflictOrdersDateFilters()) {
