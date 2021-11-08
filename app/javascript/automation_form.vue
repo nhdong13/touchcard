@@ -17,10 +17,10 @@
         <input type="radio" id="automation" value="automation" v-model="campaign_type" v-on:click="setBudgetType">
         <label for="automation" class="mb-0">Automation</label>
       </span>
-      <!-- <span v-if="automation.campaign_status == 'draft' || automation.campaign_type == 'one_off'">
+      <span v-if="automation.campaign_status == 'draft' || automation.campaign_type == 'one_off'">
         <input type="radio" id="one_off" value="one_off" v-model="campaign_type" v-on:click="setBudgetType">
         <label for="one_off">One-off</label>
-      </span> -->
+      </span>
     </div>
 
     <div class="automation-section" v-if="campaign_type =='automation'">
