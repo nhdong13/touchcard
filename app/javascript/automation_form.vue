@@ -839,7 +839,11 @@
     }
   }
 </script>
-
+<style>
+  .datepicker-with-icon .vdp-datepicker input {
+    height: 22px;
+  }
+</style>
 <style lang="scss" scoped>
   [v-cloak] {
     display: none;
@@ -903,7 +907,7 @@
     .icon-calendar {
       width: 22px;
       height: 22px;
-      border: 1px solid;
+      border: 0.2px solid;
       border-left: 0;
       display: flex;
       justify-content: center;
@@ -912,6 +916,7 @@
     .icon-calendar-disabled {
       background: #f8f8f8;
       border-color: #d4d4d4;
+      cursor: default;
     }
   }
 
