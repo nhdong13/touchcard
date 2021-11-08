@@ -116,14 +116,14 @@
         </div>
       </div>
     </div>
-    <!-- <div :class="[errors.returnAddress ? 'invalid' : '', 'automation-section']">
+    <div :class="[errors.returnAddress ? 'invalid' : '', 'automation-section']">
       <label for="return-address-checkbox" class="noselect"><strong>Add Return Address</strong></label>
       <button @click="enableAddReturnAddress= !enableAddReturnAddress">Edit</button>
       <div class="nested-toggle return-address" v-if="enableAddReturnAddress">
         <div class="row">
           <div class="col-8">
             <div class="row center-items">
-              <div class="col-2 address-label"></div>
+              <div class="col-3 address-label"></div>
               <div class="col-6">
                 <span class="error d-none return-address-general-error">
                   <em>Please fill in all return address required fields.</em>
@@ -131,8 +131,8 @@
               </div>
             </div>
             <div class="row center-items">
-              <div class="col-2 address-label">
-                <h4>Name<span class='error'>*</span></h4>
+              <div class="col-3 address-label">
+                <h8>Name<span class='error'>*</span></h8>
               </div>
               <div class="col-6">
                 <div class="row">
@@ -142,8 +142,8 @@
               </div>
             </div>
             <div class="row center-items">
-              <div class="col-2 address-label">
-                <h4>Address line 1<span class='error'>*</span></h4>
+              <div class="col-3 address-label">
+                <h8>Address line 1<span class='error'>*</span></h8>
               </div>
               <div class="col-6">
                 <div class="row">
@@ -153,8 +153,8 @@
               </div>
             </div>
             <div class="row center-items">
-              <div class="col-2 address-label">
-                <h4>Address line 2</h4>
+              <div class="col-3 address-label">
+                <h8>Address line 2</h8>
               </div>
               <div class="col-6">
                 <div class="row">
@@ -163,8 +163,8 @@
               </div>
             </div>
             <div class="row center-items">
-              <div class="col-2 address-label">
-                <h4>City<span class='error'>*</span></h4>
+              <div class="col-3 address-label">
+                <h8>City<span class='error'>*</span></h8>
               </div>
               <div class="col-6">
                 <div class="row">
@@ -174,8 +174,8 @@
               </div>
             </div>
             <div class="row center-items">
-              <div class="col-2 address-label">
-                <h4>State<span class='error'>*</span></h4>
+              <div class="col-3 address-label">
+                <h8>State<span class='error'>*</span></h8>
               </div>
               <div class="col-6">
                 <div class="row">
@@ -185,8 +185,8 @@
               </div>
             </div>
             <div class="row center-items">
-              <div class="col-2 address-label">
-                <h4>Zip<span class='error'>*</span></h4>
+              <div class="col-3 address-label">
+                <h8>Zip<span class='error'>*</span></h8>
               </div>
               <div class="col-6">
                 <div class="row">
@@ -198,7 +198,7 @@
           </div>
         </div>
       </div>
-    </div> -->
+    </div>
     <h2 class="d-inline-block custom-h2 my-3">Customer Filters</h2>
     <button @click="downloadCSV"> CSV </button>
     <button @click="downloadTestCSV"> Test CSV </button>
