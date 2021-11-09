@@ -185,13 +185,24 @@ const checkConflictOrdersSpentFilters = function() {
 	[this.acceptedFilters, this.removedFilters].forEach((collection, index) => {
 		let lastOrderTotal = collection.find(ft=> ft.selectedFilter === 'last_order_total');
 		let allOrderTotal = collection.find(ft=> ft.selectedFilter === 'all_order_total');
+		const returnValueToCompare = function(condition, value, isLastOrder) {
+			let calculateVal = calculateValue(value, condition);
+			if ((condition === "matches_number") || 
+					(isLastOrder && condition === "greater_number") || 
+					(!isLastOrder && condition === "smaller_number")) {
+				return calculateVal;
+			}
+			
+			if (condition === "between_number") {
+				if (isLastOrder) return calculateVal[0];
+				return calculateVal[1];
+			}
+		}
+		
 		let isError = lastOrderTotal && allOrderTotal &&
-									lastOrderTotal.value !== null &&
-									allOrderTotal.value !== null &&
-									lastOrderTotal.selectedCondition === 'matches_number' &&
-									allOrderTotal.selectedCondition === 'matches_number' &&
-									lastOrderTotal.value > allOrderTotal.value;
-
+									returnValueToCompare(allOrderTotal.selectedCondition, allOrderTotal.value, false) <
+									returnValueToCompare(lastOrderTotal.selectedCondition, lastOrderTotal.value, true);
+		
 		let collectionName = index == 0 ? 'accepted':'removed';
 		
 		if (isError) {
