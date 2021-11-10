@@ -821,7 +821,7 @@
       orderDateFiltersNotConflict,
 
       isFiltersValid() {
-        if (this.isFilterComplete() && this.orderDateFiltersNotConflict("accepted") && this.orderDateFiltersNotConflict("removed") && this.sameFiltersNotConflict() && !this.checkConflictOrdersSpentFilters() && !this.checkConflictOrdersDateFilters()) {
+        if (this.isFilterComplete() && this.orderDateFiltersNotConflict() && !this.checkConflictOrdersDateFilters() && !this.checkConflictOrdersSpentFilters() && this.sameFiltersNotConflict()) {
           this.errors.filters = false;
           return true;
         } else {

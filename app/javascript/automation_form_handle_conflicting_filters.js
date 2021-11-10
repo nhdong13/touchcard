@@ -182,25 +182,27 @@ const sameFilterType = function (excludeCondition, includeCondition, includeValu
 
 const checkConflictOrdersSpentFilters = function() {
   let hasError = false;
+  unmarkInvalidBeforeCheck(this.acceptedFilters, this.removedFilters, this.markInvalidFilter);
   [this.acceptedFilters, this.removedFilters].forEach((collection, index) => {
     let lastOrderTotal = collection.find(ft=> ft.selectedFilter === 'last_order_total');
     let allOrderTotal = collection.find(ft=> ft.selectedFilter === 'all_order_total');
+    if (!lastOrderTotal || !allOrderTotal) return;
+    
     const returnValueToCompare = function(condition, value, isLastOrder) {
       let calculateVal = calculateValue(value, condition);
-      if ((condition === "matches_number") || 
-          (isLastOrder && condition === "greater_number") || 
-          (!isLastOrder && condition === "smaller_number")) {
+      if ((condition === 'matches_number') || 
+          (isLastOrder && condition === 'greater_number') || 
+          (!isLastOrder && condition === 'smaller_number')) {
         return calculateVal;
       }
       
-      if (condition === "between_number") {
+      if (condition === 'between_number') {
         if (isLastOrder) return calculateVal[0];
         return calculateVal[1];
       }
     }
     
-    let isError = lastOrderTotal && allOrderTotal &&
-                  returnValueToCompare(allOrderTotal.selectedCondition, allOrderTotal.value, false) <
+    let isError = returnValueToCompare(allOrderTotal.selectedCondition, allOrderTotal.value, false) <
                   returnValueToCompare(lastOrderTotal.selectedCondition, lastOrderTotal.value, true);
     
     let collectionName = index == 0 ? 'accepted':'removed';
@@ -218,13 +220,13 @@ const checkConflictOrdersSpentFilters = function() {
 
 const checkConflictOrdersDateFilters = function() {
   let hasError = false;
+  unmarkInvalidBeforeCheck(this.acceptedFilters, this.removedFilters, this.markInvalidFilter);
   [this.acceptedFilters, this.removedFilters].forEach((collection, index) => {
     let lastOrderDate = collection.find(ft=> ft.selectedFilter === 'last_order_date');
     let firstOrderDate = collection.find(ft=> ft.selectedFilter === 'first_order_date');
-    let isError = lastOrderDate && firstOrderDate &&
-                  lastOrderDate.value !== null &&
-                  firstOrderDate.value !== null &&
-                  ((lastOrderDate.selectedCondition === 'before' &&
+    if (!lastOrderDate || !firstOrderDate) return;
+
+    let isError = ((lastOrderDate.selectedCondition === 'before' &&
                   firstOrderDate.selectedCondition === 'before') ||
                   (lastOrderDate.selectedCondition === 'after' &&
                   firstOrderDate.selectedCondition === 'after')) &&
@@ -243,63 +245,56 @@ const checkConflictOrdersDateFilters = function() {
   return hasError;
 }
 
-const orderDateFiltersNotConflict = function(collectionType) {
-  let col = collectionType == "accepted" ? this.acceptedFilters : this.removedFilters;
-  let orderDateFilters = col.filter(filter => filter.selectedFilter.includes("order_date"));
-  if (orderDateFilters.length != 2) return true;
-  let firstOrdFilter = orderDateFilters.filter(filter => filter.selectedFilter == "first_order_date")[0];
-  let lastOrdFilter = orderDateFilters.filter(filter => filter.selectedFilter == "last_order_date")[0];
-  // let firstOrderDateCompareValue = new Date(firstOrderDateVal.includes("&") ? firstOrderDateVal.split : firstOrderDateVal);
-  let firstOrdCondition = firstOrdFilter.selectedCondition;
-  let lastOrdCondition = lastOrdFilter.selectedCondition;
-  let firstOrderDateValue = calculateValue(firstOrdFilter.value, firstOrdCondition);
-  let lastOrderDateValue = calculateValue(lastOrdFilter.value, lastOrdCondition);
-  
-  const returnFirstOrderDateCompareValue = function() {
-    switch (firstOrdCondition) {
-      case "after":
-      case "matches_date":
-        return firstOrderDateValue;
-      case "between_date":
-        return firstOrderDateValue[0];
-      case "between_number":
-        return convertDaysAgoToDate(firstOrderDateValue[1]);
-      case "matches_number":
-      case "smaller_number":
-        return convertDaysAgoToDate(firstOrderDateValue);
-      default:
-        break;
-    }
-  }
-  let firstOrdCompareValue = returnFirstOrderDateCompareValue();
-  if (!firstOrdCompareValue) return true;
+const orderDateFiltersNotConflict = function() {
+  let valid = true;
+  unmarkInvalidBeforeCheck(this.acceptedFilters, this.removedFilters, this.markInvalidFilter);
+  [this.acceptedFilters, this.removedFilters].forEach((collection, index) => {
+    let firstOrderDate = collection.find(filter => filter.selectedFilter == 'first_order_date');
+    let lastOrderDate = collection.find(filter => filter.selectedFilter == 'last_order_date');
+    let collectionType = index == 0 ? 'accepted':'removed'; 
+    if (!firstOrderDate || !lastOrderDate) return;
 
-  const returnLastOrderDateCompareValue = function() {
-    switch (lastOrdCondition) {
-      case "before":
-      case "matches_date":
-        return lastOrderDateValue;
-      case "between_date":
-        return lastOrderDateValue[1];
-      case "between_number":
-        return convertDaysAgoToDate(lastOrderDateValue[0]);
-      case "matches_number":
-      case "greater_number":
-        return convertDaysAgoToDate(lastOrderDateValue);
-      default:
-        break;
+    const returnCompareValue = function(condition, value, isFirst) {
+      let calculateVal = calculateValue(value, condition);
+      switch (condition) {
+        case isFirst ? 'after' : 'before':
+        case 'matches_date':
+          return calculateVal;
+        case 'between_date':
+          return isFirst ? calculateVal[0] : calculateVal[1];
+        case 'between_number':
+          return convertDaysAgoToDate(isFirst ? calculateVal[1] : calculateVal[0]);
+        case 'matches_number':
+        case isFirst ? 'smaller_number' : 'greater_number':
+          return convertDaysAgoToDate(calculateVal);
+        default:
+          break;
+      }
     }
-  }
-  let lastOrdCompareValue = returnLastOrderDateCompareValue();
-  if (!lastOrdCompareValue) return true;
 
-  if (lastOrdCompareValue <= firstOrdCompareValue) {
-    this.markInvalidFilter(collectionType, firstOrdFilter, lastOrdFilter);
-    return false;
-  } else {
-    this.markInvalidFilter(collectionType, firstOrdFilter, lastOrdFilter, true);
-    return true;
-  }
+    let firstCompareValue = returnCompareValue(firstOrderDate.selectedCondition, firstOrderDate.value, true);
+    let lastCompareValue = returnCompareValue(lastOrderDate.selectedCondition, lastOrderDate.value, false);
+    let isError = (!firstCompareValue || !lastCompareValue) ? false : lastCompareValue <= firstCompareValue;
+    
+    if (isError) {
+      this.markInvalidFilter(collectionType, firstOrderDate, lastOrderDate);
+      valid = false;
+    } else {
+      this.markInvalidFilter(collectionType, firstOrderDate, lastOrderDate, true);
+    }
+  })
+
+  return valid;
+}
+
+const unmarkInvalidBeforeCheck = function(acceptedFilters, removedFilters, markInvalidFilterfunc) {
+  [acceptedFilters, removedFilters].forEach((collection, index) => {
+    if (collection.lenght == 0) return;
+    let collectionType = index == 0 ? 'accepted' : 'removed';
+    collection.forEach(item => {
+      markInvalidFilterfunc(collectionType, item, item, true);
+    });
+  })
 }
 
 export { sameFiltersNotConflict, checkConflictOrdersSpentFilters, checkConflictOrdersDateFilters, orderDateFiltersNotConflict }
