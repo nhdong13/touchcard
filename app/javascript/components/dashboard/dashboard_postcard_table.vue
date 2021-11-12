@@ -30,7 +30,7 @@
             <td>{{ postcard.city }}, {{ postcard.state }}, {{ postcard.country }}</td>
             <td class="text-center">
               <i v-if="(postcard.sent || postcard.canceled) == false"
-                v-on:click="showModal(postcard.id)"
+                v-on:click="showModalConfirmCancelPostcard(postcard.id)"
                 class="material-icons mdc-button__icon cancel-postcard-button-icon"
                 v-b-tooltip title="Cancel postcard">
               cancel
@@ -69,7 +69,8 @@
   <modal name="cannot-cancel-postcard-modal" classes="delete-campaign-modal" width="450" height="200" :clickToClose="false">
     <div>
       <div>
-        <strong><h3>This postcard is sent and unable to cancel</h3></strong>
+        <strong v-if="isPostcardSent"><h3>This postcard is sent and unable to cancel</h3></strong>   
+        <strong v-else><h3> This postcard has been canceled. No change was made</h3></strong>
       </div>
       <div>
         <button v-on:click="closeModalCannotCancelPostcard" class="mdc-button mdc-button--stroked"> OK </button>
@@ -108,20 +109,31 @@
         thisPostcards: this.postcards,
         thisTotalPages: this.totalPages,
         currentPage: parseInt(this.searchParams.page) || 1,
-        loading: false
+        loading: false,
+        isPostcardSent: false,
       }
     },
     methods: {
       cancelPostcard: function () {
         this.$modal.hide("cancel-postcard-modal");
         this.loading = true;
+        let _this = this;
         let target = `/dashboard/${this.id}/cancel_postcard.json`;
         axios.patch(target, { params: { id: this.id } })
-          .then(() => {
-            this.reloadPostcards();
+          .then((response) => {
+            if (response.data.message === 'canceled') {
+              return this.reloadPostcards();
+            }
+
+            if (response.data.message === 'cannot cancel') {
+              _this.isPostcardSent = response.data.postcard_sent;
+              _this.loading = false;
+              _this.$modal.show('cannot-cancel-postcard-modal');
+            }
           }).catch(function (error) {
         })
       },
+
       reloadPostcards: function () {
         this.loading = true;
         this.id = "";
@@ -133,21 +145,17 @@
           }).catch(function(error) {
           })
       },
-      showModal: function (id) {
+
+      showModalConfirmCancelPostcard: function (id) {
         this.id = id;
-        this.loading = true;
-        let _this = this;
-        axios.get(`/dashboard/${ this.id }/get_postcard_sent.json`)
-          .then(function(response) {
-            _this.loading = false;
-            _this.$modal.show(response.data.postcard_sent ? 'cannot-cancel-postcard-modal' : 'cancel-postcard-modal');
-          }).catch(function (error) {
-        })
+        this.$modal.show('cancel-postcard-modal');
       },
+
       closeModalConfirmCancelPostcard: function () {
         this.reloadPostcards();
         this.$modal.hide('cancel-postcard-modal');
       },
+
       closeModalCannotCancelPostcard: function () {
         this.reloadPostcards();
         this.$modal.hide('cannot-cancel-postcard-modal');

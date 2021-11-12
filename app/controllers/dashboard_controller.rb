@@ -19,12 +19,11 @@ class DashboardController < BaseController
 
   def cancel_postcard
     @postcard = @current_shop.postcards.find(params[:id])
-    @postcard.cancel
-    render json: { postcard: PostcardSerializer.new(@postcard).to_json, message: "canceled", status: :ok }
-  end
-
-  def get_postcard_sent
-    @postcard = @current_shop.postcards.find(params[:id])
-    render json: { postcard_sent: @postcard.sent , status: :ok}
+    if @postcard.canceled || @postcard.sent
+      render json: { postcard_sent: @postcard.sent , message: "cannot cancel", status: :ok}
+    else
+      @postcard.cancel
+      render json: { message: "canceled", status: :ok}
+    end
   end
 end
