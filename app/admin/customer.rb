@@ -36,7 +36,9 @@ ActiveAdmin.register Customer do
         order&.shop
       end
       row :id
-      row "Shopify Id", :shopify_id
+      row "Shopify Id" do |customer|
+        customer.shopify_id
+      end
       row :first_name
       row :last_name
       row :email

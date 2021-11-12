@@ -5,6 +5,7 @@ class DashboardController < BaseController
       @postcards = @current_shop.postcards
         .or(@current_shop.postcards.where(canceled: true))
         .where(error: nil)
+        .includes(:customer)
         .order(created_at: :desc)
         .page(@current_page)
         .per(20)

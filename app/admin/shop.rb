@@ -88,7 +88,7 @@ ActiveAdmin.register Shop do
         link_to "List of Postcards",
                 controller: "postcards",
                 action: "index",
-                'q[card_order_shop_id_eq]' => "#{shop.id}".html_safe
+                'q[filter_postcards_by_shop]' => "#{shop.id}".html_safe
       end
       row "Orders" do
         link_to "List of Orders",
