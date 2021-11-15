@@ -57,7 +57,7 @@
   <modal name="cancel-postcard-modal" classes="delete-campaign-modal" width="450" height="200" :clickToClose="false">
     <div>
       <div>
-        <strong><h3>This action cannot be undone. Are you sure to cancel this postcard?</h3></strong>
+        <strong><h3>This action cannot be undone. Are you sure you want to cancel this postcard?</h3></strong>
       </div>
       <div>
         <button v-on:click="closeModalConfirmCancelPostcard" class="mdc-button mdc-button--stroked"> Back </button>
@@ -69,8 +69,8 @@
   <modal name="cannot-cancel-postcard-modal" classes="delete-campaign-modal" width="450" height="200" :clickToClose="false">
     <div>
       <div>
-        <strong v-if="isPostcardSent"><h3>This postcard is sent and unable to cancel</h3></strong>   
-        <strong v-else><h3> This postcard has been canceled. No change was made</h3></strong>
+        <strong v-if="isPostcardSent"><h3>Unable to cancel because this postcard has already been sent.</h3></strong>   
+        <strong v-else><h3>Unable to cancel because this postcard has already been canceled.</h3></strong>
       </div>
       <div>
         <button v-on:click="closeModalCannotCancelPostcard" class="mdc-button mdc-button--stroked"> OK </button>

@@ -5,9 +5,9 @@ ActiveAdmin.register Postcard do
   member_action :cancel, method: :patch do
     card = Postcard.find(params[:id])
     if card.canceled
-      redirect_to admin_postcards_path, alert: "This postcard has been canceled. No change was made"
+      redirect_to admin_postcards_path, alert: "Unable to cancel because this postcard has already been canceled."
     elsif card.sent
-      redirect_to admin_postcards_path, alert: "This postcard is sent and unable to cancel"
+      redirect_to admin_postcards_path, alert: "Unable to cancel because this postcard has already been sent."
     else
       card.cancel
       redirect_to admin_postcards_path
