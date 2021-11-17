@@ -155,7 +155,7 @@
     <modal name="deleteCampaignModal" classes="delete-campaign-modal" width="450" height="200" :clickToClose="false">
       <div>
         <div>
-          <strong><h3>This action cannot be undone and any pending postcards in this campaign will be canceled. Are you sure you want to delete the campaign(s)?</h3></strong>
+          <strong><h3>This action cannot be undone and any unsent postcards in this campaign will be canceled. Are you sure you want to delete the campaign(s)?</h3></strong>
         </div>
         <div>
           <button v-on:click="closeModalConfirmDeleteCampaign" class="mdc-button mdc-button--stroked"> Cancel </button>
