@@ -227,9 +227,9 @@ class CustomerTargetingService
       when "any_discount_code"
         user_orders.map{|order| order.discount_codes.map{|item| item['code']} if order.discount_codes.class == Array}.select{|order|order.class == Array}.flatten
       when "last_order_total"
-        filter_order.total_price.to_f / 100
+        filter_order.total_line_items_price.to_f / 100
       when "all_order_total"
-        user_orders.sum(:total_price).to_f / 100
+        user_orders.sum(:total_line_items_price).to_f / 100
       when "discount_amount"
         filter_order.discount_codes
       # end
@@ -489,7 +489,7 @@ class CustomerTargetingService
       customer.total_spent,
       customer_order.processed_at,
       customer_order.fulfillment_status,
-      customer_order.total_price,
+      customer_order.total_line_items_price,
       customer_first_order.processed_at,
       customer.postcards.count,
       customer.postcards.last&.date_sent,
