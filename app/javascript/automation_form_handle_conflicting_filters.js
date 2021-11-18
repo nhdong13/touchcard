@@ -97,9 +97,9 @@ const sameFilterType = function (excludeCondition, includeCondition, includeValu
         case 'between_date':
           return excludeValue[0] <= convertDaysAgoToDate(includeValue) && convertDaysAgoToDate(includeValue) <= excludeValue[1];
         case 'before':
-          return excludeValue > convertDaysAgoToDate(includeValue);
+          return excludeValue >= convertDaysAgoToDate(includeValue);
         case 'after':
-          return excludeValue < convertDaysAgoToDate(includeValue);
+          return excludeValue <= convertDaysAgoToDate(includeValue);
         case 'between_number':
           return excludeValue[0] <= includeValue && includeValue <= excludeValue[1];
         case 'greater_number':
@@ -113,9 +113,9 @@ const sameFilterType = function (excludeCondition, includeCondition, includeValu
         case 'between_date':
           return excludeValue[0] <= convertDaysAgoToDate(includeValue[1]) && convertDaysAgoToDate(includeValue[0]) <= excludeValue[1];
         case 'before':
-          return excludeValue > convertDaysAgoToDate(includeValue[0]);
+          return excludeValue >= convertDaysAgoToDate(includeValue[0]);
         case 'after':
-          return excludeValue < convertDaysAgoToDate(includeValue[1]);
+          return excludeValue <= convertDaysAgoToDate(includeValue[1]);
         case 'greater_number':
           return excludeValue <= includeValue[0];
         case 'smaller_number':
@@ -124,13 +124,13 @@ const sameFilterType = function (excludeCondition, includeCondition, includeValu
     
     case 'greater_number':
       if (excludeCondition == 'before') {
-        return excludeValue > convertDaysAgoToDate(includeValue);
+        return excludeValue >= convertDaysAgoToDate(includeValue);
       }
       break;
     
     case 'smaller_number':
       if (excludeCondition == 'after') {
-        return excludeValue < convertDaysAgoToDate(includeValue);
+        return excludeValue <= convertDaysAgoToDate(includeValue);
       }
       break;
     
@@ -139,9 +139,9 @@ const sameFilterType = function (excludeCondition, includeCondition, includeValu
         case 'between_date':
           return excludeValue[0] <= includeValue && includeValue <= excludeValue[1];
         case 'before':
-          return excludeValue > includeValue;
+          return excludeValue >= includeValue;
         case 'after':
-          return excludeValue < includeValue;
+          return excludeValue <= includeValue;
         case 'matches_number':
           return convertDaysAgoToDate(excludeValue).getTime() == includeValue.getTime();
         case 'between_number':
@@ -168,13 +168,13 @@ const sameFilterType = function (excludeCondition, includeCondition, includeValu
     
     case 'before':
       if (excludeCondition == 'greater_number') {
-        return convertDaysAgoToDate(excludeValue) > includeValue;
+        return convertDaysAgoToDate(excludeValue) >= includeValue;
       }
       break;
     
     case 'after':
       if (excludeCondition == 'smaller_number') {
-        return convertDaysAgoToDate(excludeValue) < includeValue;
+        return convertDaysAgoToDate(excludeValue) <= includeValue;
       }
       break;
   }
