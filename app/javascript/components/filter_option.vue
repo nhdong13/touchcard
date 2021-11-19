@@ -382,7 +382,7 @@
 </script>
 <style scoped>
 .filter-line {
-  width: 890px;
+  width: 910px;
   display: flex;
   margin-top: 15px;
 }
@@ -399,7 +399,7 @@
 }
 
 .option-dropdown {
-  width: 160px;
+  width: 180px;
   margin-right: 10px;
 }
 
@@ -495,14 +495,14 @@ input[type=number] {
 
 .datepicker-arrow {
   position: absolute;
-  left: 870px;
+  left: 890px;
   margin-top: 9px; 
   filter: brightness(0%); 
   width: 0.75em !important;
 }
 
 .datepicker-arrow.middle-arrow {
-  left: 602px;
+  left: 622px;
 }
 
 .datepicker-arrow path {

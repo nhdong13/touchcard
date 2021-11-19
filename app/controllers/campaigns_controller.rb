@@ -28,7 +28,6 @@ class CampaignsController < BaseController
       campaign = CardOrder.find_by(id: campaign_id)
       PaymentService.refund_cards_when_cancelled @current_shop, campaign
       campaign.archive
-      campaign.safe_destroy! rescue nil
     end
     respond_to do |format|
       format.html {}
