@@ -13,7 +13,7 @@ class OrdersCreateJob < ActiveJob::Base
         return puts "unable to create order (duplicate webhook?)"
       end
 
-      # order.connect_to_postcard
+      order.connect_to_postcard
       # return puts "no customer" unless order.customer
       # return puts "no default address" unless shopify_order.customer.respond_to?(:default_address)
       # return puts "no default address" unless shopify_order.customer.default_address
