@@ -67,7 +67,7 @@
       <input type="text" :class="['valueInput', {invalid: showError}]" v-model="filter.value" v-if="showTextInput()" @change="filterChange" />
       <input type="number" :class="['valueInput', {invalid: showError}]" v-model="filter.value" v-else-if="showNumberInput()" @change="filterChange" @keypress="preventDecimal($event)" min=0 />
 
-      <datepicker class="valueInput" v-model="filter.value" v-if="showDateInput()" @input="filterChange" :use-utc="true" format="MMM dd, yyyy" :input-class="{invalid: showError}" />
+      <datepicker class="valueInput" v-model="filter.value" v-if="showDateInput()" @input="filterChange" :use-utc="true" :disabled-dates="lastOrderDateDisabledDates()" format="MMM dd, yyyy" :input-class="{invalid: showError}" />
       <font-awesome-icon icon="chevron-down" v-if="showDateInput()" @click="triggerDatepicker(1)" class="datepicker-arrow" />
 
       <treeselect :class="['valueInput', {invalid: showError}]" v-model="filter.value" v-if="showCountrySelect()" :multiple="true" :options="countriesList" placeholder="Any country" />
@@ -101,7 +101,7 @@
   import VueTagsInput from '@johmun/vue-tags-input';
   const FILTERS_SHOW_NUMBER_INPUT = ['number_of_order', 'last_order_total', 'all_order_total']; //'total_spend', 'referring_site', 'landing_site', 'discount_amount'];
   const NUMBER_CONDITIONS = ["matches_number", "between_number", "greater_number", "smaller_number"];
-  const DATE_CONDITIONS = ["matches_date", "before", "between_date", "after", "disable_display_1", "disable_display_2"];
+  const DATE_CONDITIONS = ["matches_date", "before", "between_date", "after"]; //"disable_display_1", "disable_display_2"];
   export default {
     components: {
       Datepicker,Switcher,Treeselect,VueTagsInput
@@ -215,7 +215,8 @@
         //       (this.selectedFilter == "shipping_company" && ["no", "yes"].indexOf(option) > -1) ||
         //       (this.selectedFilter == 'discount_amount' && ["discount_amount_matches", "discount_amount_between"].includes(option));
         return (FILTERS_SHOW_NUMBER_INPUT.includes(this.selectedFilter) && NUMBER_CONDITIONS.includes(option)) ||
-               (this.selectedFilter.includes("order_date") && DATE_CONDITIONS.concat(NUMBER_CONDITIONS).includes(option));
+               (this.selectedFilter.includes("order_date") && DATE_CONDITIONS.includes(option));
+              // Hide days ago filters (this.selectedFilter.includes("order_date") && DATE_CONDITIONS.concat(NUMBER_CONDITIONS).includes(option);
       },
       isFilter(filterNames) {
         let correctFilter = false;
@@ -374,8 +375,18 @@
         if (e.currentTarget.value == "" && e.key==='.') {e.preventDefault()};
       },
       datePickerDisabledDates(isMinInput = true) {
+        if (this.selectedFilter === 'last_order_date') return this.lastOrderDateDisabledDates(isMinInput);
         if (isMinInput && this.value2) return {from: new Date(this.value2)};
         if (!isMinInput && this.value1) return {to: new Date(this.value1)};
+      },
+
+      lastOrderDateDisabledDates(isMinInput = false) {
+        if (this.selectedFilter !== 'last_order_date') return;
+        let today = new Date();
+        today.setDate(today.getDate() - 1);
+        if (isMinInput && this.value2) return { from: new Date(this.value2), to: today };
+        if (!isMinInput && this.value1) return { to: new Date(this.value1) };
+        return { to: today };
       }
     }
   }
