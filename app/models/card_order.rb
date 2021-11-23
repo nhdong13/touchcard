@@ -223,6 +223,7 @@ class CardOrder < ApplicationRecord
   end
 
   def toggle_pause
+    return self if self.complete?
     if self.enabled?
       update!(enabled: !self.enabled, campaign_status: :paused, previous_campaign_status: self.campaign_status_before_type_cast)
     else
@@ -243,11 +244,11 @@ class CardOrder < ApplicationRecord
   end
 
   def can_enabled?
-    today = Time.current.beginning_of_day
+    today = Time.current.to_time.to_date
     if self.automation?
-      send_continuously || send_date_end > today
+      send_continuously || send_date_end >= today
     elsif self.one_off?
-      send_date_start < today
+      send_date_start <= today
     end
   end
 

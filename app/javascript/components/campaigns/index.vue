@@ -47,7 +47,7 @@
             </td>
             <td>
               <span v-if="['Out of credit', 'Error', 'Draft', 'Complete'].includes(item.campaign_status)">
-                <md-switch class="md-primary" disabled />
+                <md-switch value="true" class="md-primary" disabled />
               </span>
               <span v-else>
                 <md-switch :value="!item.enabled" class="md-primary" @change="onChangeCampaignActive(item.id)" :disabled="disableToggle(item)" />
