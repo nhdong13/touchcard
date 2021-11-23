@@ -173,7 +173,7 @@ class CardOrder < ApplicationRecord
     # 4-6 business days delivery according to lob
     # TODO: handle international + 5 to 7 business days
     #send_date = arrive_by - 1.week
-    Date.current
+    return send_delay == 0 ? Date.current : Date.current + send_delay.weeks
   end
 
   def prepare_for_sending(postcard_trigger)

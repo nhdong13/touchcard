@@ -111,6 +111,7 @@ ActiveAdmin.register CardOrder, as: "Campaign" do
         link_to "edit", change_sending_status_admin_campaign_path(card_order) unless card_order.archived
       end   
       row :international
+      row :send_delay
       row :created_at
       row :updated_at
 

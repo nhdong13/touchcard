@@ -116,6 +116,11 @@
         </div>
       </div>
     </div>
+
+    <div class="automation-section d-flex">
+      <span><strong>Send delay </strong>Send card <input type="number" min="0" max="52" v-model="automation.send_delay"> weeks after purchase</span>
+    </div>
+
     <!-- <div :class="[errors.returnAddress ? 'invalid' : '', 'automation-section']">
       <label for="return-address-checkbox" class="noselect"><strong>Add Return Address</strong></label>
       <button @click="enableAddReturnAddress= !enableAddReturnAddress">Edit</button>
