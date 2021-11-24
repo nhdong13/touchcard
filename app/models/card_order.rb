@@ -188,7 +188,7 @@ class CardOrder < ApplicationRecord
         send_date: self.send_date,
         paid: false)
 
-    if shop.pay(postcard)
+    if shop.pay(postcard) && self.can_pay?(postcard)
       postcard.paid = true
       postcard.save
     else
@@ -276,6 +276,20 @@ class CardOrder < ApplicationRecord
   def get_status
     return "Archived" if self.archived
     self.enabled? ? "Enabled" : "Disabled"
+  end
+
+  def can_pay?(postcard)
+    if self.monthly?
+      available_budget = self.budget - self.budget_used
+      if available_budget < postcard.cost
+        out_of_credit!
+        return false
+      end
+      self.budget_used += postcard.cost
+      self.save!
+    else
+      true
+    end
   end
 
   private
