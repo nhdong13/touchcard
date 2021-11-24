@@ -90,7 +90,11 @@ class CardOrder < ApplicationRecord
         campaign_status: :paused
       )
     else
-      update(budget: budget_update)
+      if self.out_of_credit?
+        update(budget: budget_update, campaign_status: :paused)
+      else
+        update(budget: budget_update)
+      end
     end
   end
 
@@ -282,7 +286,7 @@ class CardOrder < ApplicationRecord
     if self.monthly?
       available_budget = self.budget - self.budget_used
       if available_budget < postcard.cost
-        self.toggle_pause
+        self.update(previous_campaign_status: CardOrder.campaign_statuses[self.campaign_status], campaign_status: :out_of_credit, enabled: false)
         return false
       end
       self.budget_used += postcard.cost
