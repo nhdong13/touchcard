@@ -24,15 +24,15 @@
     </div>
 
     <div class="automation-section" v-if="campaign_type =='automation'">
-      <strong>Monthly budget</strong>
       <span>
+      <strong>Monthly budget</strong>
         $ <input type="numer" v-on:keypress="restrictToNumber($event)" id="budget_limit" v-model="budget" maxlength = "5">
       </span>
     </div>
 
     <div class="automation-section d-flex" v-if="campaign_type =='one_off'">
       <div class="align-self-center">
-        <strong class="f-14">Campaign schedule</strong>
+        <strong>Campaign schedule</strong>
       </div>
       <div>
         <div class="filter-config nested-toggle">
@@ -68,7 +68,7 @@
 
     <div class="automation-section d-flex" v-if="campaign_type =='automation'">
       <div class="align-self-center">
-        <strong class="f-14">Campaign schedule</strong>
+        <strong>Campaign schedule</strong>
       </div>
       <div class="flex-center">
         <div class="campaign-section nested-toggle">
