@@ -118,7 +118,7 @@
     </div>
 
     <div class="automation-section d-flex">
-      <span><strong>Send delay </strong>Send card <input type="number" min="0" max="52" v-model="automation.send_delay"> weeks after purchase</span>
+      <span><strong>Send delay </strong>Send card <input type="number" min="0" max="52" v-model="automation.send_delay"> days after purchase</span>
     </div>
 
     <!-- <div :class="[errors.returnAddress ? 'invalid' : '', 'automation-section']">
