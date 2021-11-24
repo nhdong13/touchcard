@@ -788,8 +788,6 @@
         const date_end = new Date(this.sendDateEnd);
         date_start.setHours(0,0,0,0);
         date_end.setHours(0,0,0,0);
-        let dateEndString = `${date_end.getFullYear()}-${date_end.getMonth() + 1}-${date_end.getDate()}`;
-        if (dateEndString === this.automation.send_date_end) return true;
         if (date_end <= date_start) return false;
         let today = new Date();
         today.setHours(0,0,0,0);
