@@ -17,9 +17,8 @@ ActiveAdmin.register CardOrder, as: "Campaign" do
 
   member_action :change_enabled, method: :put do
     card_order = CardOrder.find(params[:id])
-    enabled = params[:card_order][:enabled]
-    card_order.enabled = enabled
-    card_order.save!
+    enabled = params[:card_order][:enabled] == "1"
+    card_order.toggle_pause unless card_order.enabled == enabled
     redirect_to admin_campaign_path(card_order)
   end
 
