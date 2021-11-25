@@ -39,7 +39,7 @@ class Subscription < ApplicationRecord
     # TODO error handling on shop failure
     subscription = shop.stripe_customer.subscriptions.retrieve(stripe_id)
     subscription.quantity = new_quantity
-    subscription.proration_behavior = "none"
+    subscription.proration_behavior = downgrade ? "none" : "always_invoice"
     subscription.save
     update(quantity: new_quantity, stripe_id: subscription.id)
     # don't need to do anything for downgrade as the billing won't change till
@@ -48,12 +48,12 @@ class Subscription < ApplicationRecord
     # if upgrading we want to immediately upgrade their credits by using a
     # one off charge for the delta credits between the two quantities
     # essentially they're buying extra credits for the month
-    Stripe::InvoiceItem.create({
-      customer: shop.stripe_customer.id,
-      amount: delta_quantity * plan.amount,
-      currency: "usd",
-      description: "Plan upgrade from #{old_quantity} cards to #{new_quantity} cards adding #{delta_quantity} cards for this month"
-    })
+    # Stripe::InvoiceItem.create({
+    #   customer: shop.stripe_customer.id,
+    #   amount: delta_quantity * plan.amount,
+    #   currency: "usd",
+    #   description: "Plan upgrade from #{old_quantity} cards to #{new_quantity} cards adding #{delta_quantity} cards for this month"
+    # })
     shop.update(credit: shop.credit + delta_quantity * (Plan.last.amount.to_f / 100))
   end
 
