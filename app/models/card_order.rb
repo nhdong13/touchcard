@@ -292,7 +292,7 @@ class CardOrder < ApplicationRecord
       self.budget_used += postcard.cost
       self.save! && self.shop.pay(postcard)
     else
-      true
+      self.shop.pay(postcard)
     end
   end
 
