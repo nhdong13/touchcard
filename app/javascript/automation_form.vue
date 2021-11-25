@@ -109,7 +109,7 @@
           </div>
         </div>
         <div class="send-continuously-option align-self-center">
-          <span>
+          <span class="send-continuously-bc-container">
             <input id="send-continuously" :class="['m-1', {'invalid-checkbox': errors.endDate}]" type="checkbox" @click="triggerErrorCheckbox" v-model="automation.send_continuously" />
           </span>
           <label for="send-continuously" class="noselect mb-0">- Ongoing</label>
@@ -1006,6 +1006,11 @@
   .custom-h2 {
     font-size: 1.5em;
     font-weight: 700;
+  }
+
+  .send-continuously-bc-container {
+    width: 21px;
+    height: 21px;
   }
 
 </style>
