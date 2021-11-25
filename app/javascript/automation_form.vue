@@ -6,16 +6,18 @@
     <div class="automation-section">
       <span>
         <strong><small :class="{error: errors.campaignName}" v-if="errors.campaignName">*</small> Campaign name</strong>
-        <input id="campaign_name" v-model="automation.campaign_name" :class="[errors.campaignName ? 'invalid' : '', 'error-wrapper']" maxlength="60">
+        <input id="campaign_name" v-model="automation.campaign_name" :class="[errors.campaignName ? 'invalid' : '']" maxlength="60">
         <span class="error campaign-name-error">This field is required.</span>
       </span>
     </div>
 
-    <div class="automation-section">
-      <strong>Type</strong>
-      <span v-if="automation.campaign_status == 'draft' || automation.campaign_type == 'automation'">
-        <input type="radio" id="automation" value="automation" v-model="campaign_type" v-on:click="setBudgetType">
-        <label for="automation" class="mb-0">Automation</label>
+    <div class="automation-section d-flex">
+      <div class="align-self-center">
+        <strong>Type</strong>
+      </div>
+      <span v-if="automation.campaign_status == 'draft' || automation.campaign_type == 'automation'" class="flex-center">
+        <input type="radio" class="m-1" id="automation" value="automation" v-model="campaign_type" v-on:click="setBudgetType">
+        <label for="automation" class="noselect mb-0">Automation</label>
       </span>
       <!-- <span v-if="automation.campaign_status == 'draft' || automation.campaign_type == 'one_off'">
         <input type="radio" id="one_off" value="one_off" v-model="campaign_type" v-on:click="setBudgetType">
@@ -117,8 +119,11 @@
       </div>
     </div>
 
-    <div class="automation-section d-flex">
-      <span><strong>Send delay </strong>Send card <input type="number" min="0" max="52" v-model="automation.send_delay"> days after purchase</span>
+    <div class="automation-section flex-center">
+      <strong>Send delay </strong>
+      <span class="nested-toggle">Send card</span>
+      <input type="number" min="0" max="52" id="send_delay" v-model="automation.send_delay" class="mx-1">
+      <span>days after purchase</span>
     </div>
 
     <!-- <div :class="[errors.returnAddress ? 'invalid' : '', 'automation-section']">
@@ -852,7 +857,10 @@
     display: none;
   }
   .automation-section{
-    margin: 16px 0
+    margin: 16px 0;
+    #campaign_name, #budget_limit, #send_delay {
+      height: 22px;
+    }
   }
   .nested-toggle {
     padding-left: 10px;
