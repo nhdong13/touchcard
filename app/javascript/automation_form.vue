@@ -123,7 +123,7 @@
       <strong>Send delay </strong>
       <span class="nested-toggle">Send card</span>
       <input type="number" min="0" max="52" id="send_delay" v-model="automation.send_delay" class="mx-1">
-      <span>days after purchase</span>
+      <span>weeks after purchase</span>
     </div>
 
     <!-- <div :class="[errors.returnAddress ? 'invalid' : '', 'automation-section']">
