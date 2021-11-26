@@ -269,7 +269,7 @@
       showModalConfirmDuplicate() {
         const selectedCampaignName = this.thisCampaigns.find(campaign => campaign.id == this.selected).campaign_name
         this.duplicateCampaignName = "Copy of " + selectedCampaignName;
-        if(this.duplicateCampaignName.length > MAXIMUM_CAMPAIGN_NAME_LENGTH) {
+        if (selectedCampaignName.length >= MAXIMUM_CAMPAIGN_NAME_LENGTH) {
           this.duplicateCampaignName = selectedCampaignName;
         }
         this.$modal.show('duplicateModal')
