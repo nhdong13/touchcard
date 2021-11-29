@@ -274,7 +274,7 @@ const orderDateFiltersNotConflict = function() {
 
     let firstCompareValue = returnCompareValue(firstOrderDate.selectedCondition, firstOrderDate.value, true);
     let lastCompareValue = returnCompareValue(lastOrderDate.selectedCondition, lastOrderDate.value, false);
-    let isError = (!firstCompareValue || !lastCompareValue) ? false : lastCompareValue <= firstCompareValue;
+    let isError = (!firstCompareValue || !lastCompareValue) ? false : lastCompareValue < firstCompareValue;
     
     if (isError) {
       this.markInvalidFilter(collectionType, firstOrderDate, lastOrderDate);
