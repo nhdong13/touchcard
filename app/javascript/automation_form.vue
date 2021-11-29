@@ -793,7 +793,7 @@
         const date_end = new Date(this.sendDateEnd);
         date_start.setHours(0,0,0,0);
         date_end.setHours(0,0,0,0);
-        if (date_end <= date_start) return false;
+        if (date_end < date_start) return false;
         let today = new Date();
         today.setHours(0,0,0,0);
         if (date_end < today) return false;
