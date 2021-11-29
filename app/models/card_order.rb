@@ -60,6 +60,7 @@ class CardOrder < ApplicationRecord
   after_initialize :ensure_defaults, if: :new_record?
   after_update :update_budget, if: :saved_change_to_budget_update?
   after_update :update_budget_type, if: :saved_change_to_budget_type?
+  after_update :change_campaign_status_on_schedule_changed
   before_update :save_schedule_of_complete_campaign
   before_save :validate_campaign_name
 
@@ -350,5 +351,11 @@ class CardOrder < ApplicationRecord
 
   def save_schedule_of_complete_campaign
     self.campaign_status = :draft if complete? && (send_date_end_changed? || send_continuously_changed?)
+  end
+
+  def change_campaign_status_on_schedule_changed
+    if saved_change_to_send_date_start? || saved_change_to_send_date_end?
+      self.define_current_status
+    end
   end
 end
