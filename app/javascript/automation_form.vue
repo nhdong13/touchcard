@@ -25,12 +25,12 @@
       </span> -->
     </div>
 
-    <div class="automation-section" v-if="campaign_type =='automation'">
+    <!-- <div class="automation-section" v-if="campaign_type =='automation'">
       <span>
       <strong>Monthly budget</strong>
         $ <input type="numer" v-on:keypress="restrictToNumber($event)" id="budget_limit" v-model="budget" maxlength = "5">
       </span>
-    </div>
+    </div> -->
 
     <div class="automation-section d-flex" v-if="campaign_type =='one_off'">
       <div class="align-self-center">
