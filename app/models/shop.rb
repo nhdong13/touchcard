@@ -123,7 +123,8 @@ class Shop < ApplicationRecord
   end
 
   def top_up
-    update_attribute(:credit, subscriptions.first.value)
+    # update_attribute(:credit, subscriptions.first.value)
+    self.update(credit: self.credit + subscriptions.first.value)
   end
 
   def credits_used
