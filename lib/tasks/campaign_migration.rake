@@ -3,6 +3,7 @@ task :migrate_filters => :environment do
   ActiveRecord::Base.transaction do
     CardOrder.find_each do |cp|
       old_filter = cp.filters.last
+      next unless old_filter.present?
       min = old_filter.filter_data["minimum"].to_f || -1.0
       max = old_filter.filter_data["maximum"].to_f.positive? ? filter.filter_data["maximum"].to_f : 1_000_000_000.0
       cp.filters.destroy_all
