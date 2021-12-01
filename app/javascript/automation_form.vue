@@ -122,7 +122,7 @@
     <div class="automation-section flex-center">
       <strong>Send delay </strong>
       <span class="nested-toggle">Send card</span>
-      <input type="number" min="0" max="365" id="send_delay" v-model="automation.send_delay" class="mx-1">
+      <input type="number" min="0" max="365" id="send_delay" v-model="automation.send_delay"  :class="['mx-1', {'invalid': errors.sendDelay}]">
       <span>days after purchase</span>
     </div>
 
@@ -360,7 +360,8 @@
           uploadedBackDesign: this.automation.back_json.background_url === undefined,
           returnAddress: false,
           campaignName: false,
-          filters: false
+          filters: false,
+          sendDelay: false
         },
         filterConditions: [],
         filterOptions: [],
@@ -705,6 +706,13 @@
         } else {
           this.errors.startDate = true;
           formValid = false;
+        }
+
+        if (isEmpty(this.automation.send_delay)) {
+          formValid = false;
+          this.errors.sendDelay = true;
+        } else {
+          this.errors.sendDelay = false
         }
 
         if (this.errors.uploadedFrontDesign) {
