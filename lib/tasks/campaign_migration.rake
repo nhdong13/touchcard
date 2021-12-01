@@ -26,10 +26,9 @@ end
 desc "Migrate start date for campaigns"
 task :migrate_start_date_of_campaigns => :environment do
   CardOrder.find_each do |cp|
-    cp.enabled = true
     cp.send_date_start = Date.current
     cp.send_continuously = true
-    cp.campaign_status = :sending
-    cp.save!
+    cp.campaign_status = :sending if cp.enabled?
+    cp.save
   end
 end
