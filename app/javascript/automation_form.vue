@@ -210,8 +210,8 @@
       </div>
     </div> -->
     <h2 class="d-inline-block custom-h2 my-3">Customer Filters</h2>
-    <button @click="downloadCSV"> CSV </button>
-    <button @click="downloadTestCSV"> Test CSV </button>
+    <!-- <button @click="downloadCSV"> CSV </button>
+    <button @click="downloadTestCSV"> Test CSV </button> -->
     <div class="filter-config row mx-0" :showError="errors.filters">
       <div id="accepted-section">
         <div class="filter-section-title">Include these customers</div>
