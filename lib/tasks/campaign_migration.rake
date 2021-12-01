@@ -5,7 +5,7 @@ task :migrate_filters => :environment do
       old_filter = cp.filters.last
       next unless old_filter.present?
       min = old_filter.filter_data["minimum"].to_f || -1.0
-      max = old_filter.filter_data["maximum"].to_f.positive? ? filter.filter_data["maximum"].to_f : 1_000_000_000.0
+      max = old_filter.filter_data["maximum"].to_f.positive? ? old_filter.filter_data["maximum"].to_f : 1_000_000_000.0
       cp.filters.destroy_all
       if old_filter.filter_data["minimum"].present? && old_filter.filter_data["maximum"].present?
         Filter.create(card_order_id: cp.id,
