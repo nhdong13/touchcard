@@ -22,7 +22,7 @@ desc "Upgrade subscription plan"
 end
 
 desc "Check if all shop moved to new subscription plan"
-  task :upgrade_subsciption_plan => :environment do
+  task :check_if_subscription_plan_all_changed => :environment do
     ActiveRecord::Base.transaction do
       new_plan = Plan.find_by(amount: 89, interval: "month", name: "$0.89/month", currency: "usd", interval_count: 1)
       Shop.all.each do |shop|
