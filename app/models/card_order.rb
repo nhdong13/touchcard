@@ -148,7 +148,7 @@ class CardOrder < ApplicationRecord
     self.filters << Filter.new(filter_data: {:accepted => {}, :removed => {}}) if self.filters.empty?
     # TODO: add defaults to schema that can be added
     # Custom price_rules only for campaigns of Kinsley Armelle shop
-    self.price_rules = {"target_selection"=>"entitled", "entitled_collection_ids"=>[157410590831]} if self.shop.domain.present? && self.shop.domain == "kinsley-armelle.myshopify.com"
+    self.price_rules = {"target_selection"=>"entitled", "entitled_collection_ids"=>[157410590831]} if self.shop.present? && self.shop.domain == "kinsley-armelle.myshopify.com"
   end
 
   def has_discount?
