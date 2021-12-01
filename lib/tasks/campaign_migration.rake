@@ -7,25 +7,24 @@ task :migrate_filters => :environment do
       min = old_filter.filter_data["minimum"].to_f || -1.0
       max = old_filter.filter_data["maximum"].to_f.positive? ? old_filter.filter_data["maximum"].to_f : 1_000_000_000.0
       cp.filters.destroy_all
+
+      filter_data = {"accepted"=> {
+          "number_of_order" =>{"condition"=>"matches_number", "value"=>1},
+        }, "removed"=>{}}
+
       if old_filter.filter_data["minimum"].present? && old_filter.filter_data["maximum"].present?
-        Filter.create(card_order_id: cp.id,
-          filter_data: {"accepted"=> {
-            "number_of_order" =>{"condition"=>"matches_number", "value"=>1},
-            "last_order_total"=>{"condition"=>"between_number", "value"=>"#{min}&#{max}"}
-          }, "removed"=>{}})
+        if max == 99999
+          filter_data["accepted"]["last_order_total"] = {"condition"=>"greater_number", "value"=>min}
+        else
+         filter_data["accepted"]["last_order_total"] = {"condition"=>"between_number", "value"=>"#{min}&#{max}"}
+        end
       elsif old_filter.filter_data["minimum"].present?
-        Filter.create(card_order_id: cp.id,
-          filter_data: {"accepted"=> {
-            "number_of_order" =>{"condition"=>"matches_number", "value"=>1},
-            "last_order_total"=>{"condition"=>"greater_number", "value"=>min}
-          }, "removed"=>{}})
+        filter_data["accepted"]["last_order_total"] = {"condition"=>"greater_number", "value"=>min}
       elsif old_filter.filter_data["maximum"].present?
-        Filter.create(card_order_id: cp.id,
-          filter_data: {"accepted"=> {
-            "number_of_order" =>{"condition"=>"matches_number", "value"=>1},
-            "last_order_total"=>{"condition"=>"smaller_number", "value"=>max}
-          }, "removed"=>{}})
+        filter_data["accepted"]["last_order_total"] = {"condition"=>"smaller_number", "value"=>max}
       end
+
+      Filter.create(card_order_id: cp.id, filter_data: filter_data)
     end
   end
 end
