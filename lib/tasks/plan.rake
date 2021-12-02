@@ -1,11 +1,12 @@
 desc "Upgrade subscription plan"
-  task :upgrade_subsciption_plan => :environment do
+  task :upgrade_subscription_plan => :environment do
     ## Before upgrade:
     ## - Create a product on Stripe
     ## - Change value to create new subscription plan, stripe_plan_id is the most IMPORTANT
 
     ActiveRecord::Base.transaction do
       # Create new subscription plan in backend
+      old_plan = Plan.find_by(amount: 99, interval: "month", name: "$0.99/month", currency: "usd", interval_count: 1)
       new_plan = Plan.find_by(amount: 89, interval: "month", name: "$0.89/month", currency: "usd", interval_count: 1)
       unless new_plan.present?
         new_plan = Plan.create(amount: 89, interval: "month", name: "$0.89/month", currency: "usd", interval_count: 1)
@@ -17,14 +18,11 @@ desc "Upgrade subscription plan"
       Shop.find_each{|shop| shop.update(credit: shop.credit * shop.current_subscription.plan.amount.to_f / 100) if shop.current_subscription.present?}
 
       # Update all shop to new subscription plan
-      Shop.find_each do |shop|
-        shop_subscription = shop.current_subscription
-        shop_subscription.change_plan(new_plan.reload.stripe_plan_id) if shop_subscription.present?
+      Subscription.find_each do |s|
+        new_quantity = (s.quantity * old_plan.amount / new_plan.amount) + 1
+        s.change_plan(new_plan.reload.stripe_plan_id, new_quantity)
+        s.update(plan_id: new_plan.id, quantity: new_quantity)
       end
-
-      Subscription.update_all(plan_id: new_plan.id)
-        # Init subscription dollar value into Subscription table and set current current value for each
-      Subscription.find_each{|sub| sub.update(value: sub.quantity * sub.plan.amount.to_f / 100)}
     end
 end
 

@@ -122,7 +122,7 @@
     <div class="automation-section flex-center">
       <strong>Send delay </strong>
       <span class="nested-toggle">Send card</span>
-      <input type="number" min="0" max="365" id="send_delay" v-model="automation.send_delay"  :class="['mx-1', {'invalid': errors.sendDelay}]">
+      <input type="number" min="0" max="365" id="send_delay" v-model="automation.send_delay" class="mx-1">
       <span>days after purchase</span>
     </div>
 
@@ -360,8 +360,7 @@
           uploadedBackDesign: this.automation.back_json.background_url === undefined,
           returnAddress: false,
           campaignName: false,
-          filters: false,
-          sendDelay: false
+          filters: false
         },
         filterConditions: [],
         filterOptions: [],
@@ -380,6 +379,8 @@
           let today = this.sendDateStart || new Date();
           let minDate = new Date(Math.max(...[today, new Date()]));
           minDate.setHours(0,0,0,0);
+          // function convertDateToUTC(date) { return new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds()); }
+          // console.log(convertDateToUTC(minDate))
           return {
             to: minDate
           }
@@ -642,6 +643,7 @@
         // Set campaign schedule value
         if (this.sendDateStart) this.automation.send_date_start = this.moment(this.sendDateStart).format("YYYY-MM-DD");
         if (isEmpty(this.sendDateEnd)) this.automation.send_date_end = this.moment(this.sendDateEnd).format("YYYY-MM-DD");
+        if (isEmpty(this.automation.send_delay)) this.automation.send_delay = 0;
 
         if (this.id) {
           axios.put(`/automations/${this.id}.json`, { card_order: this.automation})
@@ -706,13 +708,6 @@
         } else {
           this.errors.startDate = true;
           formValid = false;
-        }
-
-        if (isEmpty(this.automation.send_delay)) {
-          formValid = false;
-          this.errors.sendDelay = true;
-        } else {
-          this.errors.sendDelay = false
         }
 
         if (this.errors.uploadedFrontDesign) {
@@ -801,10 +796,11 @@
         const date_end = new Date(this.sendDateEnd);
         date_start.setHours(0,0,0,0);
         date_end.setHours(0,0,0,0);
-        if (date_end < date_start) return false;
+        if (date_end <= date_start) return false;
         let today = new Date();
-        today.setHours(0,0,0,0);
-        if (date_end < today) return false;
+        // today.setHours(0,0,0,0);
+        let utc_date = new Date(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate());
+        if (date_end < utc_date) return false;
         return true;
       },
 
