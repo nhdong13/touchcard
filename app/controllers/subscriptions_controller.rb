@@ -25,7 +25,7 @@ class SubscriptionsController < BaseController
     @subscription = Subscription.create(stripe_params)
 
     if @subscription.save
-      @subscription.shop.top_up
+      # @subscription.shop.top_up
       flash[:notice] = "Subscription successfully created"
       redirect_to start_sending_automation_path(campaign.id)
     else
