@@ -65,11 +65,11 @@ class Subscription < ApplicationRecord
 
   # Update subscription date to match the stripe dates
   def change_subscription_dates
-    subscription = shop.stripe_customer.subscriptions.retrieve(stripe_id)
-    return if subscription.blank?
+    stripe_subscription = shop.stripe_customer.subscriptions.retrieve(stripe_id) rescue nil
+    return if stripe_subscription.blank?
     update(
-      current_period_start: Time.at(subscription.current_period_start),
-      current_period_end:   Time.at(subscription.current_period_end)
+      current_period_start: Time.at(stripe_subscription.current_period_start),
+      current_period_end:   Time.at(stripe_subscription.current_period_end)
     )
   end
 
