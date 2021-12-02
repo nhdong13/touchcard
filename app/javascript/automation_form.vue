@@ -379,6 +379,8 @@
           let today = this.sendDateStart || new Date();
           let minDate = new Date(Math.max(...[today, new Date()]));
           minDate.setHours(0,0,0,0);
+          // function convertDateToUTC(date) { return new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds()); }
+          // console.log(convertDateToUTC(minDate))
           return {
             to: minDate
           }
@@ -794,10 +796,11 @@
         const date_end = new Date(this.sendDateEnd);
         date_start.setHours(0,0,0,0);
         date_end.setHours(0,0,0,0);
-        if (date_end < date_start) return false;
+        if (date_end <= date_start) return false;
         let today = new Date();
-        today.setHours(0,0,0,0);
-        if (date_end < today) return false;
+        // today.setHours(0,0,0,0);
+        let utc_date = new Date(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate());
+        if (date_end < utc_date) return false;
         return true;
       },
 

@@ -111,7 +111,7 @@ class Subscription < ApplicationRecord
     self.id
   end
 
-  def change_plan plan_id
-    Stripe::Subscription.update(stripe_id, {plan: plan_id}) rescue nil
+  def change_plan plan_id, new_quantity
+    Stripe::Subscription.update(stripe_id, {plan: plan_id, quantity: new_quantity}) rescue nil
   end
 end
