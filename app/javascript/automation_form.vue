@@ -122,7 +122,7 @@
     <div class="automation-section flex-center">
       <strong>Send delay </strong>
       <span class="nested-toggle">Send card</span>
-      <input type="number" min="0" max="365" id="send_delay" v-model="automation.send_delay"  :class="['mx-1', {'invalid': errors.sendDelay}]">
+      <input type="number" min="0" max="365" id="send_delay" v-model="automation.send_delay" class="mx-1">
       <span>days after purchase</span>
     </div>
 
@@ -360,8 +360,7 @@
           uploadedBackDesign: this.automation.back_json.background_url === undefined,
           returnAddress: false,
           campaignName: false,
-          filters: false,
-          sendDelay: false
+          filters: false
         },
         filterConditions: [],
         filterOptions: [],
@@ -642,6 +641,7 @@
         // Set campaign schedule value
         if (this.sendDateStart) this.automation.send_date_start = this.moment(this.sendDateStart).format("YYYY-MM-DD");
         if (isEmpty(this.sendDateEnd)) this.automation.send_date_end = this.moment(this.sendDateEnd).format("YYYY-MM-DD");
+        if (isEmpty(this.automation.send_delay)) this.automation.send_delay = 0;
 
         if (this.id) {
           axios.put(`/automations/${this.id}.json`, { card_order: this.automation})
@@ -706,13 +706,6 @@
         } else {
           this.errors.startDate = true;
           formValid = false;
-        }
-
-        if (isEmpty(this.automation.send_delay)) {
-          formValid = false;
-          this.errors.sendDelay = true;
-        } else {
-          this.errors.sendDelay = false
         }
 
         if (this.errors.uploadedFrontDesign) {
