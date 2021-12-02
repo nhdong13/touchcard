@@ -84,7 +84,8 @@ class Subscription < ApplicationRecord
       subscription = shop.stripe_customer.subscriptions.create(
         plan: plan.stripe_plan_id || '1',
         quantity: params[:quantity],
-        coupon: params[:coupon]
+        coupon: params[:coupon],
+        test_clock: "clock_1K2GZfJ1aSkEJ9MyOc2zToAN"
       )
       instance = super(params.merge(
         stripe_id: subscription.id,
