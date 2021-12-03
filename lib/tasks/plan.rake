@@ -19,7 +19,7 @@ desc "Upgrade subscription plan"
 
       # Update all shop to new subscription plan
       Subscription.find_each do |s|
-        new_quantity = (s.quantity * old_plan.amount / new_plan.amount) + 1
+        new_quantity = s.quantity * old_plan.amount / new_plan.amount
         s.change_plan(new_plan.reload.stripe_plan_id, new_quantity)
         s.update(plan_id: new_plan.id, quantity: new_quantity)
       end
