@@ -643,8 +643,8 @@
         // Set campaign schedule value
         if (this.sendDateStart) this.automation.send_date_start = this.moment(this.sendDateStart).format("YYYY-MM-DD");
         if (isEmpty(this.sendDateEnd)) this.automation.send_date_end = this.moment(this.sendDateEnd).format("YYYY-MM-DD");
-        if (isEmpty(this.automation.send_delay)) this.automation.send_delay = 0;
-
+        if (this.automation.send_delay == '') this.automation.send_delay = 0;
+       
         if (this.id) {
           axios.put(`/automations/${this.id}.json`, { card_order: this.automation})
             .then((response) => {
