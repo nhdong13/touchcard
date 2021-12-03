@@ -27,7 +27,7 @@ class SubscriptionsController < BaseController
     if @subscription.save
       # @subscription.shop.top_up
       flash[:notice] = "Subscription successfully created"
-      redirect_to start_sending_automation_path(campaign.id)
+      redirect_to start_sending_automation_path(campaign.id, :subscription_value => @subscription.value)
     else
       flash[:error] = @subscription.errors.full_messages.join("\n")
       render :new
