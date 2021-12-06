@@ -14,15 +14,17 @@ task :migrate_filters => :environment do
         cp.filters.destroy_all
 
         if old_filter.filter_data["minimum"].present? && old_filter.filter_data["maximum"].present?
-          if max == 99999
-            filter_data["accepted"]["last_order_total"] = {"condition"=>"greater_number", "value"=>min}
-          else
-          filter_data["accepted"]["last_order_total"] = {"condition"=>"between_number", "value"=>"#{min}&#{max}"}
+          if min != 0 && max == 99999
+            filter_data["accepted"]["last_order_total"] = {"condition"=>"greater_number", "value"=>min.to_s}
+          elsif min == 0 && max != 99999
+            filter_data["accepted"]["last_order_total"] = {"condition"=>"smaller_number", "value"=>max.to_s}
+          elsif min != 0 && max != 99999
+            filter_data["accepted"]["last_order_total"] = {"condition"=>"between_number", "value"=>"#{min}&#{max}"}
           end
-        elsif old_filter.filter_data["minimum"].present?
-          filter_data["accepted"]["last_order_total"] = {"condition"=>"greater_number", "value"=>min}
+        elsif old_filter.filter_data["minimum"].present? && min != 0
+          filter_data["accepted"]["last_order_total"] = {"condition"=>"greater_number", "value"=>min.to_s}
         elsif old_filter.filter_data["maximum"].present?
-          filter_data["accepted"]["last_order_total"] = {"condition"=>"smaller_number", "value"=>max}
+          filter_data["accepted"]["last_order_total"] = {"condition"=>"smaller_number", "value"=>max.to_s}
         end
       end
 
