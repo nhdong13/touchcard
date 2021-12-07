@@ -37,7 +37,7 @@ class CardOrder < ApplicationRecord
                                 allow_destroy: true
 
   validates :shop, :card_side_front, :card_side_back, presence: true
-  validates :campaign_name, length: {maximum: MAXIMUM_CAMPAIGN_NAME_LENGTH}
+  # validates :campaign_name, length: {maximum: MAXIMUM_CAMPAIGN_NAME_LENGTH}
   validates :discount_pct, numericality: { greater_than_or_equal_to: -100,
                                            less_than: 0,
                                            only_integer: true,
@@ -58,12 +58,12 @@ class CardOrder < ApplicationRecord
   scope :active, -> { where(archived: false) }
 
   after_initialize :ensure_defaults, if: :new_record?
-  after_update :update_budget, if: :saved_change_to_budget_update?
-  after_update :update_budget_type, if: :saved_change_to_budget_type?
-  after_update :replenish_budget, if: :saved_change_to_budget_used?
-  after_update :change_campaign_status_on_schedule_changed
-  before_update :save_schedule_of_complete_campaign
-  before_save :validate_campaign_name
+  # after_update :update_budget, if: :saved_change_to_budget_update?
+  # after_update :update_budget_type, if: :saved_change_to_budget_type?
+  # after_update :replenish_budget, if: :saved_change_to_budget_used?
+  # after_update :change_campaign_status_on_schedule_changed
+  # before_update :save_schedule_of_complete_campaign
+  # before_save :validate_campaign_name
 
   enum budget_type: [ :non_set, :monthly ]
   enum campaign_type: { automation: 0, one_off: 1 }
