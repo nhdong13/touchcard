@@ -48,10 +48,10 @@ ActiveAdmin.register Subscription do
     column :id do |subscription|
       link_to subscription.id, admin_subscription_path(subscription)
     end
-    column :shop do |subscription|
+    column :shop, :sortable => 'shops.name' do |subscription|
       subscription.shop
     end
-    column :sub_qty do |subscription|
+    column 'Sub Qty', sortable: :value do |subscription|
       number_to_currency(subscription.value)
     end
     column :current_period_start
