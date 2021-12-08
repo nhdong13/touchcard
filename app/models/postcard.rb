@@ -50,9 +50,10 @@ class Postcard < ApplicationRecord
 
   def self.send_all
     num_failed = 0
+    today = Date.current
     todays_cards = Postcard.joins(:shop)
-      .where("error IS NULL AND sent = FALSE AND canceled = FALSE AND send_date <= ?
-               AND shops.approval_state != ?", Date.current, "denied")
+      .where("error IS NULL AND paid = TRUE AND sent = FALSE AND canceled = FALSE AND send_date <= ? AND send_date >= ? 
+               AND shops.approval_state != ?", today, today - 2.weeks, "denied")
     todays_cards.each do |card|
       begin
         card.send_card
