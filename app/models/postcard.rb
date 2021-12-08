@@ -177,6 +177,14 @@ class Postcard < ApplicationRecord
     end rescue nil
   end
 
+  def completely_cancel
+    if self.cancel
+      @lob = Lob::Client.new(api_key: ENV['LOB_API_KEY'], api_version: LOB_API_VER)
+      @lob.postcards.destroy(self.postcard_id)
+      self.destroy
+    end
+  end
+
   def return_address
     if card_order.international
       return_address = card_order.return_address
