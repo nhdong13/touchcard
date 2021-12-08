@@ -29,12 +29,14 @@ end
 desc "Check if all shop moved to new subscription plan"
 task :check_if_subscription_plan_all_changed => :environment do
   ActiveRecord::Base.transaction do
+    a = []
     new_plan = Plan.find_by(amount: 89, interval: "month", name: "$0.89/month", currency: "usd", interval_count: 1)
     Shop.find_each do |shop|
       shop_subscription = shop.current_subscription
       shop_stripe_subscription = Stripe::Subscription.retrieve(shop_subscription.stripe_id) rescue nil
       # shop_subscription.change_plan(new_plan.reload.stripe_plan_id) if shop_subscription.present? && shop_subscription.plan.id != new_plan.id
-      puts shop.id if (shop_subscription && shop_subscription.plan.id != new_plan.id) || (shop_stripe_subscription && (shop_stripe_subscription.plan.nil? || shop_stripe_subscription.plan.amount != 89))
+      a.push(shop.id) if (shop_subscription && shop_subscription.plan.id != new_plan.id) || (shop_stripe_subscription && (shop_stripe_subscription.plan.nil? || shop_stripe_subscription.plan.amount != 89))
     end
+    puts a
   end
 end
