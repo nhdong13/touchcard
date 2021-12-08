@@ -49,7 +49,7 @@ ActiveAdmin.register Shop do
     column :credit do |shop|
       number_to_currency(shop.credit)
     end
-    column "Sub Qty" do |shop|
+    column "Sub Qty", :sortable => 'subscriptions.value' do |shop|
       number_to_currency(shop.current_subscription.value) if shop.current_subscription
     end
     column "Last Login", :last_login_at
