@@ -223,4 +223,20 @@ class Postcard < ApplicationRecord
   def self.filter_postcards_by_shop(shop_id)
     joins('LEFT OUTER JOIN card_orders ON card_orders.id = postcards.card_order_id').where('card_orders.shop_id = ?', shop_id)
   end
+
+  def get_all_invalid_postcard
+    res = []
+    Postcard.where('created_at >= ?',Time.now - 2.day).find_each do |pc|
+      order = pc.customer.orders.first
+      filter = pc.card_order.filters.last
+      if pc.customer.postcards.count > 1
+        res.push(pc.id)
+      elsif pc.customer.orders.count == 1
+        res.push(pc.id) unless CustomerTargetingService.new({order: order}, filter.filter_data[:accepted], filter.filter_data[:removed]).match_filter?
+      elsif pc.customer.orders.count >= 1 && pc.customer.postcards.count == 1
+        filter.filter_data[:accepted].delete("number_of_order")
+        res.push(pc.id) unless CustomerTargetingService.new({order: order}, filter.filter_data[:accepted], filter.filter_data[:removed]).match_filter?
+      end
+    end
+  end
 end
