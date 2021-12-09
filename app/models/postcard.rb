@@ -179,8 +179,10 @@ class Postcard < ApplicationRecord
 
   def completely_cancel
     if self.cancel
-      @lob = Lob::Client.new(api_key: ENV['LOB_API_KEY'], api_version: LOB_API_VER)
-      @lob.postcards.destroy(self.postcard_id)
+      if self.sent?
+        @lob = Lob::Client.new(api_key: ENV['LOB_API_KEY'], api_version: LOB_API_VER)
+        @lob.postcards.destroy(self.postcard_id)
+      end
       self.destroy
     end
   end
@@ -226,17 +228,20 @@ class Postcard < ApplicationRecord
 
   def get_all_invalid_postcard
     res = []
-    Postcard.where('created_at >= ?',Time.now - 2.day).find_each do |pc|
+    Postcard.where('created_at >= ?',Time.now - 2.day).where(paid: true).find_each do |pc|
       order = pc.customer.orders.first
-      filter = pc.card_order.filters.last
-      if pc.customer.postcards.count > 1
-        res.push(pc.id)
-      elsif pc.customer.orders.count == 1
-        res.push(pc.id) unless CustomerTargetingService.new({order: order}, filter.filter_data[:accepted], filter.filter_data[:removed]).match_filter?
-      elsif pc.customer.orders.count >= 1 && pc.customer.postcards.count == 1
-        filter.filter_data[:accepted].delete("number_of_order")
-        res.push(pc.id) unless CustomerTargetingService.new({order: order}, filter.filter_data[:accepted], filter.filter_data[:removed]).match_filter?
+      CardOrder.unscoped do
+        filter = pc.card_order.filters.last
+        if pc.customer.postcards.count > 1
+          res.push(pc.id)
+        elsif pc.customer.orders.count == 1
+          res.push(pc.id) unless CustomerTargetingService.new({order: order}, filter.filter_data[:accepted], filter.filter_data[:removed]).match_filter?
+        elsif pc.customer.orders.count >= 1 && pc.customer.postcards.count == 1
+          filter.filter_data[:accepted].delete("number_of_order")
+          res.push(pc.id) unless CustomerTargetingService.new({order: order}, filter.filter_data[:accepted], filter.filter_data[:removed]).match_filter?
+        end
       end
     end
+    res
   end
 end
