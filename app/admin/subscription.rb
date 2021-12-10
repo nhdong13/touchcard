@@ -35,8 +35,8 @@ ActiveAdmin.register Subscription do
   filter :shop , as: :select, collection: ->{Shop.select(:domain, :id).order(:domain)}
   filter :plan
   filter :quantity
-  filter :current_period_start
-  filter :current_period_end
+  filter :current_period_start, as: :date_range
+  filter :current_period_end, as: :date_range
   filter :created_at
   filter :updated_at
   filter :stripe_id
