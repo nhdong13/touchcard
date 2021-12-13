@@ -66,6 +66,15 @@ class Order < ApplicationRecord
     customer.default_address.country_code.present? && customer.default_address.country_code != "US"
   end
 
+  # Custom active_admin filter order by discount code in url /admin/orders
+  def self.ransackable_scopes(_auth_object = nil)
+    %i(filter_orders_by_discount)
+  end
+  
+  def self.filter_orders_by_discount(discount_code)
+    where("discount_codes like ?", "%#{discount_code}%")
+  end
+
   private
   def prepare_postcard_for_send
     PreparePostcardJob.perform_later(id)
