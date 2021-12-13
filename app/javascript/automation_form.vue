@@ -126,7 +126,7 @@
       <span>days after purchase</span>
     </div>
 
-    <!-- <div :class="[errors.returnAddress ? 'invalid' : '', 'automation-section']">
+    <div :class="[errors.returnAddress ? 'invalid' : '', 'automation-section']">
       <label for="return-address-checkbox" class="noselect"><strong>Add Return Address</strong></label>
       <button @click="enableAddReturnAddress= !enableAddReturnAddress">Edit</button>
       <div class="nested-toggle return-address" v-if="enableAddReturnAddress">
