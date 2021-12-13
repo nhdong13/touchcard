@@ -19,18 +19,18 @@
         <input type="radio" class="m-1" id="automation" value="automation" v-model="campaign_type" v-on:click="setBudgetType">
         <label for="automation" class="noselect mb-0">Automation</label>
       </span>
-      <span v-if="automation.campaign_status == 'draft' || automation.campaign_type == 'one_off'">
-        <input type="radio" id="one_off" value="one_off" v-model="campaign_type" v-on:click="setBudgetType">
-        <label for="one_off">One-off</label>
+      <span v-if="automation.campaign_status == 'draft' || automation.campaign_type == 'one_off'" class="flex-center">
+        <input type="radio" class="m-1" id="one_off" value="one_off" v-model="campaign_type" v-on:click="setBudgetType">
+        <label for="one_off" class="noselect mb-0">One-off</label>
       </span>
     </div>
 
-    <!-- <div class="automation-section" v-if="campaign_type =='automation'">
+    <div class="automation-section" v-if="campaign_type =='automation'">
       <span>
       <strong>Monthly budget</strong>
         $ <input type="numer" v-on:keypress="restrictToNumber($event)" id="budget_limit" v-model="budget" maxlength = "5">
       </span>
-    </div> -->
+    </div>
 
     <div class="automation-section d-flex" v-if="campaign_type =='one_off'">
       <div class="align-self-center">

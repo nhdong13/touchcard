@@ -288,17 +288,17 @@ class CardOrder < ApplicationRecord
   end
 
   def can_pay?(postcard)
-    # if self.monthly?
-    #   available_budget = self.budget - self.budget_used
-    #   if available_budget < postcard.cost
-    #     self.update(previous_campaign_status: CardOrder.campaign_statuses[self.campaign_status], campaign_status: :out_of_credit, enabled: false)
-    #     return false
-    #   end
-    #   self.budget_used += postcard.cost
-    #   self.save! && self.shop.pay(postcard)
-    # else
-    #   self.shop.pay(postcard)
-    # end
+    if self.monthly?
+      available_budget = self.budget - self.budget_used
+      if available_budget < postcard.cost
+        self.update(previous_campaign_status: CardOrder.campaign_statuses[self.campaign_status], campaign_status: :out_of_credit, enabled: false)
+        return false
+      end
+      self.budget_used += postcard.cost
+      self.save! && self.shop.pay(postcard)
+    else
+      self.shop.pay(postcard)
+    end
     self.shop.pay(postcard)
   end
 

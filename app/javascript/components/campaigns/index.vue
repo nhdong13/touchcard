@@ -69,9 +69,9 @@
             </td>
             <td>{{ item.campaign_status}}</td>
             <td>{{ item.campaign_type }}</td>
-            <!-- <td class="budget-max-width">
+            <td class="budget-max-width">
               <span class='t-b'> {{ item.campaign_type == "Automation" && item.budget != "-" ? `$${item.budget.toLocaleString('en-us')}/month` : item.budget }}</span>
-            </td> -->
+            </td>
             <td>
               {{ splitedSchedule(item.schedule)[0] }}
             </td>
@@ -110,10 +110,10 @@
                   <strong>Type</strong>
                   <span>{{ item.campaign_type}}</span>
                 </div>
-                <!-- <div class='column-info flex-column d-flex'>
+                <div class='column-info flex-column d-flex'>
                   <strong>Budget</strong>
                   <span>{{ item.campaign_type == "Automation" && item.budget != "-" ? `$${item.budget.toLocaleString('en-us')}/month` : item.budget }}</span>
-                </div> -->
+                </div>
                 <div class='column-info flex-column d-flex'>
                   <strong>Starts</strong>
                   <span>{{ splitedSchedule(item.schedule)[0] }}</span>
@@ -220,7 +220,7 @@
         tableColumns: [
           ["Status", "campaign_status"],
           ["Type", "campaign_type"],
-          // ["Budget", "budget"],
+          ["Budget", "budget"],
           ["Starts", "send_date_start"],
           ["Ends", "send_date_end"]
         ],
