@@ -22,7 +22,7 @@ ActiveAdmin.register Order do
     column "Disc ¢", :total_discounts
     column "Ln Itm ¢", :total_line_items_price
     column "Total ¢", :total_price
-    column :customer
+    column :customer, :sortable => 'customers.first_name'
     column :postcard_id
     column "Shopify Id", :shopify_id
     column :discount_codes

@@ -60,6 +60,8 @@ class CardOrder < ApplicationRecord
   after_initialize :ensure_defaults, if: :new_record?
   after_update :update_budget, if: :saved_change_to_budget_update?
   after_update :update_budget_type, if: :saved_change_to_budget_type?
+  after_update :replenish_budget, if: :saved_change_to_budget_used?
+  after_update :change_campaign_status_on_schedule_changed
   before_update :save_schedule_of_complete_campaign
   before_save :validate_campaign_name
 
@@ -87,10 +89,15 @@ class CardOrder < ApplicationRecord
     if budget_update < budget_used
       update(
         budget: budget_update,
-        campaign_status: :paused
+        campaign_status: :paused,
+        enabled: false
       )
     else
-      update(budget: budget_update)
+      if self.out_of_credit?
+        update(budget: budget_update, campaign_status: :paused)
+      else
+        update(budget: budget_update)
+      end
     end
   end
 
@@ -140,6 +147,8 @@ class CardOrder < ApplicationRecord
     self.campaign_status = :draft
     self.filters << Filter.new(filter_data: {:accepted => {}, :removed => {}}) if self.filters.empty?
     # TODO: add defaults to schema that can be added
+    # Custom price_rules only for campaigns of Kinsley Armelle shop
+    self.price_rules = {"target_selection"=>"entitled", "entitled_collection_ids"=>[157410590831]} if self.shop.present? && self.shop.domain == "kinsley-armelle.myshopify.com"
   end
 
   def has_discount?
@@ -173,7 +182,7 @@ class CardOrder < ApplicationRecord
     # 4-6 business days delivery according to lob
     # TODO: handle international + 5 to 7 business days
     #send_date = arrive_by - 1.week
-    Date.current
+    return send_delay == 0 ? Date.current : Date.current + send_delay.days
   end
 
   def prepare_for_sending(postcard_trigger)
@@ -188,7 +197,7 @@ class CardOrder < ApplicationRecord
         send_date: self.send_date,
         paid: false)
 
-    if shop.pay(postcard)
+    if self.can_pay?(postcard)
       postcard.paid = true
       postcard.save
     else
@@ -223,6 +232,7 @@ class CardOrder < ApplicationRecord
   end
 
   def toggle_pause
+    return self if self.complete?
     if self.enabled?
       update!(enabled: !self.enabled, campaign_status: :paused, previous_campaign_status: self.campaign_status_before_type_cast)
     else
@@ -243,11 +253,11 @@ class CardOrder < ApplicationRecord
   end
 
   def can_enabled?
-    today = Time.current.beginning_of_day
+    today = Time.current.to_time.to_date
     if self.automation?
-      send_continuously || send_date_end > today
+      send_continuously || send_date_end >= today
     elsif self.one_off?
-      send_date_start < today
+      send_date_start <= today
     end
   end
 
@@ -277,6 +287,21 @@ class CardOrder < ApplicationRecord
     self.enabled? ? "Enabled" : "Disabled"
   end
 
+  def can_pay?(postcard)
+    # if self.monthly?
+    #   available_budget = self.budget - self.budget_used
+    #   if available_budget < postcard.cost
+    #     self.update(previous_campaign_status: CardOrder.campaign_statuses[self.campaign_status], campaign_status: :out_of_credit, enabled: false)
+    #     return false
+    #   end
+    #   self.budget_used += postcard.cost
+    #   self.save! && self.shop.pay(postcard)
+    # else
+    #   self.shop.pay(postcard)
+    # end
+    self.shop.pay(postcard)
+  end
+
   private
   def validate_campaign_name
     if campaign_name_changed?
@@ -299,6 +324,8 @@ class CardOrder < ApplicationRecord
       # Case saving_name not exist
       # Return saving_name
       return saving_name unless shop.card_orders.where(campaign_name: saving_name).present?
+
+      saving_name = saving_name.delete_suffix(saving_name.last(2)).rstrip if saving_name.length > MAXIMUM_CAMPAIGN_NAME_LENGTH && saving_name.last(2).match?(/\d+/)
 
       #Case saving_name exists
       # Step 1: Find all campaign name like saving_name with Number at the end
@@ -328,5 +355,17 @@ class CardOrder < ApplicationRecord
 
   def save_schedule_of_complete_campaign
     self.campaign_status = :draft if complete? && (send_date_end_changed? || send_continuously_changed?)
+  end
+
+  def change_campaign_status_on_schedule_changed
+    if saved_change_to_send_date_start? || saved_change_to_send_date_end?
+      self.define_current_status
+    end
+  end
+
+  def replenish_budget
+    if self.out_of_credit?
+      self.update(campaign_status: :paused)
+    end
   end
 end

@@ -227,9 +227,9 @@ class CustomerTargetingService
       when "any_discount_code"
         user_orders.map{|order| order.discount_codes.map{|item| item['code']} if order.discount_codes.class == Array}.select{|order|order.class == Array}.flatten
       when "last_order_total"
-        filter_order.total_price.to_f / 100
+        filter_order.total_line_items_price.to_f / 100
       when "all_order_total"
-        user_orders.sum(:total_price).to_f / 100
+        user_orders.sum(:total_line_items_price).to_f / 100
       when "discount_amount"
         filter_order.discount_codes
       # end
@@ -272,11 +272,11 @@ class CustomerTargetingService
           splited_value = value.split("&")
           begin_value = splited_value[0].to_time.beginning_of_day
           end_value = splited_value[1].to_time.end_of_day
-          (field.to_time > begin_value) && (field.to_time < end_value)
+          (field.to_time >= begin_value) && (field.to_time <= end_value)
         when "before"
-          field.to_time < value.to_time.beginning_of_day
+          field.to_time <= value.to_time.end_of_day
         when "after"
-          field.to_time > value.to_time.end_of_day
+          field.to_time >= value.to_time.beginning_of_day
         when "matches_number"
           calculate_compare_number_field(field) == value.to_i
         when "between_number"
@@ -426,9 +426,9 @@ class CustomerTargetingService
     end
     shorthand += ": " + case value["condition"]
     when "before"
-      "<" + value["value"].to_date.strftime("%b %d, %Y")
+      "<=" + value["value"].to_date.strftime("%b %d, %Y")
     when "after"
-      ">" + value["value"].to_date.strftime("%b %d, %Y")
+      ">=" + value["value"].to_date.strftime("%b %d, %Y")
     when "between_date"
       date_1 = value["value"].split("&")[0].to_date.strftime("%b %d, %Y")
       date_2 = value["value"].split("&")[1].to_date.strftime("%b %d, %Y")
@@ -489,7 +489,7 @@ class CustomerTargetingService
       customer.total_spent,
       customer_order.processed_at,
       customer_order.fulfillment_status,
-      customer_order.total_price,
+      customer_order.total_line_items_price,
       customer_first_order.processed_at,
       customer.postcards.count,
       customer.postcards.last&.date_sent,

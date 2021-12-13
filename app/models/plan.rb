@@ -20,7 +20,7 @@ class Plan < ApplicationRecord
       amount: amount,
       interval: interval,
       currency: currency,
-      id: id,
+      # id: id,
       interval_count: interval_count,
       trial_period_days: trial_period_days,
       statement_descriptor: statement_descriptor,

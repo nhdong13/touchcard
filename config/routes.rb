@@ -44,7 +44,6 @@ Rails.application.routes.draw do
   resources :dashboard, only: [:index] do
     member do
       patch :cancel_postcard
-      get :get_postcard_sent
     end
   end
 

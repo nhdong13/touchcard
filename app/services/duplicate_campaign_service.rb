@@ -13,6 +13,7 @@ class DuplicateCampaignService
     card_order_clone.card_order_parent_id = @card_order.id
     card_order_clone.enabled = false
     card_order_clone.campaign_status = "draft"
+    card_order_clone.budget_used = 0 if card_order_clone.budget_used > 0
     card_order_clone.send_date_start = ( Time.now.end_of_day >= @card_order.send_date_start ) ? Time.now : @card_order.send_date_start
     unless card_order_clone.send_continuously
       if Time.now.end_of_day >= @card_order.send_date_end

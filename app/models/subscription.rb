@@ -39,6 +39,7 @@ class Subscription < ApplicationRecord
     # TODO error handling on shop failure
     subscription = shop.stripe_customer.subscriptions.retrieve(stripe_id)
     subscription.quantity = new_quantity
+    # subscription.proration_behavior = downgrade ? "none" : "always_invoice"
     subscription.proration_behavior = "none"
     subscription.save
     update(quantity: new_quantity, stripe_id: subscription.id)
@@ -64,11 +65,11 @@ class Subscription < ApplicationRecord
 
   # Update subscription date to match the stripe dates
   def change_subscription_dates
-    subscription = shop.stripe_customer.subscriptions.retrieve(stripe_id)
-    return if subscription.blank?
+    stripe_subscription = shop.stripe_customer.subscriptions.retrieve(stripe_id) rescue nil
+    return if stripe_subscription.blank?
     update(
-      current_period_start: Time.at(subscription.current_period_start),
-      current_period_end:   Time.at(subscription.current_period_end)
+      current_period_start: Time.at(stripe_subscription.current_period_start),
+      current_period_end:   Time.at(stripe_subscription.current_period_end)
     )
   end
 
@@ -110,7 +111,7 @@ class Subscription < ApplicationRecord
     self.id
   end
 
-  def change_plan plan_id
-    Stripe::Subscription.update(stripe_id, {plan: plan_id})
+  def change_plan plan_id, new_quantity
+    Stripe::Subscription.update(stripe_id, {plan: plan_id, quantity: new_quantity}) rescue nil
   end
 end

@@ -47,7 +47,7 @@
             </td>
             <td>
               <span v-if="['Out of credit', 'Error', 'Draft', 'Complete'].includes(item.campaign_status)">
-                <md-switch class="md-primary" disabled />
+                <md-switch value="true" class="md-primary" disabled />
               </span>
               <span v-else>
                 <md-switch :value="!item.enabled" class="md-primary" @change="onChangeCampaignActive(item.id)" :disabled="disableToggle(item)" />
@@ -69,14 +69,14 @@
             </td>
             <td>{{ item.campaign_status}}</td>
             <td>{{ item.campaign_type }}</td>
-            <td class="budget-max-width">
+            <!-- <td class="budget-max-width">
               <span class='t-b'> {{ item.campaign_type == "Automation" && item.budget != "-" ? `$${item.budget.toLocaleString('en-us')}/month` : item.budget }}</span>
+            </td> -->
+            <td>
+              {{ splitedSchedule(item.schedule)[0] }}
             </td>
             <td>
-              <span class='t-b'> {{ splitedSchedule(item.schedule)[0] }}</span>
-            </td>
-            <td>
-              <span class='t-b'> {{ splitedSchedule(item.schedule)[1] }}</span>
+              {{ splitedSchedule(item.schedule)[1] }}
             </td>
           </tr>
         </table>
@@ -110,10 +110,10 @@
                   <strong>Type</strong>
                   <span>{{ item.campaign_type}}</span>
                 </div>
-                <div class='column-info flex-column d-flex'>
+                <!-- <div class='column-info flex-column d-flex'>
                   <strong>Budget</strong>
                   <span>{{ item.campaign_type == "Automation" && item.budget != "-" ? `$${item.budget.toLocaleString('en-us')}/month` : item.budget }}</span>
-                </div>
+                </div> -->
                 <div class='column-info flex-column d-flex'>
                   <strong>Starts</strong>
                   <span>{{ splitedSchedule(item.schedule)[0] }}</span>
@@ -155,7 +155,7 @@
     <modal name="deleteCampaignModal" classes="delete-campaign-modal" width="450" height="200" :clickToClose="false">
       <div>
         <div>
-          <strong><h3>This action cannot be undone and any pending postcards in this campaign will be canceled. Are you sure you want to delete the campaign(s)?</h3></strong>
+          <strong><h3>This action cannot be undone and any unsent postcards in this campaign will be canceled. Are you sure you want to delete the campaign(s)?</h3></strong>
         </div>
         <div>
           <button v-on:click="closeModalConfirmDeleteCampaign" class="mdc-button mdc-button--stroked"> Cancel </button>
@@ -220,7 +220,7 @@
         tableColumns: [
           ["Status", "campaign_status"],
           ["Type", "campaign_type"],
-          ["Budget", "budget"],
+          // ["Budget", "budget"],
           ["Starts", "send_date_start"],
           ["Ends", "send_date_end"]
         ],
@@ -269,7 +269,7 @@
       showModalConfirmDuplicate() {
         const selectedCampaignName = this.thisCampaigns.find(campaign => campaign.id == this.selected).campaign_name
         this.duplicateCampaignName = "Copy of " + selectedCampaignName;
-        if(this.duplicateCampaignName.length > MAXIMUM_CAMPAIGN_NAME_LENGTH) {
+        if (selectedCampaignName.length >= MAXIMUM_CAMPAIGN_NAME_LENGTH) {
           this.duplicateCampaignName = selectedCampaignName;
         }
         this.$modal.show('duplicateModal')

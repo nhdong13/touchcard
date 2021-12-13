@@ -96,8 +96,10 @@ class AutomationsController < BaseController
     # a shop with credit less than 0.89$ can put any campaign to out of credit status
     @automation.update(enabled: true)
     @automation.define_current_status
-
-    if @current_shop.credit < 0.89
+    
+    sub_value = params[:subscription_value]
+    shop_credit = sub_value.present? ? sub_value.to_i : @current_shop.credit
+    if shop_credit < 0.89
       @automation.update(campaign_status: :out_of_credit, previous_campaign_status: @automation.campaign_status_before_type_cast)
     end
 

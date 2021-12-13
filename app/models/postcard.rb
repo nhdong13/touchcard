@@ -50,9 +50,10 @@ class Postcard < ApplicationRecord
 
   def self.send_all
     num_failed = 0
+    today = Date.current
     todays_cards = Postcard.joins(:shop)
-      .where("error IS NULL AND sent = FALSE AND canceled = FALSE AND send_date <= ?
-               AND shops.approval_state != ?", Date.current, "denied")
+      .where("error IS NULL AND paid = TRUE AND sent = FALSE AND canceled = FALSE AND send_date <= ? AND send_date >= ? 
+               AND shops.approval_state != ?", today, today - 2.weeks, "denied")
     todays_cards.each do |card|
       begin
         card.send_card
@@ -176,6 +177,16 @@ class Postcard < ApplicationRecord
     end rescue nil
   end
 
+  def completely_cancel
+    if self.cancel
+      if self.sent?
+        @lob = Lob::Client.new(api_key: ENV['LOB_API_KEY'], api_version: LOB_API_VER)
+        @lob.postcards.destroy(self.postcard_id)
+      end
+      self.destroy
+    end
+  end
+
   def return_address
     if card_order.international
       return_address = card_order.return_address
@@ -213,5 +224,24 @@ class Postcard < ApplicationRecord
 
   def self.filter_postcards_by_shop(shop_id)
     joins('LEFT OUTER JOIN card_orders ON card_orders.id = postcards.card_order_id').where('card_orders.shop_id = ?', shop_id)
+  end
+
+  def get_all_invalid_postcard
+    res = []
+    Postcard.where('created_at >= ?',Time.now - 2.day).where(paid: true).find_each do |pc|
+      order = pc.customer.orders.first
+      CardOrder.unscoped do
+        filter = pc.card_order.filters.last
+        if pc.customer.postcards.count > 1
+          res.push(pc.id)
+        elsif pc.customer.orders.count == 1
+          res.push(pc.id) unless CustomerTargetingService.new({order: order}, filter.filter_data[:accepted], filter.filter_data[:removed]).match_filter?
+        elsif pc.customer.orders.count >= 1 && pc.customer.postcards.count == 1
+          filter.filter_data[:accepted].delete("number_of_order")
+          res.push(pc.id) unless CustomerTargetingService.new({order: order}, filter.filter_data[:accepted], filter.filter_data[:removed]).match_filter?
+        end
+      end
+    end
+    res
   end
 end

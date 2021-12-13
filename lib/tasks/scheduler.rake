@@ -104,6 +104,23 @@ task :daily_update_campaign_status => :environment do
            .update_all(campaign_status: :complete, enabled: false)
 end
 
+desc "Daily replenish campaign's budget"
+task :daily_replenish_campaign_budget => :environment do
+  today = Date.current
+  CardOrder.where(budget_type: :monthly)
+    .where("send_date_start < ? AND extract(day from send_date_start) = ?", today, today.day)
+    .find_each{|cp| cp.update(budget_used: 0)}
+end
+
+desc "Change send delay from week to day for testing in staging"
+task :change_send_delay_to_day => :environment do
+  CardOrder.where.not(send_delay: 0).find_each do |campaign|
+    puts campaign.id
+    campaign.send_delay = campaign.send_delay * 7
+    campaign.save
+    puts ">>>>>>>>>>>> Done"
+  end
+end
 # TODO: Unused Automations Code
 #
 # namespace :shopify do

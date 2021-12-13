@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_10_07_120322) do
+ActiveRecord::Schema.define(version: 2021_12_01_145437) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
@@ -105,6 +105,7 @@ ActiveRecord::Schema.define(version: 2021_10_07_120322) do
     t.boolean "send_continuously", default: true
     t.integer "campaign_status", default: 0
     t.integer "previous_campaign_status"
+    t.integer "send_delay", default: 0, null: false
   end
 
   create_table "card_sides", id: :serial, force: :cascade do |t|

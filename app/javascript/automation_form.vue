@@ -6,16 +6,18 @@
     <div class="automation-section">
       <span>
         <strong><small :class="{error: errors.campaignName}" v-if="errors.campaignName">*</small> Campaign name</strong>
-        <input id="campaign_name" v-model="automation.campaign_name" :class="[errors.campaignName ? 'invalid' : '', 'error-wrapper']" maxlength="60">
+        <input id="campaign_name" v-model="automation.campaign_name" :class="[errors.campaignName ? 'invalid' : '']" maxlength="60">
         <span class="error campaign-name-error">This field is required.</span>
       </span>
     </div>
 
-    <div class="automation-section">
-      <strong>Type</strong>
-      <span v-if="automation.campaign_status == 'draft' || automation.campaign_type == 'automation'">
-        <input type="radio" id="automation" value="automation" v-model="campaign_type" v-on:click="setBudgetType">
-        <label for="automation" class="mb-0">Automation</label>
+    <div class="automation-section d-flex">
+      <div class="align-self-center">
+        <strong>Type</strong>
+      </div>
+      <span v-if="automation.campaign_status == 'draft' || automation.campaign_type == 'automation'" class="flex-center">
+        <input type="radio" class="m-1" id="automation" value="automation" v-model="campaign_type" v-on:click="setBudgetType">
+        <label for="automation" class="noselect mb-0">Automation</label>
       </span>
       <span v-if="automation.campaign_status == 'draft' || automation.campaign_type == 'one_off'">
         <input type="radio" id="one_off" value="one_off" v-model="campaign_type" v-on:click="setBudgetType">
@@ -23,16 +25,16 @@
       </span>
     </div>
 
-    <div class="automation-section" v-if="campaign_type =='automation'">
-      <strong>Monthly budget</strong>
+    <!-- <div class="automation-section" v-if="campaign_type =='automation'">
       <span>
+      <strong>Monthly budget</strong>
         $ <input type="numer" v-on:keypress="restrictToNumber($event)" id="budget_limit" v-model="budget" maxlength = "5">
       </span>
-    </div>
+    </div> -->
 
     <div class="automation-section d-flex" v-if="campaign_type =='one_off'">
       <div class="align-self-center">
-        <strong class="f-14">Campaign schedule</strong>
+        <strong>Campaign schedule</strong>
       </div>
       <div>
         <div class="filter-config nested-toggle">
@@ -68,7 +70,7 @@
 
     <div class="automation-section d-flex" v-if="campaign_type =='automation'">
       <div class="align-self-center">
-        <strong class="f-14">Campaign schedule</strong>
+        <strong>Campaign schedule</strong>
       </div>
       <div class="flex-center">
         <div class="campaign-section nested-toggle">
@@ -109,14 +111,22 @@
           </div>
         </div>
         <div class="send-continuously-option align-self-center">
-          <span>
+          <span class="send-continuously-bc-container">
             <input id="send-continuously" :class="['m-1', {'invalid-checkbox': errors.endDate}]" type="checkbox" @click="triggerErrorCheckbox" v-model="automation.send_continuously" />
           </span>
           <label for="send-continuously" class="noselect mb-0">- Ongoing</label>
         </div>
       </div>
     </div>
-    <div :class="[errors.returnAddress ? 'invalid' : '', 'automation-section']">
+
+    <div class="automation-section flex-center">
+      <strong>Send delay </strong>
+      <span class="nested-toggle">Send card</span>
+      <input type="number" min="0" max="365" id="send_delay" v-model="automation.send_delay" class="mx-1">
+      <span>days after purchase</span>
+    </div>
+
+    <!-- <div :class="[errors.returnAddress ? 'invalid' : '', 'automation-section']">
       <label for="return-address-checkbox" class="noselect"><strong>Add Return Address</strong></label>
       <button @click="enableAddReturnAddress= !enableAddReturnAddress">Edit</button>
       <div class="nested-toggle return-address" v-if="enableAddReturnAddress">
@@ -200,8 +210,8 @@
       </div>
     </div>
     <h2 class="d-inline-block custom-h2 my-3">Customer Filters</h2>
-    <button @click="downloadCSV"> CSV </button>
-    <button @click="downloadTestCSV"> Test CSV </button>
+    <!-- <button @click="downloadCSV"> CSV </button>
+    <button @click="downloadTestCSV"> Test CSV </button> -->
     <div class="filter-config row mx-0" :showError="errors.filters">
       <div id="accepted-section">
         <div class="filter-section-title">Include these customers</div>
@@ -369,6 +379,8 @@
           let today = this.sendDateStart || new Date();
           let minDate = new Date(Math.max(...[today, new Date()]));
           minDate.setHours(0,0,0,0);
+          // function convertDateToUTC(date) { return new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds()); }
+          // console.log(convertDateToUTC(minDate))
           return {
             to: minDate
           }
@@ -631,7 +643,8 @@
         // Set campaign schedule value
         if (this.sendDateStart) this.automation.send_date_start = this.moment(this.sendDateStart).format("YYYY-MM-DD");
         if (isEmpty(this.sendDateEnd)) this.automation.send_date_end = this.moment(this.sendDateEnd).format("YYYY-MM-DD");
-
+        if (this.automation.send_delay == '') this.automation.send_delay = 0;
+       
         if (this.id) {
           axios.put(`/automations/${this.id}.json`, { card_order: this.automation})
             .then((response) => {
@@ -783,12 +796,11 @@
         const date_end = new Date(this.sendDateEnd);
         date_start.setHours(0,0,0,0);
         date_end.setHours(0,0,0,0);
-        let dateEndString = `${date_end.getFullYear()}-${date_end.getMonth() + 1}-${date_end.getDate()}`;
-        if (dateEndString === this.automation.send_date_end) return true;
         if (date_end <= date_start) return false;
         let today = new Date();
-        today.setHours(0,0,0,0);
-        if (date_end < today) return false;
+        // today.setHours(0,0,0,0);
+        let utc_date = new Date(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate());
+        if (date_end < utc_date) return false;
         return true;
       },
 
@@ -821,7 +833,7 @@
       orderDateFiltersNotConflict,
 
       isFiltersValid() {
-        if (this.isFilterComplete() && this.orderDateFiltersNotConflict("accepted") && this.orderDateFiltersNotConflict("removed") && this.sameFiltersNotConflict() && !this.checkConflictOrdersSpentFilters() && !this.checkConflictOrdersDateFilters()) {
+        if (this.isFilterComplete() && this.orderDateFiltersNotConflict() && !this.checkConflictOrdersDateFilters() && !this.checkConflictOrdersSpentFilters() && this.sameFiltersNotConflict()) {
           this.errors.filters = false;
           return true;
         } else {
@@ -839,13 +851,20 @@
     }
   }
 </script>
-
+<style>
+  .datepicker-with-icon .vdp-datepicker input {
+    height: 22px;
+  }
+</style>
 <style lang="scss" scoped>
   [v-cloak] {
     display: none;
   }
   .automation-section{
-    margin: 16px 0
+    margin: 16px 0;
+    #campaign_name, #budget_limit, #send_delay {
+      height: 22px;
+    }
   }
   .nested-toggle {
     padding-left: 10px;
@@ -903,7 +922,7 @@
     .icon-calendar {
       width: 22px;
       height: 22px;
-      border: 1px solid;
+      border: 0.2px solid;
       border-left: 0;
       display: flex;
       justify-content: center;
@@ -912,6 +931,7 @@
     .icon-calendar-disabled {
       background: #f8f8f8;
       border-color: #d4d4d4;
+      cursor: default;
     }
   }
 
@@ -998,6 +1018,11 @@
   .custom-h2 {
     font-size: 1.5em;
     font-weight: 700;
+  }
+
+  .send-continuously-bc-container {
+    width: 21px;
+    height: 21px;
   }
 
 </style>

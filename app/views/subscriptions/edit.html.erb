@@ -9,18 +9,18 @@
     <button class="mdc-button mdc-button--stroked">Back</button>
   <% end %>
   <section class="text-center">
-    You're currently subscribed to <strong><%= @current_shop.current_subscription.quantity %></strong> postcards <strong>(<%= number_to_currency(@current_shop.current_subscription.value) %>)</strong> per month. Change to:
+    You're currently subscribed to <strong><%= @current_shop.current_subscription.quantity %></strong> postcards <strong>(<%= number_to_currency(@current_shop.current_subscription.value) %>)</strong> per month.
 
     <br>
-    <div><span v-cloak class="checkout-quantity-display f-s-300">{{ this.quantity }}</span><span class="f-s-200"> postcards / month</span></div>
+    <br>
+    <div>
+      <span class="f-s-200">Change to: <span v-cloak class="checkout-quantity-display">{{ this.quantity }}</span> postcards<span v-cloak class="checkout-display-price"> (${{ this.price.toFixed(2) }})</span> / month</span>
+    </div>
 
     <%= render 'slider', slider_index: update_index(@current_shop) %>
 
     <br><br>
 
-    <div>
-      <strong><span v-cloak class="checkout-display-price">$ {{ this.price.toFixed(2) }}</span></strong> per month
-    </div>
     <br>
 
     <%= form_with(model: @subscription, url: subscriptions_path(@subscription), local: true, id:'checkout-form') do |form| %>

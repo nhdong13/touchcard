@@ -98,6 +98,7 @@ class Shop < ApplicationRecord
       return false
     end
     customer = Stripe::Customer.create(source: token)
+    # customer = Stripe::Customer.create({source: token,test_clock: "clock_1K2GZfJ1aSkEJ9MyOc2zToAN"})
     return update_attribute(:stripe_customer_id, customer.id) if customer
     errors.add(:stripe_token, "was invalid")
     false
@@ -123,7 +124,8 @@ class Shop < ApplicationRecord
   end
 
   def top_up
-    update_attribute(:credit, subscriptions.first.value)
+    # update_attribute(:credit, subscriptions.first.value)
+    self.update(credit: self.credit + subscriptions.first.value)
   end
 
   def credits_used

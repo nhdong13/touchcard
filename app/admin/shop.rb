@@ -49,7 +49,7 @@ ActiveAdmin.register Shop do
     column :credit do |shop|
       number_to_currency(shop.credit)
     end
-    column "Sub Qty" do |shop|
+    column "Sub Qty", :sortable => 'subscriptions.value' do |shop|
       number_to_currency(shop.current_subscription.value) if shop.current_subscription
     end
     column "Last Login", :last_login_at
@@ -88,7 +88,7 @@ ActiveAdmin.register Shop do
         link_to "List of Postcards",
                 controller: "postcards",
                 action: "index",
-                'q[card_order_shop_id_eq]' => "#{shop.id}".html_safe
+                'q[filter_postcards_by_shop]' => "#{shop.id}".html_safe
       end
       row "Orders" do
         link_to "List of Orders",

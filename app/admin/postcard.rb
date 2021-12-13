@@ -4,8 +4,14 @@ ActiveAdmin.register Postcard do
 
   member_action :cancel, method: :patch do
     card = Postcard.find(params[:id])
-    card.cancel
-    redirect_to admin_postcards_path
+    if card.canceled
+      redirect_to admin_postcards_path, alert: "Unable to cancel because this postcard has already been canceled."
+    elsif card.sent
+      redirect_to admin_postcards_path, alert: "Unable to cancel because this postcard has already been sent."
+    else
+      card.cancel
+      redirect_to admin_postcards_path
+    end
   end
 
   # Only allow filtering by shops that actually sent a postcard
