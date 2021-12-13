@@ -7,7 +7,7 @@ ActiveAdmin.register Order do
   filter :total_discounts
   filter :total_line_items_price
   filter :total_price
-  filter :discount_codes
+  filter :filter_orders_by_discount, label: "Discount Codes", as: :string
   filter :processed_at
   filter :postcard_id
 
