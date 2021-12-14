@@ -299,7 +299,6 @@ class CardOrder < ApplicationRecord
     else
       self.shop.pay(postcard)
     end
-    self.shop.pay(postcard)
   end
 
   private
