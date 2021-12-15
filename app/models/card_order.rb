@@ -201,6 +201,7 @@ class CardOrder < ApplicationRecord
       postcard.paid = true
       postcard.save
     else
+      self.update!(previous_campaign_status: self.campaign_status_before_type_cast, campaign_status: :out_of_credit)
       return postcard.errors.full_messages.map{|msg| msg}.join("\n")
     end
   end
@@ -359,7 +360,7 @@ class CardOrder < ApplicationRecord
 
   def change_campaign_status_on_schedule_changed
     if saved_change_to_send_date_start? || saved_change_to_send_date_end?
-      self.define_current_status
+      self.define_current_status unless out_of_credit?
     end
   end
 
