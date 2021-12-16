@@ -2,13 +2,14 @@
 <div>	
   <div class="mdc-layout-grid__inner scheduled-cards-container">
     <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12">
-      <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
+      <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp table-max-width">
         <thead>
         <tr>
-          <th class="mdl-data-table__cell--non-numeric">Status</th>
-          <th class="mdl-data-table__cell--non-numeric">Name</th>
-          <th class="mdl-data-table__cell--non-numeric">Location</th>
-          <th class="mdl-data-table__cell--non-numeric"></th>
+          <th class="mdl-data-table__cell--non-numeric status-column">Status</th>
+          <th class="mdl-data-table__cell--non-numeric name-column">Name</th>
+          <th class="mdl-data-table__cell--non-numeric campaign-column">Campaign</th>
+          <th class="mdl-data-table__cell--non-numeric location-column">Location</th>
+          <th class="mdl-data-table__cell--non-numeric cancel-btn-column"></th>
         </tr>
         </thead>
         <tbody>
@@ -27,8 +28,9 @@
             </td>
 
             <td>{{ postcard.full_name }}</td>
+            <td>{{ postcard.campaign_name | truncate(35) }}</td>
             <td>{{ postcard.city }}, {{ postcard.state }}, {{ postcard.country }}</td>
-            <td class="text-center">
+            <td class="cancel-btn">
               <i v-if="(postcard.sent || postcard.canceled) == false"
                 v-on:click="showModalConfirmCancelPostcard(postcard.id)"
                 class="material-icons mdc-button__icon cancel-postcard-button-icon"
@@ -38,7 +40,7 @@
             </td>
           </tr>
           <tr>
-            <td colspan="4">
+            <td colspan="5">
               <div id="pagination">
                 <CustomPagination
                   v-model="currentPage"
@@ -103,6 +105,7 @@
       CustomPagination,
       LoadingDialog
     },
+
     data: function() {
       return {
         id: "",
@@ -113,6 +116,7 @@
         isPostcardSent: false,
       }
     },
+
     methods: {
       cancelPostcard: function () {
         this.$modal.hide("cancel-postcard-modal");
@@ -160,6 +164,14 @@
         this.reloadPostcards();
         this.$modal.hide('cannot-cancel-postcard-modal');
       }
+    },
+
+    filters: {
+      truncate: function(data, num) {
+        if (data.length <= num) return data;
+        let truncate_name = data.slice(0, num) + "..."
+        return truncate_name
+      }
     }
   }
 </script>
@@ -167,7 +179,35 @@
   .cancel-postcard-button-icon {
     cursor: pointer;
   }
-  .text-center {
+
+  .cancel-btn {
     text-align: center;
+    padding-left: 6px;
+  }
+  
+  .table-max-width {
+    table-layout: fixed;
+    width: 1075px;
+  }
+
+  .status-column {
+    width: 160px;
+  }
+  
+  .name-column {
+    width: 200px;
+  }
+
+  .campaign-column {
+    width: 250px;
+  }
+
+  .location-column {
+    width: 300px;
+  }
+  
+  .cancel-btn-column {
+    width: 40px;
+    padding-left: 6px;
   }
 </style>

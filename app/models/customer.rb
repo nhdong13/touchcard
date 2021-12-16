@@ -4,6 +4,7 @@ class Customer < ApplicationRecord
   has_many :addresses
   has_many :shops, through: :orders
   has_many :checkouts
+  has_one :default_addr, -> { where default: true }, class_name: "Address"
 
   validates :shopify_id, presence: true
   validates :shopify_id, uniqueness: true
@@ -11,7 +12,8 @@ class Customer < ApplicationRecord
   scope :marketing_eligible, -> { where(accepts_marketing: true) }
 
   def default_address
-    @default_address ||= addresses.find_by(default: true) || addresses.last
+    # @default_address ||= addresses.find_by(default: true) || addresses.last
+    @default_address ||= default_addr || addresses.last
   end
 
   def new_customer?(shop_id=nil)
