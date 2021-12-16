@@ -1,22 +1,11 @@
 <%= currently_at "Dashboard" %>
 
+<div class="d-flex">
+  <%= select_tag :selected_campaign, options_for_select(@current_shop.card_orders.pluck(:campaign_name, :id), params[:campaign_id]), {prompt: "-- All --", class: "dashboard-campaign-selector mb-3 ml-auto"} %>
+</div>
+
 <div class="mdc-layout-grid__inner">
-  <% if @current_shop.revenue %>
-      <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4">
-        <div class="mdc-card sales-realized-card">
-          <div class="mdc-card__horizontal-block">
-            <div class="mdc-card__media mdc-card__media-item">
-              <i class="material-icons mdc-card__media-item" style="font-size: 300%;">shopping_cart</i>
-            </div>
-            <section class="mdc-card__primary">
-              <h2 class="mdc-card__subtitle">Sales</h2>
-              <h1 class="mdc-card__title mdc-card__title--large"><%= number_to_currency (@current_shop.revenue / 100.0) %></h1>
-            </section>
-          </div>
-        </div>
-      </div>
-  <% end %>
-  <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4">
+  <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-3">
     <div class="mdc-card cards-sent-card">
       <div class="mdc-card__horizontal-block">
         <div class="mdc-card__media mdc-card__media-item">
@@ -24,11 +13,59 @@
         </div>
         <section class="mdc-card__primary">
           <h2 class="mdc-card__subtitle">Cards Sent</h2>
-          <h1 class="mdc-card__title mdc-card__title--large"><%= @current_shop.cards_sent %></h1>
+          <h1 class="mdc-card__title mdc-card__title--large"><%= @current_shop.cards_sent(params[:campaign_id]) %></h1>
         </section>
       </div>
     </div>
   </div>
+
+  <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-3">
+    <div class="mdc-card cards-sent-card">
+      <div class="mdc-card__horizontal-block">
+        <div class="mdc-card__media mdc-card__media-item">
+          <i class="material-icons mdc-card__media-item" style="font-size: 300%;">monetization_on</i>
+        </div>
+        <section class="mdc-card__primary">
+          <h2 class="mdc-card__subtitle">Realized ad spend</h2>
+          <h1 class="mdc-card__title mdc-card__title--large">0</h1>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <% if @current_shop.revenue %>
+      <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-3">
+        <div class="mdc-card sales-realized-card">
+          <div class="mdc-card__horizontal-block">
+            <div class="mdc-card__media mdc-card__media-item">
+              <i class="material-icons mdc-card__media-item" style="font-size: 300%;">shopping_cart</i>
+            </div>
+            <section class="mdc-card__primary">
+              <h2 class="mdc-card__subtitle">Revenue</h2>
+              <h1 class="mdc-card__title mdc-card__title--large"><%= number_to_currency (@current_shop.revenue / 100.0) %></h1>
+            </section>
+          </div>
+        </div>
+      </div>
+  <% end %>
+
+  <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-3">
+    <div class="mdc-card cards-sent-card">
+      <div class="mdc-card__horizontal-block">
+        <div class="mdc-card__media mdc-card__media-item">
+          <i class="material-icons mdc-card__media-item" style="font-size: 300%;">monetization_on</i>
+        </div>
+        <section class="mdc-card__primary">
+          <h2 class="mdc-card__subtitle">ROAS</h2>
+          <h1 class="mdc-card__title mdc-card__title--large">
+            0
+          </h1>
+        </section>
+      </div>
+    </div>
+  </div>
+
+<% if false %>
   <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4">
     <div class="mdc-card cards-sent-card">
       <div class="mdc-card__horizontal-block">
@@ -44,6 +81,7 @@
       </div>
     </div>
   </div>
+<% end %>
 
 </div>
 
@@ -54,3 +92,15 @@
               total_pages: @postcards.total_pages,
             }
 %>
+
+<%= javascript_tag do %>
+  $(document).ready(function() {
+    $("#selected_campaign").change(function() {
+      let directUrl = "<%= dashboard_index_path %>";
+      if (this.value !== '') {
+        directUrl += "?campaign_id=" + this.value;
+      }
+      window.location.href = directUrl
+    })
+  })
+<% end %>

@@ -7,8 +7,8 @@ class DashboardController < BaseController
         .where(error: nil)
         .includes(:customer)
         .order(created_at: :desc)
-        .page(@current_page)
-        .per(20)
+      @postcards = @postcards.where(card_order_id: params[:campaign_id]) if params[:campaign_id].present?
+      @postcards = @postcards.page(@current_page).per(20)
     end
     respond_to do |format|
       format.html { render :index }

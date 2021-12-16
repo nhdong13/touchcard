@@ -35,9 +35,11 @@ class Shop < ApplicationRecord
     subscriptions.last
   end
 
-  def cards_sent
+  def cards_sent campaign_id=nil
     CardOrder.unscoped do
-      postcards.where(sent: true).count
+      pcs = postcards.where(sent: true)
+      pcs = pcs.where(card_order_id: campaign_id) if campaign_id.present?
+      pcs.count
     end
   end
 
