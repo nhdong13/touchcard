@@ -28,7 +28,7 @@ ActiveAdmin.register Postcard do
   filter :estimated_arrival
   filter :canceled
   filter :price_rule
-  filter :discount_pct
+  filter :discount_pct_is, label: "Discount Pct", as: :numeric
 
   index pagination_total: false do
     # actions

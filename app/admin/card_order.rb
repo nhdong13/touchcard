@@ -57,7 +57,7 @@ ActiveAdmin.register CardOrder, as: "Campaign" do
   end
   
   filter :shop , as: :select, collection: ->{Shop.select(:domain, :id).order(:domain)}
-  filter :discount_pct
+  filter :discount_pct_is, label: "Discount Pct", as: :numeric
   filter :discount_exp
   filter :enabled
   filter :archived

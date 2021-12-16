@@ -1,3 +1,5 @@
+require "admin_custom_discount_pct_filters"
+
 class CardOrder < ApplicationRecord
   TYPES = ['PostSaleOrder', 'CustomerWinbackOrder', 'LifetimePurchaseOrder', 'AbandonedCheckout']
 
@@ -302,6 +304,14 @@ class CardOrder < ApplicationRecord
     end
   end
 
+  # Custom active_admin filter discount_pct in url /admin/campaigns
+  extend AdminCustomDiscountPctFilters
+  
+  def self.ransackable_scopes(_auth_object = nil)
+    %i[discount_pct_is_equals discount_pct_is_greater_than discount_pct_is_less_than]
+  end
+  # Above methods are for custom filter in active_admin
+  
   private
   def validate_campaign_name
     if campaign_name_changed?
