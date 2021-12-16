@@ -1,7 +1,7 @@
 <%= currently_at "Dashboard" %>
 
 <div class="d-flex">
-  <%= select_tag :selected_campaign, options_for_select(@current_shop.card_orders.pluck(:campaign_name, :id), params[:campaign_id]), {prompt: "-- All --", class: "dashboard-campaign-selector mb-3 ml-auto"} %>
+  <%= select_tag :selected_campaign, options_for_select(@current_shop.card_orders.active.order(:campaign_name).pluck(:campaign_name, :id), params[:campaign_id]), {prompt: "-- All --", class: "dashboard-campaign-selector mb-3 w-50"} %>
 </div>
 
 <div class="row summarize-tabs">
@@ -59,7 +59,7 @@
         <section class="mdc-card__primary d-block w-100 pr-0">
           <h2 class="mdc-card__subtitle">ROAS</h2>
           <h1 class="mdc-card__title mdc-card__title--large">
-            <%= number_to_currency(@current_shop.revenue == 0 ? 0 : (ad_spend / @current_shop.revenue * 100.0)) %>
+            <%= number_to_percentage(@current_shop.revenue == 0 ? 0 : (ad_spend / @current_shop.revenue * 100.0), precision: 2) %>
           </h1>
         </section>
       </div>
