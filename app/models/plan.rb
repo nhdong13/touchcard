@@ -32,4 +32,8 @@ class Plan < ApplicationRecord
   def helpers
     ActionController::Base.helpers
   end
+
+  def self.current
+    Plan.find_by(amount: 89)
+  end
 end

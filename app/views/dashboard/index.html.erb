@@ -4,14 +4,14 @@
   <%= select_tag :selected_campaign, options_for_select(@current_shop.card_orders.pluck(:campaign_name, :id), params[:campaign_id]), {prompt: "-- All --", class: "dashboard-campaign-selector mb-3 ml-auto"} %>
 </div>
 
-<div class="mdc-layout-grid__inner">
-  <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-3">
+<div class="row summarize-tabs">
+  <div class="col pr-0">
     <div class="mdc-card cards-sent-card">
       <div class="mdc-card__horizontal-block">
-        <div class="mdc-card__media mdc-card__media-item">
+        <div class="mdc-card__media mdc-card__media-item mt-0 ml-0 d-flex">
           <i class="material-icons mdc-card__media-item" style="font-size: 300%;">email</i>
         </div>
-        <section class="mdc-card__primary">
+        <section class="mdc-card__primary d-block w-100 pr-0">
           <h2 class="mdc-card__subtitle">Cards Sent</h2>
           <h1 class="mdc-card__title mdc-card__title--large"><%= @current_shop.cards_sent(params[:campaign_id]) %></h1>
         </section>
@@ -19,60 +19,60 @@
     </div>
   </div>
 
-  <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-3">
+  <div class="col pr-0">
     <div class="mdc-card cards-sent-card">
       <div class="mdc-card__horizontal-block">
-        <div class="mdc-card__media mdc-card__media-item">
-          <i class="material-icons mdc-card__media-item" style="font-size: 300%;">monetization_on</i>
+        <div class="mdc-card__media mdc-card__media-item mt-0 ml-0">
+          <i class="material-icons mdc-card__media-item mx-2" style="font-size: 300%;">monetization_on</i>
         </div>
-        <section class="mdc-card__primary">
-          <h2 class="mdc-card__subtitle">Realized ad spend</h2>
-          <h1 class="mdc-card__title mdc-card__title--large">0</h1>
+        <section class="mdc-card__primary d-block w-100 px-0" style="max-height: 98px;">
+          <h3 class="mdc-card__subtitle">Realized ad spend</h2>
+          <% ad_spend = ad_spend_postcards(@postcards).size * Plan.current.amount / 100.00 %>
+          <h1 class="mdc-card__title mdc-card__title--large"><%= number_to_currency(ad_spend) %></h1>
         </section>
       </div>
     </div>
   </div>
 
   <% if @current_shop.revenue %>
-      <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-3">
+      <div class="col pr-0">
         <div class="mdc-card sales-realized-card">
           <div class="mdc-card__horizontal-block">
-            <div class="mdc-card__media mdc-card__media-item">
+            <div class="mdc-card__media mdc-card__media-item mt-0 ml-0">
               <i class="material-icons mdc-card__media-item" style="font-size: 300%;">shopping_cart</i>
             </div>
-            <section class="mdc-card__primary">
+            <section class="mdc-card__primary d-block w-100 pr-0">
               <h2 class="mdc-card__subtitle">Revenue</h2>
-              <h1 class="mdc-card__title mdc-card__title--large"><%= number_to_currency (@current_shop.revenue / 100.0) %></h1>
+              <h1 class="mdc-card__title mdc-card__title--large"><%= number_to_currency(@current_shop.revenue / 100.0) %></h1>
             </section>
           </div>
         </div>
       </div>
   <% end %>
 
-  <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-3">
+  <div class="col pr-0">
     <div class="mdc-card cards-sent-card">
       <div class="mdc-card__horizontal-block">
-        <div class="mdc-card__media mdc-card__media-item">
+        <div class="mdc-card__media mdc-card__media-item mt-0 ml-0">
           <i class="material-icons mdc-card__media-item" style="font-size: 300%;">monetization_on</i>
         </div>
-        <section class="mdc-card__primary">
+        <section class="mdc-card__primary d-block w-100 pr-0">
           <h2 class="mdc-card__subtitle">ROAS</h2>
           <h1 class="mdc-card__title mdc-card__title--large">
-            0
+            <%= number_to_currency(@current_shop.revenue == 0 ? 0 : (ad_spend / @current_shop.revenue * 100.0)) %>
           </h1>
         </section>
       </div>
     </div>
   </div>
 
-<% if false %>
-  <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4">
+  <div class="col">
     <div class="mdc-card cards-sent-card">
       <div class="mdc-card__horizontal-block">
-        <div class="mdc-card__media mdc-card__media-item">
+        <div class="mdc-card__media mdc-card__media-item mt-0 ml-0">
           <i class="material-icons mdc-card__media-item" style="font-size: 300%;">monetization_on</i>
         </div>
-        <section class="mdc-card__primary">
+        <section class="mdc-card__primary d-block w-100 pr-0">
           <h2 class="mdc-card__subtitle">Credit</h2>
           <h1 class="mdc-card__title mdc-card__title--large">
             <%= number_to_currency(@current_shop.credit) %>
@@ -81,15 +81,14 @@
       </div>
     </div>
   </div>
-<% end %>
 
 </div>
 
 <%= tag.div id: "postcard-table",
             data: {
-              postcards: ActiveModelSerializers::SerializableResource.new(@postcards, {each_serializer: PostcardSerializer}).to_json,
+              postcards: ActiveModelSerializers::SerializableResource.new(@postcards_with_paging, {each_serializer: PostcardSerializer}).to_json,
               search_params: params.as_json,
-              total_pages: @postcards.total_pages,
+              total_pages: @postcards_with_paging.total_pages,
             }
 %>
 
