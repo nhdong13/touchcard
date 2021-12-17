@@ -28,7 +28,7 @@
             </td>
 
             <td>{{ postcard.full_name }}</td>
-            <td>{{ postcard.campaign_name | truncate(35) }}</td>
+            <td :class="{ 'gray-text': postcard.campaign_deleted }">{{ postcard.campaign_name | truncate(35) }}</td>
             <td>{{ postcard.city }}, {{ postcard.state }}, {{ postcard.country }}</td>
             <td class="cancel-btn">
               <i v-if="(postcard.sent || postcard.canceled) == false"
@@ -209,5 +209,9 @@
   .cancel-btn-column {
     width: 40px;
     padding-left: 6px;
+  }
+
+  .gray-text {
+    color: gray;
   }
 </style>

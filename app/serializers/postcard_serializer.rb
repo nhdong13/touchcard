@@ -9,6 +9,7 @@ class PostcardSerializer < ActiveModel::Serializer
              :state,
              :country,
              :campaign_name,
+             :campaign_deleted
 
 
   def send_date
@@ -48,5 +49,10 @@ class PostcardSerializer < ActiveModel::Serializer
     else
       object.card_order.campaign_name
     end
+  end
+
+  def campaign_deleted
+    return unless object.card_order
+    object.card_order.archived
   end
 end
