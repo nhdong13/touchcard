@@ -22,8 +22,18 @@
 }
 
 .dashboard-campaign-selector {
-  padding: 10px 20px;
-  text-align: center;
+  width: 50%;
+  text-align: start;
+  text-transform: none;
+  text-overflow: ellipsis;
+  color: black !important;
+}
+
+.expand_more {
+  position: absolute;
+  top: 6px;
+  right: 50%;
+  pointer-events: none
 }
 
 .summarize-tabs .col {
