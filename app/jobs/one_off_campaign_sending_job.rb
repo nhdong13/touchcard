@@ -7,6 +7,7 @@ class OneOffCampaignSendingJob < ActiveJob::Base
     shop.orders.find_each do |order|
       campaign.prepare_for_sending(order)
     end
+    campaign.complete!
   end
 
 end
