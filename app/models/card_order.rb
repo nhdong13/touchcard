@@ -64,6 +64,7 @@ class CardOrder < ApplicationRecord
   after_update :change_campaign_status_on_schedule_changed
   before_update :save_schedule_of_complete_campaign
   before_save :validate_campaign_name
+  after_save :one_off_campaign_started
 
   enum budget_type: [ :non_set, :monthly ]
   enum campaign_type: { automation: 0, one_off: 1 }
@@ -366,6 +367,12 @@ class CardOrder < ApplicationRecord
   def replenish_budget
     if self.out_of_credit?
       self.update(campaign_status: :paused)
+    end
+  end
+
+  def one_off_campaign_started
+    if self.one_off? && self.saved_change_to_campaign_status? && self.sending?
+      OneOffCampaignSendingJob.perform_later(self.id)
     end
   end
 end
