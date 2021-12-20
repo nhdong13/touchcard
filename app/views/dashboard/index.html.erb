@@ -2,7 +2,9 @@
 
 <div class="d-flex">
   <div class="d-flex position-relative">
-    <%= select_tag :selected_campaign, options_for_select(@current_shop.card_orders.active.order(:campaign_name).pluck(:campaign_name, :id), params[:campaign_id]), {prompt: "-- All --", class: "mdc-button mdc-button--stroked dashboard-campaign-selector mb-3"} %>
+    <%= select_tag :selected_campaign, options_for_select(@current_shop.card_orders.active.have_postcards.order(:campaign_name).pluck(:campaign_name, :id).uniq + 
+                                                          @current_shop.card_orders.unactive.have_postcards.order(:campaign_name).pluck(:campaign_name, :id).uniq.each { |array| array[0] = "(Deleted) #{array[0]}" }, 
+                                                          params[:campaign_id]), {prompt: "-- All --", class: "mdc-button mdc-button--stroked dashboard-campaign-selector mb-3"} %>
     <i class="material-icons mdc-select__icon expand_more" tabindex="0" role="button">expand_more</i>
   </div>
 </div>

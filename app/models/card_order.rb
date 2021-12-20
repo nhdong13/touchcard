@@ -56,6 +56,8 @@ class CardOrder < ApplicationRecord
   default_scope { where(archived: false) }
 
   scope :active, -> { where(archived: false) }
+  scope :unactive, -> { where(archived: true) }
+  scope :have_postcards, -> { includes(:postcards).where.not(postcards: { card_order_id: nil }) }
 
   after_initialize :ensure_defaults, if: :new_record?
   after_update :update_budget, if: :saved_change_to_budget_update?
