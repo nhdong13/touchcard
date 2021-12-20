@@ -1,19 +1,14 @@
 class DashboardController < BaseController
   def index
-    @current_page = params[:page].present? ? params[:page] : 1
     CardOrder.unscoped do 
-      @postcards = @current_shop.postcards
-        .or(@current_shop.postcards.where(canceled: true))
-        .where(error: nil)
-        .includes(:card_order, customer: :default_addr)
-        .order(created_at: :desc)
-      @postcards = @postcards.where(card_order_id: params[:campaign_id]) if params[:campaign_id].present?
-      @postcards_with_paging = @postcards.page(@current_page).per(20)
-    
+      @result = PostcardsService.new(@current_shop, postcards_search_params).all
+      @postcards = @result[:postcards]
+      @postcards_with_paging = @result[:postcards_with_paging]
+      
       respond_to do |format|
         format.html { render :index }
         format.json { render json: { 
-          postcards: ActiveModelSerializers::SerializableResource.new(@postcards, {each_serializer: PostcardSerializer}).to_json
+          postcards: ActiveModelSerializers::SerializableResource.new(@postcards_with_paging, {each_serializer: PostcardSerializer}).to_json
         }}
       end
     end
@@ -27,5 +22,10 @@ class DashboardController < BaseController
       @postcard.cancel
       render json: { message: "canceled", status: :ok}
     end
+  end
+
+  private
+  def postcards_search_params
+    params.permit(:campaign_id, :sort_by, :order, :page)
   end
 end

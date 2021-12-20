@@ -5,10 +5,17 @@
       <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp table-max-width">
         <thead>
         <tr>
-          <th class="mdl-data-table__cell--non-numeric status-column">Status</th>
+          <!-- <th class="mdl-data-table__cell--non-numeric status-column">Status</th>
           <th class="mdl-data-table__cell--non-numeric name-column">Name</th>
           <th class="mdl-data-table__cell--non-numeric campaign-column">Campaign</th>
-          <th class="mdl-data-table__cell--non-numeric location-column">Location</th>
+          <th class="mdl-data-table__cell--non-numeric location-column">Location</th> -->
+          <th class="mdl-data-table__cell--non-numeric" v-for="column in tableColumns" :key="column[1]" :class="`${column[1]}-column`">
+            {{ column[0] }}
+            <span v-on:click="onSort(column[1])" class="pointer">
+              <font-awesome-icon icon="caret-down" v-if="currentSortBy == column[1] && currentOrder == 'desc'" />
+              <font-awesome-icon icon="caret-up" v-else/>
+            </span>
+          </th>
           <th class="mdl-data-table__cell--non-numeric cancel-btn-column"></th>
         </tr>
         </thead>
@@ -114,6 +121,15 @@
         currentPage: parseInt(this.searchParams.page) || 1,
         loading: false,
         isPostcardSent: false,
+        currentSortBy: this.searchParams.sort_by,
+        currentOrder: this.searchParams.order,
+        campaignId: this.searchParams.campaign_id,
+        tableColumns: [
+          ['Status', 'status'],
+          ['Name', 'name'],
+          ['Campaign', 'campaign'],
+          ['Location', 'location']
+        ]
       }
     },
 
@@ -142,7 +158,13 @@
         this.loading = true;
         this.id = "";
         let _this = this;
-        axios.get('/dashboard.json', { params: { page: this.currentPage } })
+        let indexParams = {
+          page: this.currentPage,
+          sort_by: this.currentSortBy,
+          order: this.currentOrder,
+          campaign_id: this.campaignId
+        };
+        axios.get('/dashboard.json', { params: indexParams })
           .then(function(response) {
             _this.thisPostcards = JSON.parse(response.data.postcards);
             _this.loading = false;
@@ -163,6 +185,16 @@
       closeModalCannotCancelPostcard: function () {
         this.reloadPostcards();
         this.$modal.hide('cannot-cancel-postcard-modal');
+      },
+
+      onSort: function(columnName) {
+        let url = new URL(window.location.href);
+        let order = this.currentSortBy == columnName && this.currentOrder == 'asc' ? 'desc' : 'asc';
+        url.searchParams.set('sort_by', columnName);
+        url.searchParams.set('order', order);
+        this.currentSortBy = columnName;
+        this.currentOrder = order;
+        Turbolinks.visit(url.href);
       }
     },
 
@@ -213,5 +245,9 @@
 
   .gray-text {
     color: gray;
+  }
+  
+  .pointer {
+    cursor: pointer;
   }
 </style>
