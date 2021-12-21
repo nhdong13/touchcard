@@ -1,6 +1,6 @@
 <%= currently_at "Dashboard" %>
 
-<div class="row">
+<div class="row campaign-dropdown">
   <div class="col pr-0">
     <%= select_tag :selected_campaign, options_for_select(@campaigns_for_dropdown, params[:campaign_id]), 
       {prompt: "-- All campaigns --", class: "mdc-button mdc-button--stroked dashboard-campaign-selector mb-3"} 
@@ -13,8 +13,8 @@
   <div class="col pr-0"></div>
 </div>
 
-<div class="row summarize-tabs">
-  <div class="col pr-0">
+<div class="row summarize-tabs mr-0">
+  <div class="col pr-0 mb-2">
     <div class="mdc-card cards-sent-card">
       <div class="mdc-card__horizontal-block">
         <div class="mdc-card__media mdc-card__media-item mt-0 ml-0 d-flex">
@@ -28,7 +28,7 @@
     </div>
   </div>
 
-  <div class="col pr-0">
+  <div class="col pr-0 mb-2">
     <div class="mdc-card cards-sent-card">
       <div class="mdc-card__horizontal-block">
         <div class="mdc-card__media mdc-card__media-item mt-0 ml-0">
@@ -44,7 +44,7 @@
   </div>
 
   <% if @current_shop.revenue %>
-      <div class="col pr-0">
+      <div class="col pr-0 mb-2">
         <div class="mdc-card sales-realized-card">
           <div class="mdc-card__horizontal-block">
             <div class="mdc-card__media mdc-card__media-item mt-0 ml-0">
@@ -59,7 +59,7 @@
       </div>
   <% end %>
 
-  <div class="col pr-0">
+  <div class="col pr-0 mb-2">
     <div class="mdc-card cards-sent-card">
       <div class="mdc-card__horizontal-block">
         <div class="mdc-card__media mdc-card__media-item mt-0 ml-0">
@@ -75,7 +75,7 @@
     </div>
   </div>
 
-  <div class="col">
+  <div class="col pr-0 mb-2">
     <div class="mdc-card cards-sent-card">
       <div class="mdc-card__horizontal-block">
         <div class="mdc-card__media mdc-card__media-item mt-0 ml-0">
@@ -108,9 +108,19 @@
       if (this.value !== '') {
         directUrl += "?campaign_id=" + this.value;
       }
-      window.location.href = directUrl;
-      
-      $(this).val($(this).find('option[selected]').val());
+      Turbolinks.visit(directUrl);
     });
+
+    $("#selected_campaign option").each(function() {
+      let text = $(this).text();
+      if (text.length > 35) {
+        let truncateText = text.substring(0,35) + "...";
+        $(this).text(truncateText);
+      }
+    })
   })
+<% end %>
+
+<% content_for :head do %>
+  <meta name="turbolinks-cache-control" content="no-cache">
 <% end %>

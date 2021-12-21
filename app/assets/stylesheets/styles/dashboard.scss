@@ -37,6 +37,6 @@
   pointer-events: none
 }
 
-.summarize-tabs .col {
-  min-width: fit-content;
+.summarize-tabs .col, .campaign-dropdown .col {
+  min-width: 218.2px;
 }
