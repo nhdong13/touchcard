@@ -46,7 +46,7 @@
               <input type="checkbox" v-model="selected" :value="item.id" number/>
             </td>
             <td>
-              <span v-if="['Out of credit', 'Error', 'Draft', 'Complete'].includes(item.campaign_status)">
+              <span v-if="['Out of credit', 'Out of budget', 'Error', 'Draft', 'Complete'].includes(item.campaign_status)">
                 <md-switch value="true" class="md-primary" disabled />
               </span>
               <span v-else>
@@ -94,7 +94,7 @@
             <span class="campaign-info d-flex flex-column">
               <div class="campaign-name">
                 <span v-on:click="onClickEditCampaign(item.id)" class="campaign-name-style two-line-text">{{ item.campaign_name | truncate(30) }}</span>
-                <span v-if="['Out of credit', 'Error', 'Draft', 'Complete'].includes(item.campaign_status)" class="toggle-button">
+                <span v-if="['Out of credit', 'Out of budget', 'Error', 'Draft', 'Complete'].includes(item.campaign_status)" class="toggle-button">
                   <md-switch class="md-primary" disabled />
                 </span>
                 <span class="toggle-button" v-else>
