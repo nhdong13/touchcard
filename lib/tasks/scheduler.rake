@@ -109,7 +109,8 @@ task :daily_replenish_campaign_budget => :environment do
   today = Date.current
   CardOrder.where(budget_type: :monthly)
     .where("send_date_start < ? AND extract(day from send_date_start) = ?", today, today.day)
-    .find_each{|cp| cp.update(budget_used: 0)}
+    .update_all(budget_used: 0)
+    # .find_each{|cp| cp.update(budget_used: 0)}
 end
 
 desc "Change send delay from week to day for testing in staging"
