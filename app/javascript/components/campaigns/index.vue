@@ -70,7 +70,7 @@
             <td>{{ item.campaign_status}}</td>
             <td>{{ item.campaign_type }}</td>
             <td class="budget-max-width">
-              <span class='t-b'> {{ item.campaign_type == "Automation" && item.budget != "-" ? `$${item.budget-item.budget_used}/$${item.budget}` : item.budget }}</span>
+              <span class='t-b'> {{ item.campaign_type == "Automation" && item.budget != "-" ? `$${item.budget - (item.budget_used > item.budget ? item.budget : item.budget_used)}/$${item.budget}` : item.budget }}</span>
             </td>
             <td>
               {{ splitedSchedule(item.schedule)[0] }}
@@ -112,7 +112,7 @@
                 </div>
                 <div class='column-info flex-column d-flex'>
                   <strong>Budget</strong>
-                  <span>{{ item.campaign_type == "Automation" && item.budget != "-" ? `$${item.budget-item.budget_used}/$${item.budget}` : item.budget }}</span>
+                  <span>{{ item.campaign_type == "Automation" && item.budget != "-" ? `$${item.budget - (item.budget_used > item.budget ? item.budget : item.budget_used)}/$${item.budget}` : item.budget }}</span>
                 </div>
                 <div class='column-info flex-column d-flex'>
                   <strong>Starts</strong>
