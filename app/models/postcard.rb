@@ -3,6 +3,7 @@ require "card_html"
 require "newrelic_rpm"
 require "discount_manager"
 require "postcard_render_util"
+require "admin_custom_discount_pct_filters"
 
 class Postcard < ApplicationRecord
   belongs_to :card_order
@@ -217,14 +218,17 @@ class Postcard < ApplicationRecord
     address&.country
   end
 
-  # Custom active_admin filter postcards by shop in url /admin/postcards
+  # Custom active_admin filters postcards in url /admin/postcards
+  extend AdminCustomDiscountPctFilters
+  
   def self.ransackable_scopes(_auth_object = nil)
-    %i(filter_postcards_by_shop)
+    %i[filter_postcards_by_shop discount_pct_is_equals discount_pct_is_greater_than discount_pct_is_less_than]
   end
 
   def self.filter_postcards_by_shop(shop_id)
     joins('LEFT OUTER JOIN card_orders ON card_orders.id = postcards.card_order_id').where('card_orders.shop_id = ?', shop_id)
   end
+  # Above methods are for custom filter in active_admin
 
   def get_all_invalid_postcard
     res = []

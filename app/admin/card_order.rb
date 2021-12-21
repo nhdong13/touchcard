@@ -57,7 +57,7 @@ ActiveAdmin.register CardOrder, as: "Campaign" do
   end
   
   filter :shop , as: :select, collection: ->{Shop.select(:domain, :id).order(:domain)}
-  filter :discount_pct
+  filter :discount_pct_is, label: "Discount Pct", as: :numeric
   filter :discount_exp
   filter :enabled
   filter :archived
@@ -96,8 +96,12 @@ ActiveAdmin.register CardOrder, as: "Campaign" do
       row :shop do |card_order|
         card_order.shop
       end
+      row :campaign_name
       row :type  do |card_order|
         card_order.campaign_type&.gsub("_", "-")&.capitalize
+      end
+      row :budget do |card_order|
+        card_order.monthly? ? card_order.budget : "-"
       end
       row :discount_pct do |card_order|
         card_order.discount_pct_to_str
@@ -111,6 +115,12 @@ ActiveAdmin.register CardOrder, as: "Campaign" do
       end   
       row :international
       row :send_delay
+      row "Campaign start date" do |card_order|
+        card_order.send_date_start
+      end
+      row "Campaign end date" do |card_order|
+        card_order.send_continuously ? "Ongoing" : card_order.send_date_end
+      end
       row :created_at
       row :updated_at
 
