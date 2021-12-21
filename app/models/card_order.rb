@@ -62,7 +62,7 @@ class CardOrder < ApplicationRecord
   after_initialize :ensure_defaults, if: :new_record?
   after_update :update_budget, if: :saved_change_to_budget_update?
   after_update :update_budget_type, if: :saved_change_to_budget_type?
-  after_update :replenish_budget, if: :saved_change_to_budget_used?
+  # after_update :replenish_budget, if: :saved_change_to_budget_used?
   after_update :change_campaign_status_on_schedule_changed
   before_update :save_schedule_of_complete_campaign
   before_save :validate_campaign_name
@@ -70,7 +70,7 @@ class CardOrder < ApplicationRecord
 
   enum budget_type: [ :non_set, :monthly ]
   enum campaign_type: { automation: 0, one_off: 1 }
-  enum campaign_status: { draft: 0, processing: 1, scheduled: 2, sending: 3, complete: 4, paused: 5, error: 6, out_of_credit: 7 }
+  enum campaign_status: { draft: 0, processing: 1, scheduled: 2, sending: 3, complete: 4, paused: 5, error: 6, out_of_credit: 7, out_of_budget: 8 }
 
   class << self
     def num_enabled
@@ -96,8 +96,8 @@ class CardOrder < ApplicationRecord
         enabled: false
       )
     else
-      if self.out_of_credit?
-        update(budget: budget_update, campaign_status: :paused)
+      if self.out_of_budget?
+        update(budget: budget_update, campaign_status: self.previous_campaign_status, enabled: true)
       else
         update(budget: budget_update)
       end
@@ -204,7 +204,6 @@ class CardOrder < ApplicationRecord
       postcard.paid = true
       postcard.save
     else
-      self.update!(previous_campaign_status: self.campaign_status_before_type_cast, campaign_status: :out_of_credit)
       return postcard.errors.full_messages.map{|msg| msg}.join("\n")
     end
   end
@@ -241,8 +240,9 @@ class CardOrder < ApplicationRecord
       update!(enabled: !self.enabled, campaign_status: :paused, previous_campaign_status: self.campaign_status_before_type_cast)
     else
       if self.can_enabled?
-        if out_of_credit?
-          update!(enabled: !self.enabled, campaign_status: :sending) if shop.credit > 0
+        if self.out_of_credit?
+          update!(enabled: true, campaign_status: :sending) if shop.credit > 0
+        elsif self.out_of_budget?
         else
           if previous_campaign_status == CardOrder.campaign_statuses[:paused] || previous_campaign_status.nil?
             update!(enabled: !self.enabled)
@@ -295,14 +295,21 @@ class CardOrder < ApplicationRecord
     if self.monthly?
       available_budget = self.budget - self.budget_used
       if available_budget < postcard.cost
-        self.update(previous_campaign_status: CardOrder.campaign_statuses[self.campaign_status], campaign_status: :out_of_credit, enabled: false)
+        self.update(previous_campaign_status: self.campaign_status_before_type_cast, campaign_status: :out_of_budget, enabled: false)
         return false
       end
       self.budget_used += postcard.cost
-      self.save! && self.shop.pay(postcard)
+      unless self.save && self.shop.pay(postcard)
+        self.update!(previous_campaign_status: self.campaign_status_before_type_cast, campaign_status: :out_of_credit, enabled: false)
+        return false
+      end
     else
-      self.shop.pay(postcard)
+      unless self.shop.pay(postcard)
+        self.update!(previous_campaign_status: self.campaign_status_before_type_cast, campaign_status: :out_of_credit, enabled: false)
+        return false
+      end
     end
+    true
   end
 
   private
