@@ -406,17 +406,20 @@
     filters: {
       truncate: function(data, num) {
         if(_.isEmpty(data)) return data
-        const truncatedStr = []
-        let characterCount = 0
-        data.split(" ").slice(0, data.length).forEach((element) => {
-          if((element.length + characterCount) < num) {
-            truncatedStr.push(element)
-            characterCount += (element.length + 1) // 1 is for space " "
-          }
-        })
-        let result = truncatedStr.join(" ")
-        if(data != result) result += " ..."
-        return result
+        // const truncatedStr = []
+        // let characterCount = 0
+        // data.split(" ").slice(0, data.length).forEach((element) => {
+        //   if((element.length + characterCount) < num) {
+        //     truncatedStr.push(element)
+        //     characterCount += (element.length + 1) // 1 is for space " "
+        //   }
+        // })
+        // let result = truncatedStr.join(" ")
+        // if(data != result) result += " ..."
+        // return result
+        if (data.length <= num) return data;
+        let truncateName = data.substring(0, num) + "...";
+        return truncateName;
       }
     }
   }

@@ -201,8 +201,8 @@
     filters: {
       truncate: function(data, num) {
         if (data.length <= num) return data;
-        let truncate_name = data.slice(0, num) + "..."
-        return truncate_name
+        let truncateName = data.substring(0, num) + "..."
+        return truncateName;
       }
     }
   }
