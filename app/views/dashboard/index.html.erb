@@ -52,7 +52,7 @@
             </div>
             <section class="mdc-card__primary d-block w-100 pr-0">
               <h2 class="mdc-card__subtitle">Revenue</h2>
-              <h1 class="mdc-card__title mdc-card__title--large"><%= number_to_currency(@current_shop.revenue / 100.0) %></h1>
+              <h1 class="mdc-card__title mdc-card__title--large"><%= number_to_currency(@current_shop.revenue(params[:campaign_id]) / 100.0) %></h1>
             </section>
           </div>
         </div>

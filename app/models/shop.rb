@@ -43,8 +43,10 @@ class Shop < ApplicationRecord
     end
   end
 
-  def revenue
-    card_orders.joins(postcards: :orders).sum(:total_price)
+  def revenue campaign_id=nil
+    res = card_orders.joins(postcards: :orders)
+    res = res.where(id: campaign_id) if campaign_id.present?
+    res.sum(:total_price)
   end
 
   class << self
