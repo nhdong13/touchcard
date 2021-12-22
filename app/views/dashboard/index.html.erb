@@ -36,7 +36,7 @@
         </div>
         <section class="mdc-card__primary d-block w-100 px-0" style="max-height: 98px;">
           <h3 class="mdc-card__subtitle">Realized ad spend</h2>
-          <% ad_spend = ad_spend_postcards(@postcards).size * Plan.current.amount / 100.00 %>
+          <% ad_spend = ad_spend_postcards(@postcards.where(sent: true)).size * Plan.current.amount / 100.00 %>
           <h1 class="mdc-card__title mdc-card__title--large"><%= number_to_currency(ad_spend) %></h1>
         </section>
       </div>
