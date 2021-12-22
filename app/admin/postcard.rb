@@ -43,7 +43,9 @@ ActiveAdmin.register Postcard do
     column :date_sent
     column :paid
     column "Est'd Arrival", :estimated_arrival
-    column "Disc Pct", :discount_pct
+    column "Disc Pct", sortable: :discount_pct do |postcard|
+      postcard.discount_pct.present? ? postcard.discount_pct.abs : postcard.discount_pct
+    end
     column "Disc Exp At", :discount_exp_at
     column :canceled
 
@@ -67,7 +69,9 @@ ActiveAdmin.register Postcard do
                 admin_campaign_path(postcard.card_order_id) if postcard.card_order_id
       end
       row :discount_code
-      row :discount_pct
+      row :discount_pct do |postcard|
+        postcard.discount_pct.present? ? postcard.discount_pct.abs : postcard.discount_pct
+      end
       row :discount_exp_at
       row "Lob Id" do |postcard|
         link_to postcard.postcard_id,

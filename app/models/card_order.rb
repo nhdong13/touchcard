@@ -225,7 +225,7 @@ class CardOrder < ApplicationRecord
 
   def discount_pct_to_str
     if (back_json['discount_x'] && back_json['discount_y']) || (front_json['discount_x'] && front_json['discount_y'])
-      "-" + discount_pct.to_s
+      discount_pct.to_s
     else
       "-"
     end
