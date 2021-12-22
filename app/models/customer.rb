@@ -92,4 +92,14 @@ class Customer < ApplicationRecord
   def last_order_date
     orders.order("created_at DESC").first.created_at.to_date
   end
+
+  # Custom active_admin filters customers in url /admin/customers
+  def self.ransackable_scopes(_auth_object = nil)
+    %i[customers_by_shop]
+  end
+
+  def self.customers_by_shop(shop_id)
+    includes(:orders).where(orders: { shop_id: shop_id })
+  end
+  # Above methods are for custom filter in active_admin
 end

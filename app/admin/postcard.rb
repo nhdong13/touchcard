@@ -19,7 +19,7 @@ ActiveAdmin.register Postcard do
         as: :select, 
         label:"Shop", 
         filters: [:eq], 
-        collection: ->{Shop.where(id: CardOrder.unscoped.where(id: Postcard.distinct.pluck(:card_order_id)).pluck(:shop_id)).sort_by {|s| s.domain}}
+        collection: ->{Shop.where(id: CardOrder.unscoped.distinct.where(id: Postcard.distinct.pluck(:card_order_id)).pluck(:shop_id)).sort_by {|s| s.domain}}
   filter :discount_code
   filter :send_date
   filter :sent
@@ -62,7 +62,7 @@ ActiveAdmin.register Postcard do
       end
       row :id
       row :canceled
-      row :card_order_id do |postcard|
+      row "Campaign" do |postcard|
         link_to postcard.card_order_id,
                 admin_campaign_path(postcard.card_order_id) if postcard.card_order_id
       end

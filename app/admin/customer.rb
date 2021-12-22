@@ -3,7 +3,7 @@ ActiveAdmin.register Customer do
   actions :index, :show
   # menu false
 
-  # filter :shop , as: :select, collection: ->{Shop.all.sort_by {|s| s.domain}}
+  filter :customers_by_shop, label: "Shop", as: :select, collection: ->{Shop.select(:domain, :id).order(:domain)}
   filter :first_name, as: :string, filters: [:equals, :starts_with, :ends_with]
   filter :last_name, as: :string, filters: [:equals, :starts_with, :ends_with]
   filter :email, as: :string, filters: [:equals, :starts_with, :ends_with]
