@@ -304,6 +304,9 @@ class CardOrder < ApplicationRecord
         return false
       end
       self.budget_used += postcard.cost
+      if self.budget - self.budget_used < Plan.current.amount / 100.0
+        self.update(previous_campaign_status: self.campaign_status_before_type_cast, campaign_status: :out_of_budget, enabled: false)
+      end
       unless self.save && self.shop.pay(postcard)
         self.update!(previous_campaign_status: self.campaign_status_before_type_cast, campaign_status: :out_of_credit, enabled: false)
         return false
