@@ -9,7 +9,7 @@ class PostcardsService
     postcards = @current_shop.postcards.where(paid: true)
                 .or(@current_shop.postcards.where(canceled: true))
                 .where(error: nil)
-                .includes(:card_order, customer: :default_addr)
+                .includes(:card_order, :imported_customer, customer: :default_addr)
      
     if @params[:sort_by].present?
       sort_order = @params[:order] || "asc"

@@ -29,7 +29,8 @@
     "vue2-datepicker": "^3.9.1",
     "vuejs-datepicker": "^1.6.2",
     "vuejs-paginate": "^2.1.0",
-    "webpack-merge": "^4.1.1"
+    "webpack-merge": "^4.1.1",
+    "xlsx": "^0.17.4"
   },
   "devDependencies": {
     "babel-eslint": "^8.0.2",

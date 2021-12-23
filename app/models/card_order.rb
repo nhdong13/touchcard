@@ -26,6 +26,7 @@ class CardOrder < ApplicationRecord
 
   belongs_to :card_order_parent, :class_name => "CardOrder"
   has_many :copies, :class_name => "CardOrder", :foreign_key => "card_order_parent_id"
+  has_many :imported_customers
 
   accepts_nested_attributes_for :card_side_front, update_only: true
   # , reject_if: :invalid_image_size

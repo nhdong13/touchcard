@@ -94,6 +94,13 @@ gem "puma"
 gem 'active_model_serializers', '~> 0.10.12'
 
 gem 'kaminari'
+gem 'activerecord-import', "~> 1.3.0"
+
+# Until Roo releases a new version containing a fix for compatible with Ruby 3.0,
+# we need to fetch the source directly from GitHub. (https://github.com/roo-rb/roo)
+gem "roo", git: "https://github.com/roo-rb/roo.git", ref: "709464c77623be2bc09b2103405d90ded7604a75"
+gem "roo-xls", "~> 1.2.0"
+
 group :assets do
   gem "therubyracer", platforms: :ruby
 end

@@ -30,11 +30,11 @@ Vue.component('paginate', Paginate)
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { 
   faCaretDown, faCaretUp, faLongArrowAltDown, faCalendarAlt,
-  faCaretRight, faCaretLeft, faReply, faTrashAlt, faChevronDown
+  faCaretRight, faCaretLeft, faReply, faTrashAlt, faChevronDown, faFileCsv
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 library.add(faCaretDown, faCaretUp, faLongArrowAltDown, faCalendarAlt,
-  faCaretRight, faCaretLeft, faReply, faTrashAlt, faChevronDown)
+  faCaretRight, faCaretLeft, faReply, faTrashAlt, faChevronDown, faFileCsv)
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 
 import VueScreen from 'vue-screen';

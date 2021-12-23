@@ -4,6 +4,15 @@ GIT
   specs:
     active_material (1.4.1)
 
+GIT
+  remote: https://github.com/roo-rb/roo.git
+  revision: 709464c77623be2bc09b2103405d90ded7604a75
+  ref: 709464c77623be2bc09b2103405d90ded7604a75
+  specs:
+    roo (2.8.3)
+      nokogiri (~> 1)
+      rubyzip (>= 1.3.0, < 3.0.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -74,6 +83,8 @@ GEM
     activerecord (6.1.3)
       activemodel (= 6.1.3)
       activesupport (= 6.1.3)
+    activerecord-import (1.3.0)
+      activerecord (>= 4.2)
     activeresource (5.1.1)
       activemodel (>= 5.0, < 7)
       activemodel-serializers-xml (~> 1.0)
@@ -1453,6 +1464,10 @@ GEM
       netrc (~> 0.8)
     rexml (3.2.5)
     rmagick (2.16.0)
+    roo-xls (1.2.0)
+      nokogiri
+      roo (>= 2.0.0, < 3)
+      spreadsheet (> 0.9.0)
     rspec (3.10.0)
       rspec-core (~> 3.10.0)
       rspec-expectations (~> 3.10.0)
@@ -1474,6 +1489,7 @@ GEM
       rspec-mocks (~> 3.10)
       rspec-support (~> 3.10)
     rspec-support (3.10.2)
+    ruby-ole (1.2.12.2)
     ruby-vips (2.1.2)
       ffi (~> 1.12)
     ruby2_keywords (0.0.4)
@@ -1514,6 +1530,8 @@ GEM
     sorted_set (1.0.3)
       rbtree
       set (~> 1.0)
+    spreadsheet (1.3.0)
+      ruby-ole
     spring (2.1.1)
     sprockets (3.7.2)
       concurrent-ruby (~> 1.0)
@@ -1581,6 +1599,7 @@ DEPENDENCIES
   active_material!
   active_model_serializers (~> 0.10.12)
   activeadmin (~> 2.9)
+  activerecord-import (~> 1.3.0)
   aws-sdk (~> 3.0.2)
   axlsx
   bootstrap-datepicker-rails (~> 1.9, >= 1.9.0.1)
@@ -1614,6 +1633,8 @@ DEPENDENCIES
   redis (~> 3.2)
   rest-client (~> 2.0)
   rmagick (~> 2.15)
+  roo!
+  roo-xls (~> 1.2.0)
   rspec (~> 3.10)
   rspec-rails (~> 5.0.1)
   sass-rails (~> 5.0, >= 5.0.6)
@@ -1641,4 +1662,4 @@ RUBY VERSION
    ruby 3.0.0p0
 
 BUNDLED WITH
-   2.2.15
+   2.2.28

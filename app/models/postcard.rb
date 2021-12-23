@@ -10,6 +10,7 @@ class Postcard < ApplicationRecord
   belongs_to :order, optional: true
   belongs_to :customer
   belongs_to :postcard_trigger, polymorphic: true # Use Postcard's card_order
+  belongs_to :imported_customer
   has_one :shop, through: :card_order
   has_many :orders
 
@@ -35,6 +36,7 @@ class Postcard < ApplicationRecord
   end
 
   def international?
+    return imported_customer.country_code != "US" if imported_customer.present?
     address.country_code != "US"
   end
 
@@ -46,7 +48,7 @@ class Postcard < ApplicationRecord
   end
 
   def to_address
-    address.to_lob_address
+    address&.to_lob_address || imported_customer&.to_lob_address
   end
 
   def self.send_all
@@ -207,15 +209,15 @@ class Postcard < ApplicationRecord
   end
 
   def city
-    address&.city
+    address&.city || imported_customer&.city
   end
 
   def state
-    address&.province
+    address&.province || imported_customer&.province_code
   end
 
   def country
-    address&.country
+    address&.country  || imported_customer&.country_code
   end
 
   # Custom active_admin filters postcards in url /admin/postcards

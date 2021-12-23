@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_12_01_145437) do
+ActiveRecord::Schema.define(version: 2021_12_23_035409) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
@@ -106,6 +106,7 @@ ActiveRecord::Schema.define(version: 2021_12_01_145437) do
     t.integer "campaign_status", default: 0
     t.integer "previous_campaign_status"
     t.integer "send_delay", default: 0, null: false
+    t.string "imported_customers_url"
   end
 
   create_table "card_sides", id: :serial, force: :cascade do |t|
@@ -224,6 +225,20 @@ ActiveRecord::Schema.define(version: 2021_12_01_145437) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "imported_customers", force: :cascade do |t|
+    t.string "name"
+    t.string "address1"
+    t.string "address2"
+    t.string "city"
+    t.string "province_code"
+    t.string "country_code"
+    t.string "zip"
+    t.bigint "card_order_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["card_order_id"], name: "index_imported_customers_on_card_order_id"
+  end
+
   create_table "line_items", id: :serial, force: :cascade do |t|
     t.integer "order_id", null: false
     t.integer "fulfillable_quantity"
@@ -324,7 +339,9 @@ ActiveRecord::Schema.define(version: 2021_12_01_145437) do
     t.boolean "canceled", default: false
     t.string "data_source_status", default: "normal"
     t.string "error"
+    t.bigint "imported_customer_id"
     t.index ["customer_id"], name: "index_postcards_on_customer_id"
+    t.index ["imported_customer_id"], name: "index_postcards_on_imported_customer_id"
     t.index ["postcard_trigger_id"], name: "index_postcards_on_postcard_trigger_id"
   end
 
@@ -405,6 +422,7 @@ ActiveRecord::Schema.define(version: 2021_12_01_145437) do
   add_foreign_key "checkouts", "customers"
   add_foreign_key "checkouts", "shops"
   add_foreign_key "filters", "card_orders"
+  add_foreign_key "imported_customers", "card_orders"
   add_foreign_key "line_items", "orders"
   add_foreign_key "orders", "addresses", column: "billing_address_id"
   add_foreign_key "orders", "addresses", column: "shipping_address_id"
@@ -413,6 +431,7 @@ ActiveRecord::Schema.define(version: 2021_12_01_145437) do
   add_foreign_key "orders", "shops"
   add_foreign_key "postcards", "card_orders"
   add_foreign_key "postcards", "customers"
+  add_foreign_key "postcards", "imported_customers"
   add_foreign_key "postcards", "orders", column: "postcard_trigger_id"
   add_foreign_key "subscriptions", "plans"
   add_foreign_key "subscriptions", "shops"

@@ -23,8 +23,7 @@ class PostcardSerializer < ActiveModel::Serializer
   end
 
   def full_name
-    return unless object.customer
-    object.customer.full_name
+    object.customer&.full_name || object.imported_customer&.name
   end
 
   def city

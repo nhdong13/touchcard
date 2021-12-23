@@ -247,6 +247,40 @@
       </div>
     </div>
 
+    <div v-if="campaign_type === 'one_off'" id="csv-customers">
+      <div>
+        <h2 class="d-inline-block custom-h2 my-3">CSV Customers</h2>
+        <div v-if="automation.campaign_status === 'draft'" class="d-inline-block">
+          <input id="input-csv" class="d-none" type="file" accept=".csv, .xlsx, .ods, .xls" @change="uploadCSV($event)">
+          <div v-if="isCsvUploaded" class="d-inline-block">
+            <button @click="removeCSV"> Remove CSV </button>
+            <span v-if="csvCustomersFile !== null" class="alert alert-success">Upload Succeed</span>
+          </div>
+          <div v-else class="d-inline-block">
+            <button @click="openUploadCSV"> Upload CSV </button>
+            <span v-if="isCsvUploadFailed" class="alert alert-danger">Upload Failed</span>
+          </div>
+        </div>
+        <div v-if="isCsvUploaded" class="d-inline-block icon-csv-file">
+          <font-awesome-icon icon="file-csv" size="3x" @click="downloadCsvCustomers"/>
+          <a :href="csvUrl" id="csv-customers-url">{{ csvUrl.split('/').pop() }}</a>
+        </div>
+      </div>
+      <div>
+        <a href="/Template_CSV.xlsx">Template CSV</a>
+      </div> 
+      <div role="progressbar" v-if="isUploading" class="mdc-linear-progress mdc-linear-progress--indeterminate">
+        <div class="mdc-linear-progress__buffering-dots"></div>
+        <div class="mdc-linear-progress__buffer"></div>
+        <div class="mdc-linear-progress__bar mdc-linear-progress__primary-bar">
+          <span class="mdc-linear-progress__bar-inner"></span>
+        </div>
+        <div class="mdc-linear-progress__bar mdc-linear-progress__secondary-bar">
+          <span class="mdc-linear-progress__bar-inner"></span>
+        </div>
+      </div>
+    </div>
+
     <hr />
     <card-editor
       ref="frontEditor"
@@ -296,6 +330,8 @@
   import CancelCampaignDialog from './components/cancel_campaign_dialog.vue'
   import { DEFAULT_DISCOUNT_PERCENTAGE, DEFAULT_WEEK_BEFORE_DISCOUNT_EXPIRE, MAXIMUM_CAMPAIGN_NAME_LENGTH } from './config';
   import { sameFiltersNotConflict, checkConflictOrdersSpentFilters, checkConflictOrdersDateFilters, orderDateFiltersNotConflict } from 'automation_form_handle_conflicting_filters';
+  import { Api } from './api'
+  import XLSX from 'xlsx'
   window.$ = $
   const CAMPAIGN_STATUS_FOR_DISABLE_DATE = ["sending", "complete", "out_of_credit", "error", "paused"];
 
@@ -339,7 +375,9 @@
     },
 
     mounted: function() {
+      this.api = new Api(this.awsSignEndpoint);
     },
+
     data: function() {
       return {
         onSelectState: this.returnAddress.state,
@@ -370,6 +408,11 @@
         sendDateStart: this.automation.send_date_start ? this.dateParser(this.automation.send_date_start) : new Date(),
         sendDateEnd: this.automation.send_date_end ? this.dateParser(this.automation.send_date_end) : "",
         conflictFilters: [],
+        isCsvUploaded: !isEmpty(this.automation.imported_customers_url),
+        isCsvUploadFailed: false,
+        csvCustomersFile: null,
+        isUploading: false,
+        csvUrl: this.automation.imported_customers_url,
       }
     },
 
@@ -513,9 +556,10 @@
           this.automation.discount_exp = DEFAULT_WEEK_BEFORE_DISCOUNT_EXPIRE;
         }
 
-        this.automation.budget_type = this.budget_type
-        this.automation.campaign_type = this.campaign_type
-        this.automation.return_address_attributes = this.returnAddress
+        this.automation.budget_type = this.budget_type;
+        this.automation.campaign_type = this.campaign_type;
+        this.automation.return_address_attributes = this.returnAddress;
+        this.automation.imported_customers_url = this.csvUrl;
       },
       // Get all filters and conditions
       getAllFilterOptionValues() {
@@ -646,13 +690,13 @@
         if (this.automation.send_delay == '') this.automation.send_delay = 0;
        
         if (this.id) {
-          axios.put(`/automations/${this.id}.json`, { card_order: this.automation})
+          axios.put(`/automations/${this.id}.json`, { card_order: this.automation })
             .then((response) => {
               let id = JSON.parse(response.data.campaign).id;
               func(id);
             }).catch((error) => console.log(error));
         } else {
-          axios.post(`/automations.json`, { card_order: this.automation})
+          axios.post(`/automations.json`, { card_order: this.automation })
             .then((response) => {
               let id = JSON.parse(response.data.campaign).id;
               func(id);
@@ -847,6 +891,57 @@
         const month = parseInt(date.split("-")[1]) - 1;
         const day = parseInt(date.split("-")[2]);
         return new Date(year, month, day);
+      },
+
+      openUploadCSV() {
+        $('#input-csv').click();
+      },
+
+      removeCSV() {
+        $('#input-csv').val('');
+        this.isCsvUploaded = false;
+        this.isCsvUploadFailed = false;
+        this.csvCustomersFile = null;
+        this.csvUrl = null;
+      },
+
+      downloadCsvCustomers() {
+        $('#csv-customers-url')[0].click();
+      },
+
+      isValidCSV(headers) {
+        let requiredHeaders = ['Name', 'Address1', 'Address2', 'City', 'Province/State Code', 'Country Code', 'Zip/Postal Code'];
+        return headers.length === requiredHeaders.length && 
+               requiredHeaders.every((value, index) => { return value === headers[index] })
+      },
+
+      uploadCSV(e) {
+        let file = e.target.files[0];
+        this.isUploading = true;
+
+        let reader = new FileReader();
+        reader.onload = () => {
+          let workbook = XLSX.read(reader.result, { sheetRows: 1 });
+          let first_sheet_name = workbook.SheetNames[0];
+          // Return an array of arrays
+          let headers = XLSX.utils.sheet_to_json(workbook.Sheets[first_sheet_name], { header: 1 })
+          
+          if (this.isValidCSV(headers[0])) {
+            this.api.uploadFileToS3(file, (error, result) => {
+              if (result) {
+                this.isCsvUploaded = true;
+                this.csvCustomersFile = file;
+                this.isUploading = false;
+                this.csvUrl = result;
+              }
+            })
+          } else {
+            $('#input-csv').val('');
+            this.isCsvUploadFailed = true;
+            this.isUploading = false;
+          }
+        }
+        reader.readAsArrayBuffer(file);
       }
     }
   }
@@ -1025,4 +1120,16 @@
     height: 21px;
   }
 
+  #csv-customers span {
+    padding: 10px;
+  }
+
+  .icon-csv-file {
+    svg {
+      position: relative;
+      top: 10px;
+      padding: 1px 0px;
+      cursor: pointer;
+    }
+  }
 </style>
