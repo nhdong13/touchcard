@@ -36,4 +36,8 @@ class Plan < ApplicationRecord
   def self.current
     Plan.find_by(amount: 89)
   end
+
+  def self.current_amount
+    Plan.find_by(amount: 89).amount / 100.0
+  end
 end

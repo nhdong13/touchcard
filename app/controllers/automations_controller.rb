@@ -103,6 +103,10 @@ class AutomationsController < BaseController
       @automation.update(campaign_status: :out_of_credit, previous_campaign_status: @automation.campaign_status_before_type_cast)
     end
 
+    if @automation.budget < Plan.current_amount || @automation.budget - @automation.budget_used < Plan.current_amount
+      @automation.update(campaign_status: :out_of_credit, previous_campaign_status: @automation.campaign_status_before_type_cast)
+    end
+
     respond_to do |format|
       format.html { redirect_to root_path }
       format.json { render json: { message: "OK" }, status: :ok }
