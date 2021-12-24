@@ -23,17 +23,23 @@
 
 .dashboard-campaign-selector {
   height: 36px !important;
-  padding-right: 16px;
+  padding-left: 10px;
+  padding-right: 20px;
   text-align: start;
   text-transform: none;
   text-overflow: ellipsis;
-  color: black !important;
+  color: rgba(0, 0, 0, 0.87) !important;
+  background-color: white;
+  border: none;
+  flex-direction: row;
+  font-size: 0.875rem;
+  letter-spacing: 0.04em;
 }
 
 .expand_more {
   position: absolute;
   top: 6px;
-  right: 5px;
+  right: 0px;
   pointer-events: none
 }
 

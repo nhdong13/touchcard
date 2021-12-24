@@ -23,7 +23,7 @@
           <tr v-if="postcards.length == 0">
             <td colspan="4" style="text-align:center">Sent postcards will appear here.</td>
           </tr>
-          <tr v-else v-for="postcard in thisPostcards" :id="`postcard-${postcard.id}`" :key="postcard.id">
+          <tr v-else v-for="postcard in thisPostcards" :id="`postcard-${postcard.id}`" :key="postcard.id" :class="{ 'gray-text': postcard.campaign_deleted }">
             <td>
               <button type="button"
                       class="mdl-chip postcard-status-chip"
@@ -35,7 +35,7 @@
             </td>
 
             <td>{{ postcard.full_name }}</td>
-            <td :class="{ 'gray-text': postcard.campaign_deleted }">{{ postcard.campaign_name | truncate(35) }}</td>
+            <td>{{ postcard.campaign_name | truncate(35) }}</td>
             <td>{{ postcard.city }}, {{ postcard.state }}, {{ postcard.country }}</td>
             <td class="cancel-btn">
               <i v-if="(postcard.sent || postcard.canceled) == false"
