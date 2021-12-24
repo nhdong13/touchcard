@@ -243,7 +243,7 @@ class Shop < ApplicationRecord
   # end
 
   def can_afford?(postcard)
-    @can_afford ||= credit >= postcard.cost
+    credit >= postcard.cost
   end
 
   def pay(postcard)
@@ -271,10 +271,12 @@ class Shop < ApplicationRecord
   def change_campaign_status
     if credit < SINGLE_POSTCARD_PRICE && credit_before_last_save >= SINGLE_POSTCARD_PRICE
       card_orders.where.not(campaign_status: [:draft, :complete])
-                 .find_each{|cp| cp.update(campaign_status: :out_of_credit, previous_campaign_status: cp.campaign_status_before_type_cast) }
+                 .find_each{|cp| cp.update(campaign_status: :out_of_credit, previous_campaign_status: cp.campaign_status_before_type_cast, enabled: false) }
     elsif credit_before_last_save < SINGLE_POSTCARD_PRICE && credit >= SINGLE_POSTCARD_PRICE
-      card_orders.out_of_credit
-                 .find_each{|cp| cp.update(campaign_status: cp.previous_campaign_status, previous_campaign_status: nil) }
+      card_orders.out_of_credit.find_each{|cp| 
+        cp.update(campaign_status: cp.previous_campaign_status, previous_campaign_status: nil)
+        cp.update(enabled: true) if cp.sending? || cp.scheduled?
+      }
     end
   end
 
