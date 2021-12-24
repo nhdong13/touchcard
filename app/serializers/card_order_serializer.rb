@@ -16,7 +16,8 @@ class CardOrderSerializer < ActiveModel::Serializer
              :send_date_end,
              :front_json,
              :back_json,
-             :send_continuously
+             :send_continuously,
+             :replenish_date
 
 
   def campaign_status

@@ -27,8 +27,13 @@
 
     <div class="automation-section" v-if="campaign_type =='automation'">
       <span>
-      <strong>Monthly budget</strong>
+        <strong>Monthly budget</strong>
         $ <input type="numer" v-on:keypress="restrictToNumber($event)" id="budget_limit" v-model="budget" maxlength = "5">
+        <i id="budget-input" class="material-icons callout">help_outline</i>
+        <b-tooltip target="budget-input" placement="top" triggers="hover">
+          <div>- The budget will be unlimited if there's no value input</div>
+          <div v-if="automation.budget_type === 'monthly'">- The campaign budget will be replenished on {{moment(automation.replenish_date).format("MMM D, YYYY")}}</div>
+        </b-tooltip>
       </span>
     </div>
 
@@ -305,7 +310,7 @@
     />
 
     <div class="text-right">
-      <div v-if="id && automation.campaign_status != 'draft' && automation.campaign_status != 'complete'">
+      <div v-if="id && automation.campaign_status != 'draft' && automation.campaign_status != 'complete' && (automation.campaign_status != 'out_of_budget' || (automation.campaign_status === 'out_of_budget' && (budget !== '' && automation.budget - automation.budget_used < 0.89)))">
         <button class="mdc-button mdc-button--stroked" @click="returnToCampaignList" :disabled="pausedSubmitForm">Discard</button>
         <button class="mdc-button mdc-button--raised" @click="saveAndReturn" :disabled="pausedSubmitForm">Save Changes</button>
       </div>
@@ -356,6 +361,9 @@
         required: true
       },
       isUserHasPaymentMethod: {
+        type: Boolean
+      },
+      showSendingButton: {
         type: Boolean
       },
       shared: {

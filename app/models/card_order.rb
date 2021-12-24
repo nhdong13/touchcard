@@ -67,6 +67,7 @@ class CardOrder < ApplicationRecord
 
   after_initialize :ensure_defaults, if: :new_record?
   after_update :update_budget, if: :saved_change_to_budget_update?
+  after_create :set_replenish_date
   after_update :update_budget_type, if: :saved_change_to_budget_type?
   # after_update :replenish_budget, if: :saved_change_to_budget_used?
   after_update :change_campaign_status_on_schedule_changed
@@ -95,19 +96,21 @@ class CardOrder < ApplicationRecord
   end
 
   def update_budget
-    if budget_update < budget_used
+    if (budget_update < budget_used) || (budget_update < Plan.current.amount / 100) || (budget_update < Plan.current.amount / 100)
       update(
         budget: budget_update,
-        campaign_status: :paused,
+        previous_campaign_status: campaign_status_before_type_cast,
+        campaign_status: :out_of_budget,
         enabled: false
       )
     else
       if self.out_of_budget?
-        update(budget: budget_update, campaign_status: self.previous_campaign_status, enabled: true)
-      else
+      #   update(budget: budget_update, campaign_status: self.previous_campaign_status, enabled: true)
+      # else
         update(budget: budget_update)
       end
     end
+    update(replenish_date: Date.current)
   end
 
   def reactivate_campaign
@@ -400,5 +403,9 @@ class CardOrder < ApplicationRecord
     if self.one_off? && self.saved_change_to_campaign_status? && self.sending?
       OneOffCampaignSendingJob.perform_later(self.id)
     end
+  end
+
+  def set_replenish_date
+    self.update(replenish_date: self.send_date_start)
   end
 end

@@ -108,7 +108,7 @@ desc "Daily replenish campaign's budget"
 task :daily_replenish_campaign_budget => :environment do
   today = Date.current
   CardOrder.where(budget_type: :monthly)
-    .where("send_date_start < ? AND extract(day from send_date_start) = ?", today, today.day)
+    .where("replenish_date < ? AND extract(day from replenish_date) = ?", today, today.day)
     .update_all(budget_used: 0)
     # .find_each{|cp| cp.update(budget_used: 0)}
 end

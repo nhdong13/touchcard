@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_12_23_035409) do
+ActiveRecord::Schema.define(version: 2021_12_23_175559) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
@@ -107,6 +107,7 @@ ActiveRecord::Schema.define(version: 2021_12_23_035409) do
     t.integer "previous_campaign_status"
     t.integer "send_delay", default: 0, null: false
     t.string "imported_customers_url"
+    t.date "replenish_date"
   end
 
   create_table "card_sides", id: :serial, force: :cascade do |t|
