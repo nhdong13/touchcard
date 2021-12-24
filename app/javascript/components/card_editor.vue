@@ -24,7 +24,7 @@
           <ul>
             <li>PNG or JPG (required)</li>
             <li>1875 by 1275 pixels (recommended)</li>
-            <li><a href="/images/front-side-guide.jpg" target="_blank">guidelines</a>, <a href="http://touchcard.co/templates/" target="_blank">templates</a></span></li>
+            <li><a href="/images/front-side-guide.jpg" target="_blank">guidelines</a>, <a href="http://touchcard.co/templates/" target="_blank">templates</a></li>
           </ul>
         </div>
         <div role="progressbar" v-if="isUploading" class="mdc-linear-progress mdc-linear-progress--indeterminate">
@@ -37,11 +37,14 @@
             <span class="mdc-linear-progress__bar-inner"></span>
           </div>
         </div>
-        <input type="file" accept="image/png,image/jpeg"  @change="updateBackground($event)">
-        <br>
+        <div class="upload-img-section">
+          <label v-bind:for="'upload-image-' + _uid" class="upload-img-btn">Choose File</label>
+          <span class="noselect upload-img-name"> {{ imageName | truncateImageName(25) }}</span>
+          <input v-bind:id="'upload-image-' + _uid" class="upload-img-input" type="file" accept="image/png,image/jpeg" @change="updateBackground($event)">
+        </div>
         <hr />
         <input v-bind:id="'discount-toggle-' + _uid" type="checkbox" v-model="attributes.showsDiscount">
-        <label v-bind:for="'discount-toggle-' + _uid" class="noselect" >
+        <label class="noselect" >
           <strong>Include Expiring Discount</strong>
           <i class="material-icons callout" v-b-tooltip.hover title="Each postcard gets a unique coupon">help_outline</i>
         </label>
@@ -117,6 +120,7 @@
         isUploading: false,
         showError: false,
         cardName: this.isBack ? "Back" : "Front",
+        imageName: "No file chosen"
       }
     },
     watch: {
@@ -194,6 +198,8 @@
       // },
       updateBackground: function(e) {
         let files = e.target.files || e.dataTransfer.files;
+        this.imageName = files[0].name;
+
         if (!files.length)
           return;
 
@@ -229,6 +235,14 @@
         if (showsDiscount && (this.discount_pct == 0 || this.discount_exp == 0)) flag = true;
         this.showError = doShowError && flag;
         this.$emit('update:errorPresent', flag);
+      }
+    },
+
+    filters: {
+      truncateImageName(data, num) {
+        if (data.length <= num) return data;
+        let truncateText = data.substring(0, 11) + '...' + data.substring(data.length - 11);
+        return truncateText;
       }
     }
   }
@@ -308,6 +322,32 @@
     font-size: 1.5em;
     font-weight: 700;
   }
+  
+  .upload-img-section {
+    min-width: 246px;
+    width: max-content;
+  }
 
+  .upload-img-input {
+    /* opacity: 0; */
+    display: none;
+  }
+  
+  .upload-img-btn {
+    background-color: rgb(240, 240, 240);
+    font-size: 13px;
+    padding: 3px 6px;
+    border: 0.2px solid lightslategray;
+    border-radius: 1px;
+    margin: 0px;
+  }
+
+  .upload-img-btn:hover {
+    background-color: rgb(233, 233, 233);
+  }
+
+  .upload-img-name {
+    text-overflow: ellipsis;
+  }
 </style>
 
