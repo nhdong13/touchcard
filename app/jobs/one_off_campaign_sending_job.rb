@@ -4,7 +4,7 @@ class OneOffCampaignSendingJob < ActiveJob::Base
   def perform campaign_id
     campaign = CardOrder.find(campaign_id)
     shop = campaign.shop
-    shop.orders.find_each do |order|
+    removed_duplicate_orders_of_customer(shop.orders).each do |order|
       campaign.prepare_for_sending(order)
     end
 
@@ -31,6 +31,16 @@ class OneOffCampaignSendingJob < ActiveJob::Base
     end
 
     campaign.complete!
+  end
+
+  private
+
+  def removed_duplicate_orders_of_customer orders
+    res = []
+    orders.each do |order|
+      res.push(order) if res.none?{|el| el.customer_id == order.customer_id}
+    end
+    res
   end
 
 end
