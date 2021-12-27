@@ -19,10 +19,10 @@
         <input type="radio" class="m-1" id="automation" value="automation" v-model="campaign_type" v-on:click="setBudgetType">
         <label for="automation" class="noselect mb-0">Automation</label>
       </span>
-      <!-- <span v-if="automation.campaign_status == 'draft' || automation.campaign_type == 'one_off'" class="flex-center">
+      <span v-if="automation.campaign_status == 'draft' || automation.campaign_type == 'one_off'" class="flex-center">
         <input type="radio" class="m-1" id="one_off" value="one_off" v-model="campaign_type" v-on:click="setBudgetType">
         <label for="one_off" class="noselect mb-0">One-off</label>
-      </span> -->
+      </span>
     </div>
 
     <div class="automation-section" v-if="campaign_type =='automation'">
@@ -131,7 +131,7 @@
       <span>days after purchase</span>
     </div>
 
-    <!-- <div :class="[errors.returnAddress ? 'invalid' : '', 'automation-section']">
+    <div :class="[errors.returnAddress ? 'invalid' : '', 'automation-section']">
       <label for="return-address-checkbox" class="noselect"><strong>Add Return Address</strong></label>
       <button @click="enableAddReturnAddress= !enableAddReturnAddress">Edit</button>
       <div class="nested-toggle return-address" v-if="enableAddReturnAddress">
@@ -213,7 +213,7 @@
           </div>
         </div>
       </div>
-    </div> -->
+    </div>
     <h2 class="d-inline-block custom-h2 my-3">Customer Filters</h2>
     <!-- <button @click="downloadCSV"> CSV </button>
     <button @click="downloadTestCSV"> Test CSV </button> -->

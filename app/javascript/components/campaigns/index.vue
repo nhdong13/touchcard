@@ -10,11 +10,11 @@
           <button v-on:click="showModalConfirmDeleteCampaign" :disabled="selected.length < 1" class="mdc-button mdc-button--stroked"> Delete </button>
         </div>
         <div :class="'search-action'">
-          <!-- <button v-on:click="exportCsv">
+          <button v-on:click="exportCsv">
             CSV
             <font-awesome-icon icon="long-arrow-alt-down"/>
            </button>
-          <DropdownMenu ref="DropdownMenu"></DropdownMenu> -->
+          <DropdownMenu ref="DropdownMenu"></DropdownMenu>
           <input :placeholder="'SEARCH'" v-model="searchCampaignNameKeyword" @input="onSearchChange" class="border-theme"/>
         </div>
       </div>
@@ -69,9 +69,9 @@
             </td>
             <td>{{ item.campaign_status}}</td>
             <td>{{ item.campaign_type }}</td>
-            <!-- <td class="budget-max-width">
+            <td class="budget-max-width">
               <span class='t-b'> {{ item.campaign_type == "Automation" && item.budget != "-" ? `$${(item.budget - (item.budget_used > item.budget ? item.budget : item.budget_used)).toFixed(2)}/$${item.budget}` : item.budget }}</span>
-            </td> -->
+            </td>
             <td>
               {{ splitedSchedule(item.schedule)[0] }}
             </td>
@@ -110,10 +110,10 @@
                   <strong>Type</strong>
                   <span>{{ item.campaign_type}}</span>
                 </div>
-                <!-- <div class='column-info flex-column d-flex'>
+                <div class='column-info flex-column d-flex'>
                   <strong>Budget</strong>
                   <span>{{ item.campaign_type == "Automation" && item.budget != "-" ? `$${(item.budget - (item.budget_used > item.budget ? item.budget : item.budget_used)).toFixed(2)}/$${item.budget}` : item.budget }}</span>
-                </div> -->
+                </div>
                 <div class='column-info flex-column d-flex'>
                   <strong>Starts</strong>
                   <span>{{ splitedSchedule(item.schedule)[0] }}</span>
@@ -220,7 +220,7 @@
         tableColumns: [
           ["Status", "campaign_status"],
           ["Type", "campaign_type"],
-          // ["Budget", "budget"],
+          ["Budget", "budget"],
           ["Starts", "send_date_start"],
           ["Ends", "send_date_end"]
         ],
