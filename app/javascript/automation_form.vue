@@ -32,7 +32,7 @@
         <i id="budget-input" class="material-icons callout">help_outline</i>
         <b-tooltip target="budget-input" placement="top" triggers="hover">
           <div>- The budget will be unlimited if there's no value input</div>
-          <div v-if="automation.budget_type === 'monthly'">- The campaign budget will be replenished on {{moment(automation.replenish_date).format("MMM D, YYYY")}}</div>
+          <div v-if="automation.budget_type === 'monthly'">- The campaign budget will be replenished on {{currentMonthReplenishDate(automation.replenish_date)}}</div>
         </b-tooltip>
       </span>
     </div>
@@ -952,6 +952,18 @@
           }
         }
         reader.readAsArrayBuffer(file);
+      },
+
+      currentMonthReplenishDate(date) {
+        let replenishDate = this.moment(date).date();
+        let today = this.moment();
+        let res = null;
+        if (this.moment().set('date', replenishDate) < today) {
+          res = today.add(1, 'M').set('date', replenishDate);
+        } else {
+          res = this.moment().set('date', replenishDate);
+        }
+        return res.format("MMM D, YYYY");
       }
     }
   }
