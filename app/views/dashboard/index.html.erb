@@ -1,6 +1,6 @@
 <%= currently_at "Dashboard" %>
 
-<div class="row campaign-dropdown">
+<div class="row campaign-dropdown mr-0">
   <div class="col pr-0">
     <%= select_tag :selected_campaign, options_for_select(@campaigns_for_dropdown, params[:campaign_id]), 
       {prompt: "All campaigns", class: "mdc-card dashboard-campaign-selector mb-3"} 
