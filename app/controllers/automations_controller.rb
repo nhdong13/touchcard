@@ -99,12 +99,12 @@ class AutomationsController < BaseController
     
     sub_value = params[:subscription_value]
     shop_credit = sub_value.present? ? sub_value.to_i : @current_shop.credit
-    if shop_credit < 0.89
+    if shop_credit < Plan.current_amount
       @automation.update(campaign_status: :out_of_credit, previous_campaign_status: @automation.campaign_status_before_type_cast)
     end
 
     if @automation.budget < Plan.current_amount || @automation.budget - @automation.budget_used < Plan.current_amount
-      @automation.update(campaign_status: :out_of_credit, previous_campaign_status: @automation.campaign_status_before_type_cast)
+      @automation.update(campaign_status: :out_of_budget, previous_campaign_status: @automation.campaign_status_before_type_cast)
     end
 
     respond_to do |format|
