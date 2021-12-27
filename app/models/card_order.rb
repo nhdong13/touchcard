@@ -355,7 +355,7 @@ class CardOrder < ApplicationRecord
       # Return saving_name
       return saving_name unless shop.card_orders.where(campaign_name: saving_name).present?
 
-      saving_name = saving_name.delete_suffix(saving_name.last(2)).rstrip if saving_name.length > MAXIMUM_CAMPAIGN_NAME_LENGTH && saving_name.last(2).match?(/\d+/)
+      saving_name = saving_name.delete_suffix(saving_name.last(2)).rstrip if ("Copy of " + saving_name).length > (MAXIMUM_CAMPAIGN_NAME_LENGTH - 3) && saving_name.last(2).match?(/\d+/)
 
       #Case saving_name exists
       # Step 1: Find all campaign name like saving_name with Number at the end

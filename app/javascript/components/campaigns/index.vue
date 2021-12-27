@@ -65,7 +65,7 @@
             </td>
             <!-- The maximum of character to display is 45 -->
             <td>
-              <span v-on:click="onClickEditCampaign(item.id)" class="campaign-name-style two-line-text">{{ item.campaign_name | truncate(45) }}</span>
+              <span v-on:click="onClickEditCampaign(item.id)" class="campaign-name-style two-line-text">{{ item.campaign_name }}</span>
             </td>
             <td>{{ item.campaign_status}}</td>
             <td>{{ item.campaign_type }}</td>
@@ -142,7 +142,7 @@
           <strong><h3>What do you want to name this campaign?</h3></strong>
         </div>
         <div>
-          <input id="campaign_name" v-model="duplicateCampaignName" class="border-theme">
+          <input id="campaign_name" v-model="userInputDupCampaignName" :class="[errorDupName ? 'invalid-border' : 'border-theme']">
         </div>
         <br/>
         <div>
@@ -224,6 +224,9 @@
           ["Starts", "send_date_start"],
           ["Ends", "send_date_end"]
         ],
+        maxCampaignNameLength: (MAXIMUM_CAMPAIGN_NAME_LENGTH - 3), // 3 is for the "[space][number of dup]" after the campaign name
+        userInputDupCampaignName: '',
+        errorDupName: false,
       }
     },
 
@@ -267,11 +270,13 @@
 
     methods: {
       showModalConfirmDuplicate() {
+        this.errorDupName = false;
         const selectedCampaignName = this.thisCampaigns.find(campaign => campaign.id == this.selected).campaign_name
         this.duplicateCampaignName = "Copy of " + selectedCampaignName;
-        if (selectedCampaignName.length >= MAXIMUM_CAMPAIGN_NAME_LENGTH) {
+        if (this.duplicateCampaignName.length > this.maxCampaignNameLength) {
           this.duplicateCampaignName = selectedCampaignName;
         }
+        this.userInputDupCampaignName = this.duplicateCampaignName;
         this.$modal.show('duplicateModal')
       },
 
@@ -348,14 +353,18 @@
       },
 
       duplicateCampaign() {
-        if (this.selected.length == 1 && this.duplicateCampaignName) {
-          axios.get('/campaigns/duplicate_campaign.json', { params: { campaign_id: this.selected[0], campaign_name: this.duplicateCampaignName } })
+        let dupName = this.userInputDupCampaignName;
+        let isDuplicateName = dupName == this.duplicateCampaignName;
+        let valid = this.selected.length == 1 && this.duplicateCampaignName && dupName && ((!isDuplicateName && dupName.length <= this.maxCampaignNameLength) || (isDuplicateName && dupName.length <= MAXIMUM_CAMPAIGN_NAME_LENGTH))
+        // Valid duplicate campaign name if (user input it by themself and not exceed 57 chars) OR (app generated and not exceed 60 chars)
+        if (valid) {
+          axios.get('/campaigns/duplicate_campaign.json', { params: { campaign_id: this.selected[0], campaign_name: dupName } })
             .then((response) => {
               this.closeModalConfirmDuplicateCampaign();
               this.reloadPage();
             }).catch(() => this.showAlert("fill in campaign name!"));
         } else {
-          this.showAlert("Please fill in campaign name!");
+          this.errorDupName = true;
         }
       },
 
@@ -668,5 +677,9 @@
 
   .budget-max-width {
     max-width: 100px;
+  }
+
+  .invalid-border {
+    border: 1px solid red;
   }
 </style>
