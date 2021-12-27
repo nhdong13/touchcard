@@ -958,7 +958,7 @@
         let replenishDate = this.moment(date).date();
         let today = this.moment();
         let res = null;
-        if (this.moment().set('date', replenishDate) < today) {
+        if (this.moment().set('date', replenishDate) <= today) {
           res = today.add(1, 'M').set('date', replenishDate);
         } else {
           res = this.moment().set('date', replenishDate);
