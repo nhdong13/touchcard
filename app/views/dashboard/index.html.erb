@@ -36,14 +36,14 @@
         </div>
         <section class="mdc-card__primary d-block w-100 px-0" style="max-height: 98px;">
           <h3 class="mdc-card__subtitle">Realized ad spend</h2>
-          <% ad_spend = ad_spend_postcards(@postcards.where(sent: true)).size * Plan.current_amount %>
+          <% ad_spend = ad_spend_postcards(@postcards.includes(:orders).where(sent: true)).size * Plan.current_amount %>
           <h1 class="mdc-card__title mdc-card__title--large"><%= number_to_currency(ad_spend) %></h1>
         </section>
       </div>
     </div>
   </div>
-
-  <% if @current_shop.revenue %>
+  <% shop_revenue = @current_shop.revenue(params[:campaign_id]) %>
+  <% if shop_revenue.present? %>
     <div class="col pr-0 mb-2">
       <div class="mdc-card sales-realized-card">
         <div class="mdc-card__horizontal-block">
@@ -52,8 +52,8 @@
           </div>
           <section class="mdc-card__primary d-block w-100 pr-0">
             <h2 class="mdc-card__subtitle">Revenue</h2>
-            <% precision_value = @current_shop.revenue(params[:campaign_id]) > 1_000_000_00 ? 0 : 2 %>
-            <h1 class="mdc-card__title mdc-card__title--large"><%= number_to_currency(@current_shop.revenue(params[:campaign_id]) / 100.0, precision: precision_value) %></h1>
+            <% precision_value = shop_revenue > 1_000_000_00 ? 0 : 2 %>
+            <h1 class="mdc-card__title mdc-card__title--large"><%= number_to_currency(shop_revenue / 100.0, precision: precision_value) %></h1>
           </section>
         </div>
       </div>
@@ -68,7 +68,7 @@
           <section class="mdc-card__primary d-block w-100 pr-0">
             <h2 class="mdc-card__subtitle">ROAS</h2>
             <h1 class="mdc-card__title mdc-card__title--large">
-              <%= number_to_percentage(ad_spend == 0 ? 0 : (@current_shop.revenue(params[:campaign_id]) / 100.0 / ad_spend * 100.0), precision: 2) %>
+              <%= number_to_percentage(ad_spend == 0 ? 0 : (shop_revenue / 100.0 / ad_spend * 100.0), precision: 2) %>
             </h1>
           </section>
         </div>
