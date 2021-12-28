@@ -14,7 +14,7 @@ module DashboardHelper
     postcards.filter do |pc|
       false
       if pc.discount_code.present?
-        true if pc.orders.present?
+        true if pc.orders.present? || pc.discount_exp_at < today
       else
         true if pc.date_sent.present? && pc.date_sent.beginning_of_day <= today
       end
