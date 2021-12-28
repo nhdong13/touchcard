@@ -40,7 +40,7 @@ class CardOrder < ApplicationRecord
                                 allow_destroy: true
 
   validates :shop, :card_side_front, :card_side_back, presence: true
-  validates :campaign_name, length: {maximum: MAXIMUM_CAMPAIGN_NAME_LENGTH}
+  validates :campaign_name, length: {maximum: MAXIMUM_CAMPAIGN_NAME_LENGTH + 3} # 3 is for the "[space][number of dup]" after the campaign name
   validates :discount_pct, numericality: { greater_than_or_equal_to: -100,
                                            less_than: 0,
                                            only_integer: true,
@@ -355,7 +355,7 @@ class CardOrder < ApplicationRecord
       # Return saving_name
       return saving_name unless shop.card_orders.where(campaign_name: saving_name).present?
 
-      saving_name = saving_name.delete_suffix(saving_name.last(2)).rstrip if ("Copy of " + saving_name).length > (MAXIMUM_CAMPAIGN_NAME_LENGTH - 3) && saving_name.last(2).match?(/\d+/)
+      saving_name = saving_name.delete_suffix(saving_name.last(2)).rstrip if ("Copy of " + saving_name).length > MAXIMUM_CAMPAIGN_NAME_LENGTH && saving_name.last(2).match?(/\d+/)
 
       #Case saving_name exists
       # Step 1: Find all campaign name like saving_name with Number at the end

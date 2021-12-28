@@ -142,7 +142,7 @@
           <strong><h3>What do you want to name this campaign?</h3></strong>
         </div>
         <div>
-          <input id="campaign_name" v-model="userInputDupCampaignName" :class="[errorDupName ? 'invalid-border' : 'border-theme']">
+          <input id="campaign_name" maxlength="60" v-model="duplicateCampaignName" :class="[errorDupName ? 'invalid-border' : 'border-theme']">
         </div>
         <br/>
         <div>
@@ -224,8 +224,7 @@
           ["Starts", "send_date_start"],
           ["Ends", "send_date_end"]
         ],
-        maxCampaignNameLength: (MAXIMUM_CAMPAIGN_NAME_LENGTH - 3), // 3 is for the "[space][number of dup]" after the campaign name
-        userInputDupCampaignName: '',
+        maxDuplicateNameLength: (MAXIMUM_CAMPAIGN_NAME_LENGTH + 3), // 3 is for the "[space][number of dup]" after the campaign name
         errorDupName: false,
       }
     },
@@ -273,10 +272,9 @@
         this.errorDupName = false;
         const selectedCampaignName = this.thisCampaigns.find(campaign => campaign.id == this.selected).campaign_name
         this.duplicateCampaignName = "Copy of " + selectedCampaignName;
-        if (this.duplicateCampaignName.length > this.maxCampaignNameLength) {
+        if (this.duplicateCampaignName.length > MAXIMUM_CAMPAIGN_NAME_LENGTH) {
           this.duplicateCampaignName = selectedCampaignName;
         }
-        this.userInputDupCampaignName = this.duplicateCampaignName;
         this.$modal.show('duplicateModal')
       },
 
@@ -353,12 +351,9 @@
       },
 
       duplicateCampaign() {
-        let dupName = this.userInputDupCampaignName;
-        let isDuplicateName = dupName == this.duplicateCampaignName;
-        let valid = this.selected.length == 1 && this.duplicateCampaignName && dupName && ((!isDuplicateName && dupName.length <= this.maxCampaignNameLength) || (isDuplicateName && dupName.length <= MAXIMUM_CAMPAIGN_NAME_LENGTH))
-        // Valid duplicate campaign name if (user input it by themself and not exceed 57 chars) OR (app generated and not exceed 60 chars)
+        let valid = this.selected.length == 1 && this.duplicateCampaignName && this.duplicateCampaignName.length <= this.maxDuplicateNameLength
         if (valid) {
-          axios.get('/campaigns/duplicate_campaign.json', { params: { campaign_id: this.selected[0], campaign_name: dupName } })
+          axios.get('/campaigns/duplicate_campaign.json', { params: { campaign_id: this.selected[0], campaign_name: this.duplicateCampaignName } })
             .then((response) => {
               this.closeModalConfirmDuplicateCampaign();
               this.reloadPage();
