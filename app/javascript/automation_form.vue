@@ -770,8 +770,7 @@
           formValid = false;
         }
 
-        if (isEmpty(this.automation.campaign_name) || this.automation.campaign_name.length > MAXIMUM_CAMPAIGN_NAME_LENGTH || (this.automation.campaign_name.length > (MAXIMUM_CAMPAIGN_NAME_LENGTH - 3) && isNaN(this.automation.campaign_name.split(" ").pop()))) {
-          // Error if blank OR exceed 60 chars OR (exceed 57 chars and last chars not a number (for use case when campaign name is duplicate))
+        if (isEmpty(this.automation.campaign_name) || this.automation.campaign_name.length > (MAXIMUM_CAMPAIGN_NAME_LENGTH + 3)) {
           // 3 is for the "[space][number of dup]" after the campaign name
           this.errors.campaignName = true;
           formValid = false;
