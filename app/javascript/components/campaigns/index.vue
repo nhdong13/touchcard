@@ -65,7 +65,7 @@
             </td>
             <!-- The maximum of character to display is 45 -->
             <td>
-              <span v-on:click="onClickEditCampaign(item.id)" class="campaign-name-style two-line-text">{{ item.campaign_name }}</span>
+              <span v-on:click="onClickEditCampaign(item.id)" class="campaign-name-style two-line-text">{{ item.campaign_name | truncate(45) }}</span>
             </td>
             <td>{{ item.campaign_status}}</td>
             <td>{{ item.campaign_type }}</td>
