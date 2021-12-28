@@ -27,7 +27,7 @@
 //@import "@material/theme/mdc-theme";
 @import "@material/toolbar/mdc-toolbar";
 //@import "@material/typography/mdc-typography";
-@import "@material/fonts/material-icons";
+//@import "@material/fonts/material-icons";
 //@import "@material/fonts/roboto";
 
 // Material Design Lite - Using select components not yet supported by Material Components
@@ -47,3 +47,6 @@
 @import "styles/navbar";
 @import "styles/subscriptions";
 @import "styles/targeting.scss";
+
+// Material Icons
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
