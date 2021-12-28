@@ -100,7 +100,8 @@ class CardOrder < ApplicationRecord
       update(
         budget: budget_update,
         previous_campaign_status: campaign_status_before_type_cast,
-        campaign_status: :out_of_budget,
+        campaign_status: :paused,
+        # campaign_status: :out_of_budget,
         enabled: false
       )
     else
