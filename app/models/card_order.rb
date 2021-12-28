@@ -105,9 +105,11 @@ class CardOrder < ApplicationRecord
         enabled: false
       )
     else
-      if self.out_of_budget?
+      # if self.out_of_budget?
       #   update(budget: budget_update, campaign_status: self.previous_campaign_status, enabled: true)
-      # else
+      if self.out_of_credit?
+        update(budget: budget_update, campaign_status: :paused)
+      else
         update(budget: budget_update)
       end
     end
