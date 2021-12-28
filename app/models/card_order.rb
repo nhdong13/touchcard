@@ -73,7 +73,7 @@ class CardOrder < ApplicationRecord
   after_update :change_campaign_status_on_schedule_changed
   before_update :save_schedule_of_complete_campaign
   before_save :validate_campaign_name
-  after_save :one_off_campaign_started
+  # after_save :one_off_campaign_started
 
   enum budget_type: [ :non_set, :monthly ]
   enum campaign_type: { automation: 0, one_off: 1 }
