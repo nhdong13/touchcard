@@ -73,7 +73,7 @@ class CardOrder < ApplicationRecord
   after_update :change_campaign_status_on_schedule_changed
   before_update :save_schedule_of_complete_campaign
   before_save :validate_campaign_name
-  after_save :one_off_campaign_started
+  # after_save :one_off_campaign_started
 
   enum budget_type: [ :non_set, :monthly ]
   enum campaign_type: { automation: 0, one_off: 1 }
@@ -96,17 +96,20 @@ class CardOrder < ApplicationRecord
   end
 
   def update_budget
-    if (budget_update < budget_used) || (budget_update < Plan.current.amount / 100) || (budget_update < Plan.current.amount / 100)
+    if (budget_update < budget_used) #|| (budget_update < Plan.current.amount / 100) || (budget_update < Plan.current.amount / 100)
       update(
         budget: budget_update,
         previous_campaign_status: campaign_status_before_type_cast,
-        campaign_status: :out_of_budget,
+        campaign_status: :paused,
+        # campaign_status: :out_of_budget,
         enabled: false
       )
     else
-      if self.out_of_budget?
+      # if self.out_of_budget?
       #   update(budget: budget_update, campaign_status: self.previous_campaign_status, enabled: true)
-      # else
+      if self.out_of_credit?
+        update(budget: budget_update, campaign_status: :paused)
+      else
         update(budget: budget_update)
       end
     end
@@ -301,26 +304,26 @@ class CardOrder < ApplicationRecord
   end
 
   def can_pay?(postcard)
-    if self.monthly?
-      available_budget = self.budget - self.budget_used
-      if available_budget < postcard.cost
-        self.update(previous_campaign_status: self.campaign_status_before_type_cast, campaign_status: :out_of_budget, enabled: false)
-        return false
-      end
-      self.budget_used += postcard.cost
-      if self.budget - self.budget_used < Plan.current.amount / 100.0
-        self.update(previous_campaign_status: self.campaign_status_before_type_cast, campaign_status: :out_of_budget, enabled: false)
-      end
-      unless self.save && self.shop.pay(postcard)
-        self.update!(previous_campaign_status: self.campaign_status_before_type_cast, campaign_status: :out_of_credit, enabled: false)
-        return false
-      end
-    else
+    # if self.monthly?
+    #   available_budget = self.budget - self.budget_used
+    #   if available_budget < postcard.cost
+    #     self.update(previous_campaign_status: self.campaign_status_before_type_cast, campaign_status: :out_of_budget, enabled: false)
+    #     return false
+    #   end
+    #   self.budget_used += postcard.cost
+    #   if self.budget - self.budget_used < Plan.current.amount / 100.0
+    #     self.update(previous_campaign_status: self.campaign_status_before_type_cast, campaign_status: :out_of_budget, enabled: false)
+    #   end
+    #   unless self.save && self.shop.pay(postcard)
+    #     self.update!(previous_campaign_status: self.campaign_status_before_type_cast, campaign_status: :out_of_credit, enabled: false)
+    #     return false
+    #   end
+    # else
       unless self.shop.pay(postcard)
         self.update!(previous_campaign_status: self.campaign_status_before_type_cast, campaign_status: :out_of_credit, enabled: false)
         return false
       end
-    end
+    # end
     true
   end
 
