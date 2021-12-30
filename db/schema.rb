@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_12_23_175559) do
+ActiveRecord::Schema.define(version: 2021_12_30_185822) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
@@ -341,6 +341,7 @@ ActiveRecord::Schema.define(version: 2021_12_23_175559) do
     t.string "data_source_status", default: "normal"
     t.string "error"
     t.bigint "imported_customer_id"
+    t.boolean "is_discount_claimed", default: false
     t.index ["customer_id"], name: "index_postcards_on_customer_id"
     t.index ["imported_customer_id"], name: "index_postcards_on_imported_customer_id"
     t.index ["postcard_trigger_id"], name: "index_postcards_on_postcard_trigger_id"

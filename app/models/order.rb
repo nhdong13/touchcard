@@ -52,7 +52,10 @@ class Order < ApplicationRecord
     # This method tracks the postcard whose discount was used, if any. It's not related to postcard_trigger (the connected postcard would have been triggered by another order)
     # TODO: This speeds up the revenue query. Instead we should probably calculate that as an occasional batch job, rather than on the fly via this awkward relation
     postcard = find_postcard_by_discount
-    update!(postcard: postcard) if postcard
+    if postcard
+      update!(postcard: postcard)
+      postcard.update(is_discount_claimed: true)
+    end
     postcard
   end
 

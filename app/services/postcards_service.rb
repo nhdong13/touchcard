@@ -9,8 +9,7 @@ class PostcardsService
     postcards = @current_shop.postcards.where(paid: true)
                 .or(@current_shop.postcards.where(canceled: true))
                 .where(error: nil)
-                .includes(:card_order, :imported_customer, customer: :default_addr)
-     
+
     if @params[:sort_by].present?
       sort_order = @params[:order] || "asc"
       reverse_sort_order = sort_order == "asc" ? "desc" : "asc"
@@ -29,7 +28,7 @@ class PostcardsService
     end
 
     postcards = postcards.where(card_order_id: @params[:campaign_id]) if @params[:campaign_id].present?
-    postcards_with_paging = postcards.page(current_page).per(20)
+    postcards_with_paging = postcards.includes(:card_order, :imported_customer, customer: :default_addr).page(current_page).per(20)
 
     {
       postcards: postcards,

@@ -38,7 +38,7 @@ gem "zip-zip"
 gem "aws-sdk", "~> 3.0.2"
 
 # Image Manipulation
-gem "rmagick", "~> 2.15"
+gem "rmagick", "~> 4.2.4"
 
 # Lob integration
 gem "lob", "~> 5.0"
