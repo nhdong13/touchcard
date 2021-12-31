@@ -1,8 +1,13 @@
 class AddIsDiscountClaimedToPostcards < ActiveRecord::Migration[6.1]
   def change
     add_column :postcards, :is_discount_claimed, :boolean, default: false
-    Postcard.find_each do |pc|
-      pc.update(is_discount_claimed: true) if pc.orders.present?
+    CardOrder.unscoped do
+      Postcard.includes(:orders).find_each do |pc|
+        if pc.orders.present?
+          pc.is_discount_claimed = true
+          pc.save(validate: false)
+        end
+      end
     end
   end
 end
